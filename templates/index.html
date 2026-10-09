@@ -15,7 +15,7 @@
 <div class="sports5" id="sports"></div><div class="chips chips5" id="chips"></div></div></div>
 <div class="wrap dlabel">{{label}}</div>{% endblock %}
 {% block body %}<button id="chatFab" class="fab">💬 라운지 <span id="fabN"></span></button><aside id="lounge" class="lounge" hidden></aside><div id="status" class="status"></div><div id="list"><p class="empty">불러오는 중…</p></div>{% endblock %}
-{% block js %}<button class="sndhint" id="sndHint" hidden>🔊 알림음 켜기</button><script src="/static/sound.js?v=3"></script><script src="/static/fx.js?v=2" defer></script><script src="/static/chat.js?v=3"></script><script>
+{% block js %}<button class="sndhint" id="sndHint" hidden>🔊 소리 켜기</button><script src="/static/sound.js?v=6"></script><script src="/static/fx.js?v=2" defer></script><script src="/static/chat.js?v=3"></script><script>
 const D="{{d}}";const SPORTS=['전체','축구','야구','농구','배구','아이스하키'];let SP=localStorage.getItem('tw_sport')||'전체',OPEN=null,PV={};let F=new URLSearchParams(location.search).get('f')||'all',Q='',DATA=null,PREV={};
 const fav=()=>{try{return JSON.parse(localStorage.getItem('tw_fav')||'[]')}catch(e){return[]}};
 const fk=(g,s)=>g.kind+':'+g[s].id;

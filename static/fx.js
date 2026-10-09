@@ -5,17 +5,17 @@ const still=matchMedia('(prefers-reduced-motion: reduce)').matches;if(still)retu
 const mob=()=>innerWidth<=700;
 // 관중석 플래시: 관중석 띠 영역에서 무작위 소수
 const crowd=box.querySelector('.fx-crowd');
-function flash(){if(document.hidden)return;const d=document.createElement('i');
- let x,y;do{x=3+Math.random()*94;y=(mob()?62:60)+Math.random()*(mob()?22:30)}while(x>28&&x<74&&y<78);
- d.style.left=x+'%';d.style.top=y+'%';d.style.animationDuration=(0.9+Math.random()*1.2)+'s';
- if(Math.random()<.25)d.className='w';crowd.appendChild(d);setTimeout(()=>d.remove(),2400)}
-setInterval(()=>{if(Math.random()<.85)flash()},300);
+function flash(){if(document.hidden)return;const d=document.createElement('i');const m=mob();
+ let x,y,n=0;do{x=1+Math.random()*98;y=(m?44:38)+Math.random()*(m?46:56);n++}while(n<20&&(m?(x>17&&x<85&&y<76):(x>29&&x<73&&y<84)));
+ d.style.left=x+'%';d.style.top=y+'%';d.style.animationDuration=(0.8+Math.random()*1.4).toFixed(2)+'s';
+ const r=Math.random();d.className=r<.2?'w':r<.35?'b':'';crowd.appendChild(d);setTimeout(()=>d.remove(),2500)}
+setInterval(()=>{flash();if(Math.random()<.6)flash();if(!mob()&&Math.random()<.5)flash()},170);
 // 조명 반짝임: 이미지에서 자동 검출한 밝은 점(static/lights.json)마다 각자 랜덤 타이밍
 let LT=null,lastSet='';
 function lights(){if(!LT)return;const k=mob()?'m':'d';if(k===lastSet)return;lastSet=k;box.querySelectorAll('.fx-p').forEach(e=>e.remove());
  for(const [x,y,t] of LT[k]){const e=document.createElement('span');e.className='fx-p '+(t==='L'?'lamp':'spot');e.style.left=x*100+'%';e.style.top=y*100+'%';
   e.style.animationDuration=(3+Math.random()*4).toFixed(2)+'s';e.style.animationDelay=(-Math.random()*7).toFixed(2)+'s';box.appendChild(e)}}
-fetch('/static/lights.json?v=1').then(r=>r.json()).then(j=>{LT=j;lights()}).catch(()=>{});addEventListener('resize',lights);
+fetch('/static/lights.json?v=2').then(r=>r.json()).then(j=>{LT=j;lights()}).catch(()=>{});addEventListener('resize',lights);
 // 비: 캔버스, 성기게
 const cv=box.querySelector('.fx-rain'),cx=cv.getContext('2d');let drops=[],W=0,H=0;
 function size(){const r=box.getBoundingClientRect(),dp=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;cv.width=W*dp;cv.height=H*dp;cx.setTransform(dp,0,0,dp,0,0);
