@@ -3,7 +3,7 @@
 <meta name="theme-color" content="#0b1630">
 <script>try{var t=localStorage.getItem('tw_theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <title>{% block title %}투윈스코어{% endblock %} · TwowinSCORE</title>
-<link rel="stylesheet" href="/static/style.css?v=10"></head><body>
+<link rel="stylesheet" href="/static/style.css?v=13"></head><body class="{% block bodycls %}{% endblock %}">
 {% block hero %}{% endblock %}<header><div class="wrap top"><a class="logo" href="/"><span class="w">Twowin</span><span class="s">SCORE</span></a>
 <nav><a href="/" class="{{'on' if page in ('home','game')}}">스코어</a><a href="/standings" class="{{'on' if page=='standings'}}">순위</a></nav>
 <button class="theme" id="theme" aria-label="화면 모드">◐</button></div>{% block bar %}{% endblock %}</header>
@@ -11,4 +11,5 @@
 <footer class="wrap"><a class="tg" href="https://t.me/twowinscore" target="_blank" rel="noopener">📢 텔레그램 채널 t.me/twowinscore</a>
 <p>API-Sports · MLB 공식 일정 · NBA/MLB 공식 부상 정보 기준. 확인된 정보만 표시해요. 시간은 한국시간(KST).</p></footer>
 <script>document.getElementById('theme').onclick=function(){var r=document.documentElement,n=r.dataset.theme==='dark'?'light':'dark';r.dataset.theme=n;try{localStorage.setItem('tw_theme',n)}catch(e){}}</script>
+<script>(function(){const f=()=>document.body.classList.toggle('scrolled',scrollY>8);addEventListener('scroll',f,{passive:true});f()})()</script>
 {% block js %}{% endblock %}</body></html>
