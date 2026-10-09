@@ -10,7 +10,7 @@
 <main class="wrap">{% block body %}{% endblock %}</main>
 <footer class="wrap"><a class="tg" href="https://t.me/twowinscore" target="_blank" rel="noopener">📢 텔레그램 채널 t.me/twowinscore</a>
 <p>API-Sports · MLB 공식 일정 · NBA/MLB 공식 부상 정보 기준. 확인된 정보만 표시해요. 시간은 한국시간(KST).</p>
-<p class="credit">입장 효과음: 아나운서 음성 MeloTTS 합성(MIT) · CC0 호루라기 SpliceSound · 관중 함성 itmightgetloud "Millerntor Stadium Crowd Reaction Goal" (Freesound) — 편집함</p></footer>
+<p class="credit">입장 효과음(CC0): 호루라기 SpliceSound · 관중 함성 itmightgetloud "Millerntor Stadium Crowd Reaction Goal" (Freesound) — 편집함</p></footer>
 <script>document.getElementById('theme').onclick=function(){var r=document.documentElement,n=r.dataset.theme==='dark'?'light':'dark';r.dataset.theme=n;try{localStorage.setItem('tw_theme',n)}catch(e){}}</script>
 <script>(function(){const sb=document.getElementById('sbar');const f=()=>{document.body.classList.toggle('scrolled',scrollY>8);if(sb)sb.classList.toggle('stuck',sb.getBoundingClientRect().top<=0.5&&scrollY>40);document.body.classList.toggle('sstuck',sb.classList.contains('stuck'))};addEventListener('scroll',f,{passive:true});f()})()</script>
 {% block js %}{% endblock %}</body></html>
