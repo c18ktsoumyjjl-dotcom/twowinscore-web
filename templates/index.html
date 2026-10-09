@@ -44,7 +44,7 @@ function toggleRow(k){const was=OPEN===k;document.querySelectorAll('.pv6.open').
  if(!PV[k]||Date.now()-PV[k+'@']>30000)loadPv(k)}
 let SNDQ=false;function row(g){const sc=g.L.score!=null,p=PREV[g.key],ch=p&&p!==g.L.score+':'+g.R.score&&sc,up=ch&&(g.L.score+g.R.score)>p.split(':').reduce((x,y)=>x+(+y||0),0),on=teamFav(g);
  const lead=sc&&g.L.score!==g.R.score?(g.L.score>g.R.score?'L':'R'):'';
- let top='';if(g.state==='live')top=`<span class="pill">● LIVE ${esc(g.badge)}</span>`;else if(sc)top=`<span class="fin">${esc(g.badge)}</span>`;
+ let top='<span class="top0"></span>';if(g.state==='live')top=`<span class="pill">● LIVE ${esc(g.badge)}</span>`;else if(sc)top=`<span class="fin">${esc(g.badge)}</span>`;
  const mid=sc?`<div class="score5"><b class="${lead==='L'?'lead':''}">${g.L.score}</b><span>:</span><b class="${lead==='R'?'lead':''}">${g.R.score}</b></div>`:`<div class="vs5">${g.state==='scheduled'?'vs':esc(g.badge)}</div>`;
  if(up&&TWSound.want(teamFav(g)))SNDQ=true;const op=OPEN===g.key;return `<div class="g5 ${g.state} ${ch?'flash':''} ${op?'op':''}" role="button" tabindex="0" data-k="${esc(g.key)}">
  <div class="time5">${esc(g.time)}${g.sub?`<small>${esc(g.sub)}</small>`:''}</div>${tm(g.L,'L')}<div class="mid5">${top}${mid}</div>${tm(g.R,'R')}

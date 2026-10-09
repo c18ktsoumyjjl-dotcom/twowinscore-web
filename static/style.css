@@ -333,3 +333,24 @@ body.sbon .sb6{transform:none}
 .en{display:block;font-size:11px;font-weight:600;color:#7f8aa6;letter-spacing:.1px;line-height:1.25;margin-top:2px;word-break:normal}
 .t6 b .en{font-size:12px}
 [data-theme=light] .en{color:#8a93a8}
+/* v9: 엠블럼·이름·점수 세로 정렬 고정 */
+.tm5{display:grid!important;align-items:center;gap:10px;min-width:0}
+.tm5.L{grid-template-columns:minmax(0,1fr) 32px}.tm5.R{grid-template-columns:32px minmax(0,1fr)}
+.tm5 img,.tm5 .nologo{width:32px!important;height:32px!important;object-fit:contain;justify-self:center}
+.tm5 .nologo{display:block}
+.tm5.L .nm{text-align:right}.tm5.R .nm{text-align:left}
+.mid5{display:grid!important;grid-template-rows:22px 40px;justify-items:center;align-items:center;gap:2px}
+.top0{height:22px}
+.mid5 .vs5{grid-row:2}
+.time5{align-self:center}
+.star5{justify-self:center}
+@media(max-width:700px){
+ .tm5,.tm5.L,.tm5.R{grid-template-columns:1fr!important;grid-template-rows:32px auto;justify-items:center;gap:4px;align-self:start}
+ .tm5.L img,.tm5.L .nologo{grid-row:1}.tm5.L .nm{grid-row:2}
+ .tm5 .nm{text-align:center!important}
+ .tm5 img,.tm5 .nologo{width:30px!important;height:30px!important}
+ .mid5{grid-template-rows:20px 32px;align-self:start;margin-top:2px}.top0{height:20px}
+ .g5{align-items:start}.time5,.star5{align-self:start;margin-top:10px}}
+.mid5{grid-template-rows:22px 40px 22px}
+@media(max-width:700px){.mid5{grid-template-rows:20px 32px;margin-top:0}.tm5,.tm5.L,.tm5.R{margin-top:21px}.time5,.star5{margin-top:21px;min-height:32px;display:flex;align-items:center}.time5{flex-direction:column;justify-content:center}}
+@media(max-width:700px){.star5{height:32px;width:28px;justify-content:center}.time5{height:32px;min-height:0}}
