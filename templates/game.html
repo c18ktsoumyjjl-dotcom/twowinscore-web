@@ -30,7 +30,7 @@
 </div><aside class="dchat" id="dchat"><div class="grab" id="grab"></div><section class="box chatbox" id="gamechat"></section></aside></div>
 <div class="shade" id="shade"></div><button class="fab cfab" id="cfab">💬 채팅 <span id="unread"></span></button>
 {% endblock %}
-{% block js %}<button class="sndhint" id="sndHint" hidden>🔊 알림음 켜기</button><script src="/static/sound.js?v=2"></script><script src="/static/chat.js?v=3"></script><script>(function(){const W=matchMedia('(min-width:1024px)'),body=document.body,un=document.getElementById('unread');let n=0;
+{% block js %}<button class="sndhint" id="sndHint" hidden>🔊 알림음 켜기</button><script src="/static/sound.js?v=3"></script><script src="/static/chat.js?v=3"></script><script>(function(){const W=matchMedia('(min-width:1024px)'),body=document.body,un=document.getElementById('unread');let n=0;
 const isOpen=()=>body.classList.contains('sheet');
 function openS(){body.classList.add('sheet');n=0;un.textContent='';}
 function closeS(){body.classList.remove('sheet');document.getElementById('dchat').style.transform=''}

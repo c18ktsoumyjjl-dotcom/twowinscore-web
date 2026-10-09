@@ -372,3 +372,10 @@ body.sbon .sb6{transform:none}
  .fx-l{width:14%}.fx-l.l1{left:5.2%;top:35%}.fx-l.l4{left:94%;top:35%}.fx-l.l2,.fx-l.l3{display:none}}
 @media(prefers-reduced-motion:reduce){.fx-logo,.fx-l{animation:none;display:none}}
 .sndm hr{border:0;border-top:1px solid #232d45;margin:4px 0}
+.fx-p{right:auto!important;bottom:auto!important;position:absolute;transform:translate(-50%,-50%);border-radius:50%;opacity:0;animation:tw2 5s ease-in-out infinite}
+.fx-p.lamp{width:3.2%;aspect-ratio:1;background:radial-gradient(circle,rgba(255,255,255,.95) 0,rgba(215,232,255,.55) 22%,rgba(215,232,255,0) 68%)}
+.fx-p.spot{width:1.4%;aspect-ratio:1;background:radial-gradient(circle,rgba(255,232,190,.9) 0,rgba(255,214,150,.35) 30%,rgba(255,214,150,0) 70%)}
+@keyframes tw2{0%,100%{opacity:0}45%,55%{opacity:.9}}
+@media(max-width:700px){.fx-p.lamp{width:5%}.fx-p.spot{width:3%}}
+@media(prefers-reduced-motion:reduce){.fx-p{display:none}}
+.credit{font-size:11px;color:#5f6a85;margin-top:4px}

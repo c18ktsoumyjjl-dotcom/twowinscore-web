@@ -5,20 +5,11 @@ const mode=()=>localStorage.getItem(K)||'fav';
 function ac(){if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(C)ctx=new C()}return ctx}
 function unlock(){const c=ac();if(c&&c.state==='suspended')c.resume().then(()=>{hint();intro()});else intro();hint()}
 const IK='tw_intro';const introOn=()=>localStorage.getItem(IK)!=='off';
+let introBuf=null;
 function intro(){try{if(sessionStorage.getItem('tw_intro_done')||mode()==='off'||!introOn())return;const c=ac();if(!c||c.state!=='running')return;
- sessionStorage.setItem('tw_intro_done','1');const t=c.currentTime+.05,out=c.createGain();out.gain.value=.18;out.connect(c.destination);
- // 호루라기: 짧게 '삐' + 길게 '이익' (떨림 있는 고음)
- [[0,.18],[.26,.62]].forEach(([d,len])=>{const o=c.createOscillator(),lfo=c.createOscillator(),lg=c.createGain(),g=c.createGain();
-  o.type='sine';o.frequency.value=2900;lfo.frequency.value=38;lg.gain.value=90;lfo.connect(lg).connect(o.frequency);
-  g.gain.setValueAtTime(0,t+d);g.gain.linearRampToValueAtTime(.5,t+d+.02);g.gain.setValueAtTime(.5,t+d+len-.06);g.gain.linearRampToValueAtTime(0,t+d+len);
-  o.connect(g).connect(out);o.start(t+d);lfo.start(t+d);o.stop(t+d+len+.02);lfo.stop(t+d+len+.02)});
- // 관중 함성: 필터 노이즈, 서서히 커졌다 페이드아웃
- const len=2.6,sr=c.sampleRate,buf=c.createBuffer(2,sr*len,sr);for(let ch=0;ch<2;ch++){const a=buf.getChannelData(ch);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1}
- const n=c.createBufferSource();n.buffer=buf;const bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=900;bp.Q.value=.6;
- const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;const g=c.createGain(),s0=t+.8;
- g.gain.setValueAtTime(0,s0);g.gain.linearRampToValueAtTime(.55,s0+.5);g.gain.setValueAtTime(.55,s0+1.1);g.gain.exponentialRampToValueAtTime(.001,s0+len-.05);
- const am=c.createOscillator(),ag=c.createGain();am.frequency.value=5.5;ag.gain.value=.12;am.connect(ag).connect(g.gain);
- n.connect(bp).connect(lp).connect(g).connect(out);n.start(s0);am.start(s0);n.stop(s0+len);am.stop(s0+len)}catch(e){}}
+ sessionStorage.setItem('tw_intro_done','1');
+ const go=buf=>{const src=c.createBufferSource(),g=c.createGain();src.buffer=buf;g.gain.value=.35;src.connect(g).connect(c.destination);src.start()};
+ if(introBuf)go(introBuf);else fetch('/static/intro.mp3?v=1').then(r=>r.arrayBuffer()).then(b=>new Promise((ok,no)=>c.decodeAudioData(b,ok,no))).then(buf=>{introBuf=buf;go(buf)}).catch(()=>{})}catch(e){}}
 ['pointerdown','keydown','touchstart'].forEach(e=>addEventListener(e,unlock,{passive:true}));
 function hint(){const h=document.getElementById('sndHint');if(!h)return;h.hidden=!(mode()!=='off'&&(!ctx||ctx.state!=='running'))}
 function play(){if(mode()==='off')return;const c=ac();if(!c||c.state!=='running'){hint();return}
