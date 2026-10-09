@@ -138,18 +138,18 @@ def _periods(g):
         name = f"{lab}쿼터" if k == "basketball" and str(lab).isdigit() else f"{lab}세트" if k == "volleyball" and str(lab).isdigit() else lab
         if k == "volleyball":
             win = g["home"] if hs > as_ else g["away"]
-            ev.append({"t": f"{emo} {name} {win} 따냈어요! ({as_}-{hs})", "hot": abs(hs - as_) <= 2})
+            ev.append({"t": f"{emo} {name} {win} 따냈어요! ({hs}-{as_})", "hot": abs(hs - as_) <= 2})
         elif k == "hockey":
             if hs == as_ == 0:
-                ev.append({"t": f"{emo} {name} 무득점 · 팽팽해요 (합계 {ta}-{th})", "hot": False})
+                ev.append({"t": f"{emo} {name} 무득점 · 팽팽해요 (합계 {th}-{ta})", "hot": False})
             else:
-                ev.append({"t": f"{emo}🔥 {name} {g['away']} {as_}골 · {g['home']} {hs}골 (합계 {ta}-{th})", "hot": True})
+                ev.append({"t": f"{emo}🔥 {name} {g['home']} {hs}골 · {g['away']} {as_}골 (합계 {th}-{ta})", "hot": True})
         else:
             best = g["home"] if hs > as_ else g["away"] if as_ > hs else None
             msg = f"{best} {abs(hs - as_)}점 우세" if best else "동점 쿼터"
-            ev.append({"t": f"{emo} {name} {g['away']} {as_} - {hs} {g['home']} · {msg} (합계 {ta}-{th})", "hot": abs(hs - as_) >= 10})
+            ev.append({"t": f"{emo} {name} {g['home']} {hs} - {as_} {g['away']} · {msg} (합계 {th}-{ta})", "hot": abs(hs - as_) >= 10})
     if g["state"] == "final":
-        ev.append({"t": f"🏁 경기 종료 · {g['away']} {g.get('away_score')} : {g.get('home_score')} {g['home']}", "hot": True})
+        ev.append({"t": f"🏁 경기 종료 · {g['home']} {g.get('home_score')} : {g.get('away_score')} {g['away']}", "hot": True})
     ev.reverse()
     src = {"basketball": "쿼터별 점수(API-Sports)", "volleyball": "세트별 점수(API-Sports)", "hockey": "피리어드별 점수(API-Sports)"}[k]
     return {"source": src, "items": ev}
@@ -162,7 +162,7 @@ def _football(g):
     if not items:
         return None
     if g["state"] == "final":
-        items = [{"t": f"🏁 경기 종료 · {g['away']} {g.get('away_score')} : {g.get('home_score')} {g['home']}", "hot": True}] + items
+        items = [{"t": f"🏁 경기 종료 · {g['home']} {g.get('home_score')} : {g.get('away_score')} {g['away']}", "hot": True}] + items
     return {"source": "경기 이벤트(API-Sports 득점·카드)", "items": items}
 
 

@@ -34,7 +34,7 @@ def day_label(d):
 
 
 def view(g):
-    left_home = False   # 전 종목 공통: 원정 왼쪽 / 홈 오른쪽
+    left_home = g["kind"] != "baseball"   # 야구: 원정 왼쪽/홈 오른쪽, 그 외: 홈 왼쪽
     h = {"name": g["home"], "score": g.get("home_score"), "tag": "홈", "logo": g.get("home_logo"), "id": g.get("home_id")}
     a = {"name": g["away"], "score": g.get("away_score"), "tag": "원정", "logo": g.get("away_logo"), "id": g.get("away_id")}
     L, R = (h, a) if left_home else (a, h)
@@ -72,7 +72,7 @@ def period_table(g):
         cols = [str(i) for i in range(1, n + 1)]
         ext = [c for c in ("H", "E") if any(raw[s].get(c) is not None for s in ("home", "away"))]
         rows = [{"name": g[s], "vals": [raw[s]["inn"].get(c) for c in cols], "T": g.get(s + "_score"),
-                 "ext": [raw[s].get(c) for c in ext]} for s in ("away", "home")]
+                 "ext": [raw[s].get(c) for c in ext], "home": s == "home"} for s in ("away", "home")]
         hv = rows[1]["vals"]
         if g["state"] == "final" and hv and hv[-1] is None and (rows[1]["T"] or 0) > (rows[0]["T"] or 0):
             hv[-1] = "X"
@@ -84,8 +84,8 @@ def period_table(g):
     f = lab.get(g["kind"], lambda x: x)
     cols = [f(l[0]) for l in lines]
     tl = "세트" if g["kind"] == "volleyball" else "T"
-    rows = [{"name": g["away"], "vals": [l[2] for l in lines], "T": g.get("away_score"), "ext": []},
-            {"name": g["home"], "vals": [l[1] for l in lines], "T": g.get("home_score"), "ext": []}]
+    rows = [{"name": g["home"], "vals": [l[1] for l in lines], "T": g.get("home_score"), "ext": [], "home": True},
+            {"name": g["away"], "vals": [l[2] for l in lines], "T": g.get("away_score"), "ext": [], "home": False}]
     return {"cols": cols, "tlab": tl, "ext": [], "rows": rows}
 
 
@@ -135,7 +135,8 @@ def game(key):
         abort(404)
     v = view(g)
     det = data.detail(g)
-    forms = [(v["L"]["name"], det["form_away"]), (v["R"]["name"], det["form_home"])]
+    lh = v["left_home"]
+    forms = [(v["L"]["name"], det["form_home"] if lh else det["form_away"]), (v["R"]["name"], det["form_away"] if lh else det["form_home"])]
     st = det.get("starters")
     return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=plays.commentary(g),
                            forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st,
@@ -158,20 +159,22 @@ def api_preview(key):
         return jsonify({"error": "not found"}), 404
     v = view(g)
     det = data.detail(g)
-    forms = [{"name": v["L"]["name"], "rows": det["form_away"]}, {"name": v["R"]["name"], "rows": det["form_home"]}]
+    lh = v["left_home"]
+    forms = [{"name": v["L"]["name"], "rows": det["form_home"] if lh else det["form_away"]},
+             {"name": v["R"]["name"], "rows": det["form_away"] if lh else det["form_home"]}]
     h2h = det.get("h2h") or []
     hsum = None
     if h2h:
         a_w = sum(1 for x in h2h if (x["home"] == g["away"] and x["hs"] > x["as"]) or (x["away"] == g["away"] and x["as"] > x["hs"]))
         h_w = sum(1 for x in h2h if (x["home"] == g["home"] and x["hs"] > x["as"]) or (x["away"] == g["home"] and x["as"] > x["hs"]))
-        hsum = {"n": len(h2h), "L": a_w, "R": h_w, "last": h2h[0]}
+        hsum = {"n": len(h2h), "L": h_w if lh else a_w, "R": a_w if lh else h_w, "last": h2h[0]}
     pos = None
     st = det.get("standings")
     if st:
         def find(n):
             return next(({"rank": r.get("rank"), "win": r.get("win"), "lose": r.get("lose"), "draw": r.get("draw"), "pts": r.get("pts")}
                          for r in st["rows"] if r["team"] == n), None)
-        pos = {"section": st["section"], "L": find(g["away"]), "R": find(g["home"])}
+        pos = {"section": st["section"], "L": find(v["L"]["name"]), "R": find(v["R"]["name"])}
     starters = det.get("starters")
     com = plays.commentary(g)
     return jsonify({"key": v["key"], "kind": g["kind"], "table": v["table"], "L": v["L"]["name"], "R": v["R"]["name"],
