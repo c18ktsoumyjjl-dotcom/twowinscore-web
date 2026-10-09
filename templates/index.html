@@ -1,6 +1,14 @@
 {% extends "base.html" %}{% block title %}{{label}} 경기{% endblock %}
-{% block bodycls %}has-hero{% endblock %}{% block hero %}<div class="hero-space"><span class="hero-tag">국내·해외 야구·농구·배구 실시간 스코어</span></div>{% endblock %}
-{% block bar %}<div class="bar"><div class="wrap">
+{% block bodycls %}has-hero{% endblock %}
+{% block header %}<div class="hero4">
+<picture><source media="(max-width:700px)" type="image/webp" srcset="/static/hero_m1x.webp 540w, /static/hero_m2x.webp 1080w" sizes="100vw">
+<source media="(max-width:700px)" srcset="/static/hero_m1x.jpg 540w, /static/hero_m2x.jpg 1080w" sizes="100vw">
+<source type="image/webp" srcset="/static/hero_d1x.webp 1440w, /static/hero_d2x.webp 2560w" sizes="(min-width:2200px) 2200px, 100vw">
+<img src="/static/hero_d1x.jpg" srcset="/static/hero_d1x.jpg 1440w, /static/hero_d2x.jpg 2560w" sizes="(min-width:2200px) 2200px, 100vw" alt="TwowinSCORE" width="2560" height="900" fetchpriority="high"></picture>
+<div class="hero-nav"><nav><a href="/" class="on">스코어</a><a href="/standings">순위</a></nav><button class="theme" id="theme" aria-label="화면 모드">◐</button></div>
+</div>
+<p class="hero-tag4">국내·해외 야구·농구·배구 실시간 스코어</p>
+<div class="sbar" id="sbar"><div class="wrap"><a class="logo mini" href="/"><span class="w">Twowin</span><span class="s">SCORE</span></a>
 <div class="dates"><a href="/?d={{yday}}" class="{{'on' if d==yday}}">어제</a><a href="/?d={{today}}" class="{{'on' if d==today}}">오늘</a><a href="/?d={{tmr}}" class="{{'on' if d==tmr}}">내일</a>
 <label class="cal">📅<input type="date" id="cal" value="{{d}}" min="{{dmin}}" max="{{dmax}}"></label><span class="dl">{{label}}</span></div>
 <div class="tools"><input id="q" type="search" placeholder="팀 검색 (예: LG, 다저스)" autocomplete="off"></div>
@@ -30,9 +38,9 @@ function render(){if(!DATA)return;const gs=DATA.games,q=Q.trim().toLowerCase();
  const rank=g=>(isFav(g)?0:2)+(g.state==='live'?0:1);
  const pin=v.filter(g=>rank(g)<2).sort((a,b)=>rank(a)-rank(b)||a.ts-b.ts);
  const rest=v.filter(g=>rank(g)>=2);let h='';
- if(pin.length)h+=`<section><h2 class="pin">${pin.some(g=>g.state==='live')?'● 진행 중':''}${pin.some(g=>g.state==='live')&&pin.some(isFav)?' · ':''}${pin.some(isFav)?'★ 즐겨찾기':''}<span class="ha small">야구는 홈팀 오른쪽</span></h2>${pin.map(row).join('')}</section>`;
+ if(pin.length)h+=`<section><h2 class="pin"><span class="lh">${pin.some(g=>g.state==='live')?'● 진행 중':''}${pin.some(g=>g.state==='live')&&pin.some(isFav)?' · ':''}${pin.some(isFav)?'★ 즐겨찾기':''}</span><span class="ha small">야구는 홈팀 오른쪽</span></h2>${pin.map(row).join('')}</section>`;
  const lab=k=>k==='baseball'?'<span class="ha"><i>원정</i><i>홈</i></span>':'<span class="ha"><i>홈</i><i>원정</i></span>';
- for(const l of leagues){const x=rest.filter(g=>g.league===l);if(x.length)h+=`<section><h2>${x[0].emoji} ${esc(l)}${lab(x[0].kind)}</h2>${x.map(row).join('')}</section>`}
+ for(const l of leagues){const x=rest.filter(g=>g.league===l);if(x.length)h+=`<section><h2><span class="lh">${x[0].emoji} ${esc(l)}</span>${lab(x[0].kind)}</h2>${x.map(row).join('')}</section>`}
  document.getElementById('list').innerHTML=h||`<p class="empty">${q?'검색 결과가 없어요.':F==='live'?'지금 진행 중인 경기가 없어요.':'이 날 경기가 없어요.'}</p>`;
  const live=gs.some(g=>g.state==='live');
  document.getElementById('status').innerHTML=(DATA.failed.length?'<span class="warn">일부 종목을 불러오지 못했어요 · </span>':'')+(live?'<i class="dot"></i> 실시간 · 점수 '+(DATA.upstream||15)+'초마다 갱신 · ':'')+DATA.updated+' 기준';

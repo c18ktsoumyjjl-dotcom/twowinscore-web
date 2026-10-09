@@ -8,7 +8,7 @@ with sync_playwright() as p:
         ctx.add_init_script("localStorage.setItem('tw_chat_open','0')"+(";localStorage.setItem('tw_theme','light')" if "light" in pre else ""))
         pg=ctx.new_page(); pg.goto(B+"/",timeout=90000); pg.wait_for_selector(".g",timeout=60000); pg.wait_for_timeout(800)
         pg.screenshot(path=f"screens/{pre}_{tag}.png")
-        if tag=="desktop" or "local" in pre:
+        if True:
             pg.mouse.wheel(0,520); pg.wait_for_timeout(800); pg.screenshot(path=f"screens/{pre}_{tag}_scrolled.png")
         ctx.close()
     b.close()
