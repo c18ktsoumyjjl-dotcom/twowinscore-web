@@ -5,7 +5,7 @@ const K='tw_snd',IK='tw_intro';
 const mode=()=>localStorage.getItem(K)||'fav';
 const introOn=()=>localStorage.getItem(IK)!=='off';
 const mk=(src,vol)=>{const a=new Audio(src);a.preload='auto';a.volume=vol;a.setAttribute('playsinline','');return a};
-const INTRO=mk('/static/intro.mp3?v=2',.6),CHIME=mk('/static/chime.mp3?v=1',.7);
+const INTRO=mk('/static/intro.mp3?v=3',.6),CHIME=mk('/static/chime.mp3?v=1',.7);
 let unlocked=false;
 function hint(){const h=document.getElementById('sndHint');if(h)h.hidden=unlocked||mode()==='off'}
 function playIntro(force){if(!force&&(sessionStorage.getItem('tw_intro_done')||mode()==='off'||!introOn()))return Promise.resolve();
