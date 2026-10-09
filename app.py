@@ -2,14 +2,18 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, request, abort, jsonify, redirect
 import data
 import chat
+import plays
 
 app = Flask(__name__)
 app.register_blueprint(chat.bp)
 WD = "월화수목금토일"
-EMO = {"baseball": "⚾", "basketball": "🏀", "volleyball": "🏐"}
+EMO = {"baseball": "⚾", "basketball": "🏀", "volleyball": "🏐", "football": "⚽", "hockey": "🏒"}
+SPORT_KO = {"football": "축구", "baseball": "야구", "basketball": "농구", "volleyball": "배구", "hockey": "아이스하키"}
 SHORT = {"V리그 남자": "V리그 남", "V리그 여자": "V리그 여"}
 TABS = [("kbo", "KBO"), ("mlb", "MLB"), ("npb", "NPB"), ("kbl", "KBL"), ("wkbl", "WKBL"),
-        ("vm", "V리그 남"), ("vw", "V리그 여"), ("nba", "NBA")]
+        ("vm", "V리그 남"), ("vw", "V리그 여"), ("nba", "NBA"),
+        ("kl1", "K리그1"), ("epl", "EPL"), ("laliga", "라리가"), ("seriea", "세리에A"), ("bundes", "분데스리가"),
+        ("ligue1", "리그1"), ("ucl", "챔피언스리그"), ("nhl", "NHL"), ("khl", "KHL")]
 
 
 def today():
@@ -30,7 +34,7 @@ def day_label(d):
 
 
 def view(g):
-    left_home = g["kind"] != "baseball"   # 야구: 원정 왼쪽 / 홈 오른쪽
+    left_home = False   # 전 종목 공통: 원정 왼쪽 / 홈 오른쪽
     h = {"name": g["home"], "score": g.get("home_score"), "tag": "홈", "logo": g.get("home_logo"), "id": g.get("home_id")}
     a = {"name": g["away"], "score": g.get("away_score"), "tag": "원정", "logo": g.get("away_logo"), "id": g.get("away_id")}
     L, R = (h, a) if left_home else (a, h)
@@ -52,7 +56,37 @@ def view(g):
     return {"key": str(g["key"]), "kind": g["kind"], "league": SHORT.get(g["site_league"], g["site_league"]),
             "lorder": g["site_order"], "emoji": EMO[g["kind"]], "state": st, "badge": badge,
             "time": g["start"].strftime("%H:%M"), "ts": g["start"].timestamp(), "L": L, "R": R,
-            "lines": lines, "sub": " · ".join(sub), "left_home": left_home}
+            "lines": lines, "sub": " · ".join(sub), "left_home": left_home, "sport": SPORT_KO[g["kind"]],
+            "table": period_table(g)}
+
+
+def period_table(g):
+    """구간별 점수표. 원정 위 / 홈 아래. 실제 데이터 없으면 None."""
+    if g["state"] not in ("live", "final"):
+        return None
+    if g["kind"] == "baseball":
+        raw = g.get("innings")
+        if not raw:
+            return None
+        n = max([9] + [int(k) for s in ("home", "away") for k in raw[s]["inn"] if str(k).isdigit()])
+        cols = [str(i) for i in range(1, n + 1)]
+        ext = [c for c in ("H", "E") if any(raw[s].get(c) is not None for s in ("home", "away"))]
+        rows = [{"name": g[s], "vals": [raw[s]["inn"].get(c) for c in cols], "T": g.get(s + "_score"),
+                 "ext": [raw[s].get(c) for c in ext]} for s in ("away", "home")]
+        hv = rows[1]["vals"]
+        if g["state"] == "final" and hv and hv[-1] is None and (rows[1]["T"] or 0) > (rows[0]["T"] or 0):
+            hv[-1] = "X"
+        return {"cols": cols, "tlab": "R", "ext": ext, "rows": rows}
+    lines = g.get("lines") or []
+    if not lines:
+        return None
+    lab = {"basketball": lambda x: x if not str(x).isdigit() else f"{x}Q", "volleyball": lambda x: f"{x}세트" if str(x).isdigit() else x}
+    f = lab.get(g["kind"], lambda x: x)
+    cols = [f(l[0]) for l in lines]
+    tl = "세트" if g["kind"] == "volleyball" else "T"
+    rows = [{"name": g["away"], "vals": [l[2] for l in lines], "T": g.get("away_score"), "ext": []},
+            {"name": g["home"], "vals": [l[1] for l in lines], "T": g.get("home_score"), "ext": []}]
+    return {"cols": cols, "tlab": tl, "ext": [], "rows": rows}
 
 
 @app.route("/api/games")
@@ -101,22 +135,49 @@ def game(key):
         abort(404)
     v = view(g)
     det = data.detail(g)
-    inn = None
-    if g["kind"] == "baseball" and g.get("innings") and v["state"] in ("live", "final"):
-        raw = g["innings"]
-        n = max([9] + [int(k) for s in ("home", "away") for k in raw[s]["inn"] if str(k).isdigit()])
-        order = [("away", g["away"]), ("home", g["home"])]
-        inn = {"n": list(range(1, n + 1)), "rows": [
-            {"name": nm, "inn": [raw[s]["inn"].get(str(i)) for i in range(1, n + 1)],
-             "R": g.get(s + "_score"), "H": raw[s].get("H"), "E": raw[s].get("E")} for s, nm in order]}
-    # 최근 5경기: 화면 왼쪽 팀부터
-    forms = [(v["L"]["name"], det["form_home"] if v["left_home"] else det["form_away"]),
-             (v["R"]["name"], det["form_away"] if v["left_home"] else det["form_home"])]
+    forms = [(v["L"]["name"], det["form_away"]), (v["R"]["name"], det["form_home"])]
     st = det.get("starters")
-    return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), inn=inn,
+    return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=plays.commentary(g),
                            forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st,
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
                            names={g["home"], g["away"]})
+
+
+def _find(key):
+    d = parse_day(request.args.get("d"))
+    g = data.find_game(key, d)
+    if not g and d == today():
+        g = data.find_game(key, d - timedelta(days=1))
+    return g, d
+
+
+@app.route("/api/preview/<path:key>")
+def api_preview(key):
+    g, d = _find(key)
+    if not g:
+        return jsonify({"error": "not found"}), 404
+    v = view(g)
+    det = data.detail(g)
+    forms = [{"name": v["L"]["name"], "rows": det["form_away"]}, {"name": v["R"]["name"], "rows": det["form_home"]}]
+    h2h = det.get("h2h") or []
+    hsum = None
+    if h2h:
+        a_w = sum(1 for x in h2h if (x["home"] == g["away"] and x["hs"] > x["as"]) or (x["away"] == g["away"] and x["as"] > x["hs"]))
+        h_w = sum(1 for x in h2h if (x["home"] == g["home"] and x["hs"] > x["as"]) or (x["away"] == g["home"] and x["as"] > x["hs"]))
+        hsum = {"n": len(h2h), "L": a_w, "R": h_w, "last": h2h[0]}
+    pos = None
+    st = det.get("standings")
+    if st:
+        def find(n):
+            return next(({"rank": r.get("rank"), "win": r.get("win"), "lose": r.get("lose"), "draw": r.get("draw"), "pts": r.get("pts")}
+                         for r in st["rows"] if r["team"] == n), None)
+        pos = {"section": st["section"], "L": find(g["away"]), "R": find(g["home"])}
+    starters = det.get("starters")
+    com = plays.commentary(g)
+    return jsonify({"key": v["key"], "kind": g["kind"], "table": v["table"], "L": v["L"]["name"], "R": v["R"]["name"],
+                    "starters": starters, "forms": [f for f in forms if f["rows"]], "h2h": hsum, "pos": pos,
+                    "plays": {"source": com["source"], "items": com["items"][:3]} if com and com.get("items") else None,
+                    "url": f"/game/{v['key']}?d={d.isoformat()}"})
 
 
 @app.route("/standings")
@@ -125,7 +186,13 @@ def standings():
     if slug not in data.STANDING_SLUGS:
         abort(404)
     groups, season, ok = data.standings(slug)
-    return render_template("standings.html", page="standings", tabs=TABS, slug=slug, lname=dict(TABS)[slug],
+    kind = data.STANDING_SLUGS[slug][0]
+    sports = []
+    for k in ("football", "baseball", "basketball", "volleyball", "hockey"):
+        first = next(t for t, _ in TABS if data.STANDING_SLUGS[t][0] == k)
+        sports.append((first, SPORT_KO[k], k == kind))
+    tabs = [(t, n) for t, n in TABS if data.STANDING_SLUGS[t][0] == kind]
+    return render_template("standings.html", page="standings", tabs=tabs, sports=sports, all_tabs=TABS, slug=slug, lname=dict(TABS)[slug],
                            groups=groups, season=season, ok=ok, kind=data.STANDING_SLUGS[slug][0])
 
 

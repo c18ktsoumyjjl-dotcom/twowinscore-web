@@ -21,11 +21,24 @@ SITE_LEAGUES = [
     ("basketball", 91, "KBL"), ("basketball", 92, "WKBL"),
     ("volleyball", 151, "V리그 남자"), ("volleyball", 152, "V리그 여자"),
     ("basketball", 12, "NBA"),
+    ("football", 292, "K리그1"), ("football", 39, "EPL"), ("football", 140, "라리가"), ("football", 135, "세리에A"),
+    ("football", 78, "분데스리가"), ("football", 61, "리그1"), ("football", 2, "챔피언스리그"),
+    ("hockey", 57, "NHL"), ("hockey", 35, "KHL"),
 ]
+import sports2
+NEW_KINDS = ("football", "hockey")
+
+
+def _islive(kind, st):
+    return sports2.is_live(kind, st) if kind in NEW_KINDS else sb.LIVE[kind](st)
+
 SITE_KEYS = {(k, l): (i, n) for i, (k, l, n) in enumerate(SITE_LEAGUES)}
 STANDING_SLUGS = {"kbo": ("baseball", 5), "mlb": ("baseball", 1), "npb": ("baseball", 2),
                   "kbl": ("basketball", 91), "wkbl": ("basketball", 92),
-                  "vm": ("volleyball", 151), "vw": ("volleyball", 152), "nba": ("basketball", 12)}
+                  "vm": ("volleyball", 151), "vw": ("volleyball", 152), "nba": ("basketball", 12),
+                  "kl1": ("football", 292), "epl": ("football", 39), "laliga": ("football", 140), "seriea": ("football", 135),
+                  "bundes": ("football", 78), "ligue1": ("football", 61), "ucl": ("football", 2),
+                  "nhl": ("hockey", 57), "khl": ("hockey", 35)}
 
 TTL_LIVE = 180       # 진행 중 경기가 있는 날: 3분
 TTL_IDLE = 600       # 오늘이지만 진행 중 없음: 10분
@@ -71,7 +84,7 @@ def _sport_day(kind, day, today):
     now = time.time()
     if c:
         games = c.get("games") or []
-        live = any(sb.LIVE[kind](g["status"]) for g in games)
+        live = any(_islive(kind, g["status"]) for g in games)
         if not c.get("ok"):
             ttl = TTL_FAIL
         elif live:
@@ -97,6 +110,8 @@ def _sport_day(kind, day, today):
 
 
 def _fetch_raw(kind, day):
+    if kind in NEW_KINDS:
+        return sports2.fetch_day(kind, day)
     """API-Sports 1회 호출. 봇의 parse_game 을 그대로 쓰고, 야구 이닝/안타/실책만 원본에서 덧붙인다."""
     raws = sb.api_get(sb.HOSTS[kind], {"date": day.isoformat(), "timezone": "Asia/Seoul"})
     out = []
@@ -160,7 +175,10 @@ def detail(g):
             return fn(*a)
         except Exception:
             return None
-    with ThreadPoolExecutor(max_workers=6) as ex:
+    if kind in NEW_KINDS:
+        out.update(form_home=[], form_away=[], h2h=[], starters=None, injuries=[])
+    else:
+      with ThreadPoolExecutor(max_workers=6) as ex:
         fh = ex.submit(safe, form, g.get("home_id"))
         fa = ex.submit(safe, form, g.get("away_id"))
         fh2 = ex.submit(safe, features.head_to_head, kind, g.get("home_id"), g.get("away_id"), g["start"])
@@ -196,7 +214,7 @@ def quota(kind):
     val = None
     try:
         import urllib.request
-        req = urllib.request.Request(sb.HOSTS[kind] + "/status", headers={"x-apisports-key": os.environ.get("API_SPORTS_KEY", "")})
+        req = urllib.request.Request((sports2.HOSTS.get(kind) or sb.HOSTS[kind]) + "/status", headers={"x-apisports-key": os.environ.get("API_SPORTS_KEY", "")})
         with urllib.request.urlopen(req, timeout=15) as r:
             rq = (json.loads(r.read().decode()).get("response") or {}).get("requests") or {}
         val = (int(rq.get("current") or 0), int(rq.get("limit_day") or 0))
@@ -228,7 +246,7 @@ def games_for(day):
     today = datetime.now(SEOUL).date()
     out, failed = [], []
     with _lock:
-        for kind in ("baseball", "basketball", "volleyball"):
+        for kind in ("baseball", "basketball", "volleyball", "football", "hockey"):
             gs, ok = _sport_day(kind, day, today)
             if not ok:
                 failed.append(kind)
@@ -253,6 +271,8 @@ def games_for(day):
 
 
 def state(g):
+    if g["kind"] in NEW_KINDS:
+        return sports2.state(g["kind"], g["status"])
     if sb.is_live(g):
         return "live"
     if sb.is_finished(g):
@@ -274,11 +294,14 @@ def standings(slug):
     if c and now - c["ts"] < (TTL_STAND if c.get("ok") else TTL_FAIL):
         return c["groups"], c.get("season", ""), c.get("ok")
     try:
-        with _lock:
-            season, label = features.current_season(kind, league)
-            groups = features.fetch_standings(kind, league, season)
-        groups = features._played_groups(groups)
-        data = [[sec, [{k: r.get(k) for k in ("rank", "team", "win", "lose", "pct", "pts", "played", "extra")} for r in rows]] for sec, rows in groups]
+        if kind in NEW_KINDS:
+            data, label = sports2.standings(kind, league)
+        else:
+            with _lock:
+                season, label = features.current_season(kind, league)
+                groups = features.fetch_standings(kind, league, season)
+            groups = features._played_groups(groups)
+            data = [[sec, [{k: r.get(k) for k in ("rank", "team", "win", "lose", "pct", "pts", "played", "extra")} for r in rows]] for sec, rows in groups]
         _wr(name, {"ts": now, "ok": True, "groups": data, "season": label})
         return data, label, True
     except Exception:

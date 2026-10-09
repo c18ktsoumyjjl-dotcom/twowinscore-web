@@ -243,3 +243,49 @@ body.has-hero footer{background:none;border-top:1px solid #1b2338}
  .score5{font-size:26px;gap:5px}.score5 span{font-size:20px}.pill{font-size:11px;padding:2px 7px}.star5{width:28px;font-size:19px}}
 .dates5 .logo.mini{display:none}.sbar.stuck .dates5 .logo.mini{display:inline-block}
 @media(min-width:701px){.tm5.L{justify-content:flex-start}.tm5.R{justify-content:flex-end}}
+/* v6: 종목 탭 + 펼침 미리보기 + 구간 점수표 */
+.sports5{display:flex;gap:4px;justify-content:safe center;overflow-x:auto;scrollbar-width:none;margin:12px 0 0;padding:3px;background:#121a2e;border:1px solid #232d45;border-radius:12px}
+.sports5::-webkit-scrollbar{display:none}
+.sports5 button{flex:1 0 auto;background:none;border:0;color:#d6dcea;font-weight:800;font-size:15px;padding:9px 12px;border-radius:9px;white-space:nowrap;cursor:pointer}
+.sports5 button small{color:#8d97b0;font-weight:700;font-size:12px}
+.sports5 button.on{background:#f06a10;color:#fff}.sports5 button.on small{color:#ffe1cc}
+.g5{cursor:pointer}.g5.op{border-color:#f06a10;border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:0}
+.pv6{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s ease,margin .28s;margin-bottom:0}
+.pv6.open{grid-template-rows:1fr;margin-bottom:12px}
+.pvin{overflow:hidden;background:#10172a;border:1px solid transparent;border-top:0;border-radius:0 0 12px 12px;padding:0 16px}
+.pv6.open .pvin{border-color:#f06a10;padding:14px 16px 16px}
+.pv-b{margin-top:14px}.pv-b h4{margin:0 0 6px;font-size:13px;color:#ff8a3d;font-weight:800}
+.two6{display:grid;grid-template-columns:1fr 1fr;gap:10px;color:#e9edf5;font-size:15px}.two6 .r{text-align:right}.two6 small{color:#9aa4bd}
+.fm6{display:flex;justify-content:space-between;align-items:center;padding:4px 0;color:#e9edf5;font-weight:700;font-size:15px}
+.form i{display:inline-grid;place-items:center;width:24px;height:24px;margin-left:3px;border-radius:6px;font-style:normal;font-size:12px;font-weight:800;color:#fff;background:#56627e}
+.form i.rW{background:#1e8e5a}.form i.rL{background:#c62828}.form i.rD{background:#6b7590}
+.h6{margin:0;color:#e9edf5;font-size:15px}.h6 b{color:#ff8a3d}
+.pl6{margin:4px 0;padding:8px 10px;background:#141c30;border-radius:8px;color:#e9edf5;font-size:14px;line-height:1.45}.pl6.hot{border-left:3px solid #f06a10}
+.more6{display:block;margin-top:16px;text-align:center;background:#f06a10;color:#fff!important;font-weight:800;font-size:16px;padding:13px;border-radius:10px}
+.lsw{overflow-x:auto}
+.ls6{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;color:#e9edf5;font-size:15px}
+.ls6 th{color:#9aa4bd;font-size:12px;font-weight:700;padding:6px 4px;border-bottom:1px solid #232d45;text-align:center;white-space:nowrap}
+.ls6 td{padding:9px 4px;text-align:center;border-bottom:1px solid #1b2338;min-width:24px}
+.ls6 tr:last-child td{border-bottom:0}
+.ls6 .t{text-align:left;font-weight:800;white-space:nowrap;padding-right:10px;max-width:140px;overflow:hidden;text-overflow:ellipsis}
+.ls6 .t em{font-style:normal;font-size:11px;color:#ff8a3d;margin-left:5px}
+.ls6 td.hi{color:#fff;font-weight:800}.ls6 .o{font-weight:900;color:#ff8a3d;font-size:16px}
+[data-theme=light] .sports5,[data-theme=light] .pvin,[data-theme=light] .pl6{background:#fff;border-color:#d7deeb}
+[data-theme=light] .sports5 button:not(.on),[data-theme=light] .ls6,[data-theme=light] .two6,[data-theme=light] .fm6,[data-theme=light] .h6,[data-theme=light] .pl6,[data-theme=light] .ls6 td.hi{color:#0b1630}
+@media(max-width:700px){.sports5{justify-content:flex-start}.sports5 button{font-size:13px;padding:8px 7px;flex:1 0 auto}.sports5 button small{font-size:11px}.ls6{font-size:14px}.ls6 .t{max-width:96px}.pv6.open .pvin{padding:12px}}
+.hero6 img{max-height:220px;object-position:center 45%}
+.hero6 .hero-nav{position:absolute;top:10px;right:14px;left:auto}
+.back6{color:#d6dcea;font-weight:700;font-size:15px;padding:8px 0}
+.detail6 .dates5{justify-content:center}
+.gh6{background:#141c30;border:1px solid #232d45;border-radius:14px;padding:16px;margin-top:6px}.gh6.live{border-color:#5a2730}
+.lg6{text-align:center;color:#9aa4bd;font-weight:700;font-size:14px;margin-bottom:10px}
+.gt6{display:grid;grid-template-columns:1fr 150px 1fr;align-items:center;gap:8px}
+.t6{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}.t6 img{width:56px;height:56px;object-fit:contain}
+.t6 b{color:#fff;font-size:20px;font-weight:900;word-break:keep-all}.t6 em{font-style:normal;color:#9aa4bd;font-size:12px}
+.m6{display:flex;flex-direction:column;align-items:center;gap:6px}.gh6 .score5{font-size:44px}
+.detail6 .box{background:#141c30;border:1px solid #232d45;border-radius:14px;padding:14px 16px;margin-top:12px}
+.detail6 .box h3{color:#fff;font-size:16px;margin:0 0 10px}.detail6 .box h3 small{color:#7f8aa6;font-weight:600;font-size:11px;margin-left:6px}
+[data-theme=light] .gh6,[data-theme=light] .detail6 .box{background:#fff;border-color:#d7deeb}[data-theme=light] .t6 b,[data-theme=light] .detail6 .box h3{color:#0b1630}
+@media(max-width:700px){.hero6 img{max-height:140px}.gt6{grid-template-columns:1fr 100px 1fr}.t6 img{width:40px;height:40px}.t6 b{font-size:16px}.gh6 .score5{font-size:34px}}
+.st6{margin:8px 0 4px}.st6 a{flex:1 0 auto;text-align:center;color:#d6dcea;font-weight:800;font-size:15px;padding:9px 12px;border-radius:9px;white-space:nowrap}.st6 a.on{background:#f06a10;color:#fff}
+td.form{white-space:nowrap}td.form i{width:20px;height:20px;font-size:11px;margin-left:2px}
