@@ -1,4 +1,8 @@
 {% extends "base.html" %}{% block title %}{{label}} 경기{% endblock %}
+{% block hero %}<div class="hero-top" role="img" aria-label="TwowinSCORE 야간 경기장"><picture>
+<source media="(max-width:700px)" srcset="/static/hero_mobile.webp" type="image/webp"><source media="(max-width:700px)" srcset="/static/hero_mobile.jpg">
+<source srcset="/static/hero_desktop.webp" type="image/webp"><img src="/static/hero_desktop.jpg" alt="TwowinSCORE" width="1600" height="600" fetchpriority="high"></picture>
+<div class="hero-tag">국내·해외 야구·농구·배구 실시간 스코어</div></div>{% endblock %}
 {% block bar %}<div class="bar"><div class="wrap">
 <div class="dates"><a href="/?d={{yday}}" class="{{'on' if d==yday}}">어제</a><a href="/?d={{today}}" class="{{'on' if d==today}}">오늘</a><a href="/?d={{tmr}}" class="{{'on' if d==tmr}}">내일</a>
 <label class="cal">📅<input type="date" id="cal" value="{{d}}" min="{{dmin}}" max="{{dmax}}"></label><span class="dl">{{label}}</span></div>

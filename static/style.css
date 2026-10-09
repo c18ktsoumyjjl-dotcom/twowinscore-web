@@ -102,3 +102,12 @@ h2{font-size:16px;color:var(--tx);margin:20px 2px 8px;display:flex;align-items:c
 .chatbox{padding:0}.chatbox .ch-list{height:320px}
 @media(max-width:700px){.lounge{left:0;right:0;bottom:0;width:auto;height:72vh;max-height:none;border-radius:16px 16px 0 0}}
 @media(min-width:1240px){body.chat-open .wrap{margin-left:max(12px,calc((100vw - 820px - 400px)/2))}}
+/* hero */
+.hero-top{position:relative;height:340px;overflow:hidden;background:#050b1c}
+.hero-top img{width:100%;height:100%;object-fit:cover;object-position:center 45%;display:block}
+.hero-top::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,22,48,.15) 0%,rgba(11,22,48,0) 35%,rgba(11,22,48,.55) 75%,var(--bg) 100%)}
+.hero-tag{position:absolute;left:0;right:0;bottom:18px;z-index:1;text-align:center;color:#fff;font-weight:800;font-size:16px;text-shadow:0 2px 8px rgba(0,0,0,.8);letter-spacing:.3px}
+[data-theme=light] .hero-top::after{background:linear-gradient(180deg,rgba(0,0,0,0) 50%,var(--bg) 100%)}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:url(/static/bg_blur.webp) center top/cover no-repeat;opacity:.10;pointer-events:none}
+[data-theme=light] body::before{display:none}
+@media(max-width:700px){.hero-top{height:200px}.hero-top img{object-position:center 50%}.hero-tag{font-size:14px;bottom:10px}}
