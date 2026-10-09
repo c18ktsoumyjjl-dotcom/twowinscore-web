@@ -181,3 +181,65 @@ body.has-hero footer{background:#0b1630;border-radius:12px 12px 0 0}
 [data-theme=light] .lh,[data-theme=light] .ha i,[data-theme=light] body.has-hero .status,[data-theme=light] #q,[data-theme=light] .dates a:not(.on),[data-theme=light] .cal,[data-theme=light] .chips button:not(.on){background:#fff;color:var(--tx);border-color:#d7deeb}
 [data-theme=light] body.has-hero footer{background:var(--bg)}
 @media(max-width:700px){.hero-tag4{margin-top:-15vw;font-size:14px}.hero-nav{top:8px;right:8px}.hero-nav nav a{padding:6px 10px}}
+/* ===== v5 (approved mockup) ===== */
+body.has-hero{--bg:#0a0f1c;background:#0a0f1c}
+html:has(body.has-hero){background:#0a0f1c}
+body.has-hero::before,body.has-hero::after{display:none!important}
+body.has-hero .wrap{max-width:760px}
+.hero4,.hero-tag4{display:none}
+.hero5{position:relative;overflow:hidden;background:#0a0f1c}
+.hero5 img{display:block;width:100%;height:auto;max-height:420px;object-fit:cover;object-position:center 60%;
+ -webkit-mask-image:linear-gradient(180deg,#000 70%,transparent 100%);mask-image:linear-gradient(180deg,#000 70%,transparent 100%)}
+.tag5{position:absolute;left:0;right:0;top:79%;margin:0;text-align:center;color:#fff;font-weight:700;font-size:17px;letter-spacing:.4px;text-shadow:0 2px 10px rgba(0,0,0,.9)}
+.sbar{padding:6px 0 4px}
+.sbar.stuck{background:linear-gradient(180deg,#0a0f1c 0%,#0a0f1c calc(100% - 22px),rgba(10,15,28,0) 100%);padding-bottom:24px;margin-bottom:-20px}
+.dates5{display:flex;justify-content:center;align-items:center;gap:12px;position:relative}
+.dates5 .logo.mini{position:absolute;left:0;font-size:19px}
+.seg{display:flex;background:#121a2e;border:1px solid #232d45;border-radius:10px;padding:3px;gap:2px}
+.seg a{padding:8px 22px;border-radius:8px;color:#d6dcea;font-weight:700;font-size:15px}
+.seg a.on{background:#f06a10;color:#fff}
+.cal5{position:relative;display:grid;place-items:center;width:44px;height:44px;border-radius:10px;background:#121a2e;border:1px solid #232d45;color:#d6dcea;cursor:pointer}
+.cal5 input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.search5{display:flex;align-items:center;gap:8px;margin:12px 0 4px;padding:0 16px;height:46px;border-radius:23px;background:#121a2e;border:1px solid #232d45;color:#8d97b0}
+.search5 input{flex:1;background:transparent!important;border:0!important;padding:0!important;color:#fff;font-size:15px;outline:none;height:100%}
+.search5:focus-within{border-color:#f06a10}
+.chips5{justify-content:safe center;padding:10px 0 6px}
+.chips5 button,.chips5 button:not(.on){background:#121a2e;border:1px solid #232d45;color:#d6dcea;border-radius:18px;padding:7px 16px;font-size:14px}
+.chips5 button.on{background:#e9edf5;color:#0a0f1c;border-color:#e9edf5}
+.chips5 button.lv{color:#ff5b5b;border-color:#ff5b5b}.chips5 button.lv.on{background:#e53935;color:#fff}
+.dlabel{display:none}
+body.has-hero .status{background:none;border:0;padding:0;color:#7f8aa6;font-size:12px;display:block;margin:14px 2px 0}
+body.has-hero h2{margin:22px 4px 10px;font-size:18px;font-weight:800;color:#fff;display:flex;align-items:center;gap:10px}
+body.has-hero h2 .lh{background:none;border:0;padding:0;font-size:18px}
+.ha5{font-size:13px;font-weight:600;color:#9aa4bd}
+h2.pin .lh{color:var(--or)}
+.g5{display:grid;grid-template-columns:64px minmax(0,1fr) 140px minmax(0,1fr) 40px;align-items:center;gap:10px;min-height:88px;padding:14px 12px 14px 18px;margin-bottom:10px;
+ background:#141c30;border:1px solid #232d45;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.25);transition:border-color .2s}
+.g5:hover{border-color:#3a4a70}.g5.live{border-color:#5a2730}
+.time5{color:#c9d1e2;font-size:15px;font-weight:600;display:flex;flex-direction:column}.time5 small{color:var(--or);font-size:11px;font-weight:700}
+.tm5{display:flex;align-items:center;gap:10px;min-width:0}.tm5.L{justify-content:flex-end}.tm5.R{justify-content:flex-start}
+.tm5 .nm{font-size:18px;font-weight:800;color:#fff;word-break:keep-all;line-height:1.2}.tm5.L .nm{text-align:right}
+.tm5 img,.tm5 .nologo{width:40px;height:40px;object-fit:contain;flex:none}
+.mid5{display:flex;flex-direction:column;align-items:center;gap:4px}
+.pill{background:#c62828;color:#fff;font-size:12px;font-weight:800;padding:3px 10px;border-radius:6px;white-space:nowrap}
+.fin{color:#8d97b0;font-size:12px;font-weight:700}
+.score5{display:flex;align-items:center;gap:10px;font-size:34px;font-weight:900;font-variant-numeric:tabular-nums;color:#fff;line-height:1}
+.score5 b.lead{color:#ff7a1a}.score5 span{font-size:26px}
+.g5.final .score5 b:not(.lead){color:#c9d1e2}
+.vs5{color:#c9d1e2;font-size:15px;font-weight:700}
+.star5{background:none;border:0;font-size:22px;color:#c9d1e2;width:40px;height:44px;display:grid;place-items:center}.star5.on{color:#ffc107}
+.fab{background:#e8650f;border-radius:12px;padding:13px 18px}
+body.has-hero footer{background:none;border-top:1px solid #1b2338}
+[data-theme=light] body.has-hero{--bg:#f3f5fa;background:#f3f5fa}
+[data-theme=light] .seg,[data-theme=light] .cal5,[data-theme=light] .search5,[data-theme=light] .chips5 button:not(.on),[data-theme=light] .g5{background:#fff;border-color:#d7deeb}
+[data-theme=light] .seg a:not(.on),[data-theme=light] .cal5,[data-theme=light] .tm5 .nm,[data-theme=light] .score5,[data-theme=light] .chips5 button:not(.on),[data-theme=light] body.has-hero h2,[data-theme=light] .search5 input{color:#0b1630}
+[data-theme=light] .sbar.stuck{background:linear-gradient(180deg,#f3f5fa 0%,#f3f5fa calc(100% - 22px),rgba(243,245,250,0) 100%)}
+@media(max-width:700px){
+ .hero5 img{max-height:none}.tag5{top:70%;font-size:13px}
+ .seg a{padding:8px 16px}.dates5 .logo.mini{display:none!important}
+ .g5{grid-template-columns:40px minmax(0,1fr) 78px minmax(0,1fr) 28px;gap:6px;padding:12px 6px 12px 10px;min-height:76px}
+ .time5{font-size:13px}.tm5{flex-direction:column;gap:4px}.tm5.L{flex-direction:column-reverse}
+ .tm5 .nm{font-size:15px;text-align:center!important}.tm5 img,.tm5 .nologo{width:30px;height:30px}
+ .score5{font-size:26px;gap:5px}.score5 span{font-size:20px}.pill{font-size:11px;padding:2px 7px}.star5{width:28px;font-size:19px}}
+.dates5 .logo.mini{display:none}.sbar.stuck .dates5 .logo.mini{display:inline-block}
+@media(min-width:701px){.tm5.L{justify-content:flex-start}.tm5.R{justify-content:flex-end}}
