@@ -130,3 +130,23 @@ body.has-hero .g,body.has-hero .empty{background:rgba(20,38,79,.92)}
 footer{border-top:1px solid rgba(255,255,255,.06)}
 @media(max-width:700px){.hero-top{height:50vw}.hero-space{height:calc(26vw + 48px);padding-bottom:6px}.hero-tag{font-size:14px}}
 body.has-hero header .logo{transition:opacity .25s}body.has-hero:not(.scrolled) header .logo{opacity:0;pointer-events:none}
+
+/* hero v3: full-viewport fixed stadium background */
+.hero-top{display:none}
+body.has-hero::before{content:"";display:block;position:fixed;inset:0;z-index:-2;opacity:1;pointer-events:none;
+ background:#050b1c url(/static/bg_desktop.jpg) center top/cover no-repeat;
+ background-image:image-set(url(/static/bg_desktop.webp) type("image/webp"),url(/static/bg_desktop.jpg) type("image/jpeg"))}
+body.has-hero::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+ background:radial-gradient(ellipse 85% 75% at 50% 35%,rgba(5,11,28,0) 55%,rgba(5,11,28,.55) 100%),linear-gradient(180deg,rgba(5,11,28,0) 55%,rgba(5,11,28,.45) 85%,rgba(5,11,28,.7) 100%)}
+html:has(body.has-hero){background:#050b1c}
+body.has-hero{background:transparent}
+[data-theme=light] body.has-hero::before{display:block}
+body.has-hero .hero-space{height:calc(max(24.9vw,44.3vh) + 40px);max-height:none}
+body.has-hero .g,body.has-hero .empty{background:rgba(16,30,64,.87);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-color:rgba(255,255,255,.08)}
+[data-theme=light] body.has-hero .g,[data-theme=light] body.has-hero .empty{background:rgba(255,255,255,.92)}
+body.has-hero h2,body.has-hero .status{text-shadow:0 1px 6px rgba(0,0,0,.85)}
+[data-theme=light] body.has-hero h2,[data-theme=light] body.has-hero .status{color:#fff}
+body.has-hero footer{background:rgba(5,11,28,.6);border-radius:12px 12px 0 0}
+@media(max-width:700px){
+ body.has-hero::before{background-image:url(/static/bg_mobile.jpg);background-image:image-set(url(/static/bg_mobile.webp) type("image/webp"),url(/static/bg_mobile.jpg) type("image/jpeg"))}
+ body.has-hero .hero-space{height:calc(max(39.9vw,22.4vh) + 34px)}}
