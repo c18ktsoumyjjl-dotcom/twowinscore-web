@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% block title %}{{g.L.name}} vs {{g.R.name}}{% endblock %}
+{% block body %}<a class="back" href="/?d={{d}}">← {{label}} 경기</a>
+<div class="hero {{g.state}}" id="hero"><div class="lg">{{g.emoji}} {{g.league}}{% if g.sub %} · {{g.sub}}{% endif %} · {{g.time}}</div>
+<div class="teams big">{% for s in ('L','R') %}{% set t=g[s] %}{% if s=='R' %}<div class="sc"><span id="sL" class="{{'w' if g.L.win}}">{{g.L.score if g.L.score is not none else ''}}</span><span class="c">{{':' if g.L.score is not none else 'vs'}}</span><span id="sR" class="{{'w' if g.R.win}}">{{g.R.score if g.R.score is not none else ''}}</span></div>{% endif %}
+<div class="tm {{'win' if t.win}}">{% if t.logo %}<img src="{{t.logo}}" alt="">{% endif %}<span class="nm">{{t.name}}</span><em>{{t.tag}}</em></div>{% endfor %}</div>
+<div class="stb"><span class="badge {{g.state}}" id="badge">{% if g.state=='live' %}<i class="dot"></i>{% endif %}{{g.badge if g.state!='scheduled' else '경기 예정 '+g.badge}}</span></div></div>
+
+{% if inn %}<section class="box"><h3>이닝별 점수</h3><div class="scroll"><table class="ls"><tr><th class="t">팀</th>{% for i in inn.n %}<th>{{i}}</th>{% endfor %}<th class="o">R</th>{% if inn.rows[0].H is not none %}<th>H</th>{% endif %}{% if inn.rows[0].E is not none %}<th>E</th>{% endif %}</tr>
+{% for r in inn.rows %}<tr><td class="t">{{r.name}}</td>{% for x in r.inn %}<td>{{x if x is not none else ''}}</td>{% endfor %}<td class="o">{{r.R if r.R is not none}}</td>{% if r.H is not none %}<td>{{r.H}}</td>{% endif %}{% if r.E is not none %}<td>{{r.E}}</td>{% endif %}</tr>{% endfor %}</table></div></section>{% endif %}
+{% if g.lines %}<section class="box"><h3>{{'세트' if kind=='volleyball' else '쿼터'}}별 점수</h3><table class="ls"><tr><th class="t">팀</th>{% for lab,l,r in g.lines %}<th>{{lab}}</th>{% endfor %}</tr>
+<tr><td class="t">{{g.L.name}}</td>{% for lab,l,r in g.lines %}<td class="{{'o' if l>r}}">{{l}}</td>{% endfor %}</tr><tr><td class="t">{{g.R.name}}</td>{% for lab,l,r in g.lines %}<td class="{{'o' if r>l}}">{{r}}</td>{% endfor %}</tr></table></section>{% endif %}
+
+{% if starters and (starters.home or starters.away) %}<section class="box"><h3>선발 투수</h3><div class="two">{% for side,nm in (('away',g.L.name if not g.left_home else g.R.name),('home',g.R.name if not g.left_home else g.L.name)) %}{% set p=starters[side] %}
+<div><small>{{nm}}</small><b>{{p.name if p else '미발표'}}</b>{% if p %}<span>{% if p.w is not none and p.l is not none %}{{p.w}}승 {{p.l}}패{% endif %}{% if p.era %} · ERA {{p.era}}{% endif %}</span>{% endif %}</div>{% endfor %}</div></section>{% endif %}
+
+{% if injuries %}<section class="box"><h3>{{injuries[0].label}}</h3><div class="two">{% for b in injuries %}<div><small>{{b.team}}</small>{% if b.none %}<span>없음</span>{% endif %}{% for n,dt in b.rows %}<p class="inj"><b>{{n}}</b> {{dt}}</p>{% endfor %}{% if b.more %}<span>외 {{b.more}}명</span>{% endif %}</div>{% endfor %}</div></section>{% endif %}
+
+{% if forms %}<section class="box"><h3>최근 5경기</h3><div class="two">{% for nm,rows in forms %}<div><small>{{nm}}</small><div class="form">{% for r in rows|reverse %}<i class="r{{r.r}}">{{ {'W':'승','L':'패','D':'무'}[r.r] }}</i>{% endfor %}</div>
+{% for r in rows %}<p class="fr"><span>{{r.date}}</span> {{r.ha}} vs {{r.opp}} <b class="r{{r.r}}">{{r.me}}-{{r.op}}</b></p>{% endfor %}</div>{% endfor %}</div></section>{% endif %}
+
+{% if h2h %}<section class="box"><h3>최근 맞대결</h3>{% for x in h2h %}<p class="fr"><span>{{x.date}}</span> {% if kind=='baseball' %}{{x.away}} <b>{{x.as}} : {{x.hs}}</b> {{x.home}}{% else %}{{x.home}} <b>{{x.hs}} : {{x.as}}</b> {{x.away}}{% endif %}</p>{% endfor %}</section>{% endif %}
+
+{% if stand %}<section class="box"><h3>순위 {% if stand.section %}<small>{{stand.section}}</small>{% endif %} <a class="more" href="/standings?league={{stand.slug}}">전체 →</a></h3><table class="tbl"><tr><th>#</th><th class="t">팀</th><th>승</th><th>패</th><th>{{'승점' if kind=='volleyball' else '승률'}}</th></tr>
+{% for r in stand.rows %}{% if r.team in names or loop.index<=3 %}<tr class="{{'me' if r.team in names}}"><td class="rk">{{r.rank}}</td><td class="t">{{r.team}}</td><td>{{r.win if r.win is not none}}</td><td>{{r.lose if r.lose is not none}}</td><td>{% if kind=='volleyball' %}{{(r.pts|int) if r.pts is not none}}{% else %}{{('%.3f'|format(r.pct)).lstrip('0') if r.pct is not none}}{% endif %}</td></tr>{% endif %}{% endfor %}</table></section>{% endif %}
+{% endblock %}
+{% block js %}{% if g.state in ('live','scheduled') %}<script>
+const K={{g.key|tojson}},D="{{d}}";setInterval(async()=>{if(document.hidden)return;try{const j=await (await fetch('/api/games?d='+D,{cache:'no-store'})).json();const g=j.games.find(x=>x.key===K);if(!g)return;
+ const a=document.getElementById('sL'),b=document.getElementById('sR');const n=(g.L.score??'')+':'+(g.R.score??'');if(n!==a.textContent+':'+b.textContent){if(g.state!==({{g.state|tojson}})){location.reload();return}a.textContent=g.L.score??'';b.textContent=g.R.score??'';const h=document.getElementById('hero');h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash')}
+ document.getElementById('badge').innerHTML=(g.state==='live'?'<i class="dot"></i>':'')+g.badge}catch(e){}},5000);</script>{% endif %}{% endblock %}

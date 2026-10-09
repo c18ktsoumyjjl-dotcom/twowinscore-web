@@ -1,0 +1,44 @@
+{% extends "base.html" %}{% block title %}{{label}} 경기{% endblock %}
+{% block bar %}<div class="bar"><div class="wrap">
+<div class="dates"><a href="/?d={{yday}}" class="{{'on' if d==yday}}">어제</a><a href="/?d={{today}}" class="{{'on' if d==today}}">오늘</a><a href="/?d={{tmr}}" class="{{'on' if d==tmr}}">내일</a>
+<label class="cal">📅<input type="date" id="cal" value="{{d}}" min="{{dmin}}" max="{{dmax}}"></label><span class="dl">{{label}}</span></div>
+<div class="tools"><input id="q" type="search" placeholder="팀 검색 (예: LG, 다저스)" autocomplete="off"></div>
+<div class="chips" id="chips"></div></div></div>{% endblock %}
+{% block body %}<div id="status" class="status"></div><div id="list"><p class="empty">불러오는 중…</p></div>{% endblock %}
+{% block js %}<script>
+const D="{{d}}";let F=new URLSearchParams(location.search).get('f')||'all',Q='',DATA=null,PREV={};
+const fav=()=>{try{return JSON.parse(localStorage.getItem('tw_fav')||'[]')}catch(e){return[]}};
+const fk=(g,s)=>g.kind+':'+g[s].id;
+const isFav=g=>{const f=fav();return f.includes(fk(g,'L'))||f.includes(fk(g,'R'))};
+function toggleFav(id,e){e.preventDefault();e.stopPropagation();let f=fav();f=f.includes(id)?f.filter(x=>x!==id):[...f,id];localStorage.setItem('tw_fav',JSON.stringify(f));render()}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function side(g,s){const t=g[s],id=fk(g,s),on=fav().includes(id);
+ return `<div class="tm ${s} ${t.win?'win':''}"><button class="star ${on?'on':''}" onclick="toggleFav('${id}',event)" aria-label="${esc(t.name)} 즐겨찾기">${on?'★':'☆'}</button>${t.logo?`<img src="${esc(t.logo)}" alt="" loading="lazy">`:'<i class="nologo"></i>'}<span class="nm">${esc(t.name)}</span></div>`}
+function row(g){const sc=g.L.score!=null,p=PREV[g.key],ch=p&&p!==g.L.score+':'+g.R.score&&sc;
+ return `<a class="g ${g.state} ${ch?'flash':''}" href="/game/${encodeURIComponent(g.key)}?d=${D}">
+ <div class="st">${g.state==='live'?'<span class="lv"><i class="dot"></i>LIVE</span>':''}<b>${esc(g.badge)}</b>${g.sub?`<small class="m">${esc(g.sub)}</small>`:''}</div>
+ ${g.sub?`<div class="gsub">${esc(g.sub)}</div>`:''}<div class="teams">${side(g,'L')}<div class="sc">${sc?`<b class="${g.L.win?'w':''}">${g.L.score}</b><span>:</span><b class="${g.R.win?'w':''}">${g.R.score}</b>`:'<span class="vs">vs</span>'}</div>${side(g,'R')}</div></a>`}
+function render(){if(!DATA)return;const gs=DATA.games,q=Q.trim().toLowerCase();
+ const leagues=[...new Map(gs.map(g=>[g.league,g.lorder])).entries()].sort((a,b)=>a[1]-b[1]).map(x=>x[0]);
+ const nl=gs.filter(g=>g.state==='live').length,nf=gs.filter(isFav).length;
+ const chips=[['all','전체 '+gs.length],...(nl?[['live','● LIVE '+nl]]:[]),...(nf?[['fav','★ '+nf]]:[]),...leagues.map(l=>[l,l+' '+gs.filter(g=>g.league===l).length])];
+ if(!chips.some(c=>c[0]===F))F='all';
+ document.getElementById('chips').innerHTML=chips.map(c=>`<button class="${c[0]===F?'on':''} ${c[0]==='live'?'lv':''}" data-f="${esc(c[0])}">${esc(c[1])}</button>`).join('');
+ let v=gs.filter(g=>F==='all'||(F==='live'?g.state==='live':F==='fav'?isFav(g):g.league===F));
+ if(q)v=v.filter(g=>(g.L.name+' '+g.R.name+' '+g.league).toLowerCase().includes(q));
+ const rank=g=>(isFav(g)?0:2)+(g.state==='live'?0:1);
+ const pin=v.filter(g=>rank(g)<2).sort((a,b)=>rank(a)-rank(b)||a.ts-b.ts);
+ const rest=v.filter(g=>rank(g)>=2);let h='';
+ if(pin.length)h+=`<section><h2 class="pin">${pin.some(g=>g.state==='live')?'● 진행 중':''}${pin.some(g=>g.state==='live')&&pin.some(isFav)?' · ':''}${pin.some(isFav)?'★ 즐겨찾기':''}<span class="ha small">야구는 홈팀 오른쪽</span></h2>${pin.map(row).join('')}</section>`;
+ const lab=k=>k==='baseball'?'<span class="ha"><i>원정</i><i>홈</i></span>':'<span class="ha"><i>홈</i><i>원정</i></span>';
+ for(const l of leagues){const x=rest.filter(g=>g.league===l);if(x.length)h+=`<section><h2>${x[0].emoji} ${esc(l)}${lab(x[0].kind)}</h2>${x.map(row).join('')}</section>`}
+ document.getElementById('list').innerHTML=h||`<p class="empty">${q?'검색 결과가 없어요.':F==='live'?'지금 진행 중인 경기가 없어요.':'이 날 경기가 없어요.'}</p>`;
+ const live=gs.some(g=>g.state==='live');
+ document.getElementById('status').innerHTML=(DATA.failed.length?'<span class="warn">일부 종목을 불러오지 못했어요 · </span>':'')+(live?'<i class="dot"></i> 실시간 · 점수 '+(DATA.upstream||15)+'초마다 갱신 · ':'')+DATA.updated+' 기준';
+ gs.forEach(g=>PREV[g.key]=g.L.score+':'+g.R.score)}
+document.getElementById('chips').onclick=e=>{const b=e.target.closest('button');if(b){F=b.dataset.f;render()}};
+document.getElementById('q').oninput=e=>{Q=e.target.value;render()};
+document.getElementById('cal').onchange=e=>{if(e.target.value)location.href='/?d='+e.target.value};
+async function load(){try{const r=await fetch('/api/games?d='+D,{cache:'no-store'});DATA=await r.json();render()}catch(e){document.getElementById('status').textContent='연결이 불안정해요. 다시 시도 중…'}}
+load();setInterval(()=>{if(!document.hidden)load()},5000);
+</script>{% endblock %}

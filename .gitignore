@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+cache/
+screens/
+*.log
+nohup.out
+bin_cloudflared
+cloudflared*
+lt/
+node_modules/
+.env
+.env.*
+*.pem
+*.key
+secrets*
