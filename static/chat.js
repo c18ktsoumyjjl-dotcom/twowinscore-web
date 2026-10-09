@@ -27,6 +27,7 @@ function mount(el,room,opt){
   for(const m of ms){if(list.querySelector(`[data-id="${m.id}"]`))continue;const mine=m0&&m.nick===m0.nick&&m.tag===m0.tag;
    const d=document.createElement('div');d.className='ch-m'+(mine?' mine':'');d.dataset.id=m.id;
    d.innerHTML=`<span class="ch-n">${esc(m.nick)}<small>#${esc(m.tag)}</small></span><span class="ch-t">${esc(m.text)}</span><time>${hm(m.ts)}</time>`;list.appendChild(d)}
+  if(opt.onNew&&last>0){const n=ms.filter(m=>!(m0&&m.nick===m0.nick&&m.tag===m0.tag)).length;if(n)opt.onNew(n)}
   while(list.children.length>200)list.firstChild.remove();
   if(atBottom||last===0)list.scrollTop=list.scrollHeight}
  async function poll(){if(busy||document.hidden)return;busy=true;try{const r=await fetch(`/api/chat/${room}?since=${last}&cid=${cid()}`,{cache:'no-store'});const j=await r.json();

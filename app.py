@@ -35,8 +35,8 @@ def day_label(d):
 
 def view(g):
     left_home = g["kind"] != "baseball"   # 야구: 원정 왼쪽/홈 오른쪽, 그 외: 홈 왼쪽
-    h = {"name": g["home"], "score": g.get("home_score"), "tag": "홈", "logo": g.get("home_logo"), "id": g.get("home_id")}
-    a = {"name": g["away"], "score": g.get("away_score"), "tag": "원정", "logo": g.get("away_logo"), "id": g.get("away_id")}
+    h = {"name": g["home"], "en": g.get("home_en"), "score": g.get("home_score"), "tag": "홈", "logo": g.get("home_logo"), "id": g.get("home_id")}
+    a = {"name": g["away"], "en": g.get("away_en"), "score": g.get("away_score"), "tag": "원정", "logo": g.get("away_logo"), "id": g.get("away_id")}
     L, R = (h, a) if left_home else (a, h)
     st = g["state"]
     show = st in ("live", "final") and L["score"] is not None and R["score"] is not None

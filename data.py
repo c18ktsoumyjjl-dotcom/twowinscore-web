@@ -66,7 +66,7 @@ def _ser(g):
     d = {k: v for k, v in g.items() if k in (
         "key", "id", "kind", "league", "start", "status", "home", "away", "home_score", "away_score",
         "period", "lines", "label", "home_logo", "away_logo", "if_necessary", "series_ko",
-        "home_id", "away_id", "innings", "venue")}
+        "home_id", "away_id", "innings", "venue", "home_en", "away_en")}
     d["start"] = g["start"].isoformat()
     d["lines"] = [list(x) for x in g.get("lines") or []]
     return d

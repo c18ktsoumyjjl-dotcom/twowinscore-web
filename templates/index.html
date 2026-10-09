@@ -6,7 +6,7 @@
 <source type="image/webp" srcset="/static/band_1x.webp 1440w, /static/band_2x.webp 2560w" sizes="100vw">
 <img src="/static/band_1x.jpg" srcset="/static/band_1x.jpg 1440w, /static/band_2x.jpg 2560w" sizes="100vw" alt="TwowinSCORE" fetchpriority="high"></picture>
 <p class="tag5">국내·해외 축구·야구·농구·배구·아이스하키 실시간 스코어</p>
-<div class="hero-nav"><nav><a href="/" class="on">스코어</a><a href="/standings">순위</a></nav><button class="theme" id="theme" aria-label="화면 모드">◐</button></div>
+<div class="hero-nav"><nav><a href="/" class="on">스코어</a><a href="/standings">순위</a></nav><span class="snd"><button class="theme" id="sndBtn" aria-label="알림음">🔔</button><div class="sndm" id="sndMenu" hidden><button data-m="fav">🔔 즐겨찾기만</button><button data-m="all">🔔 전체 경기</button><button data-m="off">🔕 끄기</button></div></span><button class="theme" id="theme" aria-label="화면 모드">◐</button></div>
 </div>
 <div class="sbar" id="sbar"><div class="wrap">
 <div class="dates5"><a class="logo mini" href="/"><span class="w">Twowin</span><span class="s">SCORE</span></a><div class="seg"><a href="/?d={{yday}}" class="{{'on' if d==yday}}">어제</a><a href="/?d={{today}}" class="{{'on' if d==today}}">오늘</a><a href="/?d={{tmr}}" class="{{'on' if d==tmr}}">내일</a></div>
@@ -15,7 +15,7 @@
 <div class="sports5" id="sports"></div><div class="chips chips5" id="chips"></div></div></div>
 <div class="wrap dlabel">{{label}}</div>{% endblock %}
 {% block body %}<button id="chatFab" class="fab">💬 라운지 <span id="fabN"></span></button><aside id="lounge" class="lounge" hidden></aside><div id="status" class="status"></div><div id="list"><p class="empty">불러오는 중…</p></div>{% endblock %}
-{% block js %}<script src="/static/chat.js?v=2"></script><script>
+{% block js %}<button class="sndhint" id="sndHint" hidden>🔊 알림음 켜기</button><script src="/static/sound.js?v=1"></script><script src="/static/chat.js?v=3"></script><script>
 const D="{{d}}";const SPORTS=['전체','축구','야구','농구','배구','아이스하키'];let SP=localStorage.getItem('tw_sport')||'전체',OPEN=null,PV={};let F=new URLSearchParams(location.search).get('f')||'all',Q='',DATA=null,PREV={};
 const fav=()=>{try{return JSON.parse(localStorage.getItem('tw_fav')||'[]')}catch(e){return[]}};
 const fk=(g,s)=>g.kind+':'+g[s].id;
@@ -25,7 +25,7 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 function teamFav(g){const f=fav();return f.includes(fk(g,'L'))||f.includes(fk(g,'R'))}
 function toggleGame(k,e){e.preventDefault();e.stopPropagation();const g=DATA.games.find(x=>x.key===k);if(!g)return;let f=fav();const ids=[fk(g,'L'),fk(g,'R')];
  f=teamFav(g)?f.filter(x=>!ids.includes(x)):[...new Set([...f,...ids])];localStorage.setItem('tw_fav',JSON.stringify(f));render()}
-function tm(t,s){const lg=t.logo?`<img src="${esc(t.logo)}" alt="" loading="lazy">`:'<i class="nologo"></i>';return `<div class="tm5 ${s} ${t.win?'win':''}">${s==='L'?`<span class="nm">${esc(t.name)}</span>${lg}`:`${lg}<span class="nm">${esc(t.name)}</span>`}</div>`}
+function tm(t,s){const en=t.en?`<small class="en">${esc(t.en)}</small>`:'';const lg=t.logo?`<img src="${esc(t.logo)}" alt="" loading="lazy">`:'<i class="nologo"></i>';return `<div class="tm5 ${s} ${t.win?'win':''}">${s==='L'?`<span class="nm">${esc(t.name)}${en}</span>${lg}`:`${lg}<span class="nm">${esc(t.name)}${en}</span>`}</div>`}
 function tbl(t){if(!t)return'';const ex=t.ext||[];const cell=v=>v==null?'-':esc(v);
  return `<div class="lsw"><table class="ls6"><tr><th class="t">팀</th>${t.cols.map(c=>`<th>${esc(c)}</th>`).join('')}<th class="o">${esc(t.tlab)}</th>${ex.map(c=>`<th>${c}</th>`).join('')}</tr>`+
  t.rows.map((r,i)=>`<tr><td class="t">${esc(r.name)}${r.home?'<em>홈</em>':''}</td>${r.vals.map((v,j)=>{const o=t.rows[1-i].vals[j];return `<td class="${typeof v==='number'&&typeof o==='number'&&v>o?'hi':''}">${cell(v)}</td>`}).join('')}<td class="o">${cell(r.T)}</td>${r.ext.map(cell).map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')+'</table></div>'}
@@ -42,11 +42,11 @@ async function loadPv(k){try{const j=await (await fetch('/api/preview/'+encodeUR
 function toggleRow(k){const was=OPEN===k;document.querySelectorAll('.pv6.open').forEach(x=>x.classList.remove('open'));document.querySelectorAll('.g5.op').forEach(x=>x.classList.remove('op'));
  if(was){OPEN=null;return}OPEN=k;const el=document.querySelector('.pv6[data-k="'+CSS.escape(k)+'"]');if(!el)return;el.classList.add('open');el.previousElementSibling.classList.add('op');
  if(!PV[k]||Date.now()-PV[k+'@']>30000)loadPv(k)}
-function row(g){const sc=g.L.score!=null,p=PREV[g.key],ch=p&&p!==g.L.score+':'+g.R.score&&sc,on=teamFav(g);
+let SNDQ=false;function row(g){const sc=g.L.score!=null,p=PREV[g.key],ch=p&&p!==g.L.score+':'+g.R.score&&sc,up=ch&&(g.L.score+g.R.score)>p.split(':').reduce((x,y)=>x+(+y||0),0),on=teamFav(g);
  const lead=sc&&g.L.score!==g.R.score?(g.L.score>g.R.score?'L':'R'):'';
  let top='';if(g.state==='live')top=`<span class="pill">● LIVE ${esc(g.badge)}</span>`;else if(sc)top=`<span class="fin">${esc(g.badge)}</span>`;
  const mid=sc?`<div class="score5"><b class="${lead==='L'?'lead':''}">${g.L.score}</b><span>:</span><b class="${lead==='R'?'lead':''}">${g.R.score}</b></div>`:`<div class="vs5">${g.state==='scheduled'?'vs':esc(g.badge)}</div>`;
- const op=OPEN===g.key;return `<div class="g5 ${g.state} ${ch?'flash':''} ${op?'op':''}" role="button" tabindex="0" data-k="${esc(g.key)}">
+ if(up&&TWSound.want(teamFav(g)))SNDQ=true;const op=OPEN===g.key;return `<div class="g5 ${g.state} ${ch?'flash':''} ${op?'op':''}" role="button" tabindex="0" data-k="${esc(g.key)}">
  <div class="time5">${esc(g.time)}${g.sub?`<small>${esc(g.sub)}</small>`:''}</div>${tm(g.L,'L')}<div class="mid5">${top}${mid}</div>${tm(g.R,'R')}
  <button class="star5 ${on?'on':''}" onclick="toggleGame('${g.key}',event)" aria-label="즐겨찾기">${on?'★':'☆'}</button></div><div class="pv6 ${op?'open':''}" data-k="${esc(g.key)}"><div class="pvin">${PV[g.key]||'<p class="empty">불러오는 중…</p>'}</div></div>`}
 function render(){if(!DATA)return;const all=DATA.games,q=Q.trim().toLowerCase();
@@ -69,7 +69,8 @@ function render(){if(!DATA)return;const all=DATA.games,q=Q.trim().toLowerCase();
  document.getElementById('list').innerHTML=h||`<p class="empty">${q?'검색 결과가 없어요.':F==='live'?'지금 진행 중인 경기가 없어요.':'이 날 경기가 없어요.'}</p>`;
  const live=gs.some(g=>g.state==='live');
  document.getElementById('status').innerHTML=(DATA.failed.length?'<span class="warn">일부 종목을 불러오지 못했어요 · </span>':'')+(live?'<i class="dot"></i> 실시간 · 점수 '+(DATA.upstream||15)+'초마다 갱신 · ':'')+DATA.updated+' 기준';
- gs.forEach(g=>PREV[g.key]=g.L.score+':'+g.R.score)}
+ if(SNDQ){SNDQ=false;TWSound.play()}
+ all.forEach(g=>PREV[g.key]=g.L.score+':'+g.R.score)}
 document.getElementById('sports').onclick=e=>{const b=e.target.closest('button');if(b){SP=b.dataset.s;F='all';localStorage.setItem('tw_sport',SP);render()}};
 document.getElementById('list').addEventListener('click',e=>{if(e.target.closest('.star5,.pv6'))return;const r=e.target.closest('.g5');if(r)toggleRow(r.dataset.k)});
 document.getElementById('list').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('g5'))toggleRow(e.target.dataset.k)});

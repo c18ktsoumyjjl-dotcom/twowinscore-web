@@ -107,9 +107,12 @@ def _mk(kind, lg, gid, date, st, t, hs, as_, period, lines, rnd):
         start = datetime.fromisoformat(str(date).replace("Z", "+00:00")).astimezone(SEOUL)
     except Exception:
         return None
+    from teams_ko import ko
     h, a = t.get("home") or {}, t.get("away") or {}
-    return {"key": f"{kind}:{lg}:{gid}", "id": gid, "kind": kind, "league": lg, "start": start.isoformat(), "status": st,
-            "home": h.get("name") or "?", "away": a.get("name") or "?", "home_id": h.get("id"), "away_id": a.get("id"),
+    hn, hen = ko(kind, h.get("id"), h.get("name") or "?")
+    an, aen = ko(kind, a.get("id"), a.get("name") or "?")
+    return {"home_en": hen, "away_en": aen,"key": f"{kind}:{lg}:{gid}", "id": gid, "kind": kind, "league": lg, "start": start.isoformat(), "status": st,
+            "home": hn, "away": an, "home_id": h.get("id"), "away_id": a.get("id"),
             "home_logo": h.get("logo"), "away_logo": a.get("logo"), "home_score": hs, "away_score": as_,
             "period": period, "lines": lines, "label": LEAGUES[(kind, lg)], "round": rnd}
 
@@ -126,7 +129,8 @@ def standings(kind, league):
                 for r in grp:
                     a = r.get("all") or {}
                     name = r.get("group") or name
-                    rows.append({"rank": r.get("rank"), "team": (r.get("team") or {}).get("name"), "played": a.get("played"),
+                    tn, ten = ko(kind, (r.get("team") or {}).get("id"), (r.get("team") or {}).get("name"))
+                    rows.append({"en": ten, "rank": r.get("rank"), "team": tn, "played": a.get("played"),
                                  "win": a.get("win"), "draw": a.get("draw"), "lose": a.get("lose"), "pts": r.get("points"),
                                  "gd": r.get("goalsDiff"), "form": r.get("form")})
                 if rows and any((x.get("played") or 0) > 0 for x in rows):
@@ -137,7 +141,8 @@ def standings(kind, league):
             for r in grp:
                 g = r.get("games") or {}
                 name = (r.get("group") or {}).get("name") or ""
-                buckets.setdefault(name, []).append({"rank": r.get("position"), "team": (r.get("team") or {}).get("name"), "played": g.get("played"),
+                tn, ten = ko(kind, (r.get("team") or {}).get("id"), (r.get("team") or {}).get("name"))
+                buckets.setdefault(name, []).append({"en": ten, "rank": r.get("position"), "team": tn, "played": g.get("played"),
                              "win": (g.get("win") or {}).get("total"), "lose": (g.get("lose") or {}).get("total"),
                              "otl": (g.get("lose_overtime") or {}).get("total"), "pts": r.get("points")})
         for name, rows in buckets.items():
@@ -165,7 +170,8 @@ def events(g):
     for e in rows:
         tm = e.get("time") or {}
         minute = f"{tm.get('elapsed')}'" + (f"+{tm['extra']}" if tm.get("extra") else "")
-        team = (e.get("team") or {}).get("name") or ""
+        from teams_ko import ko
+        team = ko("football", (e.get("team") or {}).get("id"), (e.get("team") or {}).get("name") or "")[0]
         who = (e.get("player") or {}).get("name") or ""
         typ, det = e.get("type"), e.get("detail") or ""
         if typ == "Goal":

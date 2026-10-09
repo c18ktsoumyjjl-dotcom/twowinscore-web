@@ -1,22 +1,25 @@
 {% extends "base.html" %}{% block title %}{{g.L.name}} vs {{g.R.name}}{% endblock %}
 {% block bodycls %}has-hero detail6{% endblock %}
-{% block header %}<div class="hero5 hero6"><picture><source media="(max-width:700px)" type="image/webp" srcset="/static/band_1x.webp 1440w, /static/band_2x.webp 2560w" sizes="100vw"><source type="image/webp" srcset="/static/band_1x.webp 1440w, /static/band_2x.webp 2560w" sizes="100vw"><img src="/static/band_1x.jpg" alt="TwowinSCORE"></picture>
-<div class="hero-nav"><nav><a href="/" class="on">스코어</a><a href="/standings">순위</a></nav><button class="theme" id="theme" aria-label="화면 모드">◐</button></div></div>
+{% block header %}<div class="sb6" id="sb6" aria-hidden="true"><div class="sb6in"><span class="n">{{g.L.name}}</span><b id="bL">{{g.L.score if g.L.score is not none else ''}}</b><span class="st" id="bB">{% if g.state=='live' %}<i class="pill">● LIVE {{g.badge}}</i>{% else %}{{g.badge if g.state!='scheduled' else 'vs'}}{% endif %}</span><b id="bR">{{g.R.score if g.R.score is not none else ''}}</b><span class="n">{{g.R.name}}</span></div></div>
+<div class="hero5 hero6"><picture><source media="(max-width:700px)" type="image/webp" srcset="/static/band_1x.webp 1440w, /static/band_2x.webp 2560w" sizes="100vw"><source type="image/webp" srcset="/static/band_1x.webp 1440w, /static/band_2x.webp 2560w" sizes="100vw"><img src="/static/band_1x.jpg" alt="TwowinSCORE"></picture>
+<div class="hero-nav"><nav><a href="/" class="on">스코어</a><a href="/standings">순위</a></nav><span class="snd"><button class="theme" id="sndBtn" aria-label="알림음">🔔</button><div class="sndm" id="sndMenu" hidden><button data-m="fav">🔔 즐겨찾기만</button><button data-m="all">🔔 전체 경기</button><button data-m="off">🔕 끄기</button></div></span><button class="theme" id="theme" aria-label="화면 모드">◐</button></div></div>
 <div class="sbar" id="sbar"><div class="wrap"><div class="dates5"><a class="logo mini" href="/"><span class="w">Twowin</span><span class="s">SCORE</span></a><a class="back6" href="/?d={{d}}">← {{label}} 경기 목록</a></div></div></div>{% endblock %}
 {% block body %}
+<div class="dlay"><div class="dmain">
 <div class="gh6 {{g.state}}" id="hero"><div class="lg6">{{g.emoji}} {{g.league}}{% if g.sub %} · {{g.sub}}{% endif %} · {{g.time}}</div>
-<div class="gt6"><div class="t6">{% if g.L.logo %}<img src="{{g.L.logo}}" alt="">{% endif %}<b>{{g.L.name}}</b><em>{{g.L.tag}}</em></div>
+<div class="gt6"><div class="t6">{% if g.L.logo %}<img src="{{g.L.logo}}" alt="">{% endif %}<b>{{g.L.name}}{% if g.L.en %}<small class="en">{{g.L.en}}</small>{% endif %}</b><em>{{g.L.tag}}</em></div>
 <div class="m6">{% if g.state=='live' %}<span class="pill" id="badge">● LIVE {{g.badge}}</span>{% else %}<span class="fin" id="badge">{{g.badge if g.state!='scheduled' else '경기 예정 '+g.badge}}</span>{% endif %}
 <div class="score5">{% if g.L.score is not none %}<b id="sL" class="{{'lead' if g.L.score>g.R.score}}">{{g.L.score}}</b><span>:</span><b id="sR" class="{{'lead' if g.R.score>g.L.score}}">{{g.R.score}}</b>{% else %}<span class="vs5">vs</span>{% endif %}</div></div>
-<div class="t6">{% if g.R.logo %}<img src="{{g.R.logo}}" alt="">{% endif %}<b>{{g.R.name}}</b><em>{{g.R.tag}}</em></div></div></div>
-{% if table %}<section class="box"><h3>{{ {'baseball':'이닝별','basketball':'쿼터별','volleyball':'세트별','football':'전·후반','hockey':'피리어드별'}[kind] }} 점수</h3><div class="lsw"><table class="ls6"><tr><th class="t">팀</th>{% for c in table.cols %}<th>{{c}}</th>{% endfor %}<th class="o">{{table.tlab}}</th>{% for c in table.ext %}<th>{{c}}</th>{% endfor %}</tr>
+<div class="t6">{% if g.R.logo %}<img src="{{g.R.logo}}" alt="">{% endif %}<b>{{g.R.name}}{% if g.R.en %}<small class="en">{{g.R.en}}</small>{% endif %}</b><em>{{g.R.tag}}</em></div></div></div>
+<nav class="tabs6" id="tabs6"><button data-t="info" class="on">경기정보</button>{% if com and com["items"] %}<button data-t="plays">문자중계</button>{% endif %}<button data-t="chat">채팅</button></nav>
+{% if table %}<section class="box" id="sec-info"><h3>{{ {'baseball':'이닝별','basketball':'쿼터별','volleyball':'세트별','football':'전·후반','hockey':'피리어드별'}[kind] }} 점수</h3><div class="lsw"><table class="ls6"><tr><th class="t">팀</th>{% for c in table.cols %}<th>{{c}}</th>{% endfor %}<th class="o">{{table.tlab}}</th>{% for c in table.ext %}<th>{{c}}</th>{% endfor %}</tr>
 {% for r in table.rows %}{% set o=table.rows[1-loop.index0] %}<tr><td class="t">{{r.name}}{% if r.home %}<em>홈</em>{% endif %}</td>{% for v in r.vals %}{% set ov=o.vals[loop.index0] %}<td class="{{'hi' if v is number and ov is number and v>ov}}">{{v if v is not none else '-'}}</td>{% endfor %}<td class="o">{{r.T if r.T is not none else '-'}}</td>{% for x in r.ext %}<td>{{x if x is not none else '-'}}</td>{% endfor %}</tr>{% endfor %}</table></div></section>{% endif %}
 {% if starters and (starters.home or starters.away) %}<section class="box"><h3>선발 투수</h3><div class="two">{% for side,nm in (('away',g.L.name if not g.left_home else g.R.name),('home',g.R.name if not g.left_home else g.L.name)) %}{% set p=starters[side] %}
 <div><small>{{nm}}</small><b>{{p.name if p else '미발표'}}</b>{% if p %}<span>{% if p.w is not none and p.l is not none %}{{p.w}}승 {{p.l}}패{% endif %}{% if p.era %} · ERA {{p.era}}{% endif %}</span>{% endif %}</div>{% endfor %}</div></section>{% endif %}
 
 {% if injuries %}<section class="box"><h3>{{injuries[0].label}}</h3><div class="two">{% for b in injuries %}<div><small>{{b.team}}</small>{% if b.none %}<span>없음</span>{% endif %}{% for n,dt in b.rows %}<p class="inj"><b>{{n}}</b> {{dt}}</p>{% endfor %}{% if b.more %}<span>외 {{b.more}}명</span>{% endif %}</div>{% endfor %}</div></section>{% endif %}
 
-{% if com and com["items"] %}<section class="box"><h3>문자중계 <small>{{com.source}}</small></h3>{% for x in com["items"] %}<p class="pl6 {{'hot' if x.hot}}">{{x.t}}</p>{% endfor %}</section>{% endif %}
+{% if com and com["items"] %}<section class="box" id="sec-plays"><h3>문자중계 <small>{{com.source}}</small></h3>{% for x in com["items"] %}<p class="pl6 {{'hot' if x.hot}}">{{x.t}}</p>{% endfor %}</section>{% endif %}
 {% if forms %}<section class="box"><h3>최근 5경기</h3><div class="two">{% for nm,rows in forms %}<div><small>{{nm}}</small><div class="form">{% for r in rows|reverse %}<i class="r{{r.r}}">{{ {'W':'승','L':'패','D':'무'}[r.r] }}</i>{% endfor %}</div>
 {% for r in rows %}<p class="fr"><span>{{r.date}}</span> {{r.ha}} vs {{r.opp}} <b class="r{{r.r}}">{{r.me}}-{{r.op}}</b></p>{% endfor %}</div>{% endfor %}</div></section>{% endif %}
 
@@ -24,9 +27,25 @@
 
 {% if stand %}<section class="box"><h3>순위 {% if stand.section %}<small>{{stand.section}}</small>{% endif %} <a class="more" href="/standings?league={{stand.slug}}">전체 →</a></h3><table class="tbl"><tr><th>#</th><th class="t">팀</th><th>승</th><th>패</th>{% if kind=='football' %}<th>무</th>{% endif %}<th>{{'승점' if kind in ('volleyball','football','hockey') else '승률'}}</th></tr>
 {% for r in stand.rows %}{% if r.team in names or loop.index<=3 %}<tr class="{{'me' if r.team in names}}"><td class="rk">{{r.rank}}</td><td class="t">{{r.team}}</td><td>{{r.win if r.win is not none}}</td>{% if kind=='football' %}<td>{{r.draw if r.draw is not none}}</td>{% endif %}<td>{{r.lose if r.lose is not none}}</td><td>{% if kind in ('volleyball','football','hockey') %}{{(r.pts|int) if r.pts is not none}}{% else %}{{('%.3f'|format(r.pct)).lstrip('0') if r.pct is not none}}{% endif %}</td></tr>{% endif %}{% endfor %}</table></section>{% endif %}
-<section class="box chatbox" id="gamechat"></section>
+</div><aside class="dchat" id="dchat"><div class="grab" id="grab"></div><section class="box chatbox" id="gamechat"></section></aside></div>
+<div class="shade" id="shade"></div><button class="fab cfab" id="cfab">💬 채팅 <span id="unread"></span></button>
 {% endblock %}
-{% block js %}<script src="/static/chat.js?v=2"></script><script>TWChat.mount(document.getElementById("gamechat"),{{ ("game-" ~ g.key|replace(":","-"))|tojson }},{title:"💬 이 경기 채팅"});</script>{% if g.state in ('live','scheduled') %}<script>
+{% block js %}<button class="sndhint" id="sndHint" hidden>🔊 알림음 켜기</button><script src="/static/sound.js?v=1"></script><script src="/static/chat.js?v=3"></script><script>(function(){const W=matchMedia('(min-width:1024px)'),body=document.body,un=document.getElementById('unread');let n=0;
+const isOpen=()=>body.classList.contains('sheet');
+function openS(){body.classList.add('sheet');n=0;un.textContent='';}
+function closeS(){body.classList.remove('sheet');document.getElementById('dchat').style.transform=''}
+TWChat.mount(document.getElementById("gamechat"),{{ ("game-" ~ g.key|replace(":","-"))|tojson }},{title:"💬 이 경기 채팅",close:()=>closeS(),onNew:k=>{if(!W.matches&&!isOpen()){n+=k;un.textContent=n>99?'99+':n}}});
+document.getElementById('cfab').onclick=openS;document.getElementById('shade').onclick=closeS;
+const dc=document.getElementById('dchat');let y0=null;
+dc.addEventListener('touchstart',e=>{if(e.target.closest('.ch-head,.grab'))y0=e.touches[0].clientY},{passive:true});
+dc.addEventListener('touchmove',e=>{if(y0==null)return;const d=e.touches[0].clientY-y0;if(d>0)dc.style.transform=`translateY(${d}px)`},{passive:true});
+dc.addEventListener('touchend',e=>{if(y0==null)return;const d=e.changedTouches[0].clientY-y0;y0=null;dc.style.transform='';if(d>70)closeS()});
+document.getElementById('tabs6').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+ document.querySelectorAll('#tabs6 button').forEach(x=>x.classList.toggle('on',x===b));
+ if(b.dataset.t==='chat'){if(W.matches)document.querySelector('#gamechat input')?.focus();else openS();return}
+ const t=document.getElementById(b.dataset.t==='plays'?'sec-plays':'sec-info')||document.getElementById('hero');scrollTo({top:t.getBoundingClientRect().top+scrollY-70,behavior:'smooth'})};
+const hero=document.getElementById('hero');const sf=()=>body.classList.toggle('sbon',hero.getBoundingClientRect().bottom<90);addEventListener('scroll',sf,{passive:true});sf();
+})();</script>{% if g.state in ('live','scheduled') %}<script>
 const K={{g.key|tojson}},D="{{d}}";setInterval(async()=>{if(document.hidden)return;try{const j=await (await fetch('/api/games?d='+D,{cache:'no-store'})).json();const g=j.games.find(x=>x.key===K);if(!g)return;
- const a=document.getElementById('sL'),b=document.getElementById('sR');if(g.state!==({{g.state|tojson}})||!a){if(g.state!==({{g.state|tojson}}))location.reload();return}const n=(g.L.score??'')+':'+(g.R.score??'');if(n!==a.textContent+':'+b.textContent){if(g.state!==({{g.state|tojson}})){location.reload();return}a.textContent=g.L.score??'';b.textContent=g.R.score??'';const h=document.getElementById('hero');h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash')}
- document.getElementById('badge').textContent=(g.state==='live'?'● LIVE ':'')+g.badge}catch(e){}},5000);</script>{% endif %}{% endblock %}
+ const a=document.getElementById('sL'),b=document.getElementById('sR');if(g.state!==({{g.state|tojson}})||!a){if(g.state!==({{g.state|tojson}}))location.reload();return}const n=(g.L.score??'')+':'+(g.R.score??'');if(n!==a.textContent+':'+b.textContent){if(g.state!==({{g.state|tojson}})){location.reload();return}if((+(g.L.score??0))+(+(g.R.score??0))>(+a.textContent||0)+(+b.textContent||0)&&TWSound.mode()!=='off')TWSound.play();const sb=document.getElementById('sb6');sb.classList.remove('flash');void sb.offsetWidth;sb.classList.add('flash');a.textContent=g.L.score??'';b.textContent=g.R.score??'';document.getElementById('bL').textContent=g.L.score??'';document.getElementById('bR').textContent=g.R.score??'';const h=document.getElementById('hero');h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash')}
+ document.getElementById('badge').textContent=(g.state==='live'?'● LIVE ':'')+g.badge;document.getElementById('bB').innerHTML=g.state==='live'?'<i class="pill">● LIVE '+g.badge.replace(/[<>&]/g,'')+'</i>':g.badge.replace(/[<>&]/g,'')}catch(e){}},5000);</script>{% endif %}{% endblock %}
