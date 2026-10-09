@@ -41,7 +41,7 @@ function render(){if(!DATA)return;const gs=DATA.games,q=Q.trim().toLowerCase();
  document.getElementById('chips').innerHTML=chips.map(c=>`<button class="${c[0]===F?'on':''} ${c[0]==='live'?'lv':''}" data-f="${esc(c[0])}">${esc(c[1])}</button>`).join('');
  let v=gs.filter(g=>F==='all'||(F==='live'?g.state==='live':F==='fav'?isFav(g):g.league===F));
  if(q)v=v.filter(g=>(g.L.name+' '+g.R.name+' '+g.league).toLowerCase().includes(q));
- const rank=g=>(isFav(g)?0:2)+(g.state==='live'?0:1);
+ const rank=g=>g.state==='live'?(isFav(g)?0:1):(isFav(g)?1.5:2);
  const pin=v.filter(g=>rank(g)<2).sort((a,b)=>rank(a)-rank(b)||a.ts-b.ts);
  const rest=v.filter(g=>rank(g)>=2);let h='';
  if(pin.length)h+=`<section><h2 class="pin"><span class="lh">${pin.some(g=>g.state==='live')?'● 진행 중':''}${pin.some(g=>g.state==='live')&&pin.some(isFav)?' · ':''}${pin.some(isFav)?'★ 즐겨찾기':''}</span></h2>${pin.map(row).join('')}</section>`;
