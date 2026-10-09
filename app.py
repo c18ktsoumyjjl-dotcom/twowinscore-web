@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, abort, jsonify, redirect
 import data
+import chat
 
 app = Flask(__name__)
+app.register_blueprint(chat.bp)
 WD = "월화수목금토일"
 EMO = {"baseball": "⚾", "basketball": "🏀", "volleyball": "🏐"}
 SHORT = {"V리그 남자": "V리그 남", "V리그 여자": "V리그 여"}

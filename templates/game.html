@@ -22,8 +22,9 @@
 
 {% if stand %}<section class="box"><h3>순위 {% if stand.section %}<small>{{stand.section}}</small>{% endif %} <a class="more" href="/standings?league={{stand.slug}}">전체 →</a></h3><table class="tbl"><tr><th>#</th><th class="t">팀</th><th>승</th><th>패</th><th>{{'승점' if kind=='volleyball' else '승률'}}</th></tr>
 {% for r in stand.rows %}{% if r.team in names or loop.index<=3 %}<tr class="{{'me' if r.team in names}}"><td class="rk">{{r.rank}}</td><td class="t">{{r.team}}</td><td>{{r.win if r.win is not none}}</td><td>{{r.lose if r.lose is not none}}</td><td>{% if kind=='volleyball' %}{{(r.pts|int) if r.pts is not none}}{% else %}{{('%.3f'|format(r.pct)).lstrip('0') if r.pct is not none}}{% endif %}</td></tr>{% endif %}{% endfor %}</table></section>{% endif %}
+<section class="box chatbox" id="gamechat"></section>
 {% endblock %}
-{% block js %}{% if g.state in ('live','scheduled') %}<script>
+{% block js %}<script src="/static/chat.js?v=2"></script><script>TWChat.mount(document.getElementById("gamechat"),{{ ("game-" ~ g.key|replace(":","-"))|tojson }},{title:"💬 이 경기 채팅"});</script>{% if g.state in ('live','scheduled') %}<script>
 const K={{g.key|tojson}},D="{{d}}";setInterval(async()=>{if(document.hidden)return;try{const j=await (await fetch('/api/games?d='+D,{cache:'no-store'})).json();const g=j.games.find(x=>x.key===K);if(!g)return;
  const a=document.getElementById('sL'),b=document.getElementById('sR');const n=(g.L.score??'')+':'+(g.R.score??'');if(n!==a.textContent+':'+b.textContent){if(g.state!==({{g.state|tojson}})){location.reload();return}a.textContent=g.L.score??'';b.textContent=g.R.score??'';const h=document.getElementById('hero');h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash')}
  document.getElementById('badge').innerHTML=(g.state==='live'?'<i class="dot"></i>':'')+g.badge}catch(e){}},5000);</script>{% endif %}{% endblock %}

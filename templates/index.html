@@ -4,8 +4,8 @@
 <label class="cal">📅<input type="date" id="cal" value="{{d}}" min="{{dmin}}" max="{{dmax}}"></label><span class="dl">{{label}}</span></div>
 <div class="tools"><input id="q" type="search" placeholder="팀 검색 (예: LG, 다저스)" autocomplete="off"></div>
 <div class="chips" id="chips"></div></div></div>{% endblock %}
-{% block body %}<div id="status" class="status"></div><div id="list"><p class="empty">불러오는 중…</p></div>{% endblock %}
-{% block js %}<script>
+{% block body %}<button id="chatFab" class="fab">💬 라운지 <span id="fabN"></span></button><aside id="lounge" class="lounge" hidden></aside><div id="status" class="status"></div><div id="list"><p class="empty">불러오는 중…</p></div>{% endblock %}
+{% block js %}<script src="/static/chat.js?v=2"></script><script>
 const D="{{d}}";let F=new URLSearchParams(location.search).get('f')||'all',Q='',DATA=null,PREV={};
 const fav=()=>{try{return JSON.parse(localStorage.getItem('tw_fav')||'[]')}catch(e){return[]}};
 const fk=(g,s)=>g.kind+':'+g[s].id;
@@ -40,5 +40,13 @@ document.getElementById('chips').onclick=e=>{const b=e.target.closest('button');
 document.getElementById('q').oninput=e=>{Q=e.target.value;render()};
 document.getElementById('cal').onchange=e=>{if(e.target.value)location.href='/?d='+e.target.value};
 async function load(){try{const r=await fetch('/api/games?d='+D,{cache:'no-store'});DATA=await r.json();render()}catch(e){document.getElementById('status').textContent='연결이 불안정해요. 다시 시도 중…'}}
+const LG=document.getElementById('lounge'),FAB=document.getElementById('chatFab');let CH=null;
+const fabN=n=>document.getElementById('fabN').textContent=n?n+'명':'';
+function openChat(){document.body.classList.add('chat-open');LG.hidden=false;FAB.hidden=true;if(!CH)CH=TWChat.mount(LG,'lounge',{title:'💬 라운지 채팅',close:closeChat,lazy:true,onOnline:fabN});CH.start();localStorage.setItem('tw_chat_open','1')}
+function closeChat(){document.body.classList.remove('chat-open');LG.hidden=true;FAB.hidden=false;CH&&CH.stop();localStorage.setItem('tw_chat_open','0')}
+FAB.onclick=openChat;
+async function ping(){if(!LG.hidden||document.hidden)return;try{const j=await (await fetch('/api/chat-online?cid='+TWChat.cid())).json();fabN(j.online)}catch(e){}}
+ping();setInterval(ping,20000);
+if(localStorage.getItem('tw_chat_open')==='1'||(innerWidth>=1100&&localStorage.getItem('tw_chat_open')!=='0'))openChat();
 load();setInterval(()=>{if(!document.hidden)load()},5000);
 </script>{% endblock %}
