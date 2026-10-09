@@ -354,3 +354,21 @@ body.sbon .sb6{transform:none}
 .mid5{grid-template-rows:22px 40px 22px}
 @media(max-width:700px){.mid5{grid-template-rows:20px 32px;margin-top:0}.tm5,.tm5.L,.tm5.R{margin-top:21px}.time5,.star5{margin-top:21px;min-height:32px;display:flex;align-items:center}.time5{flex-direction:column;justify-content:center}}
 @media(max-width:700px){.star5{height:32px;width:28px;justify-content:center}.time5{height:32px;min-height:0}}
+/* 히어로 효과 (은은하게) */
+.fxw{position:relative}
+.fxw>*:not(picture){position:absolute;inset:0;pointer-events:none}
+.fx-rain{width:100%;height:100%;-webkit-mask-image:linear-gradient(180deg,#000 60%,transparent 100%);mask-image:linear-gradient(180deg,#000 60%,transparent 100%)}
+.fx-logo{background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%) no-repeat;background-size:250% 100%;background-position:150% 0;
+ -webkit-mask:url(/static/logo_mask_d.png) center 60%/cover no-repeat;mask:url(/static/logo_mask_d.png) center 60%/cover no-repeat;animation:shine 9s ease-in-out 2s infinite}
+@keyframes shine{0%,78%{background-position:150% 0}100%{background-position:-50% 0}}
+.fx-l{inset:auto!important;width:7%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(220,235,255,.45),rgba(220,235,255,0) 65%);opacity:0;animation:tw 6s ease-in-out infinite}
+.fx-l.l1{left:8.7%;top:12.5%}.fx-l.l2{left:20.5%;top:31%;animation-delay:1.7s;animation-duration:7s}.fx-l.l3{left:79%;top:31%;animation-delay:3.1s}.fx-l.l4{left:90.8%;top:12%;animation-delay:4.4s;animation-duration:8s}
+@keyframes tw{0%,100%{opacity:0}50%{opacity:.7}}
+.fx-crowd i{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff6dc;box-shadow:0 0 4px 1px rgba(255,246,220,.6);opacity:0;animation:fl6 1.4s ease-out forwards}
+.fx-crowd i.w{width:2px;height:2px;background:#dbe8ff}
+@keyframes fl6{0%{opacity:0}15%{opacity:.85}100%{opacity:0}}
+@media(max-width:700px){
+ .fx-logo{-webkit-mask-image:url(/static/logo_mask_m.png);mask-image:url(/static/logo_mask_m.png)}
+ .fx-l{width:14%}.fx-l.l1{left:5.2%;top:35%}.fx-l.l4{left:94%;top:35%}.fx-l.l2,.fx-l.l3{display:none}}
+@media(prefers-reduced-motion:reduce){.fx-logo,.fx-l{animation:none;display:none}}
+.sndm hr{border:0;border-top:1px solid #232d45;margin:4px 0}
