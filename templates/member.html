@@ -1,40 +1,40 @@
 {% extends "base.html" %}{% block head %}<meta name="robots" content="noindex">{% endblock %}{% block body %}
-<div class="mem">
+<div class="mem{{ ' auth' if mode in ('auth','find') }}{{ ' wide' if mode=='auth' and tab=='signup' }}">
 {% if mode=='off' %}<h1>{{ '회원가입' if page=='signup' else '로그인' }}</h1><p class="mm">회원 기능 점검 중이에요. 지금은 로그인 없이 스코어·순위·채팅을 이용할 수 있어요.</p><a class="mb pri" href="/">스코어 보러 가기</a>
-{% elif mode=='login' %}<h1>로그인</h1>
+{% elif mode=='auth' %}<div class="atabs" role="tablist"><a href="/login" class="{{'on' if tab=='login'}}" role="tab">로그인</a><a href="/signup" class="{{'on' if tab=='signup'}}" role="tab">회원가입</a></div>
 {% for e in errs %}<p class="me-err">{{e}}</p>{% endfor %}
-<form method="post" class="mf" autocomplete="on"><input type="hidden" name="_csrf" value="{{csrf_token()}}"><input type="hidden" name="next" value="{{nxt}}">
-<label>아이디<input name="login_id" value="{{lid}}" required autocomplete="username" autocapitalize="off"></label>
-<label>비밀번호<input name="pw" type="password" required autocomplete="current-password"></label>
-<button class="mb pri">로그인</button></form>
-<p class="mm">아직 회원이 아니신가요? <a href="/signup">회원가입</a></p>
-{% elif mode=='signup' %}<h1>회원가입</h1>
-{% for e in errs %}<p class="me-err">{{e}}</p>{% endfor %}
-<form method="post" class="mf" id="suf" novalidate><input type="hidden" name="_csrf" value="{{csrf_token()}}">
-<label>아이디 <small>영문 소문자·숫자 4~16자</small><input name="login_id" value="{{f.login_id}}" required minlength="4" maxlength="16" pattern="[a-z0-9_]{4,16}" autocomplete="username" autocapitalize="off"></label>
-<label>비밀번호 <small>영문+숫자 4자 이상</small><input name="pw" type="password" required minlength="4" maxlength="64" autocomplete="new-password"></label>
-<label>비밀번호 확인<input name="pw2" type="password" required autocomplete="new-password"></label>
-<label>닉네임 <small>2~12자, 채팅에 표시</small><input name="nick" value="{{f.nick}}" required minlength="2" maxlength="12"></label>
-<label>이름<input name="name" value="{{f.name}}" required maxlength="30" autocomplete="name"></label>
-<label>휴대폰 번호<input name="phone" id="suph" value="{{f.phone}}" required inputmode="numeric" placeholder="010-1234-5678" autocomplete="tel" maxlength="13"></label>
-{% if pv %}<div class="pv" id="pv"><button type="button" class="mb" id="pvs"{% if pv_done %} hidden{% endif %}>휴대폰 인증하기</button>
-<p class="me-ok" id="pvok"{% if not pv_done %} hidden{% endif %}>휴대폰 인증 완료</p>
+{% if tab=='login' %}<form method="post" class="mf" autocomplete="on"><input type="hidden" name="_csrf" value="{{csrf_token()}}"><input type="hidden" name="next" value="{{nxt}}">
+<label>아이디<input name="login_id" value="{{lid}}" required autocomplete="username" autocapitalize="off" placeholder="아이디"></label>
+<label>비밀번호<input name="pw" type="password" required autocomplete="current-password" placeholder="비밀번호"></label>
+<button class="mb pri big">로그인</button></form>
+<p class="afind"><a href="/find">아이디 찾기</a><i></i><a href="/find?t=pw">비밀번호 찾기</a></p>
+<p class="mm ac">아직 회원이 아니신가요? <a href="/signup">회원가입</a></p>
+{% else %}<form method="post" class="mf sg" id="suf" novalidate><input type="hidden" name="_csrf" value="{{csrf_token()}}">
+<div class="sgrid">
+<label><span class="lt">아이디 <b class="rq">*</b></span><span class="ib"><input name="login_id" id="suid" value="{{f.login_id}}" required minlength="4" maxlength="16" pattern="[a-z0-9_]{4,16}" autocomplete="username" autocapitalize="off" placeholder="영문 소문자·숫자 4~16자"><button type="button" class="dup" data-k="id" data-t="suid">중복확인</button></span><small class="dm" id="dm_id"></small></label>
+<label><span class="lt">닉네임 <b class="rq">*</b></span><span class="ib"><input name="nick" id="sunick" value="{{f.nick}}" required minlength="2" maxlength="12" placeholder="2~12자, 채팅에 표시"><button type="button" class="dup" data-k="nick" data-t="sunick">중복확인</button></span><small class="dm" id="dm_nick"></small></label>
+<label><span class="lt">비밀번호 <b class="rq">*</b></span><input name="pw" type="password" required minlength="4" maxlength="64" autocomplete="new-password" placeholder="영문+숫자 4자 이상"></label>
+<label><span class="lt">비밀번호 확인 <b class="rq">*</b></span><input name="pw2" type="password" required autocomplete="new-password" placeholder="한 번 더 입력"></label>
+<label><span class="lt">이름 <b class="rq">*</b></span><input name="name" value="{{f.name}}" required maxlength="30" autocomplete="name" placeholder="실명"></label>
+<label><span class="lt">생년월일 <b class="rq">*</b></span><input name="birth" id="subirth" type="text" value="{{f.birth}}" required inputmode="numeric" maxlength="6" pattern="\d{6}" placeholder="예) 940531 (만 14세 이상)" autocomplete="bday"></label>
+<div class="lab"><span class="lt">휴대폰 번호 <b class="rq">*</b></span><span class="ib"><input name="phone" id="suph" value="{{f.phone}}" required inputmode="numeric" placeholder="010-1234-5678" autocomplete="tel" maxlength="13">{% if pv %}<button type="button" class="dup" id="pvs"{% if pv_done %} hidden{% endif %}>인증하기</button>{% endif %}</span>
+{% if pv %}<div class="pv" id="pv"><p class="me-ok sm" id="pvok"{% if not pv_done %} hidden{% endif %}>휴대폰 인증 완료</p>
 <div id="pvbox" hidden><p class="mm">입력한 번호의 휴대폰으로 아래 <b>인증코드만</b> <b>1666-3538</b>로 문자를 보내 주세요. (10분 이내, 일반 문자 요금)</p>
 <p style="font-size:28px;font-weight:800;letter-spacing:4px;text-align:center" id="pvcode"></p>
 <a class="mb pri" id="pvsms" href="#">문자 앱 열기 (모바일)</a>
 <p class="mm" style="text-align:center">PC라면 휴대폰으로 QR을 찍어 보내세요<br><img id="pvqr" alt="QR" width="160" height="160"></p>
 <button type="button" class="mb pri" id="pvc">문자 보냈어요 · 확인</button></div>
-<p class="me-err" id="pverr" hidden></p></div>
-<script>(function(){var $=function(i){return document.getElementById(i)},tk=document.querySelector('#suf [name=_csrf]').value;
+<p class="me-err" id="pverr" hidden></p></div>{% endif %}</div>
+<label><span class="lt">텔레그램 아이디 <small>(선택)</small></span><input name="tg" value="{{f.tg}}" placeholder="@username" autocapitalize="off"></label>
+</div>
+{% if pv %}<script>(function(){var $=function(i){return document.getElementById(i)},tk=document.querySelector('#suf [name=_csrf]').value;
 function post(u,d){var f=new FormData();f.append('_csrf',tk);for(var k in d)f.append(k,d[k]);return fetch(u,{method:'POST',body:f,credentials:'same-origin'}).then(function(r){return r.json()})}
 function err(m){var e=$('pverr');e.textContent=m||'';e.hidden=!m}
 $('suph').addEventListener('input',function(){if(window._fmtPhone)window._fmtPhone(this);$('pvok').hidden=true;$('pvs').hidden=false;$('pvbox').hidden=true});
 $('pvs').onclick=function(){err('');post('/signup/phone/start',{phone:$('suph').value}).then(function(j){if(!j.ok)return err(j.msg);
-$('pvcode').textContent=j.code;$('pvsms').href=j.sms;$('pvqr').src=j.qr;$('pvbox').hidden=false;$('pvs').textContent='코드 다시 받기'}).catch(function(){err('네트워크 오류예요.')})};
+$('pvcode').textContent=j.code;$('pvsms').href=j.sms;$('pvqr').src=j.qr;$('pvbox').hidden=false;$('pvs').textContent='다시 받기'}).catch(function(){err('네트워크 오류예요.')})};
 $('pvc').onclick=function(){err('');post('/signup/phone/check',{}).then(function(j){if(!j.ok)return err(j.msg);$('pvbox').hidden=true;$('pvs').hidden=true;$('pvok').hidden=false}).catch(function(){err('네트워크 오류예요.')})};
 })();</script>{% endif %}
-<label>생년월일 <small>만 14세 이상 · 예) 940531</small><input name="birth" id="subirth" type="text" value="{{f.birth}}" required inputmode="numeric" maxlength="6" pattern="\d{6}" placeholder="예) 940531" autocomplete="bday"></label>
-<label>텔레그램 아이디 <small>선택</small><input name="tg" value="{{f.tg}}" placeholder="@username" autocapitalize="off"></label>
 <script>(function(){
 function digits(s){return (s||'').replace(/\D/g,'')}
 function fmtPhone(el){var d=digits(el.value).slice(0,11),o=d;
@@ -46,19 +46,58 @@ window._fmtPhone=fmtPhone;
 var ph=document.getElementById('suph');if(ph){ph.addEventListener('input',function(){fmtPhone(this)});fmtPhone(ph)}
 var b=document.getElementById('subirth');if(b){b.addEventListener('input',function(){var d=digits(this.value).slice(0,6);if(this.value!==d)this.value=d})}
 })();</script>
+<script>(function(){var tk=document.querySelector('#suf [name=_csrf]').value;
+document.querySelectorAll('.dup[data-k]').forEach(function(b){var inp=document.getElementById(b.dataset.t),m=document.getElementById('dm_'+b.dataset.k);
+inp.addEventListener('input',function(){m.textContent='';m.className='dm'});
+b.onclick=function(){var f=new FormData();f.append('_csrf',tk);f.append('kind',b.dataset.k);f.append('v',inp.value);
+fetch('/signup/check',{method:'POST',body:f,credentials:'same-origin'}).then(function(r){return r.json()}).then(function(j){m.textContent=j.msg;m.className='dm '+(j.ok?'ok':'no')}).catch(function(){m.textContent='네트워크 오류예요.';m.className='dm no'})}})})();</script>
 <div class="agree"><b>개인정보 수집·이용 동의 (필수)</b>
 <table><tr><th>목적</th><td>회원 관리, 본인 확인, 문의 응대</td></tr><tr><th>항목</th><td>아이디, 비밀번호, 닉네임, 이름, 휴대폰 번호, 생년월일, 텔레그램 아이디(선택)</td></tr><tr><th>보유 기간</th><td>회원 탈퇴 시 즉시 파기</td></tr></table>
 <p>동의를 거부할 수 있으며, 거부하면 회원가입이 제한돼요. <a href="/privacy" target="_blank">개인정보처리방침</a></p>
 <label class="chk"><input type="checkbox" name="agree" value="1" required> 위 내용에 동의해요</label></div>
-<button class="mb pri">가입하기</button></form>
-<p class="mm">이미 회원이신가요? <a href="/login">로그인</a></p>
+<button class="mb pri big">가입하기</button></form>
+<p class="mm ac">이미 계정이 있으신가요? <a href="/login">로그인</a></p>{% endif %}
+{% elif mode=='find' %}<div class="atabs" role="tablist"><a href="/find" class="{{'on' if tab=='id'}}">아이디 찾기</a><a href="/find?t=pw" class="{{'on' if tab=='pw'}}">비밀번호 찾기</a></div>
+{% if not pv %}<p class="mm">지금은 휴대폰 인증을 사용할 수 없어요. 텔레그램 고객센터로 문의해 주세요.</p>{% else %}
+<form class="mf" id="fdf" onsubmit="return false"><input type="hidden" name="_csrf" value="{{csrf_token()}}">
+<p class="mm" style="margin:0">{{ '가입한 아이디와 ' if tab=='pw' }}가입할 때 인증한 휴대폰 번호로 본인 확인을 해요.</p>
+{% if tab=='pw' %}<label>아이디<input id="fdid" autocapitalize="off" autocomplete="username" placeholder="아이디"></label>{% endif %}
+<label>휴대폰 번호<input id="suph" inputmode="numeric" maxlength="13" placeholder="010-1234-5678" autocomplete="tel"></label>
+<button type="button" class="mb pri" id="pvs">인증 문자 받기</button>
+<div class="pv"><div id="pvbox" hidden><p class="mm">입력한 번호의 휴대폰으로 아래 <b>인증코드만</b> <b>1666-3538</b>로 문자를 보내 주세요. (10분 이내, 일반 문자 요금)</p>
+<p style="font-size:28px;font-weight:800;letter-spacing:4px;text-align:center" id="pvcode"></p>
+<a class="mb pri" id="pvsms" href="#">문자 앱 열기 (모바일)</a>
+<p class="mm" style="text-align:center">PC라면 휴대폰으로 QR을 찍어 보내세요<br><img id="pvqr" alt="QR" width="160" height="160"></p>
+<button type="button" class="mb pri" id="pvc">문자 보냈어요 · 확인</button></div>
+<p class="me-err" id="pverr" hidden></p></div>
+<div id="fdres" hidden></div>
+<div id="fdnew" hidden><label>새 비밀번호<input id="np1" type="password" autocomplete="new-password" placeholder="영문+숫자 4자 이상"></label><label>새 비밀번호 확인<input id="np2" type="password" autocomplete="new-password"></label><button type="button" class="mb pri" id="npb">비밀번호 바꾸기</button></div>
+</form>
+<script>(function(){var $=function(i){return document.getElementById(i)},tk=document.querySelector('#fdf [name=_csrf]').value,kind={{ tab|tojson }};
+function post(u,d){var f=new FormData();f.append('_csrf',tk);for(var k in d)f.append(k,d[k]);return fetch(u,{method:'POST',body:f,credentials:'same-origin'}).then(function(r){return r.json()})}
+function err(m){var e=$('pverr');e.textContent=m||'';e.hidden=!m}
+$('suph').addEventListener('input',function(){var d=this.value.replace(/\D/g,'').slice(0,11);this.value=d.length>7?d.slice(0,3)+'-'+d.slice(3,7)+'-'+d.slice(7):d.length>3?d.slice(0,3)+'-'+d.slice(3):d});
+$('pvs').onclick=function(){err('');post('/find/start',{kind:kind,phone:$('suph').value,login_id:$('fdid')?$('fdid').value:''}).then(function(j){if(!j.ok)return err(j.msg);
+$('pvcode').textContent=j.code;$('pvsms').href=j.sms;$('pvqr').src=j.qr;$('pvbox').hidden=false;$('pvs').textContent='코드 다시 받기'}).catch(function(){err('네트워크 오류예요.')})};
+$('pvc').onclick=function(){err('');post('/find/check',{}).then(function(j){if(!j.ok)return err(j.msg);$('pvbox').hidden=true;$('pvs').hidden=true;
+if(j.kind==='id'){var r=$('fdres');r.innerHTML='<div class="fdid">회원님의 아이디는<b></b>예요.</div><a class="mb pri" href="/login">로그인하기</a><a class="mb" href="/find?t=pw">비밀번호 찾기</a>';r.querySelector('b').textContent=j.id;r.hidden=false}
+else $('fdnew').hidden=false}).catch(function(){err('네트워크 오류예요.')})};
+if($('npb'))$('npb').onclick=function(){err('');post('/find/reset',{pw:$('np1').value,pw2:$('np2').value}).then(function(j){if(!j.ok)return err(j.msg);$('fdnew').hidden=true;var r=$('fdres');r.innerHTML='<p class="me-ok"></p><a class="mb pri" href="/login">로그인하기</a>';r.querySelector('p').textContent=j.msg;r.hidden=false}).catch(function(){err('네트워크 오류예요.')})};
+})();</script>{% endif %}
+<p class="mm ac"><a href="/login">로그인</a> · <a href="/signup">회원가입</a></p>
 {% elif mode=='me' %}<h1>내 정보</h1>{% if welcome %}<p class="me-ok">가입을 환영해요, {{me.nick}}님!</p>{% endif %}
-{% with m=get_flashed_messages() %}{% for x in m %}<p class="me-err">{{x}}</p>{% endfor %}{% endwith %}
+{% with m=get_flashed_messages() %}{% for x in m %}{% if x[:3]=='ok:' %}<p class="me-ok">{{x[3:]}}</p>{% else %}<p class="me-err">{{x}}</p>{% endif %}{% endfor %}{% endwith %}
 {% if lv %}<div class="lv-card"><div class="lv-top"><img class="lv-big" src="/static/tiers/t{{lv.i}}_128.webp?v=1" srcset="/static/tiers/t{{lv.i}}_256.webp?v=1 2x" width="72" height="72" alt="{{lv.name}}" title="{{lv.name}}"><div class="lv-nm"><span>{{lv.name}}</span><b>{{lv.pts}}점</b></div>{% if lv.streak>1 %}<small>🔥 {{lv.streak}}일 연속 출석</small>{% endif %}</div>
 <div class="lv-bar"><i style="width:{{lv.pct}}%"></i></div>
 <p class="mm">{% if lv.next %}<b>{{lv.next}}</b>까지 {{lv.need}}점 남았어요{% else %}최고 등급 레전드예요!{% endif %}</p>
 <p class="lv-how">출석 하루 10점 · 연속 출석 하루 최대 +10점 · 채팅 1개 1점(하루 30점까지) · 응원 투표 참여 2점(하루 10점까지)</p></div>{% endif %}
 <dl class="info"><dt>아이디</dt><dd>{{me.login_id}}</dd><dt>닉네임</dt><dd>{{me.nick}}</dd><dt>이름</dt><dd>{{info.name}}</dd><dt>휴대폰</dt><dd>{{info.phone}}</dd><dt>생년월일</dt><dd>{{info.birth}}</dd><dt>텔레그램</dt><dd>{{ '@'+info.tg if info.tg else '-' }}</dd><dt>가입일</dt><dd>{{info.created}}</dd></dl>
+<section class="msec" id="nick"><h2>닉네임 변경</h2>{% if nick_next %}<p class="mm">닉네임은 30일에 한 번 바꿀 수 있어요. <b>{{nick_next}}</b>부터 다시 바꿀 수 있어요.</p>{% else %}
+<form method="post" action="/me/nick" class="mf"><input type="hidden" name="_csrf" value="{{csrf_token()}}"><label>새 닉네임 <small>2~12자 · 바꾸면 30일 동안 다시 못 바꿔요</small><input name="nick" required minlength="2" maxlength="12" placeholder="{{me.nick}}"></label><button class="mb pri">닉네임 바꾸기</button></form>{% endif %}</section>
+<section class="msec" id="pw"><h2>비밀번호 변경</h2><form method="post" action="/me/pw" class="mf"><input type="hidden" name="_csrf" value="{{csrf_token()}}">
+<label>현재 비밀번호<input name="cur" type="password" required autocomplete="current-password"></label>
+<label>새 비밀번호 <small>영문+숫자 4자 이상</small><input name="pw" type="password" required minlength="4" maxlength="64" autocomplete="new-password"></label>
+<label>새 비밀번호 확인<input name="pw2" type="password" required autocomplete="new-password"></label><button class="mb pri">비밀번호 바꾸기</button></form></section>
 <form method="post" action="/logout"><input type="hidden" name="_csrf" value="{{csrf_token()}}"><button class="mb">로그아웃</button></form>
 <details class="del" id="del"><summary>회원 탈퇴</summary><p class="mm">탈퇴하면 회원 정보가 즉시 삭제되고 되돌릴 수 없어요.</p>
 <form method="post" action="/me/delete" onsubmit="return confirm('정말 탈퇴할까요?')"><input type="hidden" name="_csrf" value="{{csrf_token()}}"><label>비밀번호 확인<input name="pw" type="password" required autocomplete="current-password"></label><button class="mb warn">탈퇴하기</button></form></details>

@@ -115,6 +115,10 @@ def _init():
     pk = "BIGSERIAL PRIMARY KEY" if PG else "INTEGER PRIMARY KEY AUTOINCREMENT"
     for s in SCHEMA.format(pk=pk).split(";"):
         q(s, fetch=False)
+    try:
+        q("ALTER TABLE members ADD COLUMN nick_changed_at TEXT", fetch=False)
+    except Exception:
+        pass  # 이미 있음
     log.warning("member storage: %s", "postgres" if PG else os.path.join(DATA_DIR, "members.db"))
 
 
@@ -179,7 +183,7 @@ def _lv_visit():
 
 @bp.before_app_request
 def _csrf_check():
-    if request.method == "POST" and (request.path.startswith(("/login", "/signup", "/logout", "/me", "/admin"))):
+    if request.method == "POST" and (request.path.startswith(("/login", "/signup", "/logout", "/me", "/admin", "/find"))):
         t = request.form.get("_csrf", "")
         if not t or not hmac.compare_digest(t, session.get("_csrf", "")):
             abort(400, "CSRF")
@@ -386,7 +390,7 @@ def signup():
     ph_disp = norm_phone(f.get("phone"))
     if ph_disp:
         f["phone"] = fmt_phone(ph_disp)
-    return render_template("member.html", page="signup", mode="signup", f=f, errs=errs, pv=pv_on(), pv_done=bool(ph_ok(f["phone"])))
+    return render_template("member.html", page="signup", mode="auth", tab="signup", f=f, errs=errs, pv=pv_on(), pv_done=bool(ph_ok(f["phone"])))
 
 
 _DUMMY_PW = generate_password_hash("dummy-" + os.urandom(8).hex())
@@ -415,7 +419,7 @@ def login():
                 session.clear(); session.permanent = True; session["uid"] = r[0]
                 q("UPDATE members SET last_login=? WHERE id=?", (now_s(), r[0]), fetch=False)
                 return redirect(nxt)
-    return render_template("member.html", page="login", mode="login", lid=lid, errs=errs, nxt=nxt)
+    return render_template("member.html", page="login", mode="auth", tab="login", lid=lid, errs=errs, nxt=nxt, pv=pv_on())
 
 
 @bp.post("/logout")
@@ -431,7 +435,190 @@ def me_page():
         return redirect("/login?next=/me")
     r = q("SELECT name_e, phone_e, birth_e, tg, created_at FROM members WHERE id=?", (m["id"],), one=True)
     info = {"name": dec(r[0]), "phone": mask_phone(dec(r[1])), "birth": dec(r[2]), "tg": r[3], "created": r[4][:10]}
-    return render_template("member.html", page="me", mode="me", info=info, welcome=request.args.get("welcome"))
+    nx = nick_next(m["id"])
+    return render_template("member.html", page="me", mode="me", info=info, welcome=request.args.get("welcome"),
+                           nick_next=nx.strftime("%Y-%m-%d") if nx else None)
+
+
+NICK_DAYS = 30
+
+
+def nick_next(mid):
+    """닉네임을 다시 바꿀 수 있는 날짜(KST date). 지금 바꿀 수 있으면 None."""
+    r = q("SELECT nick_changed_at FROM members WHERE id=?", (mid,), one=True)
+    if not r or not r[0]:
+        return None
+    try:
+        t = datetime.strptime(r[0][:19], "%Y-%m-%d %H:%M:%S").replace(tzinfo=KST) + timedelta(days=NICK_DAYS)
+    except ValueError:
+        return None
+    return t if t > datetime.now(KST) else None
+
+
+def pw_rule(pw):
+    if len(pw) < 4 or len(pw) > 64 or not (re.search(r"[A-Za-z]", pw) and re.search(r"\d", pw)):
+        return "비밀번호는 영문과 숫자를 섞어 4자 이상으로 해 주세요."
+    return None
+
+
+@bp.post("/me/nick")
+def me_nick():
+    m = current()
+    if not m:
+        return redirect("/login?next=/me")
+    import chat
+    nick = (request.form.get("nick") or "").strip()
+    nx = nick_next(m["id"])
+    if nx:
+        flash(f"닉네임은 30일에 한 번 바꿀 수 있어요. {nx.strftime('%Y-%m-%d')}부터 다시 바꿀 수 있어요.")
+    elif limited("nk|" + str(m["id"]), 10, 3600):
+        flash("잠시 후 다시 시도해 주세요.")
+    elif nick == m["nick"]:
+        flash("지금 쓰는 닉네임과 같아요.")
+    elif chat.check_nick(nick):
+        flash(chat.check_nick(nick))
+    elif q("SELECT 1 FROM members WHERE nick_l=? AND id<>?", (nick.lower(), m["id"]), one=True):
+        flash("이미 사용 중인 닉네임이에요.")
+    else:
+        try:
+            q("UPDATE members SET nick=?, nick_l=?, nick_changed_at=? WHERE id=?", (nick, nick.lower(), now_s(), m["id"]), fetch=False)
+            flash("ok:닉네임을 바꿨어요.")
+        except Exception:
+            flash("이미 사용 중인 닉네임이에요.")
+    return redirect("/me#nick")
+
+
+@bp.post("/me/pw")
+def me_pw():
+    m = current()
+    if not m:
+        return redirect("/login?next=/me")
+    cur, pw, pw2 = request.form.get("cur", ""), request.form.get("pw", ""), request.form.get("pw2", "")
+    r = q("SELECT pw FROM members WHERE id=?", (m["id"],), one=True)
+    if limited("cpw|" + str(m["id"]), 6, 900):
+        flash("시도가 너무 많아요. 잠시 후 다시 해 주세요.")
+    elif not r or not check_password_hash(r[0], cur):
+        flash("현재 비밀번호가 맞지 않아요.")
+    elif pw_rule(pw):
+        flash(pw_rule(pw))
+    elif pw != pw2:
+        flash("새 비밀번호 확인이 일치하지 않아요.")
+    elif cur == pw:
+        flash("지금 비밀번호와 다른 비밀번호로 해 주세요.")
+    else:
+        q("UPDATE members SET pw=? WHERE id=?", (generate_password_hash(pw), m["id"]), fetch=False)
+        flash("ok:비밀번호를 바꿨어요.")
+    return redirect("/me#pw")
+
+
+# ---------- 중복 확인 ----------
+@bp.post("/signup/check")
+def signup_check():
+    if not enabled():
+        return {"ok": False, "msg": "잘못된 요청입니다"}, 400
+    if limited("dup|" + ip(), 30, 600):
+        return {"ok": False, "msg": "잠시 후 다시 시도해 주세요."}, 429
+    kind, v = request.form.get("kind"), (request.form.get("v") or "").strip()
+    if kind == "id":
+        v = v.lower()
+        if not LOGIN_RE.match(v):
+            return {"ok": False, "msg": "아이디는 영문 소문자·숫자·_ 4~16자로 해 주세요."}
+        if q("SELECT 1 FROM members WHERE login_id=?", (v,), one=True):
+            return {"ok": False, "msg": "이미 사용 중인 아이디예요."}
+        return {"ok": True, "msg": "사용할 수 있는 아이디예요."}
+    if kind == "nick":
+        import chat
+        e = chat.check_nick(v)
+        if e:
+            return {"ok": False, "msg": e}
+        if q("SELECT 1 FROM members WHERE nick_l=?", (v.lower(),), one=True):
+            return {"ok": False, "msg": "이미 사용 중인 닉네임이에요."}
+        return {"ok": True, "msg": "사용할 수 있는 닉네임이에요."}
+    return {"ok": False, "msg": "잘못된 요청입니다"}, 400
+
+
+# ---------- 아이디 / 비밀번호 찾기 (가입 휴대폰 Octomo 인증) ----------
+def mask_id(s):
+    if len(s) <= 4:
+        return s[0] + "*" * (len(s) - 2) + s[-1] if len(s) > 2 else s[0] + "*"
+    return s[:2] + "*" * (len(s) - 4) + s[-2:]
+
+
+@bp.route("/find")
+def find_page():
+    if current():
+        return redirect("/me")
+    return render_template("member.html", page="login", mode="find" if enabled() else "off",
+                           tab="pw" if request.args.get("t") == "pw" else "id", pv=pv_on())
+
+
+@bp.post("/find/start")
+def find_start():
+    if not (enabled() and pv_on()):
+        return {"ok": False, "msg": "휴대폰 인증을 사용할 수 없어요."}, 400
+    kind = "pw" if request.form.get("kind") == "pw" else "id"
+    lid = (request.form.get("login_id") or "").strip().lower()
+    ph = norm_phone(request.form.get("phone"))
+    if kind == "pw" and not LOGIN_RE.match(lid):
+        return {"ok": False, "msg": "아이디를 정확히 입력해 주세요."}, 400
+    if not ph:
+        return {"ok": False, "msg": "가입할 때 인증한 휴대폰 번호를 입력해 주세요."}, 400
+    if limited("fds|" + ip(), 5, 3600) or limited("fds|" + phone_hash(ph), 5, 3600):
+        return {"ok": False, "msg": "요청이 너무 많아요. 1시간 뒤에 다시 해 주세요."}, 429
+    code = f"{secrets.randbelow(900000) + 100000}"
+    session["fv"] = {"ph": ph, "code": code, "t": time.time(), "n": 0, "kind": kind, "lid": lid}
+    session.pop("fr", None)
+    return {"ok": True, "code": code, "qr": _sms_qr(code), "sms": f"sms:{OCTOMO_NUM}?&body={code}", "ttl": PV_TTL}
+
+
+_NOMATCH = "일치하는 회원 정보가 없어요. 입력한 정보를 다시 확인해 주세요."
+
+
+@bp.post("/find/check")
+def find_check():
+    fv = session.get("fv")
+    if not (enabled() and pv_on()) or not fv:
+        return {"ok": False, "msg": "먼저 인증 요청을 해 주세요."}, 400
+    if time.time() - fv["t"] > PV_TTL:
+        session.pop("fv", None)
+        return {"ok": False, "msg": "인증 시간이 지났어요. 다시 요청해 주세요."}, 400
+    if fv.get("n", 0) >= 20 or limited("fdc|" + ip(), 30, 600):
+        return {"ok": False, "msg": "확인 시도가 너무 많아요. 잠시 후 다시 해 주세요."}, 429
+    fv["n"] = fv.get("n", 0) + 1; session["fv"] = fv
+    ok, err = _octomo_exists(fv["ph"], fv["code"])
+    if err:
+        return {"ok": False, "msg": err}, 502
+    if not ok:
+        return {"ok": False, "msg": "아직 문자가 확인되지 않았어요. 입력한 번호의 휴대폰으로 코드만 정확히 보내 주세요."}
+    session.pop("fv", None)
+    r = q("SELECT id, login_id, status FROM members WHERE phone_h=?", (phone_hash(fv["ph"]),), one=True)
+    if fv["kind"] == "id":
+        if not r:
+            return {"ok": False, "msg": _NOMATCH}
+        return {"ok": True, "kind": "id", "id": mask_id(r[1])}
+    if not r or r[1] != fv["lid"]:
+        return {"ok": False, "msg": _NOMATCH}
+    session["fr"] = {"mid": r[0], "t": time.time()}
+    return {"ok": True, "kind": "pw"}
+
+
+@bp.post("/find/reset")
+def find_reset():
+    fr = session.get("fr")
+    if not enabled() or not fr or time.time() - fr.get("t", 0) > PV_TTL:
+        session.pop("fr", None)
+        return {"ok": False, "msg": "인증 시간이 지났어요. 처음부터 다시 해 주세요."}, 400
+    pw, pw2 = request.form.get("pw", ""), request.form.get("pw2", "")
+    e = pw_rule(pw) or ("비밀번호 확인이 일치하지 않아요." if pw != pw2 else None)
+    if e:
+        return {"ok": False, "msg": e}
+    q("UPDATE members SET pw=? WHERE id=?", (generate_password_hash(pw), fr["mid"]), fetch=False)
+    session.pop("fr", None)
+    try:
+        alog("member_pw_reset_self", fr["mid"])
+    except Exception:
+        log.exception("alog")
+    return {"ok": True, "msg": "새 비밀번호로 바꿨어요. 로그인해 주세요."}
 
 
 @bp.post("/me/delete")
