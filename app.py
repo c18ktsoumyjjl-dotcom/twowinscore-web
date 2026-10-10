@@ -174,6 +174,31 @@ def day_label(d):
     return f"{d.month}월 {d.day}일 ({WD[d.weekday()]})"
 
 
+HALT_KO = {"INT": "경기 중단", "INTR": "경기 중단", "SUSP": "일시 중단", "PST": "연기", "POST": "연기",
+           "ABD": "경기 취소(중도)", "CANC": "취소", "AWD": "몰수 판정", "WO": "부전승"}
+_GENERIC_LONG = {"match interrupted", "interrupted", "match suspended", "suspended", "match postponed", "postponed",
+                 "match abandoned", "abandoned", "match cancelled", "cancelled", "canceled", "technical loss",
+                 "walkover", "awarded", "walk over"}
+
+
+def halt_info(g):
+    """중단/연기/취소 상태면 (한글 상태, 사유). 사유는 데이터에 실제로 있을 때만."""
+    st = str(g.get("status") or "")
+    reason = (g.get("halt_reason") or "").strip()
+    label = HALT_KO.get(st)
+    if not label and reason:
+        label = "경기 중단" if "중단" in reason or "서스펜디드" in reason else ("취소" if "취소" in reason or "노게임" in reason else
+                ("콜드게임" if "콜드" in reason else None))
+    if not label:
+        return None, None
+    lg = (g.get("status_long") or "").strip()
+    if not reason and lg and lg.lower() not in _GENERIC_LONG and lg.upper() != st:
+        reason = lg[:40]
+    if reason and reason.replace(" ", "") == label.replace(" ", ""):
+        reason = ""
+    return label, reason or None
+
+
 def view(g):
     left_home = g["kind"] != "baseball"   # 야구: 원정 왼쪽/홈 오른쪽, 그 외: 홈 왼쪽
     h = {"name": g["home"], "en": g.get("home_en"), "score": g.get("home_score"), "tag": "홈", "logo": g.get("home_logo"), "id": g.get("home_id")}
@@ -188,6 +213,9 @@ def view(g):
         L["win"], R["win"] = L["score"] > R["score"], R["score"] > L["score"]
     badge = {"live": g.get("period") or "진행 중", "final": "종료", "cancelled": "취소",
              "postponed": "연기", "scheduled": g["start"].strftime("%H:%M")}.get(st, "")
+    halt, reason = halt_info(g)
+    if halt:
+        badge = halt + (f" · {reason}" if reason else "")
     lines = [(lab, hs, as_) if left_home else (lab, as_, hs) for lab, hs, as_ in g.get("lines") or []]
     sub = []
     if g.get("label") and "·" in g["label"]:
@@ -198,7 +226,7 @@ def view(g):
             "lorder": g["site_order"], "emoji": EMO[g["kind"]], "state": st, "badge": badge,
             "time": g["start"].strftime("%H:%M"), "ts": g["start"].timestamp(), "L": L, "R": R,
             "lines": lines, "sub": " · ".join(sub), "left_home": left_home, "sport": SPORT_KO[g["kind"]],
-            "table": period_table(g)}
+            "table": period_table(g), "halt": halt, "reason": reason}
 
 
 def period_table(g):
@@ -338,7 +366,7 @@ def api_preview(key):
     com = plays.commentary(g)
     return jsonify({"points": insights.points(g, det), "vote": _vinfo(g, v),"key": v["key"], "kind": g["kind"], "table": v["table"], "L": v["L"]["name"], "R": v["R"]["name"],
                     "starters": starters, "goals": plays.goals(g), "forms": [f for f in forms if f["rows"]], "h2h": hsum, "pos": pos,
-                    "plays": {"source": com["source"], "items": com["items"][:3]} if com and com.get("items") else None,
+                    "halt": v["halt"], "reason": v["reason"], "plays": {"source": com["source"], "items": com["items"][:3]} if com and com.get("items") else None,
                     "url": f"/game/{v['key']}?d={d.isoformat()}"})
 
 

@@ -484,3 +484,9 @@ body.mapp #chatFab,body.mapp #lounge{display:none!important}
 .gl8 .glr{display:grid;grid-template-columns:1fr 22px 1fr;align-items:center;gap:6px;padding:6px 4px;border-bottom:1px dashed var(--line);font-size:14px;color:var(--tx);line-height:1.35}.gl8 .glr i{font-style:normal;text-align:center;font-size:13px}
 .gl8 .gL{text-align:right}.gl8 .gR{text-align:left}.gl8 .glr b{color:var(--or);font-variant-numeric:tabular-nums}.gl8 .glr em{font-style:normal;font-size:11px;padding:1px 5px;border-radius:5px;background:var(--card);border:1px solid var(--line);color:var(--mu)}.gl8 .glr small{display:block;color:var(--mu);font-size:11px}
 .gl8 .gln{margin:6px 4px;color:var(--mu);font-size:12px;text-align:center}
+
+/* 중단·연기·취소 상태 + 사유 */
+.halt{display:inline-flex;align-items:center;gap:6px;background:#fff3e8;color:#c45200;border:1.5px solid #ff7a1a;font-size:12px;font-weight:800;padding:2px 9px;border-radius:6px;white-space:nowrap;font-style:normal}
+.halt small{font-weight:700;color:#0f1f44;font-size:11px;white-space:normal}
+.ms .hl{color:#c45200;font-size:11px;font-weight:800}.ms .hr{display:block;color:#0f1f44;font-size:10px;line-height:1.2;word-break:keep-all}
+.halt6{background:#fff3e8;border-left:3px solid #ff7a1a;color:#0f1f44}.halt6 b{color:#c45200}.halt6 small{color:#6b7488}

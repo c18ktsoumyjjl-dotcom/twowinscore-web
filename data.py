@@ -92,7 +92,7 @@ def _ser(g):
     d = {k: v for k, v in g.items() if k in (
         "key", "id", "kind", "league", "start", "status", "home", "away", "home_score", "away_score",
         "period", "lines", "label", "home_logo", "away_logo", "if_necessary", "series_ko",
-        "home_id", "away_id", "innings", "venue", "home_en", "away_en")}
+        "home_id", "away_id", "innings", "venue", "home_en", "away_en", "status_long", "halt_reason")}
     d["start"] = g["start"].isoformat()
     d["lines"] = [list(x) for x in g.get("lines") or []]
     return d
@@ -110,7 +110,28 @@ def _naver_fresh(kind, games):
         for g in games:
             if g.get("league") in sb.naver_live.CAT and g.get("status") not in ("FT", "POST", "CANC"):
                 sb.naver_live.apply(g)
+            if g.get("league") in sb.naver_live.CAT:
+                _naver_halt(g)
     return games
+
+
+_HALT_WORDS = ("중단", "서스펜디드", "우천", "콜드", "취소", "연기", "노게임")
+
+
+def _naver_halt(g):
+    """네이버 상태 문구(예: '우천 중단', '우천취소')가 실제로 있을 때만 사유로 쓴다."""
+    try:
+        age = (datetime.now(SEOUL) - g["start"]).total_seconds()
+        if age > 30 * 3600 or age < -3 * 3600:
+            return
+        x, _ = sb.naver_live._find(g)
+        if not x:
+            return
+        info = str(x.get("statusInfo") or "").strip()
+        if info and any(w in info for w in _HALT_WORDS):
+            g["halt_reason"] = info[:30]
+    except Exception:
+        pass
 
 
 def _sport_day(kind, day, today):
@@ -172,6 +193,7 @@ def _fetch_raw(kind, day):
         g = sb.parse_game(raw, meta)
         if not g:
             continue
+        g["status_long"] = (raw.get("status") or {}).get("long")
         if kind == "baseball" and g.get("src") != "naver":   # 네이버 값이 있으면 그대로
             sc = raw.get("scores") or {}
             inn = {}
@@ -365,7 +387,17 @@ def games_for(day):
     return out, failed
 
 
+HALT_LIVE = {"INT", "INTR", "SUSP"}   # 중단·일시 중단: 진행 중으로 유지
+
+
 def state(g):
+    if g["status"] in HALT_LIVE:
+        try:
+            if (datetime.now(SEOUL) - g["start"]).total_seconds() < 24 * 3600:
+                return "live"
+        except Exception:
+            return "live"
+        return "postponed"
     if g["kind"] in NEW_KINDS:
         return sports2.state(g["kind"], g["status"])
     if sb.is_live(g):

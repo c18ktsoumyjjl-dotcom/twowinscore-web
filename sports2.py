@@ -42,6 +42,8 @@ def state(kind, st):
         return "live"
     if st in (FB_FIN if kind == "football" else HK_FIN):
         return "final"
+    if st == "SUSP":
+        return "live"          # 일시 중단도 진행 중 섹션에 남긴다(종료로 보지 않음)
     if st in CANC:
         return "cancelled"
     if st in POST:
@@ -72,7 +74,9 @@ def fetch_day(kind, day):
             sc = raw.get("score") or {}
             lines = []
             ht = sc.get("halftime") or {}
-            if ht.get("home") is not None and ht.get("away") is not None:
+            elapsed = (fx.get("status") or {}).get("elapsed")
+            started = st in FB_FIN or (elapsed or 0) >= 45 or (fx.get("periods") or {}).get("second")
+            if started and ht.get("home") is not None and ht.get("away") is not None:
                 lines.append(["전반", ht["home"], ht["away"]])
                 ft = sc.get("fulltime") or {}
                 if ft.get("home") is not None:
@@ -80,13 +84,14 @@ def fetch_day(kind, day):
                 elif st in ("2H", "INT", "LIVE") and goals.get("home") is not None and goals.get("away") is not None:
                     lines.append(["후반", goals["home"] - ht["home"], goals["away"] - ht["away"]])  # 진행 중 후반 = 현재 - 전반
                 et = sc.get("extratime") or {}
-                if et.get("home") is not None:
+                if et.get("home") is not None and st in ("ET", "BT", "P", "AET", "PEN"):
                     lines.append(["연장", et["home"], et["away"]])
                 pk = sc.get("penalty") or {}
-                if pk.get("home") is not None:
+                if pk.get("home") is not None and st in ("P", "PEN"):
                     lines.append(["승부차기", pk["home"], pk["away"]])
             out.append(_mk(kind, lg, fx.get("id"), fx.get("date"), st, t, goals.get("home"), goals.get("away"),
-                           _period(kind, st, (fx.get("status") or {}).get("elapsed")), lines, raw.get("league", {}).get("round")))
+                           _period(kind, st, (fx.get("status") or {}).get("elapsed")), lines, raw.get("league", {}).get("round"),
+                           (fx.get("status") or {}).get("long"), _fb_reason(raw)))
     else:
         for raw in get(kind, "/games", {"date": day.isoformat(), "timezone": "Asia/Seoul"}):
             lg = (raw.get("league") or {}).get("id")
@@ -104,11 +109,20 @@ def fetch_day(kind, day):
                     except ValueError:
                         pass
             out.append(_mk(kind, lg, raw.get("id"), raw.get("date"), st, raw.get("teams") or {}, sc.get("home"), sc.get("away"),
-                           _period(kind, st, None), lines, None))
+                           _period(kind, st, None), lines, None, (raw.get("status") or {}).get("long"), None))
     return [g for g in out if g]
 
 
-def _mk(kind, lg, gid, date, st, t, hs, as_, period, lines, rnd):
+def _fb_reason(raw):
+    """이벤트에 중단 사유 코멘트가 실제로 있을 때만. 없으면 None (지어내지 않는다)."""
+    for e in reversed(raw.get("events") or []):
+        c = str(e.get("comments") or "")
+        if any(w in c.lower() for w in ("interrupt", "suspend", "abandon", "weather", "rain", "storm", "light", "crowd", "fan")):
+            return c[:60]
+    return None
+
+
+def _mk(kind, lg, gid, date, st, t, hs, as_, period, lines, rnd, slong=None, reason=None):
     try:
         start = datetime.fromisoformat(str(date).replace("Z", "+00:00")).astimezone(SEOUL)
     except Exception:
@@ -120,7 +134,8 @@ def _mk(kind, lg, gid, date, st, t, hs, as_, period, lines, rnd):
     return {"home_en": hen, "away_en": aen,"key": f"{kind}:{lg}:{gid}", "id": gid, "kind": kind, "league": lg, "start": start.isoformat(), "status": st,
             "home": hn, "away": an, "home_id": h.get("id"), "away_id": a.get("id"),
             "home_logo": h.get("logo"), "away_logo": a.get("logo"), "home_score": hs, "away_score": as_,
-            "period": period, "lines": lines, "label": LEAGUES[(kind, lg)], "round": rnd}
+            "period": period, "lines": lines, "label": LEAGUES[(kind, lg)], "round": rnd,
+            "status_long": slong, "halt_reason": reason}
 
 
 def standings(kind, league):
