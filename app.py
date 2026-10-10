@@ -12,9 +12,25 @@ app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024      # 요청 본문 16KB 까지
 app.register_blueprint(chat.bp)
 
+# ---------- 회원 / 관리자 ----------
+import os, secrets, logging
+import members
+_sk = os.environ.get("SECRET_KEY", "").strip()
+if not _sk:
+    logging.getLogger("app").warning("SECRET_KEY 없음: 임시 키 사용 (재시작 시 로그인 풀림)")
+    _sk = secrets.token_hex(32)
+app.config.update(SECRET_KEY=_sk, SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax",
+                  SESSION_COOKIE_SECURE=os.environ.get("INSECURE_COOKIES") != "1",
+                  SESSION_COOKIE_NAME="tw_s", PERMANENT_SESSION_LIFETIME=timedelta(days=14))
+app.register_blueprint(members.bp)
+try:
+    members.init_db()
+except Exception:
+    logging.getLogger("app").exception("member DB init failed")
+
 # ---------- 보안: IP별 요청 제한 ----------
 # (경로 접두어, 1분 최대). 캐시에서 나가는 폴링은 같은 와이파이·통신사 공유 IP 를 고려해 넉넉히.
-RATE = [("/api/preview/", 20), ("/api/vote", 60), ("/api/chat", 300), ("/api/games", 300), ("/api/", 120), ("/game/", 60)]
+RATE = [("/admin", 120), ("/api/preview/", 20), ("/api/vote", 60), ("/api/chat", 300), ("/api/games", 300), ("/api/", 120), ("/game/", 60)]
 _rl, _rl_lock = {}, threading.Lock()
 
 
@@ -331,16 +347,6 @@ def api_vote():
         _voted[ik] = now
     insights.add(key, side)
     return jsonify({"ok": True, "counts": insights.counts([key])[key]})
-
-
-@app.route("/login")
-def login():
-    return render_template("soon.html", page="login", what="로그인")
-
-
-@app.route("/signup")
-def signup():
-    return render_template("soon.html", page="signup", what="회원가입")
 
 
 @app.route("/standings")

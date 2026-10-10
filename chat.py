@@ -21,6 +21,8 @@ _online = {}                    # room -> {cid: ts}
 _seq = [0]
 _hist = {}                      # key -> deque(ts)  (rate limit)
 _viol = {}                      # ip -> deque(ts)
+_guest = {}                     # 비회원 하루 채팅 수 "g|YYYYMMDD|ip:x"
+GUEST_MAX = 5
 _mute = {}                      # "ip:x" / "nick:x" -> until ts
 _dirty = [0.0]
 
@@ -279,7 +281,28 @@ def post(room):
     ip = _ip()
     now = time.time()
     tag = _tag(ip)
-    err = check_nick(nick)
+    import members
+    from flask import session
+    mem = None
+    try:
+        mem = members.current()
+    except Exception:
+        mem = None
+    if mem:
+        nick, tag = mem["nick"], "회원"
+        err = None
+    else:
+        err = check_nick(nick)
+        if not err and members.member_nick_taken(nick):
+            err = "회원이 쓰는 닉네임이에요. 다른 닉네임을 쓰거나 로그인해 주세요."
+    if not err and not mem:
+        day = time.strftime("%Y%m%d", time.gmtime(now + 9 * 3600))
+        cid = re.sub(r"[^0-9a-f]", "", str(body.get("cid") or ""))[:32] or "-"
+        with _lock:
+            ks = ["g|" + day + "|ip:" + ip, "g|" + day + "|cid:" + cid]
+            if any(_guest.get(k, 0) >= GUEST_MAX for k in ks):
+                return jsonify({"ok": False, "code": "guest_limit",
+                                "error": "비회원은 하루 5번까지 채팅할 수 있어요. 회원가입 후 계속 채팅하세요"}), 403
     if err:
         return jsonify({"ok": False, "error": err}), 400
     if not text:
@@ -300,6 +323,11 @@ def post(room):
         _seq[0] += 1
         m = {"id": _seq[0], "nick": nick, "tag": tag, "text": text, "ts": int(now), "iph": _iph(ip), "ip": ip}
         msgs.append(m)
+        if not mem:
+            if len(_guest) > 100000:
+                _guest.clear()
+            for k in ks:
+                _guest[k] = _guest.get(k, 0) + 1
         _save_soon()
     return jsonify({"ok": True, "message": _public(m)})
 

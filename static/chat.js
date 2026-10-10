@@ -3,7 +3,7 @@
 const LS='tw_nick',CID_K='tw_cid';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function cid(){let c=localStorage.getItem(CID_K);if(!c){c=Array.from(crypto.getRandomValues(new Uint8Array(8)),b=>b.toString(16).padStart(2,'0')).join('');localStorage.setItem(CID_K,c)}return c}
-function me(){try{return JSON.parse(localStorage.getItem(LS)||'null')}catch(e){return null}}
+function me(){if(window.TW_ME)return {nick:window.TW_ME,tag:'회원',mem:1};try{return JSON.parse(localStorage.getItem(LS)||'null')}catch(e){return null}}
 function hm(ts){const d=new Date(ts*1000);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
 function mount(el,room,opt){
  opt=opt||{};let last=0,timer=null,active=!opt.lazy,busy=false;
@@ -13,12 +13,13 @@ function mount(el,room,opt){
  <div class="ch-err"></div>
  <form class="ch-nick"><input maxlength="12" placeholder="닉네임 (2~12자)" required><button>입장</button></form>
  <form class="ch-form"><span class="ch-me"></span><input maxlength="200" placeholder="메시지 입력 (200자)" autocomplete="off"><button aria-label="보내기">보내기</button></form>
+ <div class="ch-gl" hidden><p>비회원은 하루 5번까지 채팅할 수 있어요. 회원가입 후 계속 채팅하세요</p><div><a class="ch-glb" href="/login?next=${encodeURIComponent(location.pathname)}">로그인</a><a class="ch-glb pri" href="/signup">회원가입</a></div></div>
  <p class="ch-rule">링크·연락처·욕설·홍보는 자동 차단돼요.</p>`;
  const list=el.querySelector('.ch-list'),err=el.querySelector('.ch-err'),nf=el.querySelector('.ch-nick'),mf=el.querySelector('.ch-form');
  const showErr=t=>{err.textContent=t||'';err.style.display=t?'block':'none';if(t)setTimeout(()=>{if(err.textContent===t)showErr('')},4000)};
  function setMode(){const m=me();nf.style.display=m?'none':'flex';mf.style.display=m?'flex':'none';if(m)el.querySelector('.ch-me').innerHTML=`${esc(m.nick)}<small>#${esc(m.tag)}</small>`}
  setMode();
- el.querySelector('.ch-me').onclick=()=>{if(confirm('닉네임을 바꿀까요?')){localStorage.removeItem(LS);setMode()}};
+ el.querySelector('.ch-me').onclick=()=>{if(window.TW_ME){location.href='/me';return}if(confirm('닉네임을 바꿀까요?')){localStorage.removeItem(LS);setMode()}};
  nf.onsubmit=e=>{e.preventDefault();const v=nf.querySelector('input').value.trim();
   if(!/^[0-9A-Za-z가-힣_]{2,12}$/.test(v)){showErr('닉네임은 2~12자 한글·영문·숫자로 해 주세요.');return}
   localStorage.setItem(LS,JSON.stringify({nick:v,tag:String(Math.floor(1000+Math.random()*9000))}));setMode();mf.querySelector('input').focus()};
@@ -40,8 +41,9 @@ function mount(el,room,opt){
  mf.onsubmit=async e=>{e.preventDefault();const inp=mf.querySelector('input'),t=inp.value.trim(),m=me();if(!t||!m)return;
   const b=mf.querySelector('button');b.disabled=true;
   try{const r=await fetch(`/api/chat/${room}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nick:m.nick,tag:m.tag,text:t,cid:cid()})});
-   const j=await r.json();if(j.ok){if(j.message.tag!==m.tag){m.tag=j.message.tag;try{localStorage.setItem(LS,JSON.stringify(m))}catch(_){}setMode()}inp.value='';add([j.message]);last=Math.max(last,j.message.id);list.scrollTop=list.scrollHeight}else showErr(j.error||'보내지 못했어요.')}
+   const j=await r.json();if(j.ok){if(j.message.tag!==m.tag){m.tag=j.message.tag;try{localStorage.setItem(LS,JSON.stringify(m))}catch(_){}setMode()}inp.value='';add([j.message]);last=Math.max(last,j.message.id);list.scrollTop=list.scrollHeight}else if(j.code==='guest_limit')guestLimit();else showErr(j.error||'보내지 못했어요.')}
   catch(e){showErr('연결이 불안정해요.')}setTimeout(()=>b.disabled=false,2000)};
+ function guestLimit(){mf.style.display='none';nf.style.display='none';el.querySelector('.ch-gl').hidden=false}
  if(opt.close)el.querySelector('.ch-x').onclick=opt.close;
  function start(){active=true;poll();clearInterval(timer);timer=setInterval(poll,2500)}
  function stop(){active=false;clearInterval(timer)}

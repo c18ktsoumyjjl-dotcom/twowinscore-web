@@ -15,3 +15,12 @@ services:
         value: /tmp/twowinscore-cache
       - key: API_SPORTS_KEY
         sync: false   # Render 대시보드에서 직접 입력 (저장소에 넣지 않음)
+      # 회원/관리자 (값은 Render 대시보드에서 직접 입력, 저장소에 넣지 않음)
+      - key: SECRET_KEY
+        sync: false
+      - key: MEMBER_ENC_KEY
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DATA_DIR        # Render Disk 마운트 경로. Postgres 를 쓰면 DATABASE_URL 을 대신 설정
+        value: /var/data

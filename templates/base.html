@@ -1,13 +1,13 @@
-{% from "_nav.html" import topnav %}<!doctype html><html lang="ko" data-theme="dark"><head><meta charset="utf-8">
+{% from "_nav.html" import topnav with context %}<!doctype html><html lang="ko" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1630">
 <link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="투윈스코어 TWOWIN">
 <script>try{var t=localStorage.getItem('tw_theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="canonical" href="https://twowinscore.com/"><meta property="og:url" content="https://twowinscore.com/"><meta property="og:title" content="투윈스코어 TWOWIN"><meta name="twitter:title" content="투윈스코어 TWOWIN"><title>투윈스코어 TWOWIN</title>
-<link rel="stylesheet" href="/static/style.css?v=48"><link rel="stylesheet" href="/static/m.css?v=2"></head><body class="{% block bodycls %}{% endblock %}" data-page="{{page}}">
+<link rel="stylesheet" href="/static/style.css?v=49"><link rel="stylesheet" href="/static/m.css?v=2"><link rel="stylesheet" href="/static/mem.css?v=1">{% block head %}{% endblock %}</head><body class="{% block bodycls %}{% endblock %}" data-page="{{page}}">{% if me %}<script>window.TW_ME={{me.nick|tojson}}</script>{% endif %}
 <script>if(matchMedia('(max-width:767px),(max-width:1023px) and (pointer:coarse)').matches)document.body.classList.add('mapp')</script>
-<div class="mh" id="mh"><div class="mtop"><a class="logo" href="/"><span class="w">Twowin</span><span class="s">SCORE</span></a><div class="mic" id="mic"><button class="mbtn" id="msq" aria-label="팀 검색" hidden><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button></div></div></div>
+<div class="mh" id="mh"><div class="mtop"><a class="logo" href="/"><span class="w">Twowin</span><span class="s">SCORE</span></a><div class="mic" id="mic"><a class="mbtn mme" href="{{'/me' if me else '/login'}}" aria-label="{{'내 정보' if me else '로그인'}}">{% if me %}<span class="mmn">{{me.nick}}</span>{% else %}<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>{% endif %}</a><button class="mbtn" id="msq" aria-label="팀 검색" hidden><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button></div></div></div>
 <div class="mptr" id="mptr" aria-hidden="true"><i></i></div>
 {% block hero %}{% endblock %}{% block header %}<header><div class="wrap top"><a class="logo" href="/"><span class="w">Twowin</span><span class="s">SCORE</span></a>
 {{ topnav(page) }}
@@ -15,7 +15,7 @@
 <main class="wrap">{% block body %}{% endblock %}</main>
 <footer class="wrap"><a class="tg" href="https://t.me/twowinscore" target="_blank" rel="noopener">📢 텔레그램 채널 t.me/twowinscore</a>
 <p>API-Sports · MLB 공식 일정 · NBA/MLB 공식 부상 정보 기준. 확인된 정보만 표시해요. 시간은 한국시간(KST).</p>
-<p class="credit">입장 효과음(CC0): 호루라기 SpliceSound · 관중 함성 itmightgetloud "Millerntor Stadium Crowd Reaction Goal" (Freesound) — 편집함</p></footer>
+<p><a href="/privacy" class="pv">개인정보처리방침</a></p><p class="credit">입장 효과음(CC0): 호루라기 SpliceSound · 관중 함성 itmightgetloud "Millerntor Stadium Crowd Reaction Goal" (Freesound) — 편집함</p></footer>
 <script>document.getElementById('theme').onclick=function(){var r=document.documentElement,n=r.dataset.theme==='dark'?'light':'dark';r.dataset.theme=n;try{localStorage.setItem('tw_theme',n)}catch(e){}}</script>
 <script>(function(){const sb=document.getElementById('sbar');const f=()=>{document.body.classList.toggle('scrolled',scrollY>8);if(sb)sb.classList.toggle('stuck',sb.getBoundingClientRect().top<=0.5&&scrollY>40);document.body.classList.toggle('sstuck',!!sb&&sb.classList.contains('stuck'))};addEventListener('scroll',f,{passive:true});f()})()</script>
 <script>(function(){var vv=window.visualViewport,r=document.documentElement;function u(){var h=vv?vv.height:innerHeight,t=vv?vv.offsetTop:0;r.style.setProperty('--vvh',h+'px');r.style.setProperty('--vvt',t+'px')}u();if(vv){vv.addEventListener('resize',u);vv.addEventListener('scroll',u)}addEventListener('resize',u);})()</script><script src="/static/sheet.js?v=42" defer></script>

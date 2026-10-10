@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% from "_nav.html" import topnav %}{% block bodycls %}has-hero detail6{% endblock %}
+{% extends "base.html" %}{% from "_nav.html" import topnav with context %}{% block bodycls %}has-hero detail6{% endblock %}
 {% block header %}<div class="sb6" id="sb6" aria-hidden="true"><div class="sb6in"><span class="n">{{g.L.name}}</span><b id="bL">{{g.L.score if g.L.score is not none else ''}}</b><span class="st" id="bB">{% if g.state=='live' %}<i class="pill">● LIVE {{g.badge}}</i>{% else %}{{g.badge if g.state!='scheduled' else 'vs'}}{% endif %}</span><b id="bR">{{g.R.score if g.R.score is not none else ''}}</b><span class="n">{{g.R.name}}</span></div></div>
 <div class="hero5 hero6"><picture><source media="(max-width:700px)" type="image/webp" srcset="/static/band_1x.webp 1440w, /static/band_2x.webp 2560w" sizes="100vw"><source type="image/webp" srcset="/static/band_1x.webp 1440w, /static/band_2x.webp 2560w" sizes="100vw"><img src="/static/band_1x.jpg" alt="TwowinSCORE"></picture>
 <div class="hero-nav">{{ topnav("game") }}<span class="snd"><button class="theme" id="sndBtn" aria-label="알림음"></button><div class="sndm" id="sndMenu" hidden><button data-m="fav">즐겨찾기만</button><button data-m="all">전체 경기</button><button data-m="off">끄기</button></div></span><button class="theme" id="theme" aria-label="화면 모드">◐</button></div></div>
@@ -38,7 +38,7 @@
 </div><aside class="dchat" id="dchat"><div class="grab" id="grab"></div><section class="box chatbox" id="gamechat"></section></aside></div>
 <div class="shade" id="shade"></div><button class="fab cfab" id="cfab">💬 채팅 <span id="unread"></span></button>
 {% endblock %}
-{% block js %}<button class="sndhint" id="sndHint" hidden>소리 켜기</button><script src="/static/sound.js?v=11"></script><script src="/static/chat.js?v=4"></script><link rel="stylesheet" href="/static/ins.css?v=4"><script src="/static/vote.js?v=4"></script><script>TWVote.scan()</script><link rel="stylesheet" href="/static/gm7.css?v=1"><script src="/static/gm7.js?v=1"></script><script>(function(){const W=matchMedia('(min-width:1024px)'),body=document.body,un=document.getElementById('unread');let n=0;
+{% block js %}<button class="sndhint" id="sndHint" hidden>소리 켜기</button><script src="/static/sound.js?v=11"></script><script src="/static/chat.js?v=6"></script><link rel="stylesheet" href="/static/ins.css?v=4"><script src="/static/vote.js?v=4"></script><script>TWVote.scan()</script><link rel="stylesheet" href="/static/gm7.css?v=1"><script src="/static/gm7.js?v=1"></script><script>(function(){const W=matchMedia('(min-width:1024px)'),body=document.body,un=document.getElementById('unread');let n=0;
 const isOpen=()=>body.classList.contains('sheet');
 function openS(){body.classList.add('sheet');n=0;un.textContent='';}
 function closeS(){body.classList.remove('sheet');document.getElementById('dchat').style.transform=''}

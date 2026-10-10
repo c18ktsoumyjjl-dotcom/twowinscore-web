@@ -17,3 +17,5 @@ secrets*
 shoot*.py
 test_sound.py
 web.log
+data/
+render_secrets.txt
