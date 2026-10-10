@@ -1,5 +1,9 @@
 """Shared helpers for 투윈스코어 bot. Never prints/logs secret values."""
 import os, json, time, urllib.request, urllib.parse, urllib.error
+try:
+    import apilimit  # noqa: F401  API-Sports 분당 한도 보호(urlopen 감쌈)
+except Exception:
+    pass
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 LOG_PATH = os.path.join(BASE, "score.log")

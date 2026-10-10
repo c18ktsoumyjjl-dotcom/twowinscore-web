@@ -123,6 +123,7 @@ def _sport_day(kind, day, today):
             ttl = 60
         else:
             ttl = TTL_IDLE
+        ttl *= 1 + (sum(map(ord, name)) % 17) / 100   # 종목/날짜마다 만료를 조금씩 엇갈리게(한꺼번에 새로 받지 않게)
         if now - c["ts"] < ttl:
             return [_de(g) for g in games], c.get("ok", False)
     with _flight(name):
