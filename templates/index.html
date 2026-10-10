@@ -80,12 +80,14 @@ document.getElementById('cal').onchange=e=>{if(e.target.value)location.href='/?d
 async function load(){try{const r=await fetch('/api/games?d='+D,{cache:'no-store'});DATA=await r.json();render();if(OPEN&&Date.now()-(PV[OPEN+'@']||0)>30000&&DATA.games.some(g=>g.key===OPEN&&g.state==='live'))loadPv(OPEN)}catch(e){document.getElementById('status').textContent='연결이 불안정해요. 다시 시도 중…'}}
 const LG=document.getElementById('lounge'),FAB=document.getElementById('chatFab');let CH=null;
 const fabN=n=>document.getElementById('fabN').textContent=n?n+'명':'';
-function openChat(){document.body.classList.add('chat-open');LG.hidden=false;FAB.hidden=true;if(!CH)CH=TWChat.mount(LG,'lounge',{title:'💬 라운지 채팅',close:closeChat,lazy:true,onOnline:fabN});CH.start();localStorage.setItem('tw_chat_open','1')}
+const DW=matchMedia('(min-width:1024px)');
+function openChat(){if(!DW.matches)return;document.body.classList.add('chat-open');LG.hidden=false;FAB.hidden=true;if(!CH)CH=TWChat.mount(LG,'lounge',{title:'💬 라운지 채팅',close:closeChat,lazy:true,onOnline:fabN});CH.start();localStorage.setItem('tw_chat_open','1')}
 function closeChat(){document.body.classList.remove('chat-open');LG.hidden=true;FAB.hidden=false;CH&&CH.stop();localStorage.setItem('tw_chat_open','0')}
 FAB.onclick=openChat;
-async function ping(){if(!LG.hidden||document.hidden)return;try{const j=await (await fetch('/api/chat-online?cid='+TWChat.cid())).json();fabN(j.online)}catch(e){}}
+async function ping(){if(!DW.matches||!LG.hidden||document.hidden)return;try{const j=await (await fetch('/api/chat-online?cid='+TWChat.cid())).json();fabN(j.online)}catch(e){}}
 ping();setInterval(ping,20000);
-if(localStorage.getItem('tw_chat_open')==='1'||(innerWidth>=1100&&localStorage.getItem('tw_chat_open')!=='0'))openChat();
+if(DW.matches&&(localStorage.getItem('tw_chat_open')==='1'||(innerWidth>=1100&&localStorage.getItem('tw_chat_open')!=='0')))openChat();
+DW.addEventListener('change',e=>{if(!e.matches&&!LG.hidden)closeChat()});
 load();setInterval(()=>{if(!document.hidden)load()},5000);
 
 (function(){const c=document.getElementById('chips'),w=document.getElementById('chipwrap'),L=document.getElementById('chL'),R=document.getElementById('chR');

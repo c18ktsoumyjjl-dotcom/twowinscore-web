@@ -475,3 +475,6 @@ body.chlock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
  .chbar .cb-n{background:var(--or);color:#fff;border-radius:10px;font-size:12px;font-weight:800;padding:2px 7px}.chbar .cb-n:empty{display:none}
  .chbar .cb-x{width:36px;height:36px;border:0;border-radius:10px;background:transparent;color:var(--mu);font-size:16px}
 }
+
+/* v45: 모바일 홈 라이브챗 제거 */
+@media(max-width:1023px){#chatFab,#lounge{display:none!important}}
