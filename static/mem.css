@@ -135,3 +135,11 @@ body.adm:not(.mopen) .side{display:flex}body.adm.mopen .side{flex-direction:colu
 .apage{max-width:none}.apage .flash{max-width:none;box-sizing:border-box}
 .at.aadm td.act{display:table-cell;white-space:nowrap}.at.aadm td.act form{display:inline-flex;margin:0 2px 0 0;vertical-align:middle}.adm .sinp{width:120px}
 .fcard+.fcard{margin-top:12px}.at.aadm td.act{white-space:normal;min-width:330px}.at.aadm td.act form{margin:2px 2px 2px 0}
+
+.nkp{display:inline-block;padding:1px 7px;border-radius:999px;font-weight:800;line-height:1.35;vertical-align:0;letter-spacing:-.01em}
+.nkp.t3{background:linear-gradient(180deg,#ff8f3a,#f26a0c);color:#fff;text-shadow:0 1px 0 rgba(120,40,0,.45);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18),0 1px 2px rgba(0,0,0,.3)}
+.nkp.t4{background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.6) 45%,transparent 60%) -150% 0/250% 100% no-repeat,linear-gradient(135deg,#fff1a8 0%,#f7c843 35%,#d99a12 70%,#f6d566 100%);color:#2a1c00;box-shadow:inset 0 0 0 1px rgba(255,248,200,.55),0 0 6px rgba(247,200,67,.35),0 1px 2px rgba(0,0,0,.3);animation:nkps 3.2s ease-in-out infinite}
+@keyframes nkps{0%,55%{background-position:150% 0,0 0}100%{background-position:-150% 0,0 0}}
+@media (prefers-reduced-motion:reduce){.nkp.t4{animation:none}}
+.ch-m.mine .ch-n .nkp.t3{color:#fff}.ch-m.mine .ch-n .nkp.t4{color:#2a1c00}
+.nkp+small{margin-left:4px!important}
