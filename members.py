@@ -370,6 +370,9 @@ def signup():
     return render_template("member.html", page="signup", mode="signup", f=f, errs=errs, pv=pv_on(), pv_done=bool(ph_ok(f["phone"])))
 
 
+_DUMMY_PW = generate_password_hash("dummy-" + os.urandom(8).hex())
+
+
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     if not enabled():
@@ -384,8 +387,9 @@ def login():
             errs.append("로그인 시도가 너무 많아요. 잠시 뒤에 다시 해 주세요.")
         else:
             r = q("SELECT id, pw, status FROM members WHERE login_id=?", (lid,), one=True)
-            if not r or not check_password_hash(r[1], request.form.get("pw", "")):
-                errs.append("아이디 또는 비밀번호가 맞지 않아요.")
+            ok_pw = check_password_hash(r[1] if r else _DUMMY_PW, request.form.get("pw", ""))  # 없는 아이디도 같은 시간 소요
+            if not r or not ok_pw:
+                errs.append("아이디 또는 비밀번호가 올바르지 않습니다")
             elif r[2] != "active":
                 errs.append("이용이 정지된 계정이에요. 고객센터로 문의해 주세요.")
             else:
@@ -683,11 +687,11 @@ def admin_login():
             err = "시도가 너무 많아요. 잠시 뒤에 다시 해 주세요."
         elif not pre:
             r = q("SELECT id, pw FROM admins WHERE username=?", (u,), one=True)
-            if r and check_password_hash(r[1], request.form.get("pw", "")):
+            if check_password_hash(r[1] if r else _DUMMY_PW, request.form.get("pw", "")) and r:
                 session["adm_pre"] = {"id": r[0], "u": u, "t": time.time()}
                 return redirect("/admin/login")
             if not r: check_password_hash(ADMIN_HASH or generate_password_hash("x"), "dummy")
-            err = "5번 틀려서 15분 동안 잠겼어요." if _fail_hit(keys) else "아이디 또는 비밀번호가 맞지 않아요."
+            err = "5번 틀려서 15분 동안 잠겼어요." if _fail_hit(keys) else "아이디 또는 비밀번호가 올바르지 않습니다"
             alog("login_fail", u[:30]); log.warning("admin login fail ip=%s", ip())
         else:
             code = request.form.get("code", "")

@@ -19,3 +19,4 @@ test_sound.py
 web.log
 data/
 render_secrets.txt
+octomo_secret.txt
