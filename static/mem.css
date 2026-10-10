@@ -58,3 +58,10 @@ body.adm{--bg:#0b1630;--bg2:#0f1d40;--card:#14264f;--line:#22386b;--or:#ff7a1a;-
 body.adm:not(.mopen) .side{display:flex}body.adm.mopen .side{flex-direction:column;position:static}}
 /* site banner */
 .tw-ban{display:block;position:relative;z-index:60;padding:9px 14px;text-align:center;color:#fff;font-weight:700;font-size:14px;line-height:1.4;text-decoration:none}.tw-ban:hover{filter:brightness(1.08)}
+.lvb{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:800;line-height:17px;color:#fff;background:var(--c,#8a94a6);letter-spacing:-.2px;vertical-align:1px;white-space:nowrap}
+.lv-card{border:1px solid rgba(255,122,26,.35);border-radius:14px;padding:14px 16px;margin:12px 0 16px;background:rgba(20,32,64,.04)}
+.lv-top{display:flex;align-items:center;gap:10px}.lv-top .lvb{font-size:13px;padding:3px 11px}.lv-top b{font-size:18px}.lv-top small{margin-left:auto;opacity:.75}
+.lv-bar{height:10px;border-radius:6px;background:rgba(128,140,160,.25);overflow:hidden;margin:10px 0 6px}.lv-bar i{display:block;height:100%;background:linear-gradient(90deg,#ff7a1a,#ffb054);border-radius:6px}
+.lv-how{font-size:12px;opacity:.65;margin:6px 0 0}
+.lv-toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-30px);opacity:0;z-index:9999;background:#13254a;color:#fff;border:2px solid #ff7a1a;border-radius:14px;padding:12px 20px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:.35s;text-align:center}
+.lv-toast.on{opacity:1;transform:translate(-50%,0)}.lv-toast em{display:block;font-style:normal;color:#ff9a4a;font-size:12px;letter-spacing:2px}

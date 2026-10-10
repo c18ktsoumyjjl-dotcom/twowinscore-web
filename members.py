@@ -155,7 +155,26 @@ def csrf_token():
 
 @bp.app_context_processor
 def _ctx():
-    return {"csrf_token": csrf_token, "me": current()}
+    m = current()
+    lv = promo = None
+    if m:
+        import levels
+        lv = levels.info(m["id"])
+        if lv and lv["i"] > lv["seen"] and request.method == "GET":
+            promo = lv; levels.mark_seen(m["id"], lv["i"])
+    return {"csrf_token": csrf_token, "me": m, "lv": lv, "lv_promo": promo}
+
+
+@bp.before_app_request
+def _lv_visit():
+    if request.method != "GET" or request.path.startswith(("/static", "/api", "/admin")):
+        return
+    m = current()
+    if m:
+        d = datetime.now(KST).strftime("%Y-%m-%d")
+        if session.get("lvd") != d:
+            import levels
+            levels.award(m["id"], "visit"); session["lvd"] = d
 
 
 @bp.before_app_request
@@ -778,11 +797,14 @@ def admin():
     total = q(f"SELECT COUNT(*) FROM members {where}", args, one=True)[0]
     rows = q(f"SELECT id,login_id,nick,name_e,phone_e,birth_e,tg,status,created_at,last_login FROM members {where} ORDER BY id DESC LIMIT {PER} OFFSET {(page - 1) * PER}", args)
     ms = []
+    import levels
+    lvp = levels.many([r[0] for r in rows])
     for r in rows:
         nm, ph, bd = dec(r[3]), dec(r[4]), dec(r[5])
         ms.append({"id": r[0], "login_id": r[1], "nick": r[2], "name": nm[0] + "*" * (len(nm) - 1),
                    "phone": mask_phone(ph) if ph[:1] == "0" else ph, "birth": bd[:4] + "-**-**",
-                   "tg": r[6], "status": r[7], "created": r[8][:16], "last": (r[9] or "")[:16]})
+                   "tg": r[6], "status": r[7], "created": r[8][:16], "last": (r[9] or "")[:16],
+                   "pts": lvp.get(r[0], 0), "tier": levels.TIERS[levels.tier_of(lvp.get(r[0], 0))]})
     today = datetime.now(KST).strftime("%Y-%m-%d")
     stats = {"total": q("SELECT COUNT(*) FROM members", one=True)[0],
              "today": q("SELECT COUNT(*) FROM members WHERE created_at LIKE ?", (today + "%",), one=True)[0],
@@ -817,6 +839,21 @@ def admin_act(mid, act):
     else:
         abort(400)
     alog(act, mid)
+    return redirect(request.referrer if (request.referrer or "").startswith(request.host_url + "admin") else "/admin")
+
+
+@bp.post("/admin/member/<int:mid>/points")
+@admin_required
+def admin_points(mid):
+    import levels
+    try:
+        d = int(request.form.get("delta", "0"))
+    except ValueError:
+        d = 0
+    if d and -100000 <= d <= 100000 and q("SELECT 1 FROM members WHERE id=?", (mid,), one=True):
+        new = levels.admin_set(mid, d)
+        alog("points %+d -> %d" % (d, new), mid)
+        flash(f"#{mid} 점수 {d:+d} → {new}점")
     return redirect(request.referrer if (request.referrer or "").startswith(request.host_url + "admin") else "/admin")
 
 

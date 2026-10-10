@@ -148,6 +148,8 @@ def _rate_ok(keys, now):
 
 def _public(m):
     d = {"id": m["id"], "nick": m["nick"], "tag": m["tag"], "text": m["text"], "ts": m["ts"]}
+    if m.get("lv"):
+        d["lv"] = m["lv"]
     if m.get("src") == "tg":
         d["src"] = "tg"
     return d
@@ -322,6 +324,7 @@ def post(room):
             return jsonify({"ok": False, "error": rl}), 429
         _seq[0] += 1
         m = {"id": _seq[0], "nick": nick, "tag": tag, "text": text, "ts": int(now), "iph": _iph(ip), "ip": ip}
+        mem_ok = True
         msgs.append(m)
         if not mem:
             if len(_guest) > 100000:
@@ -329,7 +332,20 @@ def post(room):
             for k in ks:
                 _guest[k] = _guest.get(k, 0) + 1
         _save_soon()
-    return jsonify({"ok": True, "message": _public(m)})
+    promo = None
+    if mem:
+        import levels
+        promo = levels.award(mem["id"], "chat")
+        li = levels.info(mem["id"])
+        if li:
+            m["lv"] = [li["name"], li["color"]]
+        if promo is not None:
+            levels.mark_seen(mem["id"], promo)
+    out = {"ok": True, "message": _public(m)}
+    if promo is not None:
+        import levels
+        out["promo"] = levels.TIERS[promo][0]
+    return jsonify(out)
 
 
 # ---------- 응원 (경기별 두 팀 카운터, 메모리) ----------
@@ -367,7 +383,17 @@ def cheer_post(room):
             _cheer.clear()
         c = _cheer.setdefault(room, [0, 0])
         c[0 if side == "L" else 1] += 1
-    return jsonify({"ok": True, "L": c[0], "R": c[1]})
+        res = {"ok": True, "L": c[0], "R": c[1]}
+    try:
+        import members, levels
+        mem = members.current()
+        if mem:
+            pr = levels.award(mem["id"], "cheer", room[:60])
+            if pr is not None:
+                levels.mark_seen(mem["id"], pr); res["promo"] = levels.TIERS[pr][0]
+    except Exception:
+        pass
+    return jsonify(res)
 
 
 # ---------- telegram bridge (lounge <-> 그룹방) ----------
@@ -440,7 +466,7 @@ def bridge_out():
         last = _seq[0]
         if since < 0 or since > last:          # 첫 호출 또는 웹 재시작으로 번호가 줄었음
             return jsonify({"messages": [], "last": last})
-        out = [{"id": m["id"], "nick": m["nick"], "tag": m["tag"], "text": m["text"]}
+        out = [{"id": m["id"], "nick": m["nick"], "tag": (m.get("lv") or [m["tag"]])[0], "text": m["text"]}
                for m in (_rooms.get(BRIDGE_ROOM) or []) if m["id"] > since and m.get("src") != "tg" and now - m["ts"] < 120]
     return jsonify({"messages": out[:50], "last": last})
 

@@ -113,6 +113,8 @@ def member_page(mid):
     if not r:
         abort(404)
     m = {"id": r[0], "login_id": r[1], "nick": r[2], "tg": r[3], "status": r[4], "created": r[5][:16], "last": (r[6] or "")[:16]}
+    import levels
+    m["lv"] = levels.info(mid)
     memos = q("SELECT id, body, admin, created_at FROM member_memo WHERE member_id=? ORDER BY id DESC", (mid,))
     return render_template("admin.html", mode="member", sec="members", m=m, memos=memos)
 

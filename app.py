@@ -28,6 +28,7 @@ app.register_blueprint(admin_ext.bp)
 try:
     members.init_db()
     admin_ext.init_db()
+    import levels; levels.init()
 except Exception:
     logging.getLogger("app").exception("member DB init failed")
 
@@ -415,7 +416,17 @@ def api_vote():
             return jsonify({"ok": False, "dup": True, "counts": insights.counts([key])[key]})
         _voted[ik] = now
     insights.add(key, side)
-    return jsonify({"ok": True, "counts": insights.counts([key])[key]})
+    res = {"ok": True, "counts": insights.counts([key])[key]}
+    try:
+        import levels
+        mem = members.current()
+        if mem:
+            pr = levels.award(mem["id"], "cheer", "v:" + key[:60])
+            if pr is not None:
+                levels.mark_seen(mem["id"], pr); res["promo"] = levels.TIERS[pr][0]
+    except Exception:
+        pass
+    return jsonify(res)
 
 
 @app.route("/standings")

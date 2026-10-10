@@ -20,7 +20,7 @@ async function scan(root,lazy){const els=[...(root||document).querySelectorAll('
  els.forEach(paint)}
 document.addEventListener('click',async e=>{const b=e.target.closest('.vt8btn');if(!b)return;e.preventDefault();e.stopPropagation();
  const el=b.closest('.vt8'),k=el.dataset.k,s=b.dataset.s;if(mine()[k])return;b.disabled=true;
- try{const r=await fetch('/api/vote?d='+(new URLSearchParams(location.search).get('d')||''),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({k,s})});const j=await r.json();
+ try{const r=await fetch('/api/vote?d='+(new URLSearchParams(location.search).get('d')||''),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({k,s})});const j=await r.json();if(j.promo&&window.twPromo)twPromo(j.promo);
   if(j.counts){C[k]=j.counts;setMine(k,s)}else{alert(j.error||'잠시 뒤에 다시 시도해 주세요.');if(/마감/.test(j.error||''))el.dataset.open='0'}}catch(err){}
  document.querySelectorAll('.vt8[data-k="'+CSS.escape(k)+'"]').forEach(paint)},true);
 function phtml(pts){if(!pts||!pts.length)return'';return `<div class="ap8"><h4>🤖 AI 경기 포인트</h4>${pts.map(p=>`<p>${esc(p)}</p>`).join('')}<small>기록 기반 자동 요약이며 경기 결과 예측이 아닙니다</small></div>`}

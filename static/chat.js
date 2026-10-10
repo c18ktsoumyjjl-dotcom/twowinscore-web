@@ -28,7 +28,7 @@ function mount(el,room,opt){
   for(const m of ms){if(list.querySelector(`[data-id="${m.id}"]`))continue;const mine=m0&&m.nick===m0.nick&&m.tag===m0.tag;
    const d=document.createElement('div');d.className='ch-m'+(mine?' mine':'');d.dataset.id=m.id;
    d.dataset.ts=m.ts;if(m.src==='tg')d.classList.add('tg');
-   d.innerHTML=(m.src==='tg'?`<span class="ch-n"><b class="ch-tg">TG</b>${esc(m.nick)}</span>`:`<span class="ch-n">${esc(m.nick)}<small>#${esc(m.tag)}</small></span>`)+`<span class="ch-t">${esc(m.text)}</span><time>${hm(m.ts)}</time>`;list.appendChild(d)}
+   d.innerHTML=(m.src==='tg'?`<span class="ch-n"><b class="ch-tg">TG</b>${esc(m.nick)}</span>`:`<span class="ch-n">${m.lv?`<i class="lvb" style="--c:${/^#[0-9a-f]{6}$/i.test(m.lv[1])?m.lv[1]:'#8a94a6'}">${esc(m.lv[0])}</i> `:''}${esc(m.nick)}<small>#${esc(m.tag)}</small></span>`)+`<span class="ch-t">${esc(m.text)}</span><time>${hm(m.ts)}</time>`;list.appendChild(d)}
   if(opt.onNew&&last>0){const n=ms.filter(m=>!(m0&&m.nick===m0.nick&&m.tag===m0.tag)).length;if(n)opt.onNew(n)}
   while(list.children.length>200)list.firstChild.remove();
   if(atBottom||last===0)list.scrollTop=list.scrollHeight}
@@ -41,7 +41,7 @@ function mount(el,room,opt){
  mf.onsubmit=async e=>{e.preventDefault();const inp=mf.querySelector('input'),t=inp.value.trim(),m=me();if(!t||!m)return;
   const b=mf.querySelector('button');b.disabled=true;
   try{const r=await fetch(`/api/chat/${room}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nick:m.nick,tag:m.tag,text:t,cid:cid()})});
-   const j=await r.json();if(j.ok){if(j.message.tag!==m.tag){m.tag=j.message.tag;try{localStorage.setItem(LS,JSON.stringify(m))}catch(_){}setMode()}inp.value='';add([j.message]);last=Math.max(last,j.message.id);list.scrollTop=list.scrollHeight}else if(j.code==='guest_limit')guestLimit();else showErr(j.error||'보내지 못했어요.')}
+   const j=await r.json();if(j.ok){if(j.promo&&window.twPromo)twPromo(j.promo);if(j.message.tag!==m.tag){m.tag=j.message.tag;try{localStorage.setItem(LS,JSON.stringify(m))}catch(_){}setMode()}inp.value='';add([j.message]);last=Math.max(last,j.message.id);list.scrollTop=list.scrollHeight}else if(j.code==='guest_limit')guestLimit();else showErr(j.error||'보내지 못했어요.')}
   catch(e){showErr('연결이 불안정해요.')}setTimeout(()=>b.disabled=false,2000)};
  function guestLimit(){mf.style.display='none';nf.style.display='none';el.querySelector('.ch-gl').hidden=false}
  if(opt.close)el.querySelector('.ch-x').onclick=opt.close;
