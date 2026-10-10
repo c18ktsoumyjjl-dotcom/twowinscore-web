@@ -304,6 +304,44 @@ def post(room):
     return jsonify({"ok": True, "message": _public(m)})
 
 
+# ---------- 응원 (경기별 두 팀 카운터, 메모리) ----------
+_cheer, _cheer_ip = {}, {}
+_CHEER_RE = re.compile(r"^[A-Za-z0-9_\-]{1,80}$")
+
+
+@bp.get("/api/cheer/<room>")
+def cheer_get(room):
+    if not _CHEER_RE.match(room):
+        abort(404)
+    with _lock:
+        c = _cheer.get(room) or [0, 0]
+    return jsonify({"L": c[0], "R": c[1]})
+
+
+@bp.post("/api/cheer/<room>")
+def cheer_post(room):
+    if not _CHEER_RE.match(room):
+        abort(404)
+    side = (request.get_json(silent=True) or {}).get("side")
+    if side not in ("L", "R"):
+        return jsonify({"ok": False}), 400
+    now, ip = time.time(), _ip()
+    with _lock:
+        if len(_cheer_ip) > 20000:
+            for k in [k for k, t in _cheer_ip.items() if now - t > 5]:
+                del _cheer_ip[k]
+        k = ip + "|" + room
+        if now - _cheer_ip.get(k, 0) < 1.0:
+            c = _cheer.get(room) or [0, 0]
+            return jsonify({"ok": False, "L": c[0], "R": c[1]}), 429
+        _cheer_ip[k] = now
+        if room not in _cheer and len(_cheer) > 3000:
+            _cheer.clear()
+        c = _cheer.setdefault(room, [0, 0])
+        c[0 if side == "L" else 1] += 1
+    return jsonify({"ok": True, "L": c[0], "R": c[1]})
+
+
 # ---------- telegram bridge (lounge <-> 그룹방) ----------
 PHONE_RE = re.compile(r"(\+?\d[\d\s\-\.]{7,}\d)|((공|영)\s*(일|1)\s*(공|영|0)[\s\d공영일이삼사오육칠팔구\-\.]*)")
 URL_STRIP_RE = re.compile(r"(https?://\S+|www\.\S+|t\.me/\S*|telegram\.(me|org)\S*|tg://\S+|\b[a-z0-9-]{2,}\.(com|net|org|kr|co|io|me|ly|gg|xyz|top|site|club|live|tv|link|app|bet|vip|shop)\S*)", re.I)
