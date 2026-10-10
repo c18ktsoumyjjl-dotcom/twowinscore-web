@@ -213,6 +213,88 @@ def now_s():
     return datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
 
 
+# ---------- 휴대폰 인증 (Octomo MO: 회원이 1666-3538로 코드 문자 발송, 서버가 API로 확인) ----------
+OCTOMO_KEY = os.environ.get("OCTOMO_API_KEY", "").strip()
+OCTOMO_URL = "https://api.octoverse.kr/octomo/v1/public/message/exists"
+OCTOMO_NUM = "16663538"
+PV_TTL = 10 * 60
+
+
+def pv_on():
+    return bool(OCTOMO_KEY)
+
+
+def _octomo_exists(phone, text):
+    import json, urllib.request, urllib.error
+    req = urllib.request.Request(OCTOMO_URL, method="POST",
+        data=json.dumps({"mobileNum": phone, "text": text, "withinMinutes": 10}).encode(),
+        headers={"Accept": "application/json", "Content-Type": "application/json", "Authorization": "Octomo " + OCTOMO_KEY})
+    try:
+        with urllib.request.urlopen(req, timeout=8) as r:
+            return bool(json.loads(r.read().decode() or "{}").get("exists")), None
+    except urllib.error.HTTPError as e:
+        log.warning("octomo http %s", e.code)
+        return False, ("잠시 후 다시 시도해 주세요." if e.code == 429 else "인증 서버 오류예요. 잠시 후 다시 시도해 주세요.")
+    except Exception as e:
+        log.warning("octomo err %s", type(e).__name__)
+        return False, "인증 서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요."
+
+
+def _sms_qr(code):
+    import qrcode, base64
+    buf = io.BytesIO(); qrcode.make(f"SMSTO:{OCTOMO_NUM}:{code}", box_size=5, border=2).save(buf, format="PNG")
+    return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
+
+
+@bp.route("/signup/phone/start", methods=["POST"])
+def phone_start():
+    if not (enabled() and pv_on()):
+        return {"ok": False, "msg": "휴대폰 인증을 사용할 수 없어요."}, 400
+    ph = norm_phone(request.form.get("phone"))
+    if not ph or not ph.startswith("010") or len(ph) != 11:
+        return {"ok": False, "msg": "010으로 시작하는 휴대폰 번호를 입력해 주세요."}, 400
+    if limited("pvs|" + ip(), 5, 3600) or limited("pvs|" + phone_hash(ph), 5, 3600):
+        return {"ok": False, "msg": "인증 요청이 너무 많아요. 1시간 뒤에 다시 해 주세요."}, 429
+    if q("SELECT 1 FROM members WHERE phone_h=?", (phone_hash(ph),), one=True):
+        return {"ok": False, "msg": "이미 가입된 휴대폰 번호예요."}, 400
+    code = f"{secrets.randbelow(900000) + 100000}"
+    session["pv"] = {"ph": ph, "code": code, "t": time.time(), "n": 0}
+    session.pop("pv_ok", None)
+    return {"ok": True, "code": code, "to": OCTOMO_NUM, "to_fmt": "1666-3538", "qr": _sms_qr(code),
+            "sms": f"sms:{OCTOMO_NUM}?&body={code}", "ttl": PV_TTL}
+
+
+@bp.route("/signup/phone/check", methods=["POST"])
+def phone_check():
+    pv = session.get("pv")
+    if not (enabled() and pv_on()) or not pv:
+        return {"ok": False, "msg": "먼저 인증 요청을 해 주세요."}, 400
+    if time.time() - pv["t"] > PV_TTL:
+        session.pop("pv", None)
+        return {"ok": False, "msg": "인증 시간이 지났어요. 다시 요청해 주세요."}, 400
+    if pv.get("n", 0) >= 20 or limited("pvc|" + ip(), 30, 600):
+        return {"ok": False, "msg": "확인 시도가 너무 많아요. 잠시 후 다시 해 주세요."}, 429
+    pv["n"] = pv.get("n", 0) + 1; session["pv"] = pv
+    ok, err = _octomo_exists(pv["ph"], pv["code"])
+    if err:
+        return {"ok": False, "msg": err}, 502
+    if not ok:
+        return {"ok": False, "msg": "아직 문자가 확인되지 않았어요. 입력한 번호의 휴대폰으로 코드만 정확히 보내 주세요."}
+    session["pv_ok"] = {"ph": pv["ph"], "t": time.time()}
+    session.pop("pv", None)
+    return {"ok": True, "msg": "휴대폰 인증이 완료됐어요."}
+
+
+def ph_ok(p):
+    ph = norm_phone(p)
+    return pv_on() and ph and _pv_verified(ph)
+
+
+def _pv_verified(ph):
+    v = session.get("pv_ok")
+    return bool(v and v.get("ph") == ph and time.time() - v.get("t", 0) < 30 * 60)
+
+
 # ---------- 회원 ----------
 @bp.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -238,6 +320,7 @@ def signup():
             if not (1 <= len(f["name"]) <= 30) or re.search(r"[<>\d]", f["name"]): errs.append("이름을 정확히 입력해 주세요.")
             ph = norm_phone(f["phone"])
             if not ph: errs.append("휴대폰 번호 형식이 올바르지 않아요. (예: 010-1234-5678)")
+            elif pv_on() and not _pv_verified(ph): errs.append("휴대폰 인증을 완료해 주세요. (인증한 번호와 입력한 번호가 같아야 해요)")
             try:
                 b = date.fromisoformat(f["birth"])
                 if b.year < 1900 or b > datetime.now(KST).date(): raise ValueError
@@ -265,7 +348,7 @@ def signup():
                     r = q("SELECT id FROM members WHERE login_id=?", (lid,), one=True)
                     session.clear(); session.permanent = True; session["uid"] = r[0]
                     return redirect("/me?welcome=1")
-    return render_template("member.html", page="signup", mode="signup", f=f, errs=errs)
+    return render_template("member.html", page="signup", mode="signup", f=f, errs=errs, pv=pv_on(), pv_done=bool(ph_ok(f["phone"])))
 
 
 @bp.route("/login", methods=["GET", "POST"])

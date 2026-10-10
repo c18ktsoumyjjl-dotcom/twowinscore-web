@@ -16,7 +16,23 @@
 <label>비밀번호 확인<input name="pw2" type="password" required autocomplete="new-password"></label>
 <label>닉네임 <small>2~12자, 채팅에 표시</small><input name="nick" value="{{f.nick}}" required minlength="2" maxlength="12"></label>
 <label>이름<input name="name" value="{{f.name}}" required maxlength="30" autocomplete="name"></label>
-<label>휴대폰 번호<input name="phone" value="{{f.phone}}" required inputmode="tel" placeholder="010-1234-5678" autocomplete="tel"></label>
+<label>휴대폰 번호<input name="phone" id="suph" value="{{f.phone}}" required inputmode="tel" placeholder="010-1234-5678" autocomplete="tel"></label>
+{% if pv %}<div class="pv" id="pv"><button type="button" class="mb" id="pvs"{% if pv_done %} hidden{% endif %}>휴대폰 인증하기</button>
+<p class="me-ok" id="pvok"{% if not pv_done %} hidden{% endif %}>휴대폰 인증 완료</p>
+<div id="pvbox" hidden><p class="mm">입력한 번호의 휴대폰으로 아래 <b>인증코드만</b> <b>1666-3538</b>로 문자를 보내 주세요. (10분 이내, 일반 문자 요금)</p>
+<p style="font-size:28px;font-weight:800;letter-spacing:4px;text-align:center" id="pvcode"></p>
+<a class="mb pri" id="pvsms" href="#">문자 앱 열기 (모바일)</a>
+<p class="mm" style="text-align:center">PC라면 휴대폰으로 QR을 찍어 보내세요<br><img id="pvqr" alt="QR" width="160" height="160"></p>
+<button type="button" class="mb pri" id="pvc">문자 보냈어요 · 확인</button></div>
+<p class="me-err" id="pverr" hidden></p></div>
+<script>(function(){var $=function(i){return document.getElementById(i)},tk=document.querySelector('#suf [name=_csrf]').value;
+function post(u,d){var f=new FormData();f.append('_csrf',tk);for(var k in d)f.append(k,d[k]);return fetch(u,{method:'POST',body:f,credentials:'same-origin'}).then(function(r){return r.json()})}
+function err(m){var e=$('pverr');e.textContent=m||'';e.hidden=!m}
+$('suph').addEventListener('input',function(){$('pvok').hidden=true;$('pvs').hidden=false;$('pvbox').hidden=true});
+$('pvs').onclick=function(){err('');post('/signup/phone/start',{phone:$('suph').value}).then(function(j){if(!j.ok)return err(j.msg);
+$('pvcode').textContent=j.code;$('pvsms').href=j.sms;$('pvqr').src=j.qr;$('pvbox').hidden=false;$('pvs').textContent='코드 다시 받기'}).catch(function(){err('네트워크 오류예요.')})};
+$('pvc').onclick=function(){err('');post('/signup/phone/check',{}).then(function(j){if(!j.ok)return err(j.msg);$('pvbox').hidden=true;$('pvs').hidden=true;$('pvok').hidden=false}).catch(function(){err('네트워크 오류예요.')})};
+})();</script>{% endif %}
 <label>생년월일 <small>만 14세 이상</small><input name="birth" type="date" value="{{f.birth}}" required min="1900-01-01"></label>
 <label>텔레그램 아이디 <small>선택</small><input name="tg" value="{{f.tg}}" placeholder="@username" autocapitalize="off"></label>
 <div class="agree"><b>개인정보 수집·이용 동의 (필수)</b>
