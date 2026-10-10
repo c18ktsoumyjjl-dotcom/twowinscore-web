@@ -134,17 +134,35 @@ def period_table(g):
         hv = rows[1]["vals"]
         if g["state"] == "final" and hv and hv[-1] is None and (rows[1]["T"] or 0) > (rows[0]["T"] or 0):
             hv[-1] = "X"
-        return {"cols": cols, "tlab": "R", "ext": ext, "rows": rows}
+        cur = None
+        stc = str(g.get("status") or "")
+        if g["state"] == "live" and stc.startswith("IN") and stc[2:].isdigit() and int(stc[2:]) <= n:
+            cur = int(stc[2:]) - 1
+        return {"cols": cols, "tlab": "R", "ext": ext, "rows": rows, "cur": cur}
     lines = g.get("lines") or []
-    if not lines:
+    k = g["kind"]
+    REG = {"basketball": ["1Q", "2Q", "3Q", "4Q"], "volleyball": ["1세트", "2세트", "3세트", "4세트", "5세트"],
+           "football": ["전반", "후반"], "hockey": ["1P", "2P", "3P"]}.get(k, [])
+    norm = {"basketball": lambda x: f"{x}Q" if str(x).isdigit() else x,
+            "volleyball": lambda x: f"{x}세트" if str(x).isdigit() else x}.get(k, lambda x: x)
+    got = {norm(l[0]): (l[1], l[2]) for l in lines}
+    cols = REG + [c for c in got if c not in REG]          # 정규 구간은 항상, 연장 등은 실제 있을 때만
+    if not cols:
         return None
-    lab = {"basketball": lambda x: x if not str(x).isdigit() else f"{x}Q", "volleyball": lambda x: f"{x}세트" if str(x).isdigit() else x}
-    f = lab.get(g["kind"], lambda x: x)
-    cols = [f(l[0]) for l in lines]
-    tl = "세트" if g["kind"] == "volleyball" else "T"
-    rows = [{"name": g["home"], "vals": [l[1] for l in lines], "T": g.get("home_score"), "ext": [], "home": True},
-            {"name": g["away"], "vals": [l[2] for l in lines], "T": g.get("away_score"), "ext": [], "home": False}]
-    return {"cols": cols, "tlab": tl, "ext": [], "rows": rows}
+    cur = None
+    if g["state"] == "live":
+        stc = str(g.get("status") or "")
+        live_map = {"Q1": "1Q", "Q2": "2Q", "Q3": "3Q", "Q4": "4Q", "OT": "OT", "S1": "1세트", "S2": "2세트", "S3": "3세트",
+                    "S4": "4세트", "S5": "5세트", "1H": "전반", "2H": "후반", "ET": "연장", "P": "승부차기",
+                    "P1": "1P", "P2": "2P", "P3": "3P", "PT": "SO"}
+        c = live_map.get(stc)
+        if c and c not in cols:
+            cols.append(c)
+        cur = cols.index(c) if c else None
+    tl = "세트" if k == "volleyball" else "T"
+    rows = [{"name": g["home"], "vals": [got.get(c, (None, None))[0] for c in cols], "T": g.get("home_score"), "ext": [], "home": True},
+            {"name": g["away"], "vals": [got.get(c, (None, None))[1] for c in cols], "T": g.get("away_score"), "ext": [], "home": False}]
+    return {"cols": cols, "tlab": tl, "ext": [], "rows": rows, "cur": cur}
 
 
 @app.route("/api/games")

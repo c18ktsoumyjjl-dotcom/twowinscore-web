@@ -176,13 +176,17 @@ def events(g):
         typ, det = e.get("type"), e.get("detail") or ""
         if typ == "Goal":
             kind = "자책골" if "Own" in det else "페널티 골" if "Penalty" in det else "골"
-            if "Missed" in det:
+            if "Missed" in det or det == "Missed Penalty":
                 out.append({"t": f"😱 {minute} {team} {who} 페널티 실축", "hot": False}); continue
             ast = (e.get("assist") or {}).get("name")
             out.append({"t": f"⚽🔥 {minute} {team} {who} {kind}!!" + (f" (도움 {ast})" if ast else ""), "hot": True})
         elif typ == "Card":
             out.append({"t": f"{'🟥' if 'Red' in det else '🟨'} {minute} {team} {who} {'퇴장' if 'Red' in det else '경고'}", "hot": "Red" in det})
+        elif typ == "subst":
+            ast = (e.get("assist") or {}).get("name")
+            out.append({"t": f"🔁 {minute} {team} 선수 교체 · {who}" + (f" ↔ {ast}" if ast else ""), "hot": False})
         elif typ == "Var" and det:
-            out.append({"t": f"📺 {minute} VAR · {det}", "hot": False})
+            out.append({"t": f"📺 {minute} VAR · " + {"Goal cancelled": "골 취소", "Goal Disallowed": "골 취소", "Penalty confirmed": "페널티 확정",
+                 "Penalty cancelled": "페널티 취소", "Card upgrade": "카드 상향", "Goal confirmed": "골 인정"}.get(det, det) + (f" ({team})" if team else ""), "hot": False})
     out.reverse()
     return out

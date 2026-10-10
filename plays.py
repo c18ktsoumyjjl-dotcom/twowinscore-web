@@ -18,7 +18,19 @@ EV_KO = {"home_run": ("홈런", "🔥"), "triple": ("3루타", "💥"), "double"
          "field_out": ("아웃", "⚾"), "force_out": ("포스아웃", "⚾"), "fielders_choice": ("야수선택", "⚾"),
          "fielders_choice_out": ("야수선택", "⚾"), "sac_bunt": ("희생번트", "🎯"), "wild_pitch": ("폭투", "😱"),
          "passed_ball": ("포일", "😱"), "stolen_base_2b": ("도루", "💨"), "balk": ("보크", "😱")}
-SHOW = {"home_run", "triple", "double", "single"}
+EV_KO.update({"strikeout": ("삼진", "🔥"), "strikeout_double_play": ("삼진 병살", "🔥"), "stolen_base_3b": ("3루 도루", "💨"),
+              "stolen_base_home": ("홈스틸", "💨"), "caught_stealing_2b": ("도루 실패", "🚫"), "caught_stealing_3b": ("도루 실패", "🚫"),
+              "caught_stealing_home": ("홈 도루 실패", "🚫"), "pickoff_1b": ("견제사", "🎯"), "pickoff_2b": ("견제사", "🎯"),
+              "pickoff_3b": ("견제사", "🎯"), "double_play": ("병살", "😩"), "triple_play": ("삼중살", "🤯")})
+SHOW = {"home_run", "triple", "double", "single", "walk", "intent_walk", "hit_by_pitch", "strikeout", "strikeout_double_play",
+        "field_error", "grounded_into_double_play", "double_play", "triple_play", "sac_fly", "wild_pitch", "passed_ball", "balk"}
+RUN_EV = {"stolen_base_2b", "stolen_base_3b", "stolen_base_home", "caught_stealing_2b", "caught_stealing_3b",
+          "caught_stealing_home", "pickoff_1b", "pickoff_2b", "pickoff_3b"}
+FUN = {"single": "깔끔한 안타!", "double": "2루타! 장타 터졌어요", "triple": "3루타!! 빠르다", "walk": "볼넷으로 출루",
+       "intent_walk": "고의4구, 승부를 피했어요", "hit_by_pitch": "몸에 맞고 출루 😵", "strikeout": "삼진! 돌려세웠어요",
+       "strikeout_double_play": "삼진 병살! 한 번에 투아웃", "field_error": "상대 실책으로 출루", "grounded_into_double_play": "병살타… 아쉬워요",
+       "double_play": "병살 처리", "triple_play": "삼중살!! 보기 드문 장면", "sac_fly": "희생플라이", "wild_pitch": "폭투!",
+       "passed_ball": "포일!", "balk": "보크!"}
 
 
 def _get(url, timeout=15):
@@ -75,21 +87,42 @@ def _mlb(g):
         ev = res.get("eventType")
         rbi = res.get("rbi") or 0
         scoring = ab.get("isScoringPlay")
+        inn = f"{ab.get('inning')}회{'초' if ab.get('halfInning') == 'top' else '말'}"
+        team = side_name.get(ab.get("halfInning"), "")
+        fteam = side_name.get("bottom" if ab.get("halfInning") == "top" else "top", "")   # 수비 팀
+        # 타석 중 일어난 주루·투수 교체 (playEvents 의 action)
+        for pe in p.get("playEvents") or []:
+            if pe.get("type") != "action":
+                continue
+            d = pe.get("details") or {}
+            pev = d.get("eventType")
+            if pev == "pitching_substitution":
+                import re as _re
+                m = _re.search(r":\s*(.+?)\s+replaces\s+(.+?)\.?$", d.get("description") or "")
+                nm = f"{m.group(1)} 등판 ({m.group(2)} 강판)" if m else ""
+                out.append({"t": f"🔁 {inn} {fteam} 투수 교체" + (f" · {nm}" if nm else ""), "hot": False})
+            elif pev in RUN_EV:
+                nm2, emo2 = EV_KO[pev]
+                runner = (pe.get("player") or {}).get("id")
+                rn = next((r.get("details", {}).get("runner", {}).get("fullName") for r in p.get("runners") or []
+                           if r.get("details", {}).get("runner", {}).get("id") == runner), None)
+                out.append({"t": f"{emo2} {inn} {team if pev.startswith('stolen') or pev.startswith('caught') else team} {rn or ''} {nm2}".replace("  ", " "), "hot": False})
         if ev not in SHOW and not scoring:
             continue
         name, emo = EV_KO.get(ev, (res.get("event") or "플레이", "⚾"))
         batter = (mu.get("batter") or {}).get("fullName")
-        inn = f"{ab.get('inning')}회{'초' if ab.get('halfInning') == 'top' else '말'}"
-        team = side_name.get(ab.get("halfInning"), "")
+        pitcher = (mu.get("pitcher") or {}).get("fullName")
         if ev == "home_run":
             line = f"{emo} {inn} {team} {batter} {'만루 ' if rbi == 4 else ''}홈런!! " + (f"{rbi}점 홈런이에요" if rbi > 1 else "솔로포!")
         elif scoring:
             line = f"{emo} {inn} {team} {batter} {name}" + (f" · {rbi}타점" if rbi else "") + " — 득점!"
+        elif ev in ("strikeout", "strikeout_double_play"):
+            line = f"{emo} {inn} {fteam} {pitcher}, {batter} {FUN[ev]}"
         else:
-            line = f"{emo} {inn} {team} {batter} {name}"
+            line = f"{emo} {inn} {team} {batter} {FUN.get(ev, name)}"
         if scoring and res.get("awayScore") is not None:
             line += f"  ({g['away']} {res['awayScore']} : {res['homeScore']} {g['home']})"
-        out.append({"t": line, "hot": bool(scoring)})
+        out.append({"t": line, "hot": bool(scoring) or ev in ("triple_play",)})
     if g["state"] == "final" and out:
         out.append({"t": f"🏁 경기 종료 · {g['away']} {g.get('away_score')} : {g.get('home_score')} {g['home']}", "hot": True})
     out.reverse()
@@ -133,12 +166,22 @@ def _periods(g):
     k = g["kind"]
     emo = {"basketball": "🏀", "volleyball": "🏐", "hockey": "🏒"}.get(k, "⚽")
     ev, th, ta = [], 0, 0
-    for lab, hs, as_ in lines:
+    lead, sh, sa = None, 0, 0
+    for i, (lab, hs, as_) in enumerate(lines):
         th, ta = th + hs, ta + as_
+        now_on = g["state"] == "live" and i == len(lines) - 1
+        nl = "h" if th > ta else "a" if ta > th else None
+        flip = k != "volleyball" and nl and lead and nl != lead
+        if nl:
+            lead = nl
         name = f"{lab}쿼터" if k == "basketball" and str(lab).isdigit() else f"{lab}세트" if k == "volleyball" and str(lab).isdigit() else lab
-        if k == "volleyball":
+        if now_on:
+            pname = f"{lab}쿼터" if k == "basketball" and str(lab).isdigit() else f"{lab}세트" if k == "volleyball" and str(lab).isdigit() else lab
+            ev.append({"t": f"⏱️ {pname} 진행 중 · {g['home']} {hs} - {as_} {g['away']}" + ("" if k == "volleyball" else f" (합계 {th}-{ta})"), "hot": False})
+        elif k == "volleyball":
             win = g["home"] if hs > as_ else g["away"]
-            ev.append({"t": f"{emo} {name} {win} 따냈어요! ({hs}-{as_})", "hot": abs(hs - as_) <= 2})
+            sh, sa = sh + (hs > as_), sa + (as_ > hs)
+            ev.append({"t": f"{emo} {name} {win} 따냈어요! ({hs}-{as_}) · 세트 스코어 {g['home']} {sh}-{sa} {g['away']}", "hot": abs(hs - as_) <= 2})
         elif k == "hockey":
             if hs == as_ == 0:
                 ev.append({"t": f"{emo} {name} 무득점 · 팽팽해요 (합계 {th}-{ta})", "hot": False})
@@ -148,6 +191,8 @@ def _periods(g):
             best = g["home"] if hs > as_ else g["away"] if as_ > hs else None
             msg = f"{best} {abs(hs - as_)}점 우세" if best else "동점 쿼터"
             ev.append({"t": f"{emo} {name} {g['home']} {hs} - {as_} {g['away']} · {msg} (합계 {th}-{ta})", "hot": abs(hs - as_) >= 10})
+        if flip:
+            ev.append({"t": f"🔄 역전! {g['home'] if nl == 'h' else g['away']} 리드 ({g['home']} {th} : {ta} {g['away']})", "hot": True})
     if g["state"] == "final":
         ev.append({"t": f"🏁 경기 종료 · {g['home']} {g.get('home_score')} : {g.get('away_score')} {g['away']}", "hot": True})
     ev.reverse()
@@ -163,7 +208,7 @@ def _football(g):
         return None
     if g["state"] == "final":
         items = [{"t": f"🏁 경기 종료 · {g['home']} {g.get('home_score')} : {g.get('away_score')} {g['away']}", "hot": True}] + items
-    return {"source": "경기 이벤트(API-Sports 득점·카드)", "items": items}
+    return {"source": "경기 이벤트(API-Sports 득점·도움·카드·교체·VAR)", "items": items}
 
 
 def commentary(g):

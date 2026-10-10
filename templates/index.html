@@ -26,9 +26,9 @@ function teamFav(g){const f=fav();return f.includes(fk(g,'L'))||f.includes(fk(g,
 function toggleGame(k,e){e.preventDefault();e.stopPropagation();const g=DATA.games.find(x=>x.key===k);if(!g)return;let f=fav();const ids=[fk(g,'L'),fk(g,'R')];
  f=teamFav(g)?f.filter(x=>!ids.includes(x)):[...new Set([...f,...ids])];localStorage.setItem('tw_fav',JSON.stringify(f));render()}
 function tm(t,s){const en=t.en?`<small class="en">${esc(t.en)}</small>`:'';const lg=t.logo?`<img src="${esc(t.logo)}" alt="" loading="lazy">`:'<i class="nologo"></i>';return `<div class="tm5 ${s} ${t.win?'win':''}">${s==='L'?`<span class="nm">${esc(t.name)}${en}</span>${lg}`:`${lg}<span class="nm">${esc(t.name)}${en}</span>`}</div>`}
-function tbl(t){if(!t)return'';const ex=t.ext||[];const cell=v=>v==null?'-':esc(v);
- return `<div class="lsw"><table class="ls6"><tr><th class="t">팀</th>${t.cols.map(c=>`<th>${esc(c)}</th>`).join('')}<th class="o">${esc(t.tlab)}</th>${ex.map(c=>`<th>${c}</th>`).join('')}</tr>`+
- t.rows.map((r,i)=>`<tr><td class="t">${esc(r.name)}${r.home?'<em>홈</em>':''}</td>${r.vals.map((v,j)=>{const o=t.rows[1-i].vals[j];return `<td class="${typeof v==='number'&&typeof o==='number'&&v>o?'hi':''}">${cell(v)}</td>`}).join('')}<td class="o">${cell(r.T)}</td>${r.ext.map(cell).map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')+'</table></div>'}
+function tbl(t){if(!t)return'';const ex=t.ext||[];const cell=v=>v==null?'<i class="np">-</i>':esc(v);const cc=j=>t.cur===j?' cur':'';
+ return `<div class="lsw"><table class="ls6"><tr><th class="t">팀</th>${t.cols.map((c,j)=>`<th class="${cc(j)}">${esc(c)}</th>`).join('')}<th class="o">${esc(t.tlab)}</th>${ex.map(c=>`<th>${c}</th>`).join('')}</tr>`+
+ t.rows.map((r,i)=>`<tr><td class="t">${esc(r.name)}${r.home?'<em>홈</em>':''}</td>${r.vals.map((v,j)=>{const o=t.rows[1-i].vals[j];return `<td class="${typeof v==='number'&&typeof o==='number'&&v>o?'hi':''}${cc(j)}">${cell(v)}</td>`}).join('')}<td class="o">${cell(r.T)}</td>${r.ext.map(cell).map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')+'</table></div>'}
 const RES={W:'승',L:'패',D:'무'};
 function pv(j){let h=tbl(j.table);
  if(j.starters&&(j.starters.away||j.starters.home)){const p=x=>x?`<b>${esc(x.name)}</b>${x.era?` <small>ERA ${esc(x.era)}</small>`:''}`:'<small>미발표</small>';h+=`<div class="pv-b"><h4>선발 투수</h4><div class="two6"><div>${p(j.starters.away)}</div><div class="r">${p(j.starters.home)}</div></div></div>`}
