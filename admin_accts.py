@@ -139,8 +139,11 @@ def member_new():
         if not M.LOGIN_RE.match(lid): errs.append("아이디는 영문 소문자·숫자·_ 4~16자로 해 주세요.")
         if len(pw) < 4 or len(pw) > 64 or not (re.search(r"[A-Za-z]", pw) and re.search(r"\d", pw)):
             errs.append("비밀번호는 영문과 숫자를 섞어 4자 이상으로 해 주세요.")
-        ne = chat.check_nick(f["nick"])
-        if ne: errs.append(ne if f["nick"] else "닉네임을 입력해 주세요.")
+        # 관리자 생성 계정: 금칙어·예약어·문자 규칙 생략. 비어 있지 않음·20자 이하·제어문자 없음만 확인 (출력은 이스케이프됨)
+        f["nick"] = re.sub(r"\s+", " ", f["nick"]).strip()
+        if not f["nick"]: errs.append("닉네임을 입력해 주세요.")
+        elif len(f["nick"]) > 20: errs.append("닉네임은 20자 이하로 해 주세요.")
+        elif re.search(r"[\x00-\x1f\x7f\u200b-\u200f\u2028-\u202e\u2060-\u2064\ufeff]", f["nick"]): errs.append("닉네임에 쓸 수 없는 보이지 않는 문자가 있어요.")
         if f["name"] and (len(f["name"]) > 30 or re.search(r"[<>\d]", f["name"])): errs.append("이름을 정확히 입력해 주세요.")
         ph = M.norm_phone(f["phone"]) if f["phone"] else ""
         if f["phone"] and not ph: errs.append("휴대폰 번호 형식이 올바르지 않아요.")
@@ -151,7 +154,7 @@ def member_new():
         ti = int(f["tier"]) if f["tier"].isdigit() and int(f["tier"]) < len(levels.TIERS) else 0
         if not errs:
             if q("SELECT 1 FROM members WHERE login_id=?", (lid,), one=True): errs.append("이미 사용 중인 아이디예요.")
-            if q("SELECT 1 FROM members WHERE nick_l=?", (f["nick"].lower(),), one=True): errs.append("이미 사용 중인 닉네임이에요.")
+            if q("SELECT 1 FROM members WHERE nick_l=?", (f["nick"].lower(),), one=True): errs.append("이미 다른 회원이 쓰는 닉네임이에요. 다른 닉네임을 넣어 주세요.")
             if ph and q("SELECT 1 FROM members WHERE phone_h=?", (M.phone_hash(ph),), one=True): errs.append("이미 가입된 휴대폰 번호예요.")
             if tg and q("SELECT 1 FROM members WHERE tg=?", (tg.lower(),), one=True): errs.append("이미 등록된 텔레그램 아이디예요.")
         if not errs:
