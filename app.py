@@ -25,6 +25,8 @@ app.config.update(SECRET_KEY=_sk, SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_S
 app.register_blueprint(members.bp)
 import admin_ext
 app.register_blueprint(admin_ext.bp)
+import admin_accts
+app.register_blueprint(admin_accts.bp)
 try:
     members.init_db()
     admin_ext.init_db()

@@ -18,7 +18,9 @@ ENC_KEY = os.environ.get("MEMBER_ENC_KEY", "").strip()
 _ADMIN_PW = os.environ.get("ADMIN_PASSWORD", "")
 ADMIN_HASH = generate_password_hash(_ADMIN_PW) if len(_ADMIN_PW) >= 10 else None
 del _ADMIN_PW
-ADMIN_TTL = 2 * 60 * 60
+ADMIN_TTL = 12 * 60 * 60      # 마지막 활동 후 12시간 (활동할 때마다 연장)
+ADMIN_MAX = 24 * 60 * 60      # 로그인 후 최대 24시간 (그 뒤엔 OTP 다시)
+_ADM_KEYS = ("adm", "adm_id", "adm_t0")
 
 _fernet = None
 if ENC_KEY:
@@ -115,10 +117,16 @@ def _init():
     pk = "BIGSERIAL PRIMARY KEY" if PG else "INTEGER PRIMARY KEY AUTOINCREMENT"
     for s in SCHEMA.format(pk=pk).split(";"):
         q(s, fetch=False)
-    try:
-        q("ALTER TABLE members ADD COLUMN nick_changed_at TEXT", fetch=False)
-    except Exception:
-        pass  # 이미 있음
+    for a in ("ALTER TABLE members ADD COLUMN nick_changed_at TEXT",
+              "ALTER TABLE members ADD COLUMN created_by TEXT",
+              "ALTER TABLE admins ADD COLUMN role TEXT NOT NULL DEFAULT 'owner'",
+              "ALTER TABLE admins ADD COLUMN status TEXT NOT NULL DEFAULT 'active'",
+              "ALTER TABLE admins ADD COLUMN must_setup INTEGER NOT NULL DEFAULT 0",
+              "ALTER TABLE admins ADD COLUMN created_by TEXT"):
+        try:
+            q(a, fetch=False)
+        except Exception:
+            pass  # 이미 있음
     log.warning("member storage: %s", "postgres" if PG else os.path.join(DATA_DIR, "members.db"))
 
 
@@ -385,7 +393,7 @@ def signup():
                     errs.append("이미 사용 중인 정보가 있어요. 다시 확인해 주세요.")
                 if not errs:
                     r = q("SELECT id FROM members WHERE login_id=?", (lid,), one=True)
-                    session.clear(); session.permanent = True; session["uid"] = r[0]
+                    _keep_admin_clear(); session.permanent = True; session["uid"] = r[0]
                     return redirect("/me?welcome=1")
     ph_disp = norm_phone(f.get("phone"))
     if ph_disp:
@@ -416,7 +424,7 @@ def login():
             elif r[2] != "active":
                 errs.append("이용이 정지된 계정이에요. 고객센터로 문의해 주세요.")
             else:
-                session.clear(); session.permanent = True; session["uid"] = r[0]
+                _keep_admin_clear(); session.permanent = True; session["uid"] = r[0]
                 q("UPDATE members SET last_login=? WHERE id=?", (now_s(), r[0]), fetch=False)
                 return redirect(nxt)
     return render_template("member.html", page="login", mode="auth", tab="login", lid=lid, errs=errs, nxt=nxt, pv=pv_on())
@@ -744,18 +752,41 @@ def _fail_clear(keys):
         for k in keys: _fail.pop(k, None)
 
 
+def _keep_admin_clear():
+    """회원 로그인 때 세션을 비우되, 같은 브라우저의 관리자 로그인은 유지"""
+    keep = {k: session[k] for k in _ADM_KEYS if k in session}
+    session.clear(); session.update(keep)
+
+
+def _adm_drop():
+    for k in _ADM_KEYS: session.pop(k, None)
+
+
 def _admin_ok():
     t, aid = session.get("adm"), session.get("adm_id")
-    if not t or not aid or time.time() - t > ADMIN_TTL:
-        session.pop("adm", None); session.pop("adm_id", None)
+    now = time.time()
+    t0 = session.get("adm_t0") or t
+    if not t or not aid or now - t > ADMIN_TTL or now - (t0 or 0) > ADMIN_MAX:
+        _adm_drop()
         return False
-    r = q("SELECT username, pw FROM admins WHERE id=?", (aid,), one=True)
-    if not r:
-        session.pop("adm", None); session.pop("adm_id", None)
+    r = q("SELECT username, pw, role, status, must_setup FROM admins WHERE id=?", (aid,), one=True)
+    if not r or r[3] != "active" or r[4]:
+        _adm_drop()
         return False
-    g.admin = {"id": aid, "username": r[0], "pw": r[1]}
-    session["adm"] = time.time()
+    g.admin = {"id": aid, "username": r[0], "pw": r[1], "role": r[2] or "admin", "super": r[2] == "owner"}
+    session.permanent = True
+    if now - t > 60:  # 1분에 한 번만 쿠키 갱신
+        session["adm"] = now
     return True
+
+
+def super_required(fn):
+    @wraps(fn)
+    def w(*a, **k):
+        if not g.get("admin", {}).get("super"):
+            abort(403)
+        return fn(*a, **k)
+    return w
 
 
 def _off():
@@ -892,8 +923,17 @@ def admin_login():
         if limited("adm|" + ip(), 20, 600) or limited("adm|all", 60, 600):
             err = "시도가 너무 많아요. 잠시 뒤에 다시 해 주세요."
         elif not pre:
-            r = q("SELECT id, pw FROM admins WHERE username=?", (u,), one=True)
-            if check_password_hash(r[1] if r else _DUMMY_PW, request.form.get("pw", "")) and r:
+            r = q("SELECT id, pw, status, must_setup FROM admins WHERE username=?", (u,), one=True)
+            okp = check_password_hash(r[1] if r else _DUMMY_PW, request.form.get("pw", ""))
+            if okp and r and r[2] != "active":
+                r = None
+            if okp and r and r[3]:
+                _fail_clear(keys)
+                session.pop("adm_pre", None); _pdel("fs_tok")
+                session["adm_first"] = {"id": r[0], "u": u, "t": time.time()}
+                alog("first_login", u)
+                return redirect("/admin/first")
+            if okp and r:
                 session["adm_pre"] = {"id": r[0], "u": u, "t": time.time()}
                 return redirect("/admin/login")
             if not r: check_password_hash(ADMIN_HASH or generate_password_hash("x"), "dummy")
@@ -904,9 +944,7 @@ def admin_login():
             how = "otp" if _use_totp(pre["id"], code) else ("backup" if _use_backup(pre["id"], code) else "")
             if how:
                 _fail_clear(keys)
-                uid = session.get("uid"); session.clear()
-                if uid: session["uid"] = uid
-                session["adm"] = time.time(); session["adm_id"] = pre["id"]
+                _admin_start(pre["id"])
                 q("UPDATE admins SET last_login=? WHERE id=?", (now_s(), pre["id"]), fetch=False)
                 alog("login" if how == "otp" else "login_backup_code", pre["u"])
                 return redirect("/admin")
@@ -922,12 +960,19 @@ def admin_login():
     return render_template("admin.html", mode="login", stage=stage, err=err, u=u, left=left)
 
 
+def _admin_start(aid):
+    uid = session.get("uid"); session.clear()
+    if uid: session["uid"] = uid
+    session.permanent = True  # 브라우저를 닫아도 유지 (만료는 ADMIN_TTL/ADMIN_MAX 로 서버가 판단)
+    session["adm"] = session["adm_t0"] = time.time(); session["adm_id"] = aid
+
+
 @bp.post("/admin/logout")
 def admin_logout():
     if session.get("adm_id"): 
         try: alog("logout")
         except Exception: pass
-    session.pop("adm", None); session.pop("adm_id", None); session.pop("adm_pre", None)
+    _adm_drop(); session.pop("adm_pre", None)
     return redirect("/admin/login")
 
 
@@ -1001,7 +1046,7 @@ def admin():
         tcounts[0] = q("SELECT COUNT(*) FROM members", one=True)[0]
     order = f"{pe} DESC, members.id DESC" if sort == "pts" else "members.id DESC"
     total = q(f"SELECT COUNT(*) FROM members {jn} {where}", args, one=True)[0]
-    rows = q(f"SELECT members.id,login_id,nick,name_e,phone_e,birth_e,tg,status,created_at,last_login FROM members {jn} {where} ORDER BY {order} LIMIT {PER} OFFSET {(page - 1) * PER}", args)
+    rows = q(f"SELECT members.id,login_id,nick,name_e,phone_e,birth_e,tg,status,created_at,last_login,created_by FROM members {jn} {where} ORDER BY {order} LIMIT {PER} OFFSET {(page - 1) * PER}", args)
     ms = []
     lvp = levels.many([r[0] for r in rows])
     for r in rows:
@@ -1009,7 +1054,7 @@ def admin():
         ms.append({"id": r[0], "login_id": r[1], "nick": r[2], "name": nm[0] + "*" * (len(nm) - 1),
                    "phone": mask_phone(ph) if ph[:1] == "0" else ph, "birth": bd[:4] + "-**-**",
                    "tg": r[6], "status": r[7], "created": r[8][:16], "last": (r[9] or "")[:16],
-                   "pts": lvp.get(r[0], 0), "tier": levels.TIERS[levels.tier_of(lvp.get(r[0], 0))], "ti": levels.tier_of(lvp.get(r[0], 0))})
+                   "by": r[10], "pts": lvp.get(r[0], 0), "tier": levels.TIERS[levels.tier_of(lvp.get(r[0], 0))], "ti": levels.tier_of(lvp.get(r[0], 0))})
     today = datetime.now(KST).strftime("%Y-%m-%d")
     stats = {"total": q("SELECT COUNT(*) FROM members", one=True)[0],
              "today": q("SELECT COUNT(*) FROM members WHERE created_at LIKE ?", (today + "%",), one=True)[0],

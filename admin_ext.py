@@ -10,7 +10,7 @@ log = logging.getLogger("admin_ext")
 bp = Blueprint("admin_ext", __name__)
 
 MENU = [("members", "회원", "/admin"), ("stats", "통계", "/admin/stats"), ("bots", "봇 상태", "/admin/bots"),
-        ("settings", "설정", "/admin/settings"), ("log", "접근 기록", "/admin/log"), ("otp", "OTP 재설정", "/admin/otp")]
+        ("settings", "설정", "/admin/settings"), ("admins", "└ 관리자 계정", "/admin/admins"), ("log", "접근 기록", "/admin/log"), ("otp", "OTP 재설정", "/admin/otp")]
 
 BOTS = [("score", "@kr_twowin_bot", "채널 알림 · 그룹방 · 스코어 검색"),
         ("cscenter", "@twowinscore_cs_bot", "투윈스코어 고객센터"),
@@ -39,7 +39,9 @@ def init_db():
 
 @bp.app_context_processor
 def _ctx():
-    return {"adm_menu": MENU, "site_banner": banner() if _ok[0] else None, "hero_v": hero_ver() if _ok[0] else None}
+    from flask import g as _g
+    _sup = (_g.get("admin") or {}).get("super")
+    return {"adm_menu": [m for m in MENU if m[0] != "admins" or _sup], "adm_me": _g.get("admin"), "site_banner": banner() if _ok[0] else None, "hero_v": hero_ver() if _ok[0] else None}
 
 
 # ---------- key/value 설정 (프로세스 캐시) ----------
@@ -116,7 +118,7 @@ def member_page(mid):
     import levels
     m["lv"] = levels.info(mid)
     memos = q("SELECT id, body, admin, created_at FROM member_memo WHERE member_id=? ORDER BY id DESC", (mid,))
-    return render_template("admin.html", mode="member", sec="members", m=m, memos=memos)
+    return render_template("admin.html", mode="member", sec="members", m=m, memos=memos, lv_tiers=levels.TIERS)
 
 
 @bp.post("/admin/member/<int:mid>/memo")

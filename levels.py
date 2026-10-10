@@ -115,3 +115,10 @@ def admin_set(mid, delta):
     with _lk:
         r = _row(mid); r[0] = max(0, r[0] + delta); _save(mid, r)
         return r[0]
+
+
+def admin_set_tier(mid, i):
+    """관리자가 등급을 직접 지정: 점수를 그 등급의 시작 점수로 맞춤 (이후 활동으로 계속 쌓임)"""
+    with _lk:
+        r = _row(mid); old = r[0]; r[0] = TIERS[i][1]; r[1] = min(r[1], i); _save(mid, r)
+        return old, r[0]
