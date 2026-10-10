@@ -60,7 +60,10 @@ SCHEMA = """CREATE TABLE IF NOT EXISTS members(
  pw TEXT NOT NULL, name_e TEXT NOT NULL, phone_e TEXT NOT NULL, phone_h TEXT NOT NULL UNIQUE,
  birth_e TEXT NOT NULL, tg TEXT UNIQUE, status TEXT NOT NULL DEFAULT 'active',
  created_at TEXT NOT NULL, agreed_at TEXT NOT NULL, last_login TEXT);
-CREATE TABLE IF NOT EXISTS admin_log(id {pk}, ts TEXT NOT NULL, ip TEXT, action TEXT NOT NULL, target TEXT)"""
+CREATE TABLE IF NOT EXISTS admin_log(id {pk}, ts TEXT NOT NULL, ip TEXT, action TEXT NOT NULL, target TEXT);
+CREATE TABLE IF NOT EXISTS admins(id {pk}, username TEXT NOT NULL UNIQUE, pw TEXT NOT NULL, totp_e TEXT NOT NULL,
+ last_step BIGINT NOT NULL DEFAULT 0, created_at TEXT NOT NULL, last_login TEXT);
+CREATE TABLE IF NOT EXISTS admin_backup(id {pk}, admin_id BIGINT NOT NULL, code_h TEXT NOT NULL, used_at TEXT)"""
 
 
 def _connect():
@@ -325,24 +328,135 @@ def privacy():
     return render_template("privacy.html", page="privacy")
 
 
-# ---------- 관리자 ----------
-_fail = {}
+# ---------- 관리자 (아이디 + 비밀번호 + Google OTP) ----------
+import base64
+_fail, _flock = {}, threading.Lock()
+_pend, _plock = {}, threading.Lock()   # 설정 진행 중 상태(서버 메모리, 15분)
+_otplock = threading.Lock()
+ISSUER = "TwowinSCORE Admin"
+ADM_RE = re.compile(r"^[a-z0-9_]{4,20}$")
+
+
+def admin_exists():
+    return q("SELECT COUNT(*) FROM admins", one=True)[0] > 0
+
+
+def _bk_hash(c):
+    return hmac.new(_HKEY, b"adm-bk|" + c.encode(), hashlib.sha256).hexdigest()
+
+
+def _norm_bk(c):
+    return re.sub(r"[^A-Z0-9]", "", (c or "").upper())
+
+
+def _new_backups():
+    al = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+    return ["".join(secrets.choice(al) for _ in range(5)) + "-" + "".join(secrets.choice(al) for _ in range(5)) for _ in range(10)]
+
+
+def _save_backups(aid, codes):
+    q("DELETE FROM admin_backup WHERE admin_id=?", (aid,), fetch=False)
+    for c in codes:
+        q("INSERT INTO admin_backup(admin_id,code_h) VALUES(?,?)", (aid, _bk_hash(_norm_bk(c))), fetch=False)
+
+
+def _qr(secret, user):
+    import pyotp, qrcode
+    uri = pyotp.TOTP(secret).provisioning_uri(name=user, issuer_name=ISSUER)
+    buf = io.BytesIO(); qrcode.make(uri, box_size=6, border=2).save(buf, format="PNG")
+    return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
+
+
+def _totp_step(secret, code, last=0):
+    """유효한 코드면 해당 30초 구간 번호, 아니면 None. ±1 구간, last 이하(재사용) 거부."""
+    import pyotp
+    code = re.sub(r"\D", "", code or "")
+    if len(code) != 6:
+        return None
+    t, now = pyotp.TOTP(secret), int(time.time()) // 30
+    for s in (now - 1, now, now + 1):
+        if s > (last or 0) and hmac.compare_digest(t.at(s * 30), code):
+            return s
+    return None
+
+
+def _use_totp(aid, code):
+    with _otplock:
+        r = q("SELECT totp_e, last_step FROM admins WHERE id=?", (aid,), one=True)
+        if not r:
+            return False
+        s = _totp_step(dec(r[0]), code, r[1])
+        if s is None:
+            return False
+        q("UPDATE admins SET last_step=? WHERE id=?", (s, aid), fetch=False)
+        return True
+
+
+def _use_backup(aid, code):
+    c = _norm_bk(code)
+    if len(c) != 10:
+        return False
+    with _otplock:
+        r = q("SELECT id FROM admin_backup WHERE admin_id=? AND code_h=? AND used_at IS NULL", (aid, _bk_hash(c)), one=True)
+        if not r:
+            return False
+        q("UPDATE admin_backup SET used_at=? WHERE id=?", (now_s(), r[0]), fetch=False)
+        return True
+
+
+def _locked(keys):
+    now = time.time()
+    with _flock:
+        for k in keys:
+            st = _fail.get(k)
+            if st and st[1] > now:
+                return int((st[1] - now) // 60) + 1
+    return 0
+
+
+def _fail_hit(keys):
+    """실패 1회 기록. 잠기면 True."""
+    now, lk = time.time(), False
+    with _flock:
+        for k in keys:
+            st = _fail.get(k) or [0, 0, now]
+            if now - st[2] > 15 * 60: st = [0, 0, now]
+            st[0] += 1
+            if st[0] >= 5: st = [0, now + 15 * 60, now]; lk = True
+            _fail[k] = st
+    return lk
+
+
+def _fail_clear(keys):
+    with _flock:
+        for k in keys: _fail.pop(k, None)
 
 
 def _admin_ok():
-    t = session.get("adm")
-    if not t or time.time() - t > ADMIN_TTL:
-        session.pop("adm", None)
+    t, aid = session.get("adm"), session.get("adm_id")
+    if not t or not aid or time.time() - t > ADMIN_TTL:
+        session.pop("adm", None); session.pop("adm_id", None)
         return False
+    r = q("SELECT username, pw FROM admins WHERE id=?", (aid,), one=True)
+    if not r:
+        session.pop("adm", None); session.pop("adm_id", None)
+        return False
+    g.admin = {"id": aid, "username": r[0], "pw": r[1]}
     session["adm"] = time.time()
     return True
+
+
+def _off():
+    return render_template("admin.html", mode="off", enc=enabled(), pw=bool(ADMIN_HASH)), 503
 
 
 def admin_required(fn):
     @wraps(fn)
     def w(*a, **k):
-        if not ADMIN_HASH or not enabled():
-            return render_template("admin.html", mode="off", enc=enabled(), pw=bool(ADMIN_HASH)), 503
+        if not enabled():
+            return _off()
+        if not admin_exists():
+            return redirect("/admin/setup")
         if not _admin_ok():
             return redirect("/admin/login")
         return fn(*a, **k)
@@ -363,40 +477,179 @@ def _noindex(r):
     return r
 
 
+def _pget(name):
+    tok = session.get(name)
+    with _plock:
+        now = time.time()
+        for k in [k for k, v in _pend.items() if now - v["t"] > 15 * 60]:
+            _pend.pop(k, None)
+        return tok, _pend.get(tok) if tok else None
+
+
+def _pset(name, data):
+    tok = secrets.token_urlsafe(24); data["t"] = time.time()
+    with _plock: _pend[tok] = data
+    session[name] = tok
+
+
+def _pdel(name):
+    tok = session.pop(name, None)
+    with _plock: _pend.pop(tok, None)
+
+
+def strong_pw(pw):
+    return 12 <= len(pw) <= 128 and sum(bool(re.search(p, pw)) for p in (r"[a-z]", r"[A-Z]", r"\d", r"[^A-Za-z0-9]")) >= 3
+
+
+@bp.route("/admin/setup", methods=["GET", "POST"])
+def admin_setup():
+    if not enabled():
+        return _off()
+    if admin_exists():
+        _pdel("su_tok"); abort(404)
+    if not ADMIN_HASH:
+        return _off()
+    key = "ip|" + ip()
+    tok, p = _pget("su_tok")
+    errs, f = [], {"username": (request.form.get("username") or "").strip().lower()}
+    m = _locked([key])
+    if m:
+        return render_template("admin.html", mode="setup1", errs=[f"실패가 많아 {m}분 동안 잠겼어요."], f=f)
+    if request.method == "POST" and request.form.get("step") == "1":
+        if limited("adms|" + ip(), 20, 600):
+            errs.append("시도가 너무 많아요. 잠시 뒤에 다시 해 주세요.")
+        elif not check_password_hash(ADMIN_HASH, request.form.get("boot", "")):
+            errs.append("초기 설정 비밀번호(ADMIN_PASSWORD)가 맞지 않아요.")
+            if _fail_hit([key]): errs.append("5번 틀려서 15분 동안 잠겼어요.")
+            log.warning("admin setup bootstrap fail ip=%s", ip())
+        else:
+            _fail_clear([key])
+            pw = request.form.get("pw", "")
+            if not ADM_RE.match(f["username"]): errs.append("관리자 아이디는 영문 소문자·숫자·_ 4~20자로 해 주세요.")
+            if not strong_pw(pw): errs.append("비밀번호는 12자 이상, 대문자·소문자·숫자·특수문자 중 3종류 이상으로 해 주세요.")
+            elif pw != request.form.get("pw2", ""): errs.append("비밀번호 확인이 일치하지 않아요.")
+            elif check_password_hash(ADMIN_HASH, pw): errs.append("초기 설정 비밀번호와 다른 비밀번호를 써 주세요.")
+            if not errs:
+                import pyotp
+                _pdel("su_tok")
+                _pset("su_tok", {"u": f["username"], "pw": generate_password_hash(pw), "sec": pyotp.random_base32()})
+                return redirect("/admin/setup")
+        return render_template("admin.html", mode="setup1", errs=errs, f=f)
+    if p and request.method == "POST" and request.form.get("step") == "2":
+        if limited("adms2|" + ip(), 20, 600):
+            errs.append("시도가 너무 많아요. 잠시 뒤에 다시 해 주세요.")
+        elif _totp_step(p["sec"], request.form.get("code")) is None:
+            errs.append("OTP 코드가 맞지 않아요. 휴대폰 시간이 맞는지 확인하고 새 코드를 넣어 주세요.")
+        else:
+            codes = _new_backups()
+            with _otplock:
+                if admin_exists():
+                    _pdel("su_tok"); abort(404)
+                s = _totp_step(p["sec"], request.form.get("code"))
+                q("INSERT INTO admins(username,pw,totp_e,last_step,created_at) VALUES(?,?,?,?,?)",
+                  (p["u"], p["pw"], enc(p["sec"]), s, now_s()), fetch=False)
+            aid = q("SELECT id FROM admins WHERE username=?", (p["u"],), one=True)[0]
+            _save_backups(aid, codes)
+            _pdel("su_tok")
+            alog("setup", p["u"])
+            return render_template("admin.html", mode="codes", codes=codes, after="setup")
+    if p:
+        return render_template("admin.html", mode="setup2", errs=errs, qr=_qr(p["sec"], p["u"]), sec=p["sec"], u=p["u"], action="/admin/setup")
+    return render_template("admin.html", mode="setup1", errs=errs, f=f)
+
+
 @bp.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
-    if not ADMIN_HASH or not enabled():
-        return render_template("admin.html", mode="off", enc=enabled(), pw=bool(ADMIN_HASH)), 503
-    err, key = "", ip()
-    now = time.time()
-    st = _fail.get(key, [0, 0])
-    if st[1] > now:
-        err = f"로그인 실패가 많아 {int((st[1] - now) // 60) + 1}분 동안 잠겼어요."
+    if not enabled():
+        return _off()
+    if not admin_exists():
+        return redirect("/admin/setup")
+    if request.args.get("restart"):
+        session.pop("adm_pre", None)
+    pre = session.get("adm_pre")
+    if pre and time.time() - pre["t"] > 5 * 60:
+        session.pop("adm_pre", None); pre = None
+    u = (request.form.get("username") or (pre or {}).get("u") or "").strip().lower()
+    keys = ["ip|" + ip(), "u|" + u] if u else ["ip|" + ip()]
+    err = ""
+    m = _locked(keys)
+    stage = "otp" if pre else "pw"
+    if m:
+        err = f"로그인 실패가 많아 {m}분 동안 잠겼어요."
     elif request.method == "POST":
-        if limited("adm|" + key, 10, 600) or limited("adm|all", 30, 600):
+        if limited("adm|" + ip(), 20, 600) or limited("adm|all", 60, 600):
             err = "시도가 너무 많아요. 잠시 뒤에 다시 해 주세요."
-        elif check_password_hash(ADMIN_HASH, request.form.get("pw", "")):
-            _fail.pop(key, None)
-            uid = session.get("uid"); session.clear()
-            if uid: session["uid"] = uid
-            session["adm"] = time.time()
-            alog("login")
-            return redirect("/admin")
+        elif not pre:
+            r = q("SELECT id, pw FROM admins WHERE username=?", (u,), one=True)
+            if r and check_password_hash(r[1], request.form.get("pw", "")):
+                session["adm_pre"] = {"id": r[0], "u": u, "t": time.time()}
+                return redirect("/admin/login")
+            if not r: check_password_hash(ADMIN_HASH or generate_password_hash("x"), "dummy")
+            err = "5번 틀려서 15분 동안 잠겼어요." if _fail_hit(keys) else "아이디 또는 비밀번호가 맞지 않아요."
+            alog("login_fail", u[:30]); log.warning("admin login fail ip=%s", ip())
         else:
-            st[0] += 1
-            if st[0] >= 5:
-                st = [0, now + 15 * 60]; err = "5번 틀려서 15분 동안 잠겼어요."
+            code = request.form.get("code", "")
+            how = "otp" if _use_totp(pre["id"], code) else ("backup" if _use_backup(pre["id"], code) else "")
+            if how:
+                _fail_clear(keys)
+                uid = session.get("uid"); session.clear()
+                if uid: session["uid"] = uid
+                session["adm"] = time.time(); session["adm_id"] = pre["id"]
+                q("UPDATE admins SET last_login=? WHERE id=?", (now_s(), pre["id"]), fetch=False)
+                alog("login" if how == "otp" else "login_backup_code", pre["u"])
+                return redirect("/admin")
+            lk = _fail_hit(keys)
+            alog("login_otp_fail", pre["u"])
+            if lk:
+                session.pop("adm_pre", None); stage = "pw"; err = "5번 틀려서 15분 동안 잠겼어요."
             else:
-                err = f"비밀번호가 맞지 않아요. ({st[0]}/5)"
-            _fail[key] = st
-            log.warning("admin login fail ip=%s", key)
-    return render_template("admin.html", mode="login", err=err)
+                err = "OTP 코드가 맞지 않아요. (이미 쓴 코드는 다시 쓸 수 없어요)"
+    left = None
+    if stage == "otp":
+        left = q("SELECT COUNT(*) FROM admin_backup WHERE admin_id=? AND used_at IS NULL", (pre["id"],), one=True)[0]
+    return render_template("admin.html", mode="login", stage=stage, err=err, u=u, left=left)
 
 
 @bp.post("/admin/logout")
 def admin_logout():
-    session.pop("adm", None)
+    if session.get("adm_id"): 
+        try: alog("logout")
+        except Exception: pass
+    session.pop("adm", None); session.pop("adm_id", None); session.pop("adm_pre", None)
     return redirect("/admin/login")
+
+
+@bp.route("/admin/otp", methods=["GET", "POST"])
+@admin_required
+def admin_otp():
+    a, errs = g.admin, []
+    tok, p = _pget("otp_tok")
+    if p and p.get("aid") != a["id"]:
+        _pdel("otp_tok"); p = None
+    if request.method == "POST" and request.form.get("step") == "1":
+        if limited("admo|" + str(a["id"]), 5, 900):
+            errs.append("시도가 너무 많아요. 15분 뒤에 다시 해 주세요.")
+        elif not check_password_hash(a["pw"], request.form.get("pw", "")) or not _use_totp(a["id"], request.form.get("code", "")):
+            errs.append("현재 비밀번호 또는 현재 OTP 코드가 맞지 않아요.")
+            alog("otp_reset_fail", a["username"])
+        else:
+            import pyotp
+            _pdel("otp_tok"); _pset("otp_tok", {"aid": a["id"], "sec": pyotp.random_base32()})
+            return redirect("/admin/otp")
+        return render_template("admin.html", mode="otp1", errs=errs)
+    if p and request.method == "POST" and request.form.get("step") == "2":
+        s = _totp_step(p["sec"], request.form.get("code"))
+        if s is None or limited("admo2|" + str(a["id"]), 10, 600):
+            errs.append("새 OTP 코드가 맞지 않아요. 새로 등록한 항목의 코드를 넣어 주세요.")
+        else:
+            with _otplock:
+                q("UPDATE admins SET totp_e=?, last_step=? WHERE id=?", (enc(p["sec"]), s, a["id"]), fetch=False)
+            codes = _new_backups(); _save_backups(a["id"], codes)
+            _pdel("otp_tok"); alog("otp_reset", a["username"])
+            return render_template("admin.html", mode="codes", codes=codes, after="reset")
+    if p:
+        return render_template("admin.html", mode="setup2", errs=errs, qr=_qr(p["sec"], a["username"]), sec=p["sec"], u=a["username"], action="/admin/otp", reset=True)
+    return render_template("admin.html", mode="otp1", errs=errs)
 
 
 PER = 20
@@ -460,7 +713,7 @@ def admin_act(mid, act):
 @bp.post("/admin/export")
 @admin_required
 def admin_export():
-    if not check_password_hash(ADMIN_HASH, request.form.get("pw", "")):
+    if not check_password_hash(g.admin["pw"], request.form.get("pw", "")):
         flash("CSV 내보내기: 관리자 비밀번호를 다시 입력해 주세요.")
         return redirect("/admin")
     alog("export_csv")

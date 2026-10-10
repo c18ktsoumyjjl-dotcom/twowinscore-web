@@ -30,3 +30,4 @@ body.adm{--bg:#0b1630;--bg2:#0f1d40;--card:#14264f;--line:#22386b;--or:#ff7a1a;-
 .at tr.suspended td{opacity:.55}.at .act{display:flex;gap:4px}.at .act form{margin:0}.empty{text-align:center;color:var(--mu);padding:30px}
 .pg{display:flex;gap:6px;justify-content:center;margin:14px 0}.pg a,.pg b{padding:6px 11px;border-radius:8px;border:1px solid var(--line)}.pg b{background:var(--or);border-color:var(--or)}
 .adm .me-err{background:rgba(231,76,60,.14);border:1px solid rgba(231,76,60,.5);color:#ff8a7a;border-radius:10px;padding:9px 12px;margin:0}
+.abox .sm{font-size:13px;color:var(--mu);margin:0}.abox label.sm{margin-top:4px}.abox code{color:var(--tx)}
