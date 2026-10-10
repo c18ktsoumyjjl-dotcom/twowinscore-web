@@ -87,9 +87,41 @@ def _sec_headers(r):
     return r
 
 
-@app.errorhandler(413)
-def _too_big(e):
-    return jsonify({"ok": False, "error": "요청이 너무 커요."}), 413
+# ---------- 에러 응답: 내부 정보(프레임워크·언어·파싱 위치·스택) 절대 노출 금지 ----------
+from werkzeug.exceptions import HTTPException
+_errlog = logging.getLogger("app.error")
+_ERR_MSG = {400: "잘못된 요청입니다", 404: "페이지를 찾을 수 없어요", 405: "잘못된 요청입니다",
+            413: "요청이 너무 커요", 415: "잘못된 요청입니다", 429: "요청이 너무 많아요. 잠시 후 다시 시도해 주세요"}
+_ERR_PAGE = ("<!doctype html><html lang=ko><meta charset=utf-8><meta name=viewport content='width=device-width'>"
+             "<title>투윈스코어</title><body style='font-family:sans-serif;text-align:center;padding:60px 16px'>"
+             "<h2>{msg}</h2><p><a href='/'>홈으로</a></p></body></html>")
+
+
+def _err_resp(code):
+    msg = _ERR_MSG.get(code, "잘못된 요청입니다" if code < 500 else "일시적인 오류가 발생했어요")
+    if request.path.startswith("/api/") or request.is_json or request.accept_mimetypes.best == "application/json":
+        r = jsonify({"ok": False, "error": msg})
+    else:
+        r = app.response_class(_ERR_PAGE.format(msg=msg), mimetype="text/html")
+    r.status_code = code
+    if code == 405:
+        r.headers.pop("Allow", None)
+    return r
+
+
+@app.errorhandler(HTTPException)
+def _http_err(e):
+    if e.code is None or e.code < 400:
+        return e
+    if e.code >= 500 or e.code in (400, 413, 415):
+        _errlog.warning("%s %s %s: %s", e.code, request.method, request.path, e.description)
+    return _err_resp(e.code)
+
+
+@app.errorhandler(Exception)
+def _any_err(e):
+    _errlog.exception("unhandled %s %s", request.method, request.path)
+    return _err_resp(500)
 WD = "월화수목금토일"
 EMO = {"baseball": "⚾", "basketball": "🏀", "volleyball": "🏐", "football": "⚽", "hockey": "🏒"}
 SPORT_KO = {"football": "축구", "baseball": "야구", "basketball": "농구", "volleyball": "배구", "hockey": "아이스하키"}
