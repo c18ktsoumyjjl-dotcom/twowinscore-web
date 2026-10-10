@@ -31,3 +31,10 @@ body:not(.mapp) .ft8s b{font-size:12px}body:not(.mapp) .ft8x{font-size:17px}
 body:not(.mapp) .ft8g span{font-size:10px;padding:2px 6px}
 body:not(.mapp) .ft8h{font-size:15px;margin:2px 0 8px}
 body.mapp #feat{padding:0 12px}
+/* v50b PC 주목 경기 더 작게: 태그 한 줄, 카드 높이 통일 */
+body:not(.mapp) .ft8c{padding:8px 10px}
+body:not(.mapp) .ft8t{font-size:11px}
+body:not(.mapp) .ft8m{margin:4px 0}
+body:not(.mapp) .ft8g{flex-wrap:nowrap;overflow:hidden;justify-content:center}
+body:not(.mapp) .ft8g span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+body:not(.mapp) .ft8g span+span{display:none}
