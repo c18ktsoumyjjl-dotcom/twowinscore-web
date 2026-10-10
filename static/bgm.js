@@ -24,7 +24,7 @@ const EV=['pointerdown','click','touchend','keydown'];let armed=false;function a
  EV.forEach(v=>addEventListener(v,g,true))}
 const IC=x=>'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'+(x?'<path d="m2 2 20 20"/>':'')+'</svg>';
 function paint(){if(!btn)return;const o=on();btn.innerHTML=IC(!o);btn.classList.toggle('on',o);btn.title=o?'BGM 끄기':'BGM 켜기';btn.setAttribute('aria-pressed',o);btn.setAttribute('aria-label',btn.title)}
-function css(){const s=document.createElement('style');s.textContent='#bgmBtn{line-height:1;color:var(--mu,#8a97b5);transition:background .15s,opacity .15s}#bgmBtn.on{opacity:1;background:#e8740c!important;border-color:#c9600a!important;color:#fff!important;outline:none;box-shadow:none!important}#bgmBtn:focus{outline:none}#bgmBtn:focus-visible{box-shadow:0 0 0 2px rgba(232,116,12,.45)!important}.mic #bgmBtn.on{background:#e8740c!important}';document.head.appendChild(s)}
+function css(){const s=document.createElement('style');s.textContent='#bgmBtn svg{transition:opacity .15s}#bgmBtn:not(.on) svg{opacity:.5}';document.head.appendChild(s)}
 function init(){css();const s=document.getElementById('sndBtn');const host=s?(s.closest('.snd')||s):null;
  btn=document.createElement('button');btn.id='bgmBtn';btn.className='theme';btn.type='button';
  if(host)host.parentNode.insertBefore(btn,host);else{btn.style.cssText='position:fixed;right:12px;bottom:76px;z-index:900';document.body.appendChild(btn)}
