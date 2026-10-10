@@ -124,6 +124,13 @@ def apply(g):
 
 
 def _apply(g):
+    # 최근 경기만(지난 경기 전적 계산 때 수백 번 호출되어 상세 페이지가 멈추던 문제 방지)
+    try:
+        age = (datetime.now(SEOUL) - g["start"].astimezone(SEOUL)).total_seconds()
+    except Exception:
+        return False
+    if age > 30 * 3600 or age < -3 * 3600:
+        return False
     x, swap = _find(g)
     if not x:
         return False
