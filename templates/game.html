@@ -36,10 +36,6 @@ function openS(){body.classList.add('sheet');n=0;un.textContent='';}
 function closeS(){body.classList.remove('sheet');document.getElementById('dchat').style.transform=''}
 TWChat.mount(document.getElementById("gamechat"),{{ ("game-" ~ g.key|replace(":","-"))|tojson }},{title:"💬 이 경기 채팅",close:()=>closeS(),onNew:k=>{if(!W.matches&&!isOpen()){n+=k;un.textContent=n>99?'99+':n}}});
 document.getElementById('cfab').onclick=openS;document.getElementById('shade').onclick=closeS;
-const dc=document.getElementById('dchat');let y0=null;
-dc.addEventListener('touchstart',e=>{if(e.target.closest('.ch-head,.grab'))y0=e.touches[0].clientY},{passive:true});
-dc.addEventListener('touchmove',e=>{if(y0==null)return;const d=e.touches[0].clientY-y0;if(d>0)dc.style.transform=`translateY(${d}px)`},{passive:true});
-dc.addEventListener('touchend',e=>{if(y0==null)return;const d=e.changedTouches[0].clientY-y0;y0=null;dc.style.transform='';if(d>70)closeS()});
 document.getElementById('tabs6').onclick=e=>{const b=e.target.closest('button');if(!b)return;
  document.querySelectorAll('#tabs6 button').forEach(x=>x.classList.toggle('on',x===b));
  if(b.dataset.t==='chat'){if(W.matches)document.querySelector('#gamechat input')?.focus();else openS();return}
