@@ -404,3 +404,5 @@ body.sbon .sb6{transform:none}
 .chipwrap.fl::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}.chipwrap.fr::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
 [data-theme=light] .cha{background:#fff;color:#0b1630;border-color:#d7deeb}
 }
+/* 최근 결과: 왼쪽=오래된 → 오른쪽=최신, 최신 강조 */
+.form i:last-child{transform:scale(1.18);box-shadow:0 0 0 1.5px currentColor inset;font-weight:900}

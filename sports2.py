@@ -137,7 +137,7 @@ def standings(kind, league):
                     tn, ten = ko(kind, (r.get("team") or {}).get("id"), (r.get("team") or {}).get("name"))
                     rows.append({"en": ten, "rank": r.get("rank"), "team": tn, "played": a.get("played"),
                                  "win": a.get("win"), "draw": a.get("draw"), "lose": a.get("lose"), "pts": r.get("points"),
-                                 "gd": r.get("goalsDiff"), "form": r.get("form")})
+                                 "gd": r.get("goalsDiff"), "form": (r.get("form") or "")[:5][::-1]})
                 if rows and any((x.get("played") or 0) > 0 for x in rows):
                     groups.append([name if len(resp) > 1 or len((resp[0].get("league") or {}).get("standings") or []) > 1 else "", rows])
     else:
