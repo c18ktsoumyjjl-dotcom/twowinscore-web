@@ -22,5 +22,4 @@ services:
         sync: false
       - key: ADMIN_PASSWORD
         sync: false
-      - key: DATA_DIR        # Render Disk 마운트 경로. Postgres 를 쓰면 DATABASE_URL 을 대신 설정
-        value: /var/data
+      # 저장소: Render Disk 를 /var/data 에 붙이고 DATA_DIR=/var/data, 또는 Render Postgres 의 DATABASE_URL 을 설정

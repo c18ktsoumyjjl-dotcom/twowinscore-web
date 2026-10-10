@@ -30,8 +30,11 @@ if ENC_KEY:
 _HKEY = hashlib.sha256(b"twowin-phone|" + ENC_KEY.encode()).digest()
 
 
+_db_ok = [True]
+
+
 def enabled():
-    return _fernet is not None
+    return _fernet is not None and _db_ok[0]
 
 
 def enc(s):
@@ -98,6 +101,14 @@ def init_db():
     if not enabled():
         log.warning("MEMBER_ENC_KEY 없음: 회원 기능 비활성")
         return
+    try:
+        _init()
+    except Exception:
+        _db_ok[0] = False
+        log.exception("member DB init failed: 회원 기능 비활성")
+
+
+def _init():
     pk = "BIGSERIAL PRIMARY KEY" if PG else "INTEGER PRIMARY KEY AUTOINCREMENT"
     for s in SCHEMA.format(pk=pk).split(";"):
         q(s, fetch=False)
