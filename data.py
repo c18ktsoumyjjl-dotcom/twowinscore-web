@@ -387,13 +387,15 @@ def games_for(day):
     return out, failed
 
 
-HALT_LIVE = {"INT", "INTR", "SUSP"}   # 중단·일시 중단: 진행 중으로 유지
+HALT_LIVE = {"INT", "INTR", "SUSP"}
+HALT_MAX_H = {"football": 3, "hockey": 3.5, "basketball": 3.5, "volleyball": 3.5, "baseball": 5}   # 중단·일시 중단: 진행 중으로 유지
 
 
 def state(g):
     if g["status"] in HALT_LIVE:
         try:
-            if (datetime.now(SEOUL) - g["start"]).total_seconds() < 24 * 3600:
+            lim = HALT_MAX_H.get(g["kind"], 3) * 3600   # 이 시간이 지나도 중단이면 진행 중에서 뺀다
+            if (datetime.now(SEOUL) - g["start"]).total_seconds() < lim:
                 return "live"
         except Exception:
             return "live"

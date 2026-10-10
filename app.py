@@ -217,6 +217,8 @@ def view(g):
     halt, reason = halt_info(g)
     if halt:
         badge = halt + (f" · {reason}" if reason else "")
+        if st != "live" and halt in ("경기 중단", "일시 중단"):
+            halt = f"{halt} · {g['start'].strftime('%H:%M')} 경기"   # 오래 멈춘 경기: 시작 시각 표시
     lines = [(lab, hs, as_) if left_home else (lab, as_, hs) for lab, hs, as_ in g.get("lines") or []]
     sub = []
     if g.get("label") and "·" in g["label"]:
