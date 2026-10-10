@@ -65,3 +65,13 @@ body.adm:not(.mopen) .side{display:flex}body.adm.mopen .side{flex-direction:colu
 .lv-how{font-size:12px;opacity:.65;margin:6px 0 0}
 .lv-toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-30px);opacity:0;z-index:9999;background:#13254a;color:#fff;border:2px solid #ff7a1a;border-radius:14px;padding:12px 20px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:.35s;text-align:center}
 .lv-toast.on{opacity:1;transform:translate(-50%,0)}.lv-toast em{display:block;font-style:normal;color:#ff9a4a;font-size:12px;letter-spacing:2px}
+
+.lvi{width:17px;height:17px;vertical-align:-3px;margin-right:3px;object-fit:contain;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
+.lv-top .lv-big{width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3))}.lv-nm{display:flex;flex-direction:column;gap:2px}.lv-nm span{font-weight:800;color:#ff7a1a;font-size:15px}
+.lv-toast{display:flex;align-items:center;gap:12px;text-align:left}.lv-toast img{width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,160,60,.55));animation:lvpop .7s ease}
+@keyframes lvpop{0%{transform:scale(.4) rotate(-12deg);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.tic{width:22px;height:22px;vertical-align:-6px;object-fit:contain}.tic.s{width:18px;height:18px;vertical-align:-4px}.tic.h{width:30px;height:30px;vertical-align:-6px}.tcell{white-space:nowrap}
+.tdet{display:flex;align-items:center;gap:8px}.tdet img{width:56px;height:56px;object-fit:contain}
+.ttabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 6px}.ttabs a{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:20px;border:1px solid rgba(128,140,160,.4);text-decoration:none;color:inherit;font-size:13px;white-space:nowrap}.ttabs a b{font-size:12px;opacity:.7}.ttabs a.on{background:#13254a;color:#fff;border-color:#ff7a1a}.ttabs a.on b{color:#ff9a4a;opacity:1}.ttabs img{width:20px;height:20px;object-fit:contain}
+.tsort{font-size:13px;margin:4px 0}.tsort a{color:inherit;opacity:.65}.tsort a.on{opacity:1;color:#ff7a1a;font-weight:800}
+@media(max-width:600px){.ttabs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.lv-top .lv-big{width:60px;height:60px}}

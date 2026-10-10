@@ -794,17 +794,35 @@ def admin():
             like = "%" + s.lower().lstrip("@").replace("%", "").replace("_", "\\_") + "%"
             where = "WHERE login_id LIKE ? ESCAPE '\\' OR nick_l LIKE ? ESCAPE '\\' OR tg LIKE ? ESCAPE '\\'"
             args = [like, like, like]
-    total = q(f"SELECT COUNT(*) FROM members {where}", args, one=True)[0]
-    rows = q(f"SELECT id,login_id,nick,name_e,phone_e,birth_e,tg,status,created_at,last_login FROM members {where} ORDER BY id DESC LIMIT {PER} OFFSET {(page - 1) * PER}", args)
-    ms = []
     import levels
+    tier = request.args.get("t", type=int)
+    if tier is not None and not 0 <= tier < len(levels.TIERS):
+        tier = None
+    sort = "pts" if request.args.get("sort") == "pts" else "id"
+    jn = "LEFT JOIN member_lv l ON l.member_id=members.id" if levels._ok[0] else ""
+    pe = "COALESCE(l.pts,0)" if jn else "0"
+    if tier is not None:
+        lo, hi = levels.TIERS[tier][1], (levels.TIERS[tier + 1][1] if tier + 1 < len(levels.TIERS) else None)
+        cond = f"{pe}>=?" + (f" AND {pe}<?" if hi is not None else "")
+        where = (f"WHERE ({where[6:]}) AND " if where else "WHERE ") + cond
+        args = args + [lo] + ([hi] if hi is not None else [])
+    tcounts = [0] * len(levels.TIERS)
+    if jn:
+        for pts_, n_ in q(f"SELECT {pe}, COUNT(*) FROM members {jn} GROUP BY {pe}"):
+            tcounts[levels.tier_of(int(pts_))] += int(n_)
+    else:
+        tcounts[0] = q("SELECT COUNT(*) FROM members", one=True)[0]
+    order = f"{pe} DESC, members.id DESC" if sort == "pts" else "members.id DESC"
+    total = q(f"SELECT COUNT(*) FROM members {jn} {where}", args, one=True)[0]
+    rows = q(f"SELECT members.id,login_id,nick,name_e,phone_e,birth_e,tg,status,created_at,last_login FROM members {jn} {where} ORDER BY {order} LIMIT {PER} OFFSET {(page - 1) * PER}", args)
+    ms = []
     lvp = levels.many([r[0] for r in rows])
     for r in rows:
         nm, ph, bd = dec(r[3]), dec(r[4]), dec(r[5])
         ms.append({"id": r[0], "login_id": r[1], "nick": r[2], "name": nm[0] + "*" * (len(nm) - 1),
                    "phone": mask_phone(ph) if ph[:1] == "0" else ph, "birth": bd[:4] + "-**-**",
                    "tg": r[6], "status": r[7], "created": r[8][:16], "last": (r[9] or "")[:16],
-                   "pts": lvp.get(r[0], 0), "tier": levels.TIERS[levels.tier_of(lvp.get(r[0], 0))]})
+                   "pts": lvp.get(r[0], 0), "tier": levels.TIERS[levels.tier_of(lvp.get(r[0], 0))], "ti": levels.tier_of(lvp.get(r[0], 0))})
     today = datetime.now(KST).strftime("%Y-%m-%d")
     stats = {"total": q("SELECT COUNT(*) FROM members", one=True)[0],
              "today": q("SELECT COUNT(*) FROM members WHERE created_at LIKE ?", (today + "%",), one=True)[0],
@@ -814,7 +832,7 @@ def admin():
     mc = admin_ext.memo_counts([m["id"] for m in ms])
     for m in ms:
         m["memos"] = mc.get(m["id"], 0)
-    return render_template("admin.html", mode="list", sec="members", ms=ms, s=s, page=page, pages=pages, total=total, stats=stats,
+    return render_template("admin.html", mode="list", sec="members", ms=ms, s=s, page=page, pages=pages, total=total, stats=stats, tier=tier, sort=sort, tcounts=tcounts, tiers=levels.TIERS,
                            storage=storage_desc())
 
 

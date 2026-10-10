@@ -28,7 +28,7 @@ function mount(el,room,opt){
   for(const m of ms){if(list.querySelector(`[data-id="${m.id}"]`))continue;const mine=m0&&m.nick===m0.nick&&m.tag===m0.tag;
    const d=document.createElement('div');d.className='ch-m'+(mine?' mine':'');d.dataset.id=m.id;
    d.dataset.ts=m.ts;if(m.src==='tg')d.classList.add('tg');
-   d.innerHTML=(m.src==='tg'?`<span class="ch-n"><b class="ch-tg">TG</b>${esc(m.nick)}</span>`:`<span class="ch-n">${m.lv?`<i class="lvb" style="--c:${/^#[0-9a-f]{6}$/i.test(m.lv[1])?m.lv[1]:'#8a94a6'}">${esc(m.lv[0])}</i> `:''}${esc(m.nick)}<small>#${esc(m.tag)}</small></span>`)+`<span class="ch-t">${esc(m.text)}</span><time>${hm(m.ts)}</time>`;list.appendChild(d)}
+   d.innerHTML=(m.src==='tg'?`<span class="ch-n"><b class="ch-tg">TG</b>${esc(m.nick)}</span>`:`<span class="ch-n">${m.lv?(/^[0-4]$/.test(String(m.lv[2]))?`<img class="lvi" src="/static/tiers/t${m.lv[2]}_32.webp?v=1" srcset="/static/tiers/t${m.lv[2]}_64.webp?v=1 2x" width="17" height="17" alt="${esc(m.lv[0])}" title="${esc(m.lv[0])}">`:`<i class="lvb" style="--c:${/^#[0-9a-f]{6}$/i.test(m.lv[1])?m.lv[1]:'#8a94a6'}">${esc(m.lv[0])}</i> `):''}${esc(m.nick)}<small>#${esc(m.tag)}</small></span>`)+`<span class="ch-t">${esc(m.text)}</span><time>${hm(m.ts)}</time>`;list.appendChild(d)}
   if(opt.onNew&&last>0){const n=ms.filter(m=>!(m0&&m.nick===m0.nick&&m.tag===m0.tag)).length;if(n)opt.onNew(n)}
   while(list.children.length>200)list.firstChild.remove();
   if(atBottom||last===0)list.scrollTop=list.scrollHeight}

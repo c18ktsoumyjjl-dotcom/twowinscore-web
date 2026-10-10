@@ -338,7 +338,7 @@ def post(room):
         promo = levels.award(mem["id"], "chat")
         li = levels.info(mem["id"])
         if li:
-            m["lv"] = [li["name"], li["color"]]
+            m["lv"] = [li["name"], li["color"], li["i"]]
         if promo is not None:
             levels.mark_seen(mem["id"], promo)
     out = {"ok": True, "message": _public(m)}

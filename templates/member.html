@@ -54,7 +54,7 @@ var b=document.getElementById('subirth');if(b){b.addEventListener('input',functi
 <p class="mm">이미 회원이신가요? <a href="/login">로그인</a></p>
 {% elif mode=='me' %}<h1>내 정보</h1>{% if welcome %}<p class="me-ok">가입을 환영해요, {{me.nick}}님!</p>{% endif %}
 {% with m=get_flashed_messages() %}{% for x in m %}<p class="me-err">{{x}}</p>{% endfor %}{% endwith %}
-{% if lv %}<div class="lv-card"><div class="lv-top"><span class="lvb" style="--c:{{lv.color}}">{{lv.name}}</span><b>{{lv.pts}}점</b>{% if lv.streak>1 %}<small>🔥 {{lv.streak}}일 연속 출석</small>{% endif %}</div>
+{% if lv %}<div class="lv-card"><div class="lv-top"><img class="lv-big" src="/static/tiers/t{{lv.i}}_128.webp?v=1" srcset="/static/tiers/t{{lv.i}}_256.webp?v=1 2x" width="72" height="72" alt="{{lv.name}}" title="{{lv.name}}"><div class="lv-nm"><span>{{lv.name}}</span><b>{{lv.pts}}점</b></div>{% if lv.streak>1 %}<small>🔥 {{lv.streak}}일 연속 출석</small>{% endif %}</div>
 <div class="lv-bar"><i style="width:{{lv.pct}}%"></i></div>
 <p class="mm">{% if lv.next %}<b>{{lv.next}}</b>까지 {{lv.need}}점 남았어요{% else %}최고 등급 레전드예요!{% endif %}</p>
 <p class="lv-how">출석 하루 10점 · 연속 출석 하루 최대 +10점 · 채팅 1개 1점(하루 30점까지) · 응원 투표 참여 2점(하루 10점까지)</p></div>{% endif %}
