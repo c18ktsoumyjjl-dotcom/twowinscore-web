@@ -507,3 +507,13 @@ body.mapp #chatFab,body.mapp #lounge{display:none!important}
 @media(min-width:1240px){body.chat-open .wrap{margin-left:max(412px,calc((100vw - 820px - 400px)/2 + 400px))}}
 @media(min-width:1024px){body.detail6:not(.mapp) .dchat{top:72px;height:calc(100vh - 72px);padding:4px 0 12px}body.detail6:not(.mapp) .dchat .chatbox{height:calc(100vh - 88px)}}
 @media(min-width:1024px){body:not(.mapp) .sndhint{left:auto!important;right:16px!important}}
+/* v60: PC 홈 = 경기 상세와 같은 2단 (왼쪽 고정 채팅 380px) */
+@media(min-width:1240px){
+ body:not(.mapp){--lc:max(12px,calc((100vw - 1160px)/2))}
+ body.chat-open:not(.mapp) .lounge{left:var(--lc);right:auto;top:var(--lt,72px);bottom:12px;width:380px;height:auto;max-height:none;box-shadow:none;z-index:15;display:flex;flex-direction:column}
+ body.chat-open:not(.mapp) .lounge>*{width:100%}
+ body.chat-open:not(.mapp) .wrap{max-width:760px;margin-left:calc(var(--lc) + 400px)!important;margin-right:auto}
+ body.chat-open:not(.mapp) .sbar{z-index:16}
+}
+@media(min-width:1240px){body.chat-open:not(.mapp) main{z-index:1!important}}
+@media(min-width:1240px){body.chat-open:not(.mapp) .sbar{margin-left:calc(var(--lc) + 400px);max-width:760px}body.chat-open:not(.mapp) .sbar .wrap{margin-left:0!important;padding:0}}

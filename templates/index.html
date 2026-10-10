@@ -111,7 +111,7 @@ const fabN=n=>document.getElementById('fabN').textContent=n?n+'명':'';
 const DW=matchMedia('(min-width:1024px)'),SBS=matchMedia('(min-width:1240px)');
 function openChat(){if(!DW.matches)return;document.body.classList.add('chat-open');LG.hidden=false;FAB.hidden=true;if(!CH)CH=TWChat.mount(LG,'lounge',{title:'💬 라운지 채팅',close:closeChat,lazy:true,onOnline:fabN});CH.start();localStorage.setItem('tw_chat_open','1')}
 function closeChat(keep){document.body.classList.remove('chat-open');LG.hidden=true;FAB.hidden=false;CH&&CH.stop();if(keep!==true)localStorage.setItem('tw_chat_open','0')}
-FAB.onclick=openChat;
+FAB.onclick=openChat;(function(){const sb=document.getElementById('sbar');const f=()=>{if(!SBS.matches)return;const b=sb.getBoundingClientRect().top;document.documentElement.style.setProperty('--lt',Math.max(12,Math.round(b+14))+'px')};addEventListener('scroll',f,{passive:true});addEventListener('resize',f);setInterval(f,1000);f();new ResizeObserver(f).observe(document.body);document.querySelectorAll('img').forEach(i=>i.addEventListener('load',f))})();
 async function ping(){if(!DW.matches||!LG.hidden||document.hidden)return;try{const j=await (await fetch('/api/chat-online?cid='+TWChat.cid())).json();fabN(j.online)}catch(e){}}
 ping();setInterval(ping,20000);
 if(SBS.matches&&(localStorage.getItem('tw_chat_open')==='1'||(innerWidth>=1100&&localStorage.getItem('tw_chat_open')!=='0')))openChat();
