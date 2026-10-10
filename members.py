@@ -378,7 +378,7 @@ def login():
         return redirect("/me")
     errs, lid = [], (request.form.get("login_id") or "").strip().lower()
     nxt = request.values.get("next", "/")
-    if not nxt.startswith("/") or nxt.startswith("//"): nxt = "/"
+    if not nxt.startswith("/") or nxt.startswith("//") or "\\" in nxt or any(ord(c) < 32 for c in nxt): nxt = "/"
     if request.method == "POST":
         if limited("li|" + ip(), 10, 600) or limited("lid|" + lid, 8, 900):
             errs.append("로그인 시도가 너무 많아요. 잠시 뒤에 다시 해 주세요.")
