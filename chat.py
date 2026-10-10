@@ -7,6 +7,8 @@ bp = Blueprint("chat", __name__)
 CAP = 200
 MAX_ROOMS = 300
 MAX_LEN = 200
+TTL = 600                       # 10분 지난 메시지는 사라진다
+BRIDGE_ROOM = "lounge"
 STORE = os.path.join(os.environ.get("CACHE_DIR", "/tmp/twowinscore-cache"), "chat.json")
 ROOM_RE = re.compile(r"^(lounge|game-[a-z]+-\d+-[A-Za-z0-9]+)$")
 NICK_RE = re.compile(r"^[0-9A-Za-z가-힣_]{2,12}$")
@@ -143,7 +145,18 @@ def _rate_ok(keys, now):
 
 
 def _public(m):
-    return {"id": m["id"], "nick": m["nick"], "tag": m["tag"], "text": m["text"], "ts": m["ts"]}
+    d = {"id": m["id"], "nick": m["nick"], "tag": m["tag"], "text": m["text"], "ts": m["ts"]}
+    if m.get("src") == "tg":
+        d["src"] = "tg"
+    return d
+
+
+def _expire(now):
+    """TTL 지난 메시지 제거(호출자가 _lock 보유)."""
+    cut = now - TTL
+    for dq in _rooms.values():
+        while dq and dq[0]["ts"] < cut:
+            dq.popleft()
 
 
 def _save_soon():
@@ -187,6 +200,7 @@ def _cleaner():
         now = time.time()
         try:
             with _lock:
+                _expire(now)
                 for k in [k for k, d in _hist.items() if not d or now - d[-1] > 120]:
                     del _hist[k]
                 for k in [k for k, d in _viol.items() if not d or now - d[-1] > 600]:
@@ -240,7 +254,7 @@ def poll(room):
     except ValueError:
         since = 0
     with _lock:
-        out = [_public(m) for m in msgs if m["id"] > since]
+        out = [_public(m) for m in msgs if m["id"] > since and now - m["ts"] < TTL]
         if since == 0:
             out = out[-50:]
         n = _online_count(room, request.args.get("cid", ""), now)
@@ -288,6 +302,81 @@ def post(room):
         msgs.append(m)
         _save_soon()
     return jsonify({"ok": True, "message": _public(m)})
+
+
+# ---------- telegram bridge (lounge <-> 그룹방) ----------
+PHONE_RE = re.compile(r"(\+?\d[\d\s\-\.]{7,}\d)|((공|영)\s*(일|1)\s*(공|영|0)[\s\d공영일이삼사오육칠팔구\-\.]*)")
+URL_STRIP_RE = re.compile(r"(https?://\S+|www\.\S+|t\.me/\S*|telegram\.(me|org)\S*|tg://\S+|\b[a-z0-9-]{2,}\.(com|net|org|kr|co|io|me|ly|gg|xyz|top|site|club|live|tv|link|app|bet|vip|shop)\S*)", re.I)
+
+
+def _bridge_auth():
+    tok = os.environ.get("BRIDGE_TOKEN", "")
+    given = request.headers.get("X-Bridge-Token", "")
+    if len(tok) < 32 or not given or not hmac.compare_digest(tok, given):
+        abort(404)
+
+
+def bridge_clean(text):
+    """그룹방 글: 링크·@아이디·전화번호는 지우고, 금지어가 남으면 None."""
+    t = re.sub(r"\s+", " ", re.sub(r"<[^>]*>", "", str(text or ""))).strip()
+    t = URL_STRIP_RE.sub("", t)
+    t = HANDLE_RE.sub("", t)
+    t = PHONE_RE.sub("", t)
+    t = re.sub(r"\s+", " ", t).strip()[:MAX_LEN]
+    if not t or check_text(t):
+        return None
+    return t
+
+
+def bridge_name(name):
+    n = re.sub(r"[^0-9A-Za-z가-힣_ ]", "", str(name or "")).strip()[:12]
+    if len(n) < 1 or check_text(n) or check_nick(n.replace(" ", "_") if len(n) >= 2 else "xx") == "사용할 수 없는 닉네임이에요.":
+        n = "회원"
+    return n
+
+
+@bp.post("/api/bridge/in")
+def bridge_in():
+    _bridge_auth()
+    body = request.get_json(silent=True) or {}
+    items = body.get("messages") or []
+    if not isinstance(items, list):
+        return jsonify({"ok": False}), 400
+    msgs = _room(BRIDGE_ROOM)
+    now, added, dropped = time.time(), 0, 0
+    with _lock:
+        for it in items[:30]:
+            if not isinstance(it, dict):
+                continue
+            t = bridge_clean(it.get("text"))
+            if not t:
+                dropped += 1
+                continue
+            _seq[0] += 1
+            msgs.append({"id": _seq[0], "nick": "[텔레] " + bridge_name(it.get("name")), "tag": "", "text": t,
+                         "ts": int(now), "iph": "tg", "ip": "tg", "src": "tg"})
+            added += 1
+        if added:
+            _save_soon()
+    return jsonify({"ok": True, "added": added, "dropped": dropped})
+
+
+@bp.get("/api/bridge/out")
+def bridge_out():
+    """그룹방으로 보낼 웹 메시지. since 없음(-1)이면 현재 번호만(시작 때 옛 글을 쏟지 않게)."""
+    _bridge_auth()
+    try:
+        since = int(request.args.get("since", -1))
+    except ValueError:
+        since = -1
+    now = time.time()
+    with _lock:
+        last = _seq[0]
+        if since < 0 or since > last:          # 첫 호출 또는 웹 재시작으로 번호가 줄었음
+            return jsonify({"messages": [], "last": last})
+        out = [{"id": m["id"], "nick": m["nick"], "tag": m["tag"], "text": m["text"]}
+               for m in (_rooms.get(BRIDGE_ROOM) or []) if m["id"] > since and m.get("src") != "tg" and now - m["ts"] < 120]
+    return jsonify({"messages": out[:50], "last": last})
 
 
 # ---------- admin ----------

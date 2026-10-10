@@ -406,3 +406,5 @@ body.sbon .sb6{transform:none}
 }
 /* 최근 결과: 왼쪽=오래된 → 오른쪽=최신, 최신 강조 */
 .form i:last-child{transform:scale(1.18);box-shadow:0 0 0 1.5px currentColor inset;font-weight:900}
+
+.ch-tg{display:inline-block;background:#229ED9;color:#fff;font-size:9px;font-weight:800;border-radius:3px;padding:0 3px;margin-right:3px;vertical-align:1px}.ch-m.tg .ch-n{color:#5fb8e6}
