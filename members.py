@@ -738,7 +738,7 @@ def admin_otp():
             import pyotp
             _pdel("otp_tok"); _pset("otp_tok", {"aid": a["id"], "sec": pyotp.random_base32()})
             return redirect("/admin/otp")
-        return render_template("admin.html", mode="otp1", errs=errs)
+        return render_template("admin.html", mode="otp1", sec="otp", errs=errs)
     if p and request.method == "POST" and request.form.get("step") == "2":
         s = _totp_step(p["sec"], request.form.get("code"))
         if s is None or limited("admo2|" + str(a["id"]), 10, 600):
@@ -751,7 +751,7 @@ def admin_otp():
             return render_template("admin.html", mode="codes", codes=codes, after="reset")
     if p:
         return render_template("admin.html", mode="setup2", errs=errs, qr=_qr(p["sec"], a["username"]), sec=p["sec"], u=a["username"], action="/admin/otp", reset=True)
-    return render_template("admin.html", mode="otp1", errs=errs)
+    return render_template("admin.html", mode="otp1", sec="otp", errs=errs)
 
 
 PER = 20
@@ -784,7 +784,11 @@ def admin():
              "today": q("SELECT COUNT(*) FROM members WHERE created_at LIKE ?", (today + "%",), one=True)[0],
              "susp": q("SELECT COUNT(*) FROM members WHERE status='suspended'", one=True)[0]}
     pages = max(1, (total + PER - 1) // PER)
-    return render_template("admin.html", mode="list", ms=ms, s=s, page=page, pages=pages, total=total, stats=stats,
+    import admin_ext
+    mc = admin_ext.memo_counts([m["id"] for m in ms])
+    for m in ms:
+        m["memos"] = mc.get(m["id"], 0)
+    return render_template("admin.html", mode="list", sec="members", ms=ms, s=s, page=page, pages=pages, total=total, stats=stats,
                            storage=storage_desc())
 
 
@@ -835,4 +839,4 @@ def admin_export():
 @admin_required
 def admin_logs():
     rows = q("SELECT ts,ip,action,target FROM admin_log ORDER BY id DESC LIMIT 200")
-    return render_template("admin.html", mode="log", rows=rows)
+    return render_template("admin.html", mode="log", sec="log", rows=rows)

@@ -2,8 +2,8 @@
 {% block header %}<div class="hero5"><div class="fxw">
 <picture><source media="(max-width:700px)" type="image/webp" srcset="/static/hero_m1x.webp 540w, /static/hero_m2x.webp 1080w" sizes="100vw">
 <source media="(max-width:700px)" srcset="/static/hero_m1x.jpg 540w, /static/hero_m2x.jpg 1080w" sizes="100vw">
-<source type="image/webp" srcset="/static/band_1x.webp 1440w, /static/band_2x.webp 2560w" sizes="100vw">
-<img src="/static/band_1x.jpg" srcset="/static/band_1x.jpg 1440w, /static/band_2x.jpg 2560w" sizes="100vw" alt="TwowinSCORE" fetchpriority="high"></picture><div class="fx-logo"></div><div class="fx-crowd"></div><canvas class="fx-rain"></canvas></div>
+{% if hero_v %}<img src="/media/hero.webp?v={{hero_v}}" alt="TwowinSCORE" fetchpriority="high">{% else %}<source type="image/webp" srcset="/static/band_1x.webp 1440w, /static/band_2x.webp 2560w" sizes="100vw">
+<img src="/static/band_1x.jpg" srcset="/static/band_1x.jpg 1440w, /static/band_2x.jpg 2560w" sizes="100vw" alt="TwowinSCORE" fetchpriority="high">{% endif %}</picture><div class="fx-logo"></div><div class="fx-crowd"></div><canvas class="fx-rain"></canvas></div>
 <p class="tag5">국내·해외 축구·야구·농구·배구·아이스하키 실시간 스코어</p>
 <div class="hero-nav">{{ topnav("home") }}<span class="snd"><button class="theme" id="sndBtn" aria-label="알림음"></button><div class="sndm" id="sndMenu" hidden><button data-m="fav">즐겨찾기만</button><button data-m="all">전체 경기</button><button data-m="off">끄기</button></div></span><button class="theme" id="theme" aria-label="화면 모드">◐</button></div>
 </div>
