@@ -18,7 +18,7 @@ ENC_KEY = os.environ.get("MEMBER_ENC_KEY", "").strip()
 _ADMIN_PW = os.environ.get("ADMIN_PASSWORD", "")
 ADMIN_HASH = generate_password_hash(_ADMIN_PW) if len(_ADMIN_PW) >= 10 else None
 del _ADMIN_PW
-ADMIN_TTL = 30 * 60
+ADMIN_TTL = 2 * 60 * 60
 
 _fernet = None
 if ENC_KEY:
