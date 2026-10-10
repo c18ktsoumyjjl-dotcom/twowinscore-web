@@ -517,3 +517,11 @@ body.mapp #chatFab,body.mapp #lounge{display:none!important}
 }
 @media(min-width:1240px){body.chat-open:not(.mapp) main{z-index:1!important}}
 @media(min-width:1240px){body.chat-open:not(.mapp) .sbar{margin-left:calc(var(--lc) + 400px);max-width:760px}body.chat-open:not(.mapp) .sbar .wrap{margin-left:0!important;padding:0}}
+/* v61: 홈 라운지 = 경기 상세 채팅 카드와 동일 규격 */
+@media(min-width:1240px){
+ body:not(.mapp){--lc:max(12px,calc((100vw - 1176px)/2))}
+ body.chat-open:not(.mapp) .lounge{background:#141c30;border:1px solid #232d45;border-radius:14px;height:calc(100vh - 88px)!important;bottom:auto!important;max-height:none}
+ [data-theme=light] body.chat-open:not(.mapp) .lounge{background:#fff;border-color:#d7deeb}
+ body.chat-open:not(.mapp) .wrap{max-width:800px;margin-left:calc(var(--lc) + 388px)!important}
+ body.chat-open:not(.mapp) .sbar{margin-left:calc(var(--lc) + 400px);max-width:776px}
+}
