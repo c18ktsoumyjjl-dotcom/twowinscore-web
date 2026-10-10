@@ -79,6 +79,26 @@ TABS = [("kbo", "KBO"), ("mlb", "MLB"), ("npb", "NPB"), ("kbl", "KBL"), ("wkbl",
         ("asia_hk", "아시아리그"), ("liiga", "핀란드 리가"), ("shl", "SHL"), ("ahl", "AHL")]
 
 
+from decimal import Decimal, ROUND_HALF_UP
+
+
+@app.template_filter("wpct")
+def wpct(r):
+    """승률: 승/(승+패) (무승부 제외, KBO 방식), 소수 셋째 자리 반올림, 앞 0 생략 (.625 / 1.000). 경기 없으면 -."""
+    w, l = r.get("win"), r.get("lose")
+    if w is None or l is None:
+        p = r.get("pct")
+        if p is None:
+            return ""
+        v = Decimal(str(p))
+    elif w + l == 0:
+        return "-"
+    else:
+        v = Decimal(w) / Decimal(w + l)
+    s = str(v.quantize(Decimal("0.001"), rounding=ROUND_HALF_UP))
+    return s[1:] if s.startswith("0") else s
+
+
 def today():
     return datetime.now(data.SEOUL).date()
 

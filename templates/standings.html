@@ -7,6 +7,6 @@
 {% for r in rows %}<tr><td class="rk">{{r.rank}}</td><td class="t">{{r.team}}{% if r.en %}<small class="en">{{r.en}}</small>{% endif %}</td>
 {% if kind!='volleyball' %}<td>{{r.played if r.played else ((r.win or 0)+(r.lose or 0))}}</td>{% endif %}
 <td>{{r.win if r.win is not none}}</td>{% if kind=='football' %}<td>{{r.draw if r.draw is not none}}</td>{% endif %}<td>{{r.lose if r.lose is not none}}</td>{% if kind=='hockey' %}<td>{{r.otl if r.otl is not none}}</td>{% endif %}{% if kind=='football' %}<td>{{r.gd if r.gd is not none}}</td>{% endif %}
-{% if kind in ('volleyball','football','hockey') %}<td class="o">{{ (r.pts|int) if r.pts is not none }}</td>{% else %}<td class="o">{{ ('%.3f'|format(r.pct)).lstrip('0') if r.pct is not none }}</td>{% endif %}
+{% if kind in ('volleyball','football','hockey') %}<td class="o">{{ (r.pts|int) if r.pts is not none }}</td>{% else %}<td class="o">{{ r|wpct }}</td>{% endif %}
 {% if hasf %}<td class="form">{% for c in (r.form or '')[-5:] %}<i class="r{{c}}">{{ {'W':'승','L':'패','D':'무'}.get(c,c) }}</i>{% endfor %}</td>{% endif %}{% if kind=='baseball' %}<td>{{ (r.extra or '').replace('GB ','') }}</td>{% endif %}</tr>{% endfor %}
 </tbody></table></div></section>{% endfor %}{% endblock %}
