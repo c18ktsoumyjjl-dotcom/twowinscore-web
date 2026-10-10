@@ -13,6 +13,7 @@ from collections import deque
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
+import naver_live
 from common import (
     log, redact, tg, tg_multipart, TgError, load_channel, discover_channel, BASE, CHANNEL_TITLE,
     display_scores, format_match, format_vs,
@@ -304,7 +305,7 @@ def parse_game(raw, meta):
         return None
     hid, aid = home.get("id"), away.get("id")
     scores = raw.get("scores") or {}
-    return {
+    g = {
         "key": f"{meta['kind']}:{meta['league']}:{raw.get('id')}",
         "id": raw.get("id"),
         "emoji": meta["emoji"],
@@ -326,6 +327,9 @@ def parse_game(raw, meta):
         "period": period_text(meta["kind"], status, scores),
         "lines": period_lines(meta["kind"], raw),
     }
+    if meta["kind"] == "baseball" and meta["league"] in naver_live.CAT:
+        naver_live.apply(g)   # KBO/NPB: 네이버 실시간 우선, 실패하면 API-Sports 그대로
+    return g
 
 
 def fetch_sport_day(kind, day):

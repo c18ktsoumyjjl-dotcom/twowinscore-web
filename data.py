@@ -104,7 +104,21 @@ def _de(d):
     return d
 
 
+def _naver_fresh(kind, games):
+    """캐시된 KBO/NPB 경기에 네이버 실시간(12초 캐시)을 다시 덮는다. API 캐시가 3분이어도 점수는 빠르게."""
+    if kind == "baseball":
+        for g in games:
+            if g.get("league") in sb.naver_live.CAT and g.get("status") not in ("FT", "POST", "CANC"):
+                sb.naver_live.apply(g)
+    return games
+
+
 def _sport_day(kind, day, today):
+    games, ok = _sport_day0(kind, day, today)
+    return _naver_fresh(kind, games), ok
+
+
+def _sport_day0(kind, day, today):
     name = f"games_{kind}_{day.isoformat()}.json"
     c = _rd(name)
     now = time.time()
@@ -158,7 +172,7 @@ def _fetch_raw(kind, day):
         g = sb.parse_game(raw, meta)
         if not g:
             continue
-        if kind == "baseball":
+        if kind == "baseball" and g.get("src") != "naver":   # 네이버 값이 있으면 그대로
             sc = raw.get("scores") or {}
             inn = {}
             for side in ("home", "away"):
