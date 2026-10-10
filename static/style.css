@@ -525,3 +525,12 @@ body.mapp #chatFab,body.mapp #lounge{display:none!important}
  body.chat-open:not(.mapp) .wrap{max-width:800px;margin-left:calc(var(--lc) + 388px)!important}
  body.chat-open:not(.mapp) .sbar{margin-left:calc(var(--lc) + 400px);max-width:776px}
 }
+/* v62: PC 2단 폭 확장 (채팅 380 + 오른쪽 최대 1120, 전체 최대 1520) */
+@media(min-width:1240px){
+ body:not(.mapp){--lc:max(12px,calc((100vw - 1520px)/2));--rw:min(1120px,calc(100vw - 2 * var(--lc) - 400px))}
+ body.chat-open:not(.mapp) .wrap{max-width:calc(var(--rw) + 24px)}
+ body.chat-open:not(.mapp) .sbar{max-width:var(--rw)}
+ .detail6 main.wrap{max-width:1544px}
+ .detail6 .sb6in{max-width:1520px}
+}
+@media(min-width:1240px){body:not(.mapp){--lc:max(24px,calc((100vw - 1520px)/2))}.detail6 main.wrap{max-width:1568px;padding:0 24px}}
