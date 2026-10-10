@@ -1,8 +1,8 @@
-{% extends "base.html" %}{% block title %}{{g.L.name}} vs {{g.R.name}}{% endblock %}
+{% extends "base.html" %}{% from "_nav.html" import topnav %}{% block title %}{{g.L.name}} vs {{g.R.name}}{% endblock %}
 {% block bodycls %}has-hero detail6{% endblock %}
 {% block header %}<div class="sb6" id="sb6" aria-hidden="true"><div class="sb6in"><span class="n">{{g.L.name}}</span><b id="bL">{{g.L.score if g.L.score is not none else ''}}</b><span class="st" id="bB">{% if g.state=='live' %}<i class="pill">● LIVE {{g.badge}}</i>{% else %}{{g.badge if g.state!='scheduled' else 'vs'}}{% endif %}</span><b id="bR">{{g.R.score if g.R.score is not none else ''}}</b><span class="n">{{g.R.name}}</span></div></div>
 <div class="hero5 hero6"><picture><source media="(max-width:700px)" type="image/webp" srcset="/static/band_1x.webp 1440w, /static/band_2x.webp 2560w" sizes="100vw"><source type="image/webp" srcset="/static/band_1x.webp 1440w, /static/band_2x.webp 2560w" sizes="100vw"><img src="/static/band_1x.jpg" alt="TwowinSCORE"></picture>
-<div class="hero-nav"><nav><a href="/" class="on">스코어</a><a href="/standings">순위</a></nav><span class="snd"><button class="theme" id="sndBtn" aria-label="알림음">🔔</button><div class="sndm" id="sndMenu" hidden><button data-m="fav">🔔 즐겨찾기만</button><button data-m="all">🔔 전체 경기</button><button data-m="off">🔕 끄기</button></div></span><button class="theme" id="theme" aria-label="화면 모드">◐</button></div></div>
+<div class="hero-nav">{{ topnav("game") }}<span class="snd"><button class="theme" id="sndBtn" aria-label="알림음">🔔</button><div class="sndm" id="sndMenu" hidden><button data-m="fav">🔔 즐겨찾기만</button><button data-m="all">🔔 전체 경기</button><button data-m="off">🔕 끄기</button></div></span><button class="theme" id="theme" aria-label="화면 모드">◐</button></div></div>
 <div class="sbar" id="sbar"><div class="wrap"><div class="dates5"><a class="logo mini" href="/"><span class="w">Twowin</span><span class="s">SCORE</span></a><a class="back6" href="/?d={{d}}">← {{label}} 경기 목록</a></div></div></div>{% endblock %}
 {% block body %}
 <div class="dlay"><div class="dmain">

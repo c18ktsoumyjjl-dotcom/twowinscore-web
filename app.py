@@ -284,6 +284,16 @@ def api_preview(key):
                     "url": f"/game/{v['key']}?d={d.isoformat()}"})
 
 
+@app.route("/login")
+def login():
+    return render_template("soon.html", page="login", what="로그인")
+
+
+@app.route("/signup")
+def signup():
+    return render_template("soon.html", page="signup", what="회원가입")
+
+
 @app.route("/standings")
 def standings():
     slug = request.args.get("league", "kbo")

@@ -1,11 +1,11 @@
-<!doctype html><html lang="ko" data-theme="dark"><head><meta charset="utf-8">
+{% from "_nav.html" import topnav %}<!doctype html><html lang="ko" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1630">
 <script>try{var t=localStorage.getItem('tw_theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <title>{% block title %}투윈스코어{% endblock %} · TwowinSCORE</title>
-<link rel="stylesheet" href="/static/style.css?v=36"></head><body class="{% block bodycls %}{% endblock %}">
+<link rel="stylesheet" href="/static/style.css?v=37"></head><body class="{% block bodycls %}{% endblock %}">
 {% block hero %}{% endblock %}{% block header %}<header><div class="wrap top"><a class="logo" href="/"><span class="w">Twowin</span><span class="s">SCORE</span></a>
-<nav><a href="/" class="{{'on' if page in ('home','game')}}">스코어</a><a href="/standings" class="{{'on' if page=='standings'}}">순위</a></nav>
+{{ topnav(page) }}
 <button class="theme" id="theme" aria-label="화면 모드">◐</button></div>{% block bar %}{% endblock %}</header>{% endblock %}
 <main class="wrap">{% block body %}{% endblock %}</main>
 <footer class="wrap"><a class="tg" href="https://t.me/twowinscore" target="_blank" rel="noopener">📢 텔레그램 채널 t.me/twowinscore</a>
@@ -13,4 +13,5 @@
 <p class="credit">입장 효과음(CC0): 호루라기 SpliceSound · 관중 함성 itmightgetloud "Millerntor Stadium Crowd Reaction Goal" (Freesound) — 편집함</p></footer>
 <script>document.getElementById('theme').onclick=function(){var r=document.documentElement,n=r.dataset.theme==='dark'?'light':'dark';r.dataset.theme=n;try{localStorage.setItem('tw_theme',n)}catch(e){}}</script>
 <script>(function(){const sb=document.getElementById('sbar');const f=()=>{document.body.classList.toggle('scrolled',scrollY>8);if(sb)sb.classList.toggle('stuck',sb.getBoundingClientRect().top<=0.5&&scrollY>40);document.body.classList.toggle('sstuck',sb.classList.contains('stuck'))};addEventListener('scroll',f,{passive:true});f()})()</script>
-<a class="tgcs" href="https://t.me/twowinscore_cs_bot" target="_blank" rel="noopener noreferrer" aria-label="텔레그램 고객센터" title="텔레그램 고객센터"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="#fff" d="M21.9 4.3 18.7 19.4c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.2 13 1.4 11.5c-1-.3-1-1 .2-1.5L20.5 2.9c.9-.3 1.6.2 1.4 1.4z"/></svg><span>고객센터</span></a>{% block js %}{% endblock %}</body></html>
+<script>(function(){var vv=window.visualViewport,r=document.documentElement;function u(){var h=vv?vv.height:innerHeight,t=vv?vv.offsetTop:0;r.style.setProperty('--vvh',h+'px');r.style.setProperty('--vvt',t+'px')}u();if(vv){vv.addEventListener('resize',u);vv.addEventListener('scroll',u)}addEventListener('resize',u);
+var M=matchMedia('(max-width:1023px)'),b=document.body,y=0,lk=false;function chk(){var o=M.matches&&(b.classList.contains('chat-open')||b.classList.contains('sheet'));if(o&&!lk){y=scrollY;b.style.top=-y+'px';b.classList.add('chlock');lk=true}else if(!o&&lk){b.classList.remove('chlock');b.style.top='';scrollTo(0,y);lk=false}}new MutationObserver(chk).observe(b,{attributes:true,attributeFilter:['class']});M.addEventListener('change',chk)})()</script>{% block js %}{% endblock %}</body></html>
