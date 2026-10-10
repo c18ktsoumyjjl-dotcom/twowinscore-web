@@ -201,6 +201,23 @@ def age(b, today=None):
     return t.year - b.year - ((t.month, t.day) < (b.month, b.day))
 
 
+def parse_birth(s, today=None):
+    """YYMMDD → date. YY > current 2-digit year → 19YY else 20YY. Invalid → None."""
+    d = re.sub(r"\D", "", s or "")
+    if not re.fullmatch(r"\d{6}", d):
+        return None
+    yy, mm, dd = int(d[:2]), int(d[2:4]), int(d[4:6])
+    t = today or datetime.now(KST).date()
+    century = 1900 if yy > (t.year % 100) else 2000
+    try:
+        b = date(century + yy, mm, dd)
+    except ValueError:
+        return None
+    if b.year < 1900 or b > t:
+        return None
+    return b
+
+
 def fmt_phone(d):
     return f"{d[:3]}-{d[3:-4]}-{d[-4:]}"
 
@@ -312,8 +329,8 @@ def signup():
             lid = f["login_id"].lower(); f["login_id"] = lid
             pw, pw2 = request.form.get("pw", ""), request.form.get("pw2", "")
             if not LOGIN_RE.match(lid): errs.append("아이디는 영문 소문자·숫자·_ 4~16자로 해 주세요.")
-            if len(pw) < 8 or len(pw) > 64 or not (re.search(r"[A-Za-z]", pw) and re.search(r"\d", pw)):
-                errs.append("비밀번호는 영문과 숫자를 섞어 8자 이상으로 해 주세요.")
+            if len(pw) < 4 or len(pw) > 64 or not (re.search(r"[A-Za-z]", pw) and re.search(r"\d", pw)):
+                errs.append("비밀번호는 영문과 숫자를 섞어 4자 이상으로 해 주세요.")
             elif pw != pw2: errs.append("비밀번호 확인이 일치하지 않아요.")
             ne = chat.check_nick(f["nick"])
             if ne: errs.append(ne if f["nick"] else "닉네임을 입력해 주세요.")
@@ -321,12 +338,11 @@ def signup():
             ph = norm_phone(f["phone"])
             if not ph: errs.append("휴대폰 번호 형식이 올바르지 않아요. (예: 010-1234-5678)")
             elif pv_on() and not _pv_verified(ph): errs.append("휴대폰 인증을 완료해 주세요. (인증한 번호와 입력한 번호가 같아야 해요)")
-            try:
-                b = date.fromisoformat(f["birth"])
-                if b.year < 1900 or b > datetime.now(KST).date(): raise ValueError
-                if age(b) < 14: errs.append("만 14세 미만은 가입할 수 없어요.")
-            except ValueError:
-                b = None; errs.append("생년월일을 정확히 입력해 주세요.")
+            b = parse_birth(f["birth"])
+            if not b:
+                errs.append("생년월일을 6자리로 입력해 주세요. (예: 940531)")
+            elif age(b) < 14:
+                errs.append("만 14세 미만은 가입할 수 없어요.")
             tg = f["tg"].lstrip("@")
             if tg and not TG_RE.match(tg): errs.append("텔레그램 아이디는 영문으로 시작하는 5~32자(영문·숫자·_)예요.")
             if request.form.get("agree") != "1": errs.append("개인정보 수집·이용에 동의해 주세요.")
@@ -348,6 +364,9 @@ def signup():
                     r = q("SELECT id FROM members WHERE login_id=?", (lid,), one=True)
                     session.clear(); session.permanent = True; session["uid"] = r[0]
                     return redirect("/me?welcome=1")
+    ph_disp = norm_phone(f.get("phone"))
+    if ph_disp:
+        f["phone"] = fmt_phone(ph_disp)
     return render_template("member.html", page="signup", mode="signup", f=f, errs=errs, pv=pv_on(), pv_done=bool(ph_ok(f["phone"])))
 
 
