@@ -13,8 +13,8 @@
 <label class="search5"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="팀 검색 (예: LG, 다저스)" autocomplete="off"></label>
 <div class="sports5" id="sports"></div><div class="chipwrap" id="chipwrap"><button class="cha L" id="chL" aria-label="왼쪽" hidden>‹</button><div class="chips chips5" id="chips"></div><button class="cha R" id="chR" aria-label="오른쪽" hidden>›</button></div></div></div>
 <div class="mds" id="mds" data-d="{{d}}" data-today="{{today}}" data-min="{{dmin}}" data-max="{{dmax}}"></div><div class="wrap dlabel">{{label}}</div>{% endblock %}
-{% block body %}<button id="chatFab" class="fab">💬 라운지 <span id="fabN"></span></button><aside id="lounge" class="lounge" hidden></aside><div id="status" class="status"></div><div id="list"><p class="empty">불러오는 중…</p></div>{% endblock %}
-{% block js %}<button class="sndhint" id="sndHint" hidden>소리 켜기</button><script src="/static/sound.js?v=11"></script><script src="/static/fx.js?v=2" defer></script><script src="/static/chat.js?v=5"></script><script>
+{% block body %}<button id="chatFab" class="fab">💬 라운지 <span id="fabN"></span></button><aside id="lounge" class="lounge" hidden></aside><div id="status" class="status"></div><div id="feat" class="ft8 wrap" hidden></div><div id="list"><p class="empty">불러오는 중…</p></div>{% endblock %}
+{% block js %}<button class="sndhint" id="sndHint" hidden>소리 켜기</button><script src="/static/sound.js?v=11"></script><script src="/static/fx.js?v=2" defer></script><script src="/static/chat.js?v=5"></script><link rel="stylesheet" href="/static/ins.css?v=4"><script src="/static/vote.js?v=4"></script><script>
 const D="{{d}}";const SPORTS=['전체','축구','야구','농구','배구','아이스하키'];let SP=localStorage.getItem('tw_sport')||'전체',OPEN=null,PV={};let F=new URLSearchParams(location.search).get('f')||'all',Q='',DATA=null,PREV={};
 const fav=()=>{try{return JSON.parse(localStorage.getItem('tw_fav')||'[]')}catch(e){return[]}};
 const fk=(g,s)=>g.kind+':'+g[s].id;
@@ -31,15 +31,16 @@ function tbl(t){if(!t)return'';const ex=t.ext||[];const cell=v=>v==null?'<i clas
 const RES={W:'승',L:'패',D:'무'};
 function gls(G){if(!G)return'';const it=x=>`<b>${esc(x.min)}</b> ${esc(x.who||'득점')}${x.kind?` <em>${esc(x.kind)}</em>`:''}`;
  return `<div class="pv-b gl8"><h4>득점</h4>`+G.halves.map(s=>`<div class="glh"><div class="glt"><span>${esc(s.lab)}</span>${s.h!=null?`<b>${s.h} : ${s.a}</b>`:''}</div>${s.items.length?s.items.map(x=>`<div class="glr ${x.side}"><span class="gL">${x.side==='home'?it(x):''}</span><i>⚽</i><span class="gR">${x.side==='away'?it(x):''}</span></div>`).join(''):'<p class="gln">득점 없음</p>'}</div>`).join('')+(G.missing?`<p class="gln">득점 ${G.missing}개는 상세 기록이 아직 들어오지 않았어요</p>`:'')+'</div>'}
-function pv(j){let h=tbl(j.table)+gls(j.goals);
+function pv(j){let h=TWVote.points(j.points)+tbl(j.table)+gls(j.goals);
  if(j.starters&&(j.starters.away||j.starters.home)){const p=x=>x?`<b>${esc(x.name)}</b>${x.era?` <small>ERA ${esc(x.era)}</small>`:''}`:'<small>미발표</small>';h+=`<div class="pv-b"><h4>선발 투수</h4><div class="two6"><div>${p(j.starters.away)}</div><div class="r">${p(j.starters.home)}</div></div></div>`}
  if(j.forms.length)h+=`<div class="pv-b"><h4>최근 5경기</h4>${j.forms.map(f=>`<div class="fm6"><span>${esc(f.name)}</span><span class="form">${f.rows.slice().reverse().map(r=>`<i class="r${r.r}">${RES[r.r]}</i>`).join('')}</span></div>`).join('')}</div>`;
  if(j.h2h)h+=`<div class="pv-b"><h4>맞대결 최근 ${j.h2h.n}경기</h4><p class="h6">${esc(j.L)} <b>${j.h2h.L}승</b> · <b>${j.h2h.R}승</b> ${esc(j.R)}</p></div>`;
  if(j.pos&&(j.pos.L||j.pos.R)){const s=x=>x?`<b>${x.rank}위</b> <small>${x.win??''}${x.win!=null?'승 ':''}${x.draw!=null?x.draw+'무 ':''}${x.lose??''}${x.lose!=null?'패':''}${x.pts!=null&&j.kind!=='baseball'&&j.kind!=='basketball'?' · '+x.pts+'점':''}</small>`:'-';h+=`<div class="pv-b"><h4>순위${j.pos.section?' · '+esc(j.pos.section):''}</h4><div class="two6"><div>${esc(j.L)} ${s(j.pos.L)}</div><div class="r">${esc(j.R)} ${s(j.pos.R)}</div></div></div>`}
  if(j.plays)h+=`<div class="pv-b"><h4>문자중계</h4>${j.plays.items.map(x=>`<p class="pl6 ${x.hot?'hot':''}">${esc(x.t)}</p>`).join('')}</div>`;
+ if(j.vote)h+=TWVote.html({k:j.vote.k,L:j.L,R:j.R,draw:j.vote.draw,open:j.vote.open});
  return h+`<a class="more6" href="${esc(j.url)}">상세 페이지 보기 ›</a>`}
 async function loadPv(k){try{const j=await (await fetch('/api/preview/'+encodeURIComponent(k)+'?d='+D)).json();PV[k]=j.error?'<p class="empty">정보를 불러오지 못했어요.</p>':pv(j);PV[k+'@']=Date.now()}catch(e){PV[k]='<p class="empty">정보를 불러오지 못했어요.</p>'}
- const el=document.querySelector('.pv6[data-k="'+CSS.escape(k)+'"] .pvin');if(el)el.innerHTML=PV[k]}
+ const el=document.querySelector('.pv6[data-k="'+CSS.escape(k)+'"] .pvin');if(el){el.innerHTML=PV[k];TWVote.scan(el)}}
 function toggleRow(k){const was=OPEN===k;document.querySelectorAll('.pv6.open').forEach(x=>x.classList.remove('open'));document.querySelectorAll('.g5.op').forEach(x=>x.classList.remove('op'));
  if(was){OPEN=null;return}OPEN=k;const el=document.querySelector('.pv6[data-k="'+CSS.escape(k)+'"]');if(!el)return;el.classList.add('open');el.previousElementSibling.classList.add('op');
  if(!PV[k]||Date.now()-PV[k+'@']>30000)loadPv(k)}
@@ -72,11 +73,11 @@ function mrender(all,q){const lv=s=>(s==='전체'?all:all.filter(g=>g.sport===s)
  for(const {l,x,n,f} of lk){x.sort(ord);const c=COL.has(l);h+=`<section class="msec ${c?'col':''}"><h2 class="mlg" data-l="${esc(l)}"><span class="ln">${x[0].emoji} ${esc(l)}</span><small>${x.length}경기${n?` · <i>LIVE ${n}</i>`:''}</small><button class="mlf ${f?'':'on'}" data-l="${esc(l)}" onclick="toggleLg(this.dataset.l,event)" aria-label="리그 즐겨찾기">${f?'☆':'★'}</button><span class="chev">›</span></h2>${c?'':x.map(row).join('')}</section>`}
  document.getElementById('list').innerHTML=h||`<div class="mempty">${q?'검색 결과가 없어요.':F==='live'?'지금 진행 중인 경기가 없어요.':F==='fav'?'<b>☆</b>즐겨찾는 팀이나 리그가 없어요.<br>경기 오른쪽 ☆ 또는 리그 이름 옆 ☆를 누르면 여기에 모여요.':'이 날 경기가 없어요.'}</div>`;
  document.querySelectorAll('.mtab a').forEach(a=>{const t=a.dataset.t;if(t==='score')a.classList.toggle('on',F!=='fav');if(t==='fav')a.classList.toggle('on',F==='fav')});
- const live=all.some(g=>g.state==='live');
+ TWVote.scan(document.getElementById('list'),true);const live=all.some(g=>g.state==='live');
  document.getElementById('status').innerHTML=(DATA.failed.length?'<span class="warn">일부 종목을 불러오지 못했어요 · </span>':'')+(live?'<i class="dot"></i> 실시간 · ':'')+DATA.updated+' 기준';
  if(SNDQ){SNDQ=false;TWSound.play()}
  all.forEach(g=>PREV[g.key]=g.L.score+':'+g.R.score)}
-function render(){if(!DATA)return;if(MOB.matches)return mrender(DATA.games,Q.trim().toLowerCase());const all=DATA.games,q=Q.trim().toLowerCase();
+function render(){if(!DATA)return;document.getElementById('feat').style.display=F==='all'&&!Q.trim()?'':'none';if(MOB.matches)return mrender(DATA.games,Q.trim().toLowerCase());const all=DATA.games,q=Q.trim().toLowerCase();
  const cnt=s=>s==='전체'?all.length:all.filter(g=>g.sport===s).length;if(!SPORTS.includes(SP))SP='전체';
  document.getElementById('sports').innerHTML=SPORTS.map(s=>`<button class="${s===SP?'on':''}" data-s="${s}">${s}${cnt(s)?` <small>${cnt(s)}</small>`:''}</button>`).join('');
  const gs=SP==='전체'?all:all.filter(g=>g.sport===SP);
@@ -94,7 +95,7 @@ function render(){if(!DATA)return;if(MOB.matches)return mrender(DATA.games,Q.tri
  const lab=k=>k==='baseball'?'<span class="ha5">원정 | 홈</span>':'<span class="ha5">홈 | 원정</span>';
  for(const l of leagues){const x=rest.filter(g=>g.league===l);if(x.length)h+=`<section><h2><span class="lh">${x[0].emoji} ${esc(l)}</span>${lab(x[0].kind)}</h2>${x.map(row).join('')}</section>`}
  document.getElementById('list').innerHTML=h||`<p class="empty">${q?'검색 결과가 없어요.':F==='live'?'지금 진행 중인 경기가 없어요.':'이 날 경기가 없어요.'}</p>`;
- const live=gs.some(g=>g.state==='live');
+ TWVote.scan(document.getElementById('list'),true);const live=gs.some(g=>g.state==='live');
  document.getElementById('status').innerHTML=(DATA.failed.length?'<span class="warn">일부 종목을 불러오지 못했어요 · </span>':'')+(live?'<i class="dot"></i> 실시간 · 점수 '+(DATA.upstream||15)+'초마다 갱신 · ':'')+DATA.updated+' 기준';
  if(SNDQ){SNDQ=false;TWSound.play()}
  all.forEach(g=>PREV[g.key]=g.L.score+':'+g.R.score)}
@@ -115,6 +116,7 @@ async function ping(){if(!DW.matches||!LG.hidden||document.hidden)return;try{con
 ping();setInterval(ping,20000);
 if(DW.matches&&(localStorage.getItem('tw_chat_open')==='1'||(innerWidth>=1100&&localStorage.getItem('tw_chat_open')!=='0')))openChat();
 DW.addEventListener('change',e=>{if(!e.matches&&!LG.hidden)closeChat();render()});
+const FB=document.getElementById('feat');TWVote.feat(D,FB,true);setInterval(()=>{if(!document.hidden)TWVote.feat(D,FB,true)},90000);
 window.TWload=load;load();setInterval(()=>{if(!document.hidden)load()},5000);
 
 (function(){const c=document.getElementById('chips'),w=document.getElementById('chipwrap'),L=document.getElementById('chL'),R=document.getElementById('chR');

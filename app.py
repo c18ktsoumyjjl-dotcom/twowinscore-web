@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, abort, jsonify, redirect
 import data
 import chat
 import plays
+import insights
 
 import threading, time
 from collections import deque
@@ -13,7 +14,7 @@ app.register_blueprint(chat.bp)
 
 # ---------- 보안: IP별 요청 제한 ----------
 # (경로 접두어, 1분 최대). 캐시에서 나가는 폴링은 같은 와이파이·통신사 공유 IP 를 고려해 넉넉히.
-RATE = [("/api/preview/", 20), ("/api/chat", 300), ("/api/games", 300), ("/api/", 120), ("/game/", 60)]
+RATE = [("/api/preview/", 20), ("/api/vote", 60), ("/api/chat", 300), ("/api/games", 300), ("/api/", 120), ("/game/", 60)]
 _rl, _rl_lock = {}, threading.Lock()
 
 
@@ -242,7 +243,7 @@ def game(key):
     return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=plays.commentary(g), gl=plays.goals(g),
                            forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st,
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
-                           names={g["home"], g["away"]})
+                           names={g["home"], g["away"]}, points=insights.points(g, det), vote=_vinfo(g, v))
 
 
 def _find(key):
@@ -278,10 +279,58 @@ def api_preview(key):
         pos = {"section": st["section"], "L": find(v["L"]["name"]), "R": find(v["R"]["name"])}
     starters = det.get("starters")
     com = plays.commentary(g)
-    return jsonify({"key": v["key"], "kind": g["kind"], "table": v["table"], "L": v["L"]["name"], "R": v["R"]["name"],
+    return jsonify({"points": insights.points(g, det), "vote": _vinfo(g, v),"key": v["key"], "kind": g["kind"], "table": v["table"], "L": v["L"]["name"], "R": v["R"]["name"],
                     "starters": starters, "goals": plays.goals(g), "forms": [f for f in forms if f["rows"]], "h2h": hsum, "pos": pos,
                     "plays": {"source": com["source"], "items": com["items"][:3]} if com and com.get("items") else None,
                     "url": f"/game/{v['key']}?d={d.isoformat()}"})
+
+
+def _vinfo(g, v):
+    return {"k": v["key"], "draw": g["kind"] == "football", "open": g["state"] == "scheduled" and datetime.now(data.SEOUL) < g["start"]}
+
+
+@app.route("/api/featured")
+def api_featured():
+    d = parse_day(request.args.get("d"))
+    games, _f = data.games_for(d)
+    views = [view(g) for g in games]
+    out, pending = insights.featured(games, views, d)
+    out = [dict(x) for x in out]
+    for x in out:
+        x.pop("table", None); x.pop("lines", None)
+        x["draw"] = x["kind"] == "football"
+        x["vopen"] = x["state"] == "scheduled" and time.time() < x["ts"]
+    return jsonify({"date": d.isoformat(), "today": d == today(), "pending": pending, "games": out})
+
+
+@app.route("/api/votes")
+def api_votes():
+    return jsonify(insights.counts((request.args.get("k") or "").split(",")))
+
+
+_voted, _vlock = {}, threading.Lock()
+
+
+@app.route("/api/vote", methods=["POST"])
+def api_vote():
+    b = request.get_json(silent=True) or {}
+    key, side = str(b.get("k") or "")[:80], b.get("s")
+    g, d = _find(key) if key else (None, None)
+    if not g or side not in ("L", "R", "D") or (side == "D" and g["kind"] != "football"):
+        return jsonify({"ok": False, "error": "잘못된 요청이에요."}), 400
+    if not _vinfo(g, view(g))["open"]:
+        return jsonify({"ok": False, "error": "경기가 시작돼 응원 투표가 마감됐어요."}), 400
+    ik = chat._ip() + "|" + key
+    now = time.time()
+    with _vlock:
+        if len(_voted) > 100000:
+            for k in [k for k, t in _voted.items() if now - t > 86400]:
+                del _voted[k]
+        if ik in _voted:
+            return jsonify({"ok": False, "dup": True, "counts": insights.counts([key])[key]})
+        _voted[ik] = now
+    insights.add(key, side)
+    return jsonify({"ok": True, "counts": insights.counts([key])[key]})
 
 
 @app.route("/login")
