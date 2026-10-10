@@ -1,5 +1,4 @@
-{% extends "base.html" %}{% block title %}{{lname}} 순위{% endblock %}
-{% block bar %}<div class="bar"><div class="wrap"><div class="sports5 st6">{% for s,n,on in sports %}<a href="/standings?league={{s}}" class="{{'on' if on}}">{{n}}</a>{% endfor %}</div><div class="chips">{% for s,n in tabs %}<a href="/standings?league={{s}}" class="{{'on' if s==slug}}">{{n}}</a>{% endfor %}</div></div></div>{% endblock %}
+{% extends "base.html" %}{% block bar %}<div class="bar"><div class="wrap"><div class="sports5 st6">{% for s,n,on in sports %}<a href="/standings?league={{s}}" class="{{'on' if on}}">{{n}}</a>{% endfor %}</div><div class="chips">{% for s,n in tabs %}<a href="/standings?league={{s}}" class="{{'on' if s==slug}}">{{n}}</a>{% endfor %}</div></div></div>{% endblock %}
 {% block body %}<div class="head"><h1>{{lname}} 순위</h1>{% if season %}<span class="sub">{{season}} 시즌</span>{% endif %}</div>
 {% if not groups %}<p class="empty">{% if ok %}아직 확정된 순위가 없어요. 시즌이 시작되면 표시돼요.{% else %}순위를 불러오지 못했어요. 잠시 후 다시 확인해 주세요.{% endif %}</p>{% endif %}
 {% for sec, rows in groups %}<section>{% if sec %}<h2>{{sec}}</h2>{% endif %}<div class="scroll"><table class="tbl"><thead><tr><th>#</th><th class="t">팀</th>

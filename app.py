@@ -310,7 +310,7 @@ def standings():
                            groups=groups, season=season, ok=ok, kind=data.STANDING_SLUGS[slug][0])
 
 
-MANIFEST = {"name": "투윈스코어 TwowinSCORE", "short_name": "투윈스코어", "id": "/", "start_url": "/?src=pwa", "scope": "/",
+MANIFEST = {"name": "투윈스코어 TWOWIN", "short_name": "투윈스코어 TWOWIN", "id": "/", "start_url": "/?src=pwa", "scope": "/",
             "display": "standalone", "orientation": "portrait", "background_color": "#0b1630", "theme_color": "#0b1630", "lang": "ko",
             "description": "국내·해외 축구·야구·농구·배구·아이스하키 실시간 스코어",
             "icons": [{"src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
