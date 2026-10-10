@@ -442,3 +442,8 @@ body.chlock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
  .lounge .ch-form,.lounge .ch-nick,.lounge .ch-rule,.dchat .ch-form,.dchat .ch-nick,.dchat .ch-rule{flex:none}
  .lounge .ch-rule,.dchat .ch-rule{padding-bottom:max(10px,env(safe-area-inset-bottom))}
  .ch-x{width:44px;height:44px;font-size:22px;background:rgba(255,255,255,.08);border-radius:10px;margin:-6px -4px -6px 0}}
+
+/* v39 sound toggle = theme toggle */
+.theme{display:inline-flex;align-items:center;justify-content:center;padding:0;color:var(--tx);line-height:1;cursor:pointer;vertical-align:middle}
+#sndBtn svg{display:block;width:16px;height:16px}#sndBtn.off{color:var(--mu)}
+@media(max-width:600px){#sndBtn svg{width:14px;height:14px}}
