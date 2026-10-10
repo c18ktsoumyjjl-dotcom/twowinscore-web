@@ -26,7 +26,8 @@ function test(){prime();unlocked=true;hint();playIntro(true).catch(()=>{unlocked
 function init(){const b=document.getElementById('sndBtn'),m=document.getElementById('sndMenu');
  const h=document.getElementById('sndHint');if(h){h.textContent='소리 켜기';h.onclick=e=>{e.stopPropagation();test()}}
  if(b&&m){if(!m.querySelector('[data-i]'))m.insertAdjacentHTML('beforeend','<hr><button data-i="1" role="menuitemcheckbox"></button><button data-t="1">소리 테스트</button>');
-  b.onclick=e=>{e.stopPropagation();m.hidden=!m.hidden};
+  const place=()=>{const r=b.getBoundingClientRect(),W=innerWidth,mw=m.offsetWidth||160;let l=Math.round(r.right-mw);if(l<8)l=Math.round(Math.min(r.left,W-mw-8));m.style.cssText='position:fixed;top:'+Math.round(r.bottom+6)+'px;left:'+l+'px;right:auto;z-index:1000'};
+  b.onclick=e=>{e.stopPropagation();m.hidden=!m.hidden;if(!m.hidden)place()};addEventListener('scroll',()=>{m.hidden=true},{passive:true});addEventListener('resize',()=>{m.hidden=true});
   m.onclick=e=>{e.stopPropagation();const x=e.target.closest('button');if(!x)return;
    if(x.dataset.t){test();return}
    if(x.dataset.i){localStorage.setItem(IK,introOn()?'off':'on');paint();return}
