@@ -490,3 +490,20 @@ body.mapp #chatFab,body.mapp #lounge{display:none!important}
 .halt small{font-weight:700;color:#0f1f44;font-size:11px;white-space:normal}
 .ms .hl{color:#c45200;font-size:11px;font-weight:800}.ms .hr{display:block;color:#0f1f44;font-size:10px;line-height:1.2;word-break:keep-all}
 .halt6{background:#fff3e8;border-left:3px solid #ff7a1a;color:#0f1f44}.halt6 b{color:#c45200}.halt6 small{color:#6b7488}
+/* v59: PC 채팅 왼쪽 배치 + 닫기 버튼 히트영역 */
+@media(min-width:1024px){
+ body:not(.mapp) .lounge{right:auto;left:16px;z-index:1200}
+ body:not(.mapp) .fab{right:auto;left:16px;z-index:1200}
+ body.chat-open main{z-index:1200!important}
+ .ch-x{width:44px;height:44px;font-size:22px;line-height:1;margin:-8px -6px -8px auto;border-radius:10px;background:rgba(255,255,255,.08);position:relative;z-index:2;flex:none;cursor:pointer}
+ .ch-x:hover{background:rgba(255,255,255,.18)}
+ [data-theme=light] .ch-x{background:rgba(0,0,0,.06)}
+ body:not(.mapp) .dlay{grid-template-columns:380px minmax(0,1fr)}
+ body:not(.mapp) .dchat{order:-1;z-index:5}
+ body.dcoff .dlay{grid-template-columns:minmax(0,1fr)}
+ body.dcoff .dchat{display:none!important}
+ body.dcoff:not(.mapp) .cfab{display:block;position:fixed;left:16px;right:auto;bottom:18px;z-index:1200}
+}
+@media(min-width:1240px){body.chat-open .wrap{margin-left:max(412px,calc((100vw - 820px - 400px)/2 + 400px))}}
+@media(min-width:1024px){body.detail6:not(.mapp) .dchat{top:72px;height:calc(100vh - 72px);padding:4px 0 12px}body.detail6:not(.mapp) .dchat .chatbox{height:calc(100vh - 88px)}}
+@media(min-width:1024px){body:not(.mapp) .sndhint{left:auto!important;right:16px!important}}

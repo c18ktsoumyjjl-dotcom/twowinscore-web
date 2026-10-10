@@ -40,10 +40,10 @@
 {% endblock %}
 {% block js %}<button class="sndhint" id="sndHint" hidden>소리 켜기</button><script src="/static/sound.js?v=11"></script><script src="/static/chat.js?v=9"></script><link rel="stylesheet" href="/static/ins.css?v=4"><script src="/static/vote.js?v=5b"></script><script>TWVote.scan()</script><link rel="stylesheet" href="/static/gm7.css?v=2"><script src="/static/gm7.js?v=2"></script><script>(function(){const W=matchMedia('(min-width:1024px)'),body=document.body,un=document.getElementById('unread');let n=0;
 const isOpen=()=>body.classList.contains('sheet');
-function openS(){body.classList.add('sheet');n=0;un.textContent='';}
-function closeS(){body.classList.remove('sheet');document.getElementById('dchat').style.transform=''}
+function openS(){if(W.matches){body.classList.remove('dcoff');localStorage.removeItem('tw_gchat_off');return}body.classList.add('sheet');n=0;un.textContent='';}
+function closeS(){if(W.matches){body.classList.add('dcoff');localStorage.setItem('tw_gchat_off','1')}body.classList.remove('sheet');document.getElementById('dchat').style.transform=''}
 TWChat.mount(document.getElementById("gamechat"),{{ ("game-" ~ g.key|replace(":","-"))|tojson }},{title:"💬 이 경기 채팅",close:()=>{if(W.matches)closeS();else TWGM.mode("info")},onNew:k=>{if(!W.matches&&!isOpen()){n+=k;un.textContent=n>99?'99+':n}}});
-document.getElementById('cfab').onclick=openS;document.getElementById('shade').onclick=closeS;
+if(W.matches&&localStorage.getItem('tw_gchat_off')==='1')body.classList.add('dcoff');W.addEventListener('change',e=>{if(!e.matches)body.classList.remove('dcoff');else if(localStorage.getItem('tw_gchat_off')==='1')body.classList.add('dcoff')});document.getElementById('cfab').onclick=openS;document.getElementById('shade').onclick=closeS;
 document.getElementById('tabs6').onclick=e=>{const b=e.target.closest('button');if(!b)return;
  document.querySelectorAll('#tabs6 button').forEach(x=>x.classList.toggle('on',x===b));
  if(b.dataset.t==='chat'){if(W.matches)document.querySelector('#gamechat input')?.focus();else openS();return}
