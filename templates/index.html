@@ -44,7 +44,7 @@ async function loadPv(k){try{const j=await (await fetch('/api/preview/'+encodeUR
 function toggleRow(k){const was=OPEN===k;document.querySelectorAll('.pv6.open').forEach(x=>x.classList.remove('open'));document.querySelectorAll('.g5.op').forEach(x=>x.classList.remove('op'));
  if(was){OPEN=null;return}OPEN=k;const el=document.querySelector('.pv6[data-k="'+CSS.escape(k)+'"]');if(!el)return;el.classList.add('open');el.previousElementSibling.classList.add('op');
  if(!PV[k]||Date.now()-PV[k+'@']>30000)loadPv(k)}
-const MOB=matchMedia('(max-width:1023px)'),COL=new Set();
+const MOB=matchMedia('(max-width:767px),(max-width:1023px) and (pointer:coarse)'),COL=new Set();MOB.addEventListener('change',()=>render());
 const flg=()=>{try{return JSON.parse(localStorage.getItem('tw_favlg')||'[]')}catch(e){return[]}};
 function toggleLg(l,e){e.preventDefault();e.stopPropagation();let f=flg();f=f.includes(l)?f.filter(x=>x!==l):[...f,l];localStorage.setItem('tw_favlg',JSON.stringify(f));render()}
 let SNDQ=false;function row(g){const sc=g.L.score!=null,p=PREV[g.key],ch=p&&p!==g.L.score+':'+g.R.score&&sc,up=ch&&(g.L.score+g.R.score)>p.split(':').reduce((x,y)=>x+(+y||0),0),on=teamFav(g);

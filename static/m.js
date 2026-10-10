@@ -1,7 +1,7 @@
 /* 모바일 앱 화면(<1024px): 헤더 정리, 날짜 띠, 좌우 스와이프로 날짜 이동, 당겨서 새로고침, 서비스워커 등록 */
 (function(){
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
-const MQ=matchMedia('(max-width:1023px)'),B=document.body,mh=document.getElementById('mh'),mic=document.getElementById('mic');
+const MQ=matchMedia('(max-width:767px),(max-width:1023px) and (pointer:coarse)'),B=document.body,mh=document.getElementById('mh'),mic=document.getElementById('mic');
 if(!mh)return;
 const snd=document.getElementById('sndBtn'),sndw=snd&&snd.closest('.snd'),th=document.getElementById('theme'),sports=document.getElementById('sports'),srch=document.querySelector('.search5'),mds=document.getElementById('mds'),msq=document.getElementById('msq');
 const home=[];[sndw,th,sports,srch].forEach(n=>{if(n)home.push([n,n.parentNode,n.nextSibling])});

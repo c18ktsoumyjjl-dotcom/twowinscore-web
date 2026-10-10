@@ -1,6 +1,6 @@
-/* 모바일 앱 화면 전용(<1024px). PC(>=1024px)에는 아래 숨김 규칙 외 아무 영향 없음 */
+/* 모바일 앱 화면 전용: 폭 767px 이하 또는 1023px 이하 터치 기기. PC(마우스) 창은 좁거나 확대(125~150%)돼도 기존 PC 화면 유지 */
 .mh,.mtab,.mptr,.mds{display:none}
-@media(max-width:1023px){
+@media(max-width:767px),(max-width:1023px) and (pointer:coarse){
 html{overscroll-behavior-y:contain}
 body.mapp{background:var(--bg)!important;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
 body.mapp::before,body.mapp::after{display:none!important}
