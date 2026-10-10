@@ -551,3 +551,8 @@ body.mapp #chatFab,body.mapp #lounge{display:none!important}
 }
 @media(min-width:1240px){body.chat-open:not(.mapp) .sbar .wrap{margin-left:auto!important;margin-right:auto!important;max-width:1168px!important}}
 body:not(.gm7c) .gm7ch{display:none}
+/* v64: 사이드바 상단 = 홈 종목탭 줄 / 경기 첫 카드 (스크롤 따라가다 고정) */
+@media(min-width:1240px){
+ body.chat-open:not(.mapp) .lounge{top:var(--lt,0px)!important;border-top:1px solid #232d45!important;border-top-right-radius:14px!important}
+ body.detail6:not(.mapp):not(.dcoff) .dchat{top:var(--gt,0px)!important;border-top:1px solid #232d45!important;border-top-right-radius:14px!important}
+}
