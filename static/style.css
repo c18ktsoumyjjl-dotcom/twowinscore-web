@@ -534,3 +534,20 @@ body.mapp #chatFab,body.mapp #lounge{display:none!important}
  .detail6 .sb6in{max-width:1520px}
 }
 @media(min-width:1240px){body:not(.mapp){--lc:max(24px,calc((100vw - 1520px)/2))}.detail6 main.wrap{max-width:1568px;padding:0 24px}}
+/* v63: PC(>=1240) 채팅 = 화면 왼쪽 고정 사이드바 (전체 높이), 콘텐츠는 나머지 폭 중앙 */
+@media(min-width:1240px){
+ body.chat-open:not(.mapp),body.detail6:not(.mapp):not(.dcoff){padding-left:380px}
+ body.chat-open:not(.mapp) .lounge,body.detail6:not(.mapp):not(.dcoff) .dchat{position:fixed!important;left:0!important;top:0!important;bottom:0!important;right:auto!important;width:380px!important;height:auto!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-right:1px solid #232d45!important;border-radius:0!important;background:#141c30;box-shadow:none!important;z-index:1300!important;display:flex;flex-direction:column;transform:none!important}
+ body.detail6:not(.mapp):not(.dcoff) .dchat .chatbox{height:100%!important;flex:1;min-height:0;border:0;border-radius:0;margin:0}
+ body.chat-open:not(.mapp) .lounge .ch-list,body.detail6:not(.mapp):not(.dcoff) .dchat .ch-list{flex:1;min-height:0;max-height:none;overflow-y:auto}
+ body.chat-open:not(.mapp) .lounge .ch-head,body.chat-open:not(.mapp) .lounge .ch-form,body.chat-open:not(.mapp) .lounge .ch-nick,body.chat-open:not(.mapp) .lounge .ch-rule,body.detail6:not(.mapp):not(.dcoff) .dchat .ch-head,body.detail6:not(.mapp):not(.dcoff) .dchat .ch-form,body.detail6:not(.mapp):not(.dcoff) .dchat .ch-nick,body.detail6:not(.mapp):not(.dcoff) .dchat .ch-rule{flex:none}
+ body.chat-open:not(.mapp) .wrap{max-width:1168px!important;margin-left:auto!important;margin-right:auto!important;padding:0 24px}
+ body.chat-open:not(.mapp) .sbar{margin-left:0;max-width:none}
+ body.chat-open:not(.mapp) .sbar .wrap{padding:0 24px}
+ body.detail6:not(.mapp):not(.dcoff) .dlay{display:block}
+ .detail6 main.wrap{max-width:1168px;padding:0 24px}
+ body.detail6:not(.mapp):not(.dcoff) .sb6{left:380px}
+ [data-theme=light] body.chat-open:not(.mapp) .lounge,[data-theme=light] body.detail6:not(.mapp):not(.dcoff) .dchat{background:#fff;border-right-color:#d7deeb!important}
+}
+@media(min-width:1240px){body.chat-open:not(.mapp) .sbar .wrap{margin-left:auto!important;margin-right:auto!important;max-width:1168px!important}}
+body:not(.gm7c) .gm7ch{display:none}
