@@ -35,9 +35,11 @@ function cheer(){var box=document.getElementById('gamechat');if(!box||!room)retu
  el.querySelector('.L .nm').textContent=nm[0]?nm[0].textContent:'';el.querySelector('.R .nm').textContent=nm[1]?nm[1].textContent:'';
  box.insertBefore(el,err);
  var url='/api/cheer/'+encodeURIComponent(room),bL=el.querySelector('.L b'),bR=el.querySelector('.R b');
- function show(j){if(j&&typeof j.L==='number'){bL.textContent=j.L.toLocaleString();bR.textContent=j.R.toLocaleString()}}
+ var nt=document.createElement('div');nt.className='gm7cn';nt.hidden=true;box.insertBefore(nt,err);
+ function show(j){if(j&&typeof j.L==='number'){bL.textContent=j.L.toLocaleString();bR.textContent=j.R.toLocaleString()}
+  if(j&&typeof j.left==='number'){var off=j.left<=0;el.classList.toggle('off',off);el.querySelectorAll('button').forEach(function(b){b.disabled=off});nt.hidden=false;nt.textContent=off?'이 경기 응원은 5번까지예요':'남은 응원 '+j.left+'/'+(j.max||5)}}
  function get(){if(document.hidden||!M.matches)return;fetch(url,{cache:'no-store'}).then(function(r){return r.json()}).then(show).catch(function(){})}
- var busy=false;el.onclick=function(e){var x=e.target.closest('button');if(!x||busy)return;busy=true;x.classList.remove('pop');void x.offsetWidth;x.classList.add('pop');
+ var busy=false;el.onclick=function(e){var x=e.target.closest('button');if(!x||busy||x.disabled)return;busy=true;x.classList.remove('pop');void x.offsetWidth;x.classList.add('pop');
   fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({side:x.dataset.s})}).then(function(r){return r.json()}).then(show).catch(function(){}).then(function(){setTimeout(function(){busy=false},1000)})};
  get();setInterval(get,15000)}
 function init(){meas();setMode(M.matches?'chat':'info');cheer()}

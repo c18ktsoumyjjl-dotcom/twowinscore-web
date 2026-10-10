@@ -350,6 +350,31 @@ def post(room):
 
 # ---------- 응원 (경기별 두 팀 카운터, 메모리) ----------
 _cheer, _cheer_ip = {}, {}
+CHEER_MAX = 5
+_cheer_used = {}  # "ip:<ip>|room" / "m:<id>|room" -> [count, first_ts]  (36h expiry)
+
+
+def _cheer_keys(room):
+    ks = ["ip:" + _ip() + "|" + room]
+    try:
+        import members
+        mem = members.current()
+        if mem:
+            ks.append("m:" + str(mem["id"]) + "|" + room)
+    except Exception:
+        mem = None
+    return ks, mem
+
+
+def _cheer_left(ks, now):
+    used = 0
+    for k in ks:
+        v = _cheer_used.get(k)
+        if v and now - v[1] > 36 * 3600:
+            _cheer_used.pop(k, None); v = None
+        if v:
+            used = max(used, v[0])
+    return max(0, CHEER_MAX - used)
 _CHEER_RE = re.compile(r"^[A-Za-z0-9_\-]{1,80}$")
 
 
@@ -357,9 +382,11 @@ _CHEER_RE = re.compile(r"^[A-Za-z0-9_\-]{1,80}$")
 def cheer_get(room):
     if not _CHEER_RE.match(room):
         abort(404)
+    ks, _m = _cheer_keys(room)
     with _lock:
         c = _cheer.get(room) or [0, 0]
-    return jsonify({"L": c[0], "R": c[1]})
+        left = _cheer_left(ks, time.time())
+    return jsonify({"L": c[0], "R": c[1], "left": left, "max": CHEER_MAX})
 
 
 @bp.post("/api/cheer/<room>")
@@ -370,7 +397,16 @@ def cheer_post(room):
     if side not in ("L", "R"):
         return jsonify({"ok": False}), 400
     now, ip = time.time(), _ip()
+    ks, mem = _cheer_keys(room)
     with _lock:
+        if len(_cheer_used) > 200000:
+            for k in [k for k, v in _cheer_used.items() if now - v[1] > 36 * 3600]:
+                del _cheer_used[k]
+        left = _cheer_left(ks, now)
+        if left <= 0:
+            c = _cheer.get(room) or [0, 0]
+            return jsonify({"ok": False, "limit": True, "left": 0, "max": CHEER_MAX,
+                            "msg": "이 경기 응원은 5번까지예요", "L": c[0], "R": c[1]}), 429
         if len(_cheer_ip) > 20000:
             for k in [k for k, t in _cheer_ip.items() if now - t > 5]:
                 del _cheer_ip[k]
@@ -383,10 +419,11 @@ def cheer_post(room):
             _cheer.clear()
         c = _cheer.setdefault(room, [0, 0])
         c[0 if side == "L" else 1] += 1
-        res = {"ok": True, "L": c[0], "R": c[1]}
+        for k in ks:
+            v = _cheer_used.setdefault(k, [0, now]); v[0] += 1
+        res = {"ok": True, "L": c[0], "R": c[1], "left": left - 1, "max": CHEER_MAX}
     try:
-        import members, levels
-        mem = members.current()
+        import levels
         if mem:
             pr = levels.award(mem["id"], "cheer", room[:60])
             if pr is not None:

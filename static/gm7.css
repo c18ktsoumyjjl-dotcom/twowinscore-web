@@ -38,3 +38,6 @@
  .gm7ch b{font-weight:700;font-size:13px;opacity:.9;font-variant-numeric:tabular-nums}.gm7ch .nm{font-size:12px;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:70px}
  .gm7ch button.pop{animation:gm7p .3s}@keyframes gm7p{50%{transform:scale(.94)}}
 }
+
+ .gm7ch.off button{opacity:.45;filter:grayscale(.5);cursor:default}
+ .gm7cn{flex:none;text-align:center;font-size:11px;color:var(--mut,#8a93a8);padding:0 10px 4px;background:var(--bg2)}
