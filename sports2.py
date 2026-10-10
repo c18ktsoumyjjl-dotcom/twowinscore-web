@@ -200,3 +200,46 @@ def events(g):
                  "Penalty cancelled": "페널티 취소", "Card upgrade": "카드 상향", "Goal confirmed": "골 인정"}.get(det, det) + (f" ({team})" if team else ""), "hot": False})
     out.reverse()
     return out
+
+
+def _norm(kind, x):
+    """축구 fixture / 하키 game 원본 → (ts, 상태, hid, aid, hname, aname, hs, as)."""
+    from teams_ko import ko
+    if kind == "football":
+        fx, t, gl = x.get("fixture") or {}, x.get("teams") or {}, x.get("goals") or {}
+        st, ts, hs, a_ = (fx.get("status") or {}).get("short"), fx.get("timestamp") or 0, gl.get("home"), gl.get("away")
+    else:
+        t, sc = x.get("teams") or {}, x.get("scores") or {}
+        st, ts, hs, a_ = (x.get("status") or {}).get("short"), x.get("timestamp") or 0, sc.get("home"), sc.get("away")
+    h, a = t.get("home") or {}, t.get("away") or {}
+    return ts, st, h.get("id"), a.get("id"), ko(kind, h.get("id"), h.get("name"))[0], ko(kind, a.get("id"), a.get("name"))[0], hs, a_
+
+
+def _done(kind, n):
+    return n[1] in (FB_FIN if kind == "football" else HK_FIN) and n[6] is not None and n[7] is not None
+
+
+def team_form(kind, tid, before_ts, league=None):
+    """최근 종료 5경기 (최근순). 축구는 모든 대회, 하키는 해당 리그 시즌."""
+    if kind == "football":
+        resp = get(kind, "/fixtures", {"team": tid, "last": 10, "timezone": "Asia/Seoul"})
+    else:
+        resp = get(kind, "/games", {"team": tid, "league": league, "season": SEASON.get((kind, league), 2026), "timezone": "Asia/Seoul"})
+    rows = [n for n in (_norm(kind, x) for x in resp) if _done(kind, n) and n[0] < before_ts]
+    rows.sort(reverse=True)
+    out = []
+    for ts, _st, hid, aid, hn, an, hs, as_ in rows[:5]:
+        home = hid == tid
+        me, op = (hs, as_) if home else (as_, hs)
+        out.append({"date": datetime.fromtimestamp(ts, SEOUL).strftime("%m/%d"), "opp": an if home else hn,
+                    "ha": "홈" if home else "원정", "me": me, "op": op, "r": "W" if me > op else ("L" if me < op else "D")})
+    return out
+
+
+def h2h(kind, a, b, before_ts):
+    path = "/fixtures/headtohead" if kind == "football" else "/games/h2h"
+    resp = get(kind, path, {"h2h": f"{a}-{b}", "timezone": "Asia/Seoul"})
+    rows = [n for n in (_norm(kind, x) for x in resp) if _done(kind, n) and n[0] < before_ts]
+    rows.sort(reverse=True)
+    return [{"date": datetime.fromtimestamp(ts, SEOUL).strftime("%Y.%m.%d"), "home": hn, "away": an, "hs": hs, "as": as_,
+             "hid": hid, "aid": aid} for ts, _st, hid, aid, hn, an, hs, as_ in rows[:5]]

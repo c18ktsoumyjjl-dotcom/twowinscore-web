@@ -230,7 +230,12 @@ def _detail(g):
         except Exception:
             return None
     if kind in NEW_KINDS:
-        out.update(form_home=[], form_away=[], h2h=[], starters=None, injuries=[])
+        ts = g["start"].timestamp()
+        with ThreadPoolExecutor(max_workers=3) as ex:
+            fh = ex.submit(safe, sports2.team_form, kind, g.get("home_id"), ts, league)
+            fa = ex.submit(safe, sports2.team_form, kind, g.get("away_id"), ts, league)
+            fh2 = ex.submit(safe, sports2.h2h, kind, g.get("home_id"), g.get("away_id"), ts)
+            out.update(form_home=fh.result() or [], form_away=fa.result() or [], h2h=fh2.result() or [], starters=None, injuries=[])
     else:
       with ThreadPoolExecutor(max_workers=6) as ex:
         fh = ex.submit(safe, form, g.get("home_id"))
