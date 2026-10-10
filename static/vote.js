@@ -33,6 +33,8 @@ function card(g){const sc=g.state!=='scheduled'&&g.L.score!=null;const lg=t=>t.l
 let FD='',FJ=null;
 async function feat(d,box,ok){FD=d;try{FJ=await (await fetch('/api/featured?d='+d)).json();if(FJ.pending)setTimeout(()=>feat(d,box,ok),8000)}catch(e){}draw(box,ok)}
 function draw(box,ok){if(!box)return;if(!FJ||!FJ.games.length||!ok){box.innerHTML='';box.hidden=true;return}box.hidden=false;
- box.innerHTML=`<h2 class="ft8h">⭐ ${FJ.today?'오늘의 ':''}주목 경기 <small>순위·연승·라이벌전 등 기록 기준</small></h2><div class="ft8l">${FJ.games.map(card).join('')}</div>`;scan(box)}
+ box.innerHTML=`<h2 class="ft8h">⭐ ${FJ.today?'오늘의 ':''}주목 경기 <small>순위·연승·라이벌전 등 기록 기준</small></h2><div class="ft8l">${FJ.games.map(card).join('')}</div><button class="ft8arr l" aria-label="이전">‹</button><button class="ft8arr r" aria-label="다음">›</button>`;scan(box);arr(box)}
+function arr(box){const l=box.querySelector('.ft8l'),a=box.querySelector('.ft8arr.l'),b=box.querySelector('.ft8arr.r');const u=()=>{box.classList.toggle('ovf',l.scrollWidth>l.clientWidth+2);a.disabled=l.scrollLeft<4;b.disabled=l.scrollLeft+l.clientWidth>=l.scrollWidth-4};a.onclick=()=>l.scrollBy({left:-l.clientWidth*.8});b.onclick=()=>l.scrollBy({left:l.clientWidth*.8});l.onscroll=u;new ResizeObserver(u).observe(l);u();
+ let dn=0,sx=0,sl=0,mv=0;l.onpointerdown=e=>{if(e.pointerType!=='mouse'||e.target.closest('button'))return;dn=1;mv=0;sx=e.clientX;sl=l.scrollLeft};addEventListener('pointermove',e=>{if(!dn)return;const d=e.clientX-sx;if(Math.abs(d)>5){mv=1;l.style.scrollSnapType='none';l.style.scrollBehavior='auto'}if(mv)l.scrollLeft=sl-d});addEventListener('pointerup',()=>{if(dn){dn=0;l.style.scrollSnapType='';l.style.scrollBehavior=''}});l.addEventListener('click',e=>{if(mv){e.preventDefault();e.stopPropagation();mv=0}},true);l.ondragstart=e=>e.preventDefault()}
 window.TWVote={html:vhtml,scan,points:phtml,feat,draw};
 })();

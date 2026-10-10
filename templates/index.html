@@ -14,7 +14,7 @@
 <div class="sports5" id="sports"></div><div class="chipwrap" id="chipwrap"><button class="cha L" id="chL" aria-label="왼쪽" hidden>‹</button><div class="chips chips5" id="chips"></div><button class="cha R" id="chR" aria-label="오른쪽" hidden>›</button></div></div></div>
 <div class="mds" id="mds" data-d="{{d}}" data-today="{{today}}" data-min="{{dmin}}" data-max="{{dmax}}"></div><div class="wrap dlabel">{{label}}</div>{% endblock %}
 {% block body %}<button id="chatFab" class="fab">💬 라운지 <span id="fabN"></span></button><aside id="lounge" class="lounge" hidden></aside><div id="status" class="status"></div><div id="feat" class="ft8" hidden></div><div id="list"><p class="empty">불러오는 중…</p></div>{% endblock %}
-{% block js %}<button class="sndhint" id="sndHint" hidden>소리 켜기</button><script src="/static/sound.js?v=11"></script><script src="/static/fx.js?v=2" defer></script><script src="/static/chat.js?v=5"></script><link rel="stylesheet" href="/static/ins.css?v=6"><script src="/static/vote.js?v=4"></script><script>
+{% block js %}<button class="sndhint" id="sndHint" hidden>소리 켜기</button><script src="/static/sound.js?v=11"></script><script src="/static/fx.js?v=2" defer></script><script src="/static/chat.js?v=5"></script><link rel="stylesheet" href="/static/ins.css?v=7"><script src="/static/vote.js?v=5"></script><script>
 const D="{{d}}";const SPORTS=['전체','축구','야구','농구','배구','아이스하키'];let SP=localStorage.getItem('tw_sport')||'전체',OPEN=null,PV={};let F=new URLSearchParams(location.search).get('f')||'all',Q='',DATA=null,PREV={};
 const fav=()=>{try{return JSON.parse(localStorage.getItem('tw_fav')||'[]')}catch(e){return[]}};
 const fk=(g,s)=>g.kind+':'+g[s].id;
@@ -77,7 +77,7 @@ function mrender(all,q){const lv=s=>(s==='전체'?all:all.filter(g=>g.sport===s)
  document.getElementById('status').innerHTML=(DATA.failed.length?'<span class="warn">일부 종목을 불러오지 못했어요 · </span>':'')+(live?'<i class="dot"></i> 실시간 · ':'')+DATA.updated+' 기준';
  if(SNDQ){SNDQ=false;TWSound.play()}
  all.forEach(g=>PREV[g.key]=g.L.score+':'+g.R.score)}
-function render(){if(!DATA)return;document.getElementById('feat').style.display=F==='all'&&!Q.trim()?'':'none';if(MOB.matches)return mrender(DATA.games,Q.trim().toLowerCase());const all=DATA.games,q=Q.trim().toLowerCase();
+function render(){if(!DATA)return;document.getElementById('feat').style.display=F==='all'&&SP==='전체'&&!Q.trim()?'':'none';if(MOB.matches)return mrender(DATA.games,Q.trim().toLowerCase());const all=DATA.games,q=Q.trim().toLowerCase();
  const cnt=s=>s==='전체'?all.length:all.filter(g=>g.sport===s).length;if(!SPORTS.includes(SP))SP='전체';
  document.getElementById('sports').innerHTML=SPORTS.map(s=>`<button class="${s===SP?'on':''}" data-s="${s}">${s}${cnt(s)?` <small>${cnt(s)}</small>`:''}</button>`).join('');
  const gs=SP==='전체'?all:all.filter(g=>g.sport===SP);

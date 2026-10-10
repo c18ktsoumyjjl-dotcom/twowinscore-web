@@ -20,16 +20,13 @@
 body.mapp .ft8{margin:8px 10px 4px}body.mapp .ft8l{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:8px;padding-bottom:4px;scrollbar-width:none}
 body.mapp .ft8l::-webkit-scrollbar{display:none}body.mapp .ft8c{flex:0 0 82%;scroll-snap-align:start}body.mapp .ft8h{font-size:15px;margin:2px 2px 8px}
 
-/* v50 PC: 주목 경기는 가로 한 줄(최대 4장, 넘치면 가로 스크롤), 투표는 간략히 보기/상세에서 */
-body:not(.mapp) .ft8{margin:6px 0 10px;max-width:100%}
-body:not(.mapp) .ft8l{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x proximity}
-body:not(.mapp) .ft8c{flex:0 0 calc((100% - 24px)/4);min-width:170px;padding:9px 10px;scroll-snap-align:start}
-body:not(.mapp) .ft8c .vt8{display:none}
-body:not(.mapp) .ft8m{margin:6px 0}
-body:not(.mapp) .ft8s img,body:not(.mapp) .ft8s .nologo{width:24px;height:24px}
-body:not(.mapp) .ft8s b{font-size:12px}body:not(.mapp) .ft8x{font-size:17px}
-body:not(.mapp) .ft8g span{font-size:10px;padding:2px 6px}
-body:not(.mapp) .ft8h{font-size:15px;margin:2px 0 8px}
+/* v50c PC: 모바일과 같은 카드, 가로 스크롤 한 줄 + 좌우 화살표 */
+body:not(.mapp) .ft8{margin:6px 0 10px;position:relative}
+body:not(.mapp) .ft8l{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;padding-bottom:4px;scrollbar-width:none;scroll-behavior:smooth}
+body:not(.mapp) .ft8l::-webkit-scrollbar{display:none}
+body:not(.mapp) .ft8c{flex:0 0 300px;scroll-snap-align:start}
+.ft8arr{position:absolute;top:calc(50% + 14px);transform:translateY(-50%);z-index:2;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(11,22,48,.9);color:#fff;font-size:18px;line-height:1;display:none}
+.ft8arr.l{left:-6px}.ft8arr.r{right:-6px}body:not(.mapp) .ft8.ovf .ft8arr{display:block}.ft8arr[disabled]{opacity:.25}
 body.mapp #feat{padding:0 12px}
 /* v50b PC 주목 경기 더 작게: 태그 한 줄, 카드 높이 통일 */
 body:not(.mapp) .ft8c{padding:8px 10px}
