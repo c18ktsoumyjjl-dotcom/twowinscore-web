@@ -20,7 +20,7 @@ function hook(e){if(e===lastEl)return;lastEl=e;mkBar();if(!e.querySelector('.gra
  function end(t){if(y0==null)return;e.classList.remove('drag');var d=(t.changedTouches?t.changedTouches[0].clientY:y0)-y0;y0=null;var f=(h0-d)/vh();
   if(f<.2){apply();collapse();return}var best=SN[0];SN.forEach(function(s){if(Math.abs(s-f)<Math.abs(best-f))best=s});cur=best;apply()}
  e.addEventListener('touchend',end);e.addEventListener('touchcancel',end)}
-function chk(){var e=el();if(e&&M.matches){hook(e);apply()}else{b.classList.remove('chmin');un=0}}
+function chk(){var e=el();if(e&&M.matches){hook(e);apply()}else{if(b.classList.contains('chmin'))b.classList.remove('chmin');un=0}}
 new MutationObserver(chk).observe(b,{attributes:true,attributeFilter:['class']});M.addEventListener('change',chk);chk();
 window.TWSheet={collapse:collapse,expand:expand,snap:function(f){cur=f;b.classList.remove('chmin');apply()}};
 })();
