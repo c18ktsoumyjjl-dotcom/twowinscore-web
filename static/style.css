@@ -477,7 +477,9 @@ body.chlock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 }
 
 /* v45: 모바일 홈 라이브챗 제거 */
-@media(max-width:1023px){#chatFab,#lounge{display:none!important}}
+body.mapp #chatFab,body.mapp #lounge{display:none!important}
+@media(max-width:767px){#chatFab,#lounge{display:none!important}}
+@media(max-width:1239px){body.chat-open .lounge{max-height:calc(100vh - 32px)}}
 .gl8 .glh{margin:6px 0 10px}.gl8 .glt{display:flex;justify-content:space-between;align-items:center;padding:5px 10px;border-radius:8px;background:var(--bg2);border:1px solid var(--line);font-size:13px;color:var(--mu);font-weight:700}.gl8 .glt b{color:var(--tx);font-variant-numeric:tabular-nums}
 .gl8 .glr{display:grid;grid-template-columns:1fr 22px 1fr;align-items:center;gap:6px;padding:6px 4px;border-bottom:1px dashed var(--line);font-size:14px;color:var(--tx);line-height:1.35}.gl8 .glr i{font-style:normal;text-align:center;font-size:13px}
 .gl8 .gL{text-align:right}.gl8 .gR{text-align:left}.gl8 .glr b{color:var(--or);font-variant-numeric:tabular-nums}.gl8 .glr em{font-style:normal;font-size:11px;padding:1px 5px;border-radius:5px;background:var(--card);border:1px solid var(--line);color:var(--mu)}.gl8 .glr small{display:block;color:var(--mu);font-size:11px}
