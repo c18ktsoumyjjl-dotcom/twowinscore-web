@@ -6,7 +6,7 @@
 <source type="image/webp" srcset="/static/band_1x.webp 1440w, /static/band_2x.webp 2560w" sizes="100vw">
 <img src="/static/band_1x.jpg" srcset="/static/band_1x.jpg 1440w, /static/band_2x.jpg 2560w" sizes="100vw" alt="TwowinSCORE" fetchpriority="high"></picture><div class="fx-logo"></div><div class="fx-crowd"></div><canvas class="fx-rain"></canvas></div>
 <p class="tag5">국내·해외 축구·야구·농구·배구·아이스하키 실시간 스코어</p>
-<div class="hero-nav">{{ topnav("home") }}<span class="snd"><button class="theme" id="sndBtn" aria-label="알림음"></button><div class="sndm" id="sndMenu" hidden><button data-m="fav">🔔 즐겨찾기만</button><button data-m="all">🔔 전체 경기</button><button data-m="off">🔕 끄기</button></div></span><button class="theme" id="theme" aria-label="화면 모드">◐</button></div>
+<div class="hero-nav">{{ topnav("home") }}<span class="snd"><button class="theme" id="sndBtn" aria-label="알림음"></button><div class="sndm" id="sndMenu" hidden><button data-m="fav">즐겨찾기만</button><button data-m="all">전체 경기</button><button data-m="off">끄기</button></div></span><button class="theme" id="theme" aria-label="화면 모드">◐</button></div>
 </div>
 <div class="sbar" id="sbar"><div class="wrap">
 <div class="dates5"><a class="logo mini" href="/"><span class="w">Twowin</span><span class="s">SCORE</span></a><div class="seg"><a href="/?d={{yday}}" class="{{'on' if d==yday}}">어제</a><a href="/?d={{today}}" class="{{'on' if d==today}}">오늘</a><a href="/?d={{tmr}}" class="{{'on' if d==tmr}}">내일</a></div>
@@ -15,7 +15,7 @@
 <div class="sports5" id="sports"></div><div class="chipwrap" id="chipwrap"><button class="cha L" id="chL" aria-label="왼쪽" hidden>‹</button><div class="chips chips5" id="chips"></div><button class="cha R" id="chR" aria-label="오른쪽" hidden>›</button></div></div></div>
 <div class="wrap dlabel">{{label}}</div>{% endblock %}
 {% block body %}<button id="chatFab" class="fab">💬 라운지 <span id="fabN"></span></button><aside id="lounge" class="lounge" hidden></aside><div id="status" class="status"></div><div id="list"><p class="empty">불러오는 중…</p></div>{% endblock %}
-{% block js %}<button class="sndhint" id="sndHint" hidden>🔊 소리 켜기</button><script src="/static/sound.js?v=9"></script><script src="/static/fx.js?v=2" defer></script><script src="/static/chat.js?v=5"></script><script>
+{% block js %}<button class="sndhint" id="sndHint" hidden>소리 켜기</button><script src="/static/sound.js?v=10"></script><script src="/static/fx.js?v=2" defer></script><script src="/static/chat.js?v=5"></script><script>
 const D="{{d}}";const SPORTS=['전체','축구','야구','농구','배구','아이스하키'];let SP=localStorage.getItem('tw_sport')||'전체',OPEN=null,PV={};let F=new URLSearchParams(location.search).get('f')||'all',Q='',DATA=null,PREV={};
 const fav=()=>{try{return JSON.parse(localStorage.getItem('tw_fav')||'[]')}catch(e){return[]}};
 const fk=(g,s)=>g.kind+':'+g[s].id;
