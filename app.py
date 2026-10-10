@@ -67,11 +67,16 @@ def _too_big(e):
 WD = "월화수목금토일"
 EMO = {"baseball": "⚾", "basketball": "🏀", "volleyball": "🏐", "football": "⚽", "hockey": "🏒"}
 SPORT_KO = {"football": "축구", "baseball": "야구", "basketball": "농구", "volleyball": "배구", "hockey": "아이스하키"}
-SHORT = {"V리그 남자": "V리그 남", "V리그 여자": "V리그 여"}
+SHORT = {"V리그 남자": "V리그 남", "V리그 여자": "V리그 여", "튀르키예 여자 술탄라르": "튀르키예 여자"}
 TABS = [("kbo", "KBO"), ("mlb", "MLB"), ("npb", "NPB"), ("kbl", "KBL"), ("wkbl", "WKBL"),
         ("vm", "V리그 남"), ("vw", "V리그 여"), ("nba", "NBA"),
         ("kl1", "K리그1"), ("epl", "EPL"), ("laliga", "라리가"), ("seriea", "세리에A"), ("bundes", "분데스리가"),
-        ("ligue1", "리그1"), ("ucl", "챔피언스리그"), ("nhl", "NHL"), ("khl", "KHL")]
+        ("ligue1", "리그1"), ("ucl", "챔피언스리그"), ("nhl", "NHL"), ("khl", "KHL"),
+        ("cpbl", "CPBL"), ("bleague", "B리그"), ("cba", "CBA"), ("easl", "EASL"), ("euroleague", "유로리그"),
+        ("svl", "SV리그"), ("ita_w", "이탈리아 여자 A1"), ("tur_w", "튀르키예 여자"),
+        ("kl2", "K리그2"), ("wk", "WK리그(여자)"), ("j1", "J1리그"), ("j2", "J2리그"), ("saudi", "사우디"),
+        ("champ", "챔피언십"), ("uel", "유로파리그"), ("uecl", "컨퍼런스리그"), ("mls", "MLS"), ("unl", "네이션스리그"),
+        ("asia_hk", "아시아리그"), ("liiga", "핀란드 리가"), ("shl", "SHL"), ("ahl", "AHL")]
 
 
 def today():

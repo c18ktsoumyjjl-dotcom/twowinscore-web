@@ -9,8 +9,12 @@ LEAGUES = {
     ("football", 39): "EPL", ("football", 140): "라리가", ("football", 135): "세리에A", ("football", 78): "분데스리가",
     ("football", 61): "리그1", ("football", 292): "K리그1", ("football", 2): "챔피언스리그",
     ("hockey", 57): "NHL", ("hockey", 35): "KHL",
+    ("football", 293): "K리그2", ("football", 660): "WK리그(여자)", ("football", 98): "J1리그", ("football", 99): "J2리그",
+    ("football", 307): "사우디 리그", ("football", 40): "챔피언십", ("football", 3): "유로파리그", ("football", 848): "컨퍼런스리그",
+    ("football", 253): "MLS", ("football", 5): "UEFA 네이션스리그", ("football", 10): "A매치 친선",
+    ("hockey", 106): "아시아리그", ("hockey", 16): "핀란드 리가", ("hockey", 47): "스웨덴 SHL", ("hockey", 58): "AHL",
 }
-SEASON = {("football", 292): 2026, ("hockey", 57): 2026, ("hockey", 35): 2026}  # 나머지 축구 유럽 리그는 2026(=2026-27)
+SEASON = {("football", 292): 2026, ("football", 98): 2027, ("football", 293): 2026, ("football", 660): 2026, ("football", 253): 2026, ("hockey", 57): 2026, ("hockey", 35): 2026}  # 나머지 축구 유럽 리그는 2026(=2026-27)
 FB_LIVE = {"1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"}
 FB_FIN = {"FT", "AET", "PEN"}
 HK_LIVE = {"P1", "P2", "P3", "OT", "PT", "BT"}
@@ -118,6 +122,7 @@ def _mk(kind, lg, gid, date, st, t, hs, as_, period, lines, rnd):
 
 
 def standings(kind, league):
+    from teams_ko import ko
     season = SEASON.get((kind, league), 2026)
     resp = get(kind, "/standings", {"league": league, "season": season})
     groups = []
@@ -157,7 +162,12 @@ def standings(kind, league):
             groups = [big]
         KO = {"Eastern Conference": "동부 컨퍼런스", "Western Conference": "서부 컨퍼런스"}
         groups = [[KO.get(n, n), r] for n, r in groups]
-    lab = f"{season}-{str(season + 1)[2:]}" if (kind, league) not in (("football", 292),) else str(season)
+    if (kind, league) in (("football", 292), ("football", 293), ("football", 660), ("football", 253)):
+        lab = str(season)
+    elif (kind, league) == ("football", 98):
+        lab = f"{season - 1}-{str(season)[2:]}"
+    else:
+        lab = f"{season}-{str(season + 1)[2:]}"
     return groups, lab
 
 

@@ -17,14 +17,34 @@ _lock = threading.Lock()
 
 # 사이트에 보여줄 리그 (kind, league id, 표시 이름) - 순서 = 화면 순서
 SITE_LEAGUES = [
-    ("baseball", 5, "KBO"), ("baseball", 1, "MLB"), ("baseball", 2, "NPB"),
-    ("basketball", 91, "KBL"), ("basketball", 92, "WKBL"),
-    ("volleyball", 151, "V리그 남자"), ("volleyball", 152, "V리그 여자"),
-    ("basketball", 12, "NBA"),
-    ("football", 292, "K리그1"), ("football", 39, "EPL"), ("football", 140, "라리가"), ("football", 135, "세리에A"),
-    ("football", 78, "분데스리가"), ("football", 61, "리그1"), ("football", 2, "챔피언스리그"),
-    ("hockey", 57, "NHL"), ("hockey", 35, "KHL"),
+    # 한국
+    ("baseball", 5, "KBO"), ("basketball", 91, "KBL"), ("basketball", 92, "WKBL"),
+    ("volleyball", 151, "V리그 남자"), ("volleyball", 152, "V리그 여자"), ("volleyball", 153, "KOVO컵 여자"),
+    ("football", 292, "K리그1"), ("football", 293, "K리그2"), ("football", 660, "WK리그(여자)"),
+    # 일본·아시아
+    ("baseball", 2, "NPB"), ("baseball", 29, "CPBL"), ("basketball", 56, "B리그"), ("basketball", 31, "CBA"), ("basketball", 386, "EASL"),
+    ("volleyball", 252, "SV리그"), ("football", 98, "J1리그"), ("football", 99, "J2리그"), ("football", 307, "사우디 리그"),
+    ("hockey", 106, "아시아리그"),
+    # 유럽
+    ("football", 39, "EPL"), ("football", 140, "라리가"), ("football", 135, "세리에A"), ("football", 78, "분데스리가"),
+    ("football", 61, "리그1"), ("football", 40, "챔피언십"), ("football", 2, "챔피언스리그"), ("football", 3, "유로파리그"),
+    ("football", 848, "컨퍼런스리그"), ("basketball", 120, "유로리그"),
+    ("volleyball", 89, "이탈리아 여자 A1"), ("volleyball", 174, "튀르키예 여자 술탄라르"),
+    ("hockey", 35, "KHL"), ("hockey", 16, "핀란드 리가"), ("hockey", 47, "스웨덴 SHL"),
+    # 미주
+    ("baseball", 1, "MLB"), ("basketball", 12, "NBA"), ("football", 253, "MLS"), ("hockey", 57, "NHL"), ("hockey", 58, "AHL"),
+    # 국가대표·국제대회
+    ("baseball", 43, "프리미어12"), ("baseball", 32, "아시안게임 야구"), ("volleyball", 233, "아시안게임 배구"),
+    ("football", 5, "UEFA 네이션스리그"), ("football", 10, "A매치 친선"),
 ]
+# score_bot(읽기 전용)에 없는 리그는 여기서만 등록
+for _k, _l, _s, _n in [("baseball", 32, 2026, "아시안게임 야구"), ("baseball", 43, 2026, "프리미어12"),
+                       ("basketball", 386, "2026-2027", "EASL"), ("volleyball", 153, 2026, "KOVO컵 여자"),
+                       ("volleyball", 233, 2026, "아시안게임 배구"), ("volleyball", 252, "2026-2027", "SV리그"),
+                       ("volleyball", 174, "2026-2027", "튀르키예 여자 술탄라르")]:
+    if (_k, _l) not in sb.LEAGUE_BY_KEY:
+        _m = sb._L(_k, _l, _s, _n)
+        sb.LEAGUES.append(_m); sb.LEAGUE_BY_KEY[(_k, _l)] = _m; sb.LEAGUE_ORDER[(_k, _l)] = len(sb.LEAGUE_ORDER)
 import sports2
 NEW_KINDS = ("football", "hockey")
 
@@ -38,7 +58,13 @@ STANDING_SLUGS = {"kbo": ("baseball", 5), "mlb": ("baseball", 1), "npb": ("baseb
                   "vm": ("volleyball", 151), "vw": ("volleyball", 152), "nba": ("basketball", 12),
                   "kl1": ("football", 292), "epl": ("football", 39), "laliga": ("football", 140), "seriea": ("football", 135),
                   "bundes": ("football", 78), "ligue1": ("football", 61), "ucl": ("football", 2),
-                  "nhl": ("hockey", 57), "khl": ("hockey", 35)}
+                  "nhl": ("hockey", 57), "khl": ("hockey", 35),
+                  "kl2": ("football", 293), "wk": ("football", 660), "j1": ("football", 98), "j2": ("football", 99),
+                  "saudi": ("football", 307), "champ": ("football", 40), "uel": ("football", 3), "uecl": ("football", 848),
+                  "mls": ("football", 253), "unl": ("football", 5),
+                  "cpbl": ("baseball", 29), "bleague": ("basketball", 56), "cba": ("basketball", 31), "easl": ("basketball", 386),
+                  "euroleague": ("basketball", 120), "svl": ("volleyball", 252), "ita_w": ("volleyball", 89), "tur_w": ("volleyball", 174),
+                  "asia_hk": ("hockey", 106), "liiga": ("hockey", 16), "shl": ("hockey", 47), "ahl": ("hockey", 58)}
 
 TTL_LIVE = 180       # 진행 중 경기가 있는 날: 3분
 TTL_IDLE = 600       # 오늘이지만 진행 중 없음: 10분
