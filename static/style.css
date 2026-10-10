@@ -323,6 +323,7 @@ body.sbon .sb6{transform:none}
 .snd{position:relative;display:inline-block}
 .sndm{position:absolute;right:0;top:calc(100% + 6px);z-index:60;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:4px;min-width:160px;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .sndm[hidden]{display:none}
+.hero-nav:has(.sndm:not([hidden])){z-index:70}
 @media(max-width:600px){.sndm{right:auto;left:0}}
 .sndm button{display:flex;align-items:center;justify-content:space-between;width:100%;height:36px;text-align:left;background:none;border:0;color:var(--tx);font-family:inherit;font-size:14px;font-weight:600;line-height:1;padding:0 10px;border-radius:6px;cursor:pointer}
 .sndm button:hover{background:var(--card)}
