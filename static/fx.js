@@ -1,6 +1,6 @@
 /* 히어로 효과(가볍게): 성긴 비, 조명 반짝임, 관중석 플래시, 로고 샤인. 모션 줄이기 설정 존중 */
 (function(){
-const box=document.querySelector('.fxw');if(!box)return;
+const box=document.querySelector('.fxw');if(!box)return;if(innerWidth<1024)return;
 const still=matchMedia('(prefers-reduced-motion: reduce)').matches;if(still)return;
 const mob=()=>innerWidth<=700;
 // 관중석 플래시: 관중석 띠 영역에서 무작위 소수

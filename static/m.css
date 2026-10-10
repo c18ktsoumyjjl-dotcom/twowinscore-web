@@ -1,0 +1,109 @@
+/* 모바일 앱 화면 전용(<1024px). PC(>=1024px)에는 아래 숨김 규칙 외 아무 영향 없음 */
+.mh,.mtab,.mptr,.mds{display:none}
+@media(max-width:1023px){
+html{overscroll-behavior-y:contain}
+body.mapp{background:var(--bg)!important;padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+body.mapp::before,body.mapp::after{display:none!important}
+body.mapp .mh{display:block;position:sticky;top:0;z-index:40;background:var(--bg2);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.mtop{display:flex;align-items:center;justify-content:space-between;height:48px;padding:0 6px 0 max(14px,env(safe-area-inset-left))}
+.mtop .logo{font-style:italic;font-weight:900;font-size:21px;letter-spacing:-.5px;color:var(--tx)}.mtop .logo .s{color:var(--or)}
+.mic{display:flex;align-items:center;gap:2px}
+.mic .mbtn,.mic .theme,.mic #sndBtn{width:40px!important;height:40px!important;display:grid;place-items:center;background:none!important;border:0!important;box-shadow:none!important;color:var(--mu)!important;font-size:20px;padding:0;border-radius:50%}
+.mic .mbtn[hidden]{display:none}
+.mic .sndm{right:0!important;left:auto!important}
+.mic svg{width:20px!important;height:20px!important}
+/* 검색 */
+.mh .msrch{display:none!important}
+body.msq .mh .msrch{display:flex!important;margin:0 12px 8px}
+body.msq #msq{color:var(--or)!important}
+/* 날짜 띠 */
+body.mapp .mh .mds{display:flex;overflow-x:auto;scrollbar-width:none;padding:0 4px;scroll-behavior:auto}
+.mds::-webkit-scrollbar{display:none}
+.mds a{flex:0 0 calc(100% / 6);text-align:center;padding:4px 0 8px;color:var(--mu);border-bottom:2px solid transparent;text-decoration:none}
+.mds small{display:block;font-size:11px;font-weight:600}.mds b{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
+.mds a.on{color:var(--tx);border-color:var(--or)}.mds a.on small{color:var(--or);font-weight:800}
+.mds a.td:not(.on) small{color:var(--tx)}
+/* 종목 칩 */
+body.mapp .mh .sports5{display:flex;gap:7px;margin:0;padding:9px 12px;background:none;border:0;border-radius:0;overflow-x:auto;justify-content:flex-start;border-top:1px solid var(--line)}
+body.mapp .mh .sports5 button{flex:none;display:flex;align-items:center;gap:4px;padding:6px 13px;border-radius:17px;background:var(--card);border:1px solid var(--line);font-size:13.5px;font-weight:800;color:var(--tx)}
+body.mapp .mh .sports5 button small{font-size:11.5px;color:var(--mu)}
+body.mapp .mh .sports5 button.on{background:var(--or);border-color:var(--or);color:#fff}body.mapp .mh .sports5 button.on small{color:#ffe1cc}
+.sports5 .lc{font-style:normal;font-size:10px;font-weight:900;color:#fff;background:var(--live);border-radius:8px;padding:0 5px;line-height:15px;margin-left:1px}
+body.mapp .mh .sports5 .mlv{color:var(--live);border-color:rgba(255,77,77,.5);gap:6px}
+body.mapp .mh .sports5 .mlv.on{background:var(--live);border-color:var(--live);color:#fff}
+.pd{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--live);flex:none;animation:mpulse 1.4s ease-out infinite}
+.mlv.on .pd{background:#fff}
+@keyframes mpulse{0%{box-shadow:0 0 0 0 rgba(255,77,77,.6)}100%{box-shadow:0 0 0 7px rgba(255,77,77,0)}}
+/* 기존 헤더 숨김 */
+body.mapp .hero5,body.mapp .sbar,body.mapp .hero-nav,body.mapp .tag5,body.mapp .dlabel,body.mapp>header>.wrap.top,body.mapp .tgcs,body.mapp footer .credit{display:none!important}
+body.mapp main.wrap{max-width:none;padding:0}
+body.mapp .status{display:block;margin:8px 14px 0;padding:0;background:none;border:0;color:var(--mu);font-size:11.5px;text-shadow:none}
+/* 리그 묶음 */
+#list{transition:transform .15s ease-out}#list.gol{transform:translateX(-30%)!important;opacity:.4}#list.gor{transform:translateX(30%)!important;opacity:.4}
+body.mapp .msec{margin:0!important;padding:0!important}body.mapp .mlg{margin:0!important}body.mapp .status .dot{display:inline-block;width:6px;height:6px;margin-right:3px;vertical-align:1px;box-shadow:none}
+.mlg{display:flex;align-items:center;gap:8px;margin:0;padding:13px 6px 8px 14px;font-size:14px;font-weight:800;color:var(--tx);background:var(--bg);text-shadow:none!important;cursor:pointer;-webkit-user-select:none;user-select:none}
+.mlg .ln{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mlg small{flex:none;color:var(--mu);font-size:12px;font-weight:600}.mlg small i{color:var(--live);font-style:normal;font-weight:800}
+.mlg .mlf{margin-left:auto;flex:none;width:32px;height:28px;background:none;border:0;color:var(--mu);font-size:16px;padding:0}.mlg .mlf.on{color:#ffc107}
+.mlg .chev{flex:none;color:var(--mu);font-size:18px;width:20px;text-align:center;transform:rotate(90deg);transition:transform .15s}
+.msec.col .chev{transform:none}
+.mlg.pin{color:#ffc107;cursor:default}
+/* 경기 줄 */
+.mr{display:grid;grid-template-columns:54px minmax(0,1fr) 66px minmax(0,1fr) 30px;align-items:center;min-height:60px;padding:6px 0 6px 8px;background:var(--card);border-bottom:1px solid var(--line);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mr:active{filter:brightness(1.12)}
+.mr.live{background:linear-gradient(90deg,rgba(255,77,77,.13),var(--card) 32%);box-shadow:inset 3px 0 var(--live)}
+.mr.op{box-shadow:inset 3px 0 var(--or);background:var(--bg2)}
+.ms{display:flex;flex-direction:column;align-items:flex-start;gap:2px;font-size:11.5px;font-weight:700;color:var(--mu);line-height:1.2;min-width:0;word-break:keep-all}
+.mr.live .ms{color:var(--live)}.ms .tt{color:var(--tx);font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}.ms small{font-size:10px;color:var(--or)}
+.mt{display:flex;align-items:center;gap:7px;min-width:0;font-size:14.5px;font-weight:700;color:var(--tx)}
+.mt.R{justify-content:flex-end;text-align:right}
+.mt img,.mt .nologo{width:26px;height:26px;object-fit:contain;flex:none}.mt .nologo{display:block;border-radius:50%;background:var(--line)}
+.mt .nm{min-width:0;line-height:1.18;word-break:keep-all;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mt .nm.lng{font-size:12.5px;letter-spacing:-.3px}
+.mr.final .mt:not(.win){color:var(--mu)}
+.mc{display:flex;justify-content:center;align-items:center;gap:4px;font-size:21px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--tx)}
+.mc em{font-style:normal;color:var(--mu);font-size:17px}.mr.final .mc b{color:var(--mu)}.mr .mc b.w{color:var(--or)}.mr.live .mc b{color:#fff}
+[data-theme=light] .mr.live .mc b{color:var(--tx)}
+.mc .vs{font-size:13px;color:var(--mu);font-weight:800}
+.mr.flash .mc{animation:mflash 1.6s ease-out}
+@keyframes mflash{0%{background:rgba(255,122,26,.55);border-radius:8px;transform:scale(1.15)}100%{background:transparent;transform:none}}
+.mst{background:none;border:0;padding:0;height:44px;font-size:18px;color:var(--line);display:grid;place-items:center}.mst.on{color:#ffc107}
+[data-theme=light] .mst:not(.on){color:#c4cde0}
+body.mapp .pv6{margin:0;border-radius:0}body.mapp .pv6.open{border-bottom:1px solid var(--line)}
+.mempty{text-align:center;color:var(--mu);padding:56px 24px;font-size:14px;line-height:1.7}.mempty b{display:block;font-size:36px;color:#ffc107;margin-bottom:6px}
+/* 당겨서 새로고침 */
+body.mapp .mptr{display:grid;place-items:center;position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 8px);z-index:60;width:36px;height:36px;border-radius:50%;background:var(--bg2);border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.35);transform:translate(-50%,-60px);pointer-events:none}
+.mptr i{width:16px;height:16px;border:2.5px solid var(--mu);border-top-color:transparent;border-radius:50%}
+.mptr.rdy i{border-color:var(--or);border-top-color:transparent}.mptr.spin{transition:transform .2s}.mptr.spin i{animation:mspin .7s linear infinite}
+@keyframes mspin{to{transform:rotate(360deg)}}
+/* 하단 탭 바 */
+body.mapp .mtab{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;height:calc(58px + env(safe-area-inset-bottom));padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);background:var(--bg2);border-top:1px solid var(--line)}
+.mtab a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:700;color:var(--mu);text-decoration:none;-webkit-tap-highlight-color:transparent}
+.mtab svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mtab a,.mtab a.on{background:none!important;border:0!important;box-shadow:none!important;border-radius:0}.mtab a.on{color:var(--or)}.mtab a[data-t=fav].on svg{fill:currentColor}.mtab a[data-t=cs] svg{color:#2aabee}
+body.mapp.detail6 .mh,body.mapp.detail6 .mtab,body.mapp.detail6 .mptr{display:none!important}
+body.mapp.detail6{padding-bottom:0}
+/* 순위 */
+body.mapp[data-page=standings]>header{position:static;background:none;border:0;box-shadow:none}
+body.mapp[data-page=standings] .bar{position:sticky;top:calc(49px + env(safe-area-inset-top));z-index:30;background:var(--bg2);border-bottom:1px solid var(--line);padding:0}
+body.mapp[data-page=standings] .bar .wrap{padding:0;max-width:none}
+body.mapp[data-page=standings] .bar .sports5{display:flex;margin:0;padding:9px 12px 4px;gap:7px;background:none;border:0;border-radius:0;overflow-x:auto}
+body.mapp[data-page=standings] .bar .sports5 a{flex:none;padding:6px 13px;border-radius:17px;background:var(--card);border:1px solid var(--line);font-size:13.5px;font-weight:800;color:var(--tx);text-decoration:none}
+body.mapp[data-page=standings] .bar .sports5 a.on{background:var(--or);border-color:var(--or);color:#fff}
+body.mapp[data-page=standings] .bar .chips{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;padding:0 6px;margin:0}
+body.mapp[data-page=standings] .bar .chips a{flex:none;padding:9px 12px;background:none;border:0;border-bottom:2px solid transparent;border-radius:0;color:var(--mu);font-weight:700;font-size:14px;text-decoration:none}
+body.mapp[data-page=standings] .bar .chips a.on{color:var(--tx);border-color:var(--or)}
+body.mapp[data-page=standings] .head{display:flex;justify-content:space-between;align-items:baseline;padding:14px 14px 10px;margin:0}
+body.mapp[data-page=standings] .head h1{font-size:18px;margin:0}body.mapp[data-page=standings] .head .sub{color:var(--mu);font-size:12px}
+body.mapp[data-page=standings] section h2{font-size:13px;color:var(--mu);margin:10px 14px 6px;text-shadow:none}
+body.mapp[data-page=standings] .scroll{overflow-x:auto;margin:0;border:0;border-radius:0}
+body.mapp[data-page=standings] .tbl{width:100%;border-collapse:collapse;font-size:14px;background:var(--card);border-radius:0}
+body.mapp[data-page=standings] .tbl th{color:var(--mu);font-size:12px;font-weight:700;padding:9px 4px;border-bottom:1px solid var(--line);white-space:nowrap}
+body.mapp[data-page=standings] .tbl td{text-align:center;padding:11px 4px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+body.mapp[data-page=standings] .tbl .t{text-align:left;font-weight:800;white-space:normal;word-break:keep-all;min-width:96px;max-width:150px;line-height:1.2}
+body.mapp[data-page=standings] .tbl .t .en{display:none}
+body.mapp[data-page=standings] .tbl .rk{color:var(--or);font-weight:900;width:30px}
+body.mapp[data-page=standings] .tbl tr:nth-child(-n+5) .rk{background:linear-gradient(90deg,var(--or) 3px,transparent 3px)}
+body.mapp[data-page=standings] .tbl .o{color:var(--or);font-weight:800}
+body.mapp footer{padding:16px 14px;font-size:11.5px}
+}

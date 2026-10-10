@@ -310,6 +310,40 @@ def standings():
                            groups=groups, season=season, ok=ok, kind=data.STANDING_SLUGS[slug][0])
 
 
+MANIFEST = {"name": "투윈스코어 TwowinSCORE", "short_name": "투윈스코어", "id": "/", "start_url": "/?src=pwa", "scope": "/",
+            "display": "standalone", "orientation": "portrait", "background_color": "#0b1630", "theme_color": "#0b1630", "lang": "ko",
+            "description": "국내·해외 축구·야구·농구·배구·아이스하키 실시간 스코어",
+            "icons": [{"src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+                      {"src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+                      {"src": "/static/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable"},
+                      {"src": "/static/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}
+
+SW_JS = """// 투윈스코어 서비스워커: /static/ 정적 파일만 캐시. API·페이지는 절대 캐시하지 않음(항상 네트워크).
+const C='tw-static-v1';
+self.addEventListener('install',e=>self.skipWaiting());
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{const u=new URL(e.request.url);
+ if(e.request.method!=='GET'||u.origin!==location.origin||!u.pathname.startsWith('/static/')||u.pathname.endsWith('.mp3'))return;
+ e.respondWith(caches.open(C).then(c=>c.match(e.request).then(r=>r||fetch(e.request).then(n=>{if(n.ok)c.put(e.request,n.clone());return n}))));});
+"""
+
+
+@app.route("/manifest.webmanifest")
+def manifest():
+    import json
+    r = app.response_class(json.dumps(MANIFEST, ensure_ascii=False), mimetype="application/manifest+json")
+    r.headers["Cache-Control"] = "public, max-age=3600"
+    return r
+
+
+@app.route("/sw.js")
+def sw():
+    r = app.response_class(SW_JS, mimetype="application/javascript")
+    r.headers["Cache-Control"] = "no-cache"
+    r.headers["Service-Worker-Allowed"] = "/"
+    return r
+
+
 if __name__ == "__main__":
     import os
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8088)), threaded=True, debug=False)
