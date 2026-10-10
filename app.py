@@ -4,8 +4,66 @@ import data
 import chat
 import plays
 
+import threading, time
+from collections import deque
+
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024      # 요청 본문 16KB 까지
 app.register_blueprint(chat.bp)
+
+# ---------- 보안: IP별 요청 제한 ----------
+# (경로 접두어, 1분 최대). 캐시에서 나가는 폴링은 같은 와이파이·통신사 공유 IP 를 고려해 넉넉히.
+RATE = [("/api/preview/", 20), ("/api/chat", 300), ("/api/games", 300), ("/api/", 120), ("/game/", 60)]
+_rl, _rl_lock = {}, threading.Lock()
+
+
+@app.before_request
+def _ratelimit():
+    p = request.path
+    for pre, lim in RATE:
+        if p.startswith(pre):
+            break
+    else:
+        return None
+    if pre == "/api/chat" and request.method == "POST":
+        pre, lim = "chatpost", 30
+    now, key = time.time(), pre + "|" + chat._ip()
+    with _rl_lock:
+        if len(_rl) > 50000:
+            for k in [k for k, d in _rl.items() if not d or now - d[-1] > 60]:
+                del _rl[k]
+        dq = _rl.setdefault(key, deque())
+        while dq and now - dq[0] > 60:
+            dq.popleft()
+        if len(dq) >= lim:
+            r = jsonify({"ok": False, "error": "요청이 너무 많아요. 잠시 뒤에 다시 시도해 주세요."})
+            r.status_code, r.headers["Retry-After"] = 429, "30"
+            return r
+        dq.append(now)
+    return None
+
+
+CSP = ("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+       "img-src 'self' data: blob: https:; media-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; "
+       "object-src 'none'; base-uri 'self'; form-action 'self'; "
+       "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org https://t.me")
+
+
+@app.after_request
+def _sec_headers(r):
+    h = r.headers
+    h.setdefault("Content-Security-Policy", CSP)
+    h.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+    h.setdefault("X-Content-Type-Options", "nosniff")
+    h.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    h.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()")
+    h.setdefault("Cross-Origin-Opener-Policy", "same-origin-allow-popups")
+    return r
+
+
+@app.errorhandler(413)
+def _too_big(e):
+    return jsonify({"ok": False, "error": "요청이 너무 커요."}), 413
 WD = "월화수목금토일"
 EMO = {"baseball": "⚾", "basketball": "🏀", "volleyball": "🏐", "football": "⚽", "hockey": "🏒"}
 SPORT_KO = {"football": "축구", "baseball": "야구", "basketball": "농구", "volleyball": "배구", "hockey": "아이스하키"}

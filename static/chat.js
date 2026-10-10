@@ -16,7 +16,7 @@ function mount(el,room,opt){
  <p class="ch-rule">링크·연락처·욕설·홍보는 자동 차단돼요.</p>`;
  const list=el.querySelector('.ch-list'),err=el.querySelector('.ch-err'),nf=el.querySelector('.ch-nick'),mf=el.querySelector('.ch-form');
  const showErr=t=>{err.textContent=t||'';err.style.display=t?'block':'none';if(t)setTimeout(()=>{if(err.textContent===t)showErr('')},4000)};
- function setMode(){const m=me();nf.style.display=m?'none':'flex';mf.style.display=m?'flex':'none';if(m)el.querySelector('.ch-me').innerHTML=`${esc(m.nick)}<small>#${m.tag}</small>`}
+ function setMode(){const m=me();nf.style.display=m?'none':'flex';mf.style.display=m?'flex':'none';if(m)el.querySelector('.ch-me').innerHTML=`${esc(m.nick)}<small>#${esc(m.tag)}</small>`}
  setMode();
  el.querySelector('.ch-me').onclick=()=>{if(confirm('닉네임을 바꿀까요?')){localStorage.removeItem(LS);setMode()}};
  nf.onsubmit=e=>{e.preventDefault();const v=nf.querySelector('input').value.trim();
@@ -37,7 +37,7 @@ function mount(el,room,opt){
  mf.onsubmit=async e=>{e.preventDefault();const inp=mf.querySelector('input'),t=inp.value.trim(),m=me();if(!t||!m)return;
   const b=mf.querySelector('button');b.disabled=true;
   try{const r=await fetch(`/api/chat/${room}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nick:m.nick,tag:m.tag,text:t,cid:cid()})});
-   const j=await r.json();if(j.ok){inp.value='';add([j.message]);last=Math.max(last,j.message.id);list.scrollTop=list.scrollHeight}else showErr(j.error||'보내지 못했어요.')}
+   const j=await r.json();if(j.ok){if(j.message.tag!==m.tag){m.tag=j.message.tag;try{localStorage.setItem(LS,JSON.stringify(m))}catch(_){}setMode()}inp.value='';add([j.message]);last=Math.max(last,j.message.id);list.scrollTop=list.scrollHeight}else showErr(j.error||'보내지 못했어요.')}
   catch(e){showErr('연결이 불안정해요.')}setTimeout(()=>b.disabled=false,2000)};
  if(opt.close)el.querySelector('.ch-x').onclick=opt.close;
  function start(){active=true;poll();clearInterval(timer);timer=setInterval(poll,2500)}

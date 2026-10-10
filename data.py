@@ -99,6 +99,14 @@ def _sport_day(kind, day, today):
             ttl = TTL_IDLE
         if now - c["ts"] < ttl:
             return [_de(g) for g in games], c.get("ok", False)
+    with _flight(name):
+        c2 = _rd(name)
+        if c2 and c2.get("ts", 0) >= now:      # 기다리는 동안 다른 요청이 이미 받아옴
+            return [_de(g) for g in c2.get("games") or []], c2.get("ok", False)
+        return _sport_fetch(kind, day, name, c, time.time())
+
+
+def _sport_fetch(kind, day, name, c, now):
     try:
         games = _fetch_raw(kind, day)
         _wr(name, {"ts": now, "ok": True, "games": games})
@@ -143,7 +151,27 @@ def find_game(key, day):
     return None
 
 
+_flocks = {}
+_flocks_lock = threading.Lock()
+
+
+def _flight(key):
+    """같은 캐시 키는 한 번에 한 요청만 외부 API 를 부른다(single-flight)."""
+    with _flocks_lock:
+        lk = _flocks.get(key)
+        if lk is None:
+            if len(_flocks) > 2000:
+                _flocks.clear()
+            lk = _flocks[key] = threading.Lock()
+    return lk
+
+
 def detail(g):
+    with _flight("detail:" + str(g["key"])):
+        return _detail(g)
+
+
+def _detail(g):
     """상세 자료(최근 5경기, 맞대결, 순위, 선발, 결장). 경기마다 파일 캐시. 확인된 것만."""
     name = "detail_" + str(g["key"]).replace(":", "_") + ".json"
     c = _rd(name)
@@ -221,7 +249,28 @@ def quota(kind):
     except Exception:
         val = None
     _quota[kind] = (time.time(), val)
+    try:
+        if val and val[1] and val[0] >= 0.7 * val[1]:
+            _alert_quota(kind, val)
+    except Exception:
+        pass
     return val
+
+
+_alerted = {}
+
+
+def _alert_quota(kind, val):
+    """하루 사용량 70% 넘으면 주인에게 텔레그램 알림(종목별 하루 1번). 토큰은 TW_ALERT_BOT_TOKEN / TW_ALERT_CHAT_ID 환경변수."""
+    tok, chat_id = os.environ.get("TW_ALERT_BOT_TOKEN", ""), os.environ.get("TW_ALERT_CHAT_ID", "")
+    day = datetime.now(SEOUL).date().isoformat()
+    if not tok or not chat_id or _alerted.get(kind) == day:
+        return
+    _alerted[kind] = day
+    import urllib.request, urllib.parse
+    msg = f"⚠️ 투윈스코어 API 사용량 경고\n{kind}: 오늘 {val[0]:,} / {val[1]:,}회 ({val[0] * 100 // val[1]}%)"
+    body = urllib.parse.urlencode({"chat_id": chat_id, "text": msg}).encode()
+    urllib.request.urlopen(f"https://api.telegram.org/bot{tok}/sendMessage", data=body, timeout=10).read()
 
 
 def live_ttl(kind):

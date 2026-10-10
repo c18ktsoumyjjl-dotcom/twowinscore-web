@@ -15,7 +15,7 @@
 <div class="sports5" id="sports"></div><div class="chips chips5" id="chips"></div></div></div>
 <div class="wrap dlabel">{{label}}</div>{% endblock %}
 {% block body %}<button id="chatFab" class="fab">💬 라운지 <span id="fabN"></span></button><aside id="lounge" class="lounge" hidden></aside><div id="status" class="status"></div><div id="list"><p class="empty">불러오는 중…</p></div>{% endblock %}
-{% block js %}<button class="sndhint" id="sndHint" hidden>🔊 소리 켜기</button><script src="/static/sound.js?v=8"></script><script src="/static/fx.js?v=2" defer></script><script src="/static/chat.js?v=3"></script><script>
+{% block js %}<button class="sndhint" id="sndHint" hidden>🔊 소리 켜기</button><script src="/static/sound.js?v=8"></script><script src="/static/fx.js?v=2" defer></script><script src="/static/chat.js?v=4"></script><script>
 const D="{{d}}";const SPORTS=['전체','축구','야구','농구','배구','아이스하키'];let SP=localStorage.getItem('tw_sport')||'전체',OPEN=null,PV={};let F=new URLSearchParams(location.search).get('f')||'all',Q='',DATA=null,PREV={};
 const fav=()=>{try{return JSON.parse(localStorage.getItem('tw_fav')||'[]')}catch(e){return[]}};
 const fk=(g,s)=>g.kind+':'+g[s].id;
@@ -48,7 +48,7 @@ let SNDQ=false;function row(g){const sc=g.L.score!=null,p=PREV[g.key],ch=p&&p!==
  const mid=sc?`<div class="score5"><b class="${lead==='L'?'lead':''}">${g.L.score}</b><span>:</span><b class="${lead==='R'?'lead':''}">${g.R.score}</b></div>`:`<div class="vs5">${g.state==='scheduled'?'vs':esc(g.badge)}</div>`;
  if(up&&TWSound.want(teamFav(g)))SNDQ=true;const op=OPEN===g.key;return `<div class="g5 ${g.state} ${ch?'flash':''} ${op?'op':''}" role="button" tabindex="0" data-k="${esc(g.key)}">
  <div class="time5">${esc(g.time)}${g.sub?`<small>${esc(g.sub)}</small>`:''}</div>${tm(g.L,'L')}<div class="mid5">${top}${mid}</div>${tm(g.R,'R')}
- <button class="star5 ${on?'on':''}" onclick="toggleGame('${g.key}',event)" aria-label="즐겨찾기">${on?'★':'☆'}</button></div><div class="pv6 ${op?'open':''}" data-k="${esc(g.key)}"><div class="pvin">${PV[g.key]||'<p class="empty">불러오는 중…</p>'}</div></div>`}
+ <button class="star5 ${on?'on':''}" data-g="${esc(g.key)}" onclick="toggleGame(this.dataset.g,event)" aria-label="즐겨찾기">${on?'★':'☆'}</button></div><div class="pv6 ${op?'open':''}" data-k="${esc(g.key)}"><div class="pvin">${PV[g.key]||'<p class="empty">불러오는 중…</p>'}</div></div>`}
 function render(){if(!DATA)return;const all=DATA.games,q=Q.trim().toLowerCase();
  const cnt=s=>s==='전체'?all.length:all.filter(g=>g.sport===s).length;if(!SPORTS.includes(SP))SP='전체';
  document.getElementById('sports').innerHTML=SPORTS.map(s=>`<button class="${s===SP?'on':''}" data-s="${s}">${s}${cnt(s)?` <small>${cnt(s)}</small>`:''}</button>`).join('');

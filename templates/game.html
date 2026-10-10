@@ -30,7 +30,7 @@
 </div><aside class="dchat" id="dchat"><div class="grab" id="grab"></div><section class="box chatbox" id="gamechat"></section></aside></div>
 <div class="shade" id="shade"></div><button class="fab cfab" id="cfab">💬 채팅 <span id="unread"></span></button>
 {% endblock %}
-{% block js %}<button class="sndhint" id="sndHint" hidden>🔊 소리 켜기</button><script src="/static/sound.js?v=8"></script><script src="/static/chat.js?v=3"></script><script>(function(){const W=matchMedia('(min-width:1024px)'),body=document.body,un=document.getElementById('unread');let n=0;
+{% block js %}<button class="sndhint" id="sndHint" hidden>🔊 소리 켜기</button><script src="/static/sound.js?v=8"></script><script src="/static/chat.js?v=4"></script><script>(function(){const W=matchMedia('(min-width:1024px)'),body=document.body,un=document.getElementById('unread');let n=0;
 const isOpen=()=>body.classList.contains('sheet');
 function openS(){body.classList.add('sheet');n=0;un.textContent='';}
 function closeS(){body.classList.remove('sheet');document.getElementById('dchat').style.transform=''}
@@ -48,4 +48,4 @@ const hero=document.getElementById('hero');const sf=()=>body.classList.toggle('s
 })();</script>{% if g.state in ('live','scheduled') %}<script>
 const K={{g.key|tojson}},D="{{d}}";setInterval(async()=>{if(document.hidden)return;try{const j=await (await fetch('/api/games?d='+D,{cache:'no-store'})).json();const g=j.games.find(x=>x.key===K);if(!g)return;
  const a=document.getElementById('sL'),b=document.getElementById('sR');if(g.state!==({{g.state|tojson}})||!a){if(g.state!==({{g.state|tojson}}))location.reload();return}const n=(g.L.score??'')+':'+(g.R.score??'');if(n!==a.textContent+':'+b.textContent){if(g.state!==({{g.state|tojson}})){location.reload();return}if((+(g.L.score??0))+(+(g.R.score??0))>(+a.textContent||0)+(+b.textContent||0)&&TWSound.mode()!=='off')TWSound.play();const sb=document.getElementById('sb6');sb.classList.remove('flash');void sb.offsetWidth;sb.classList.add('flash');a.textContent=g.L.score??'';b.textContent=g.R.score??'';document.getElementById('bL').textContent=g.L.score??'';document.getElementById('bR').textContent=g.R.score??'';const h=document.getElementById('hero');h.classList.remove('flash');void h.offsetWidth;h.classList.add('flash')}
- document.getElementById('badge').textContent=(g.state==='live'?'● LIVE ':'')+g.badge;document.getElementById('bB').innerHTML=g.state==='live'?'<i class="pill">● LIVE '+g.badge.replace(/[<>&]/g,'')+'</i>':g.badge.replace(/[<>&]/g,'')}catch(e){}},5000);</script>{% endif %}{% endblock %}
+ document.getElementById('badge').textContent=(g.state==='live'?'● LIVE ':'')+g.badge;document.getElementById('bB').innerHTML=g.state==='live'?'<i class="pill">● LIVE '+String(g.badge).replace(/[<>&"']/g,'')+'</i>':String(g.badge).replace(/[<>&"']/g,'')}catch(e){}},5000);</script>{% endif %}{% endblock %}

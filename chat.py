@@ -72,7 +72,7 @@ def check_text(text):
 def check_nick(nick):
     if not NICK_RE.match(nick or ""):
         return "닉네임은 2~12자 한글·영문·숫자로 해 주세요."
-    if check_text(nick) or any(w in nick.lower() for w in ("admin", "관리자", "운영자", "투윈", "twowin")):
+    if check_text(nick) or any(w in nick.lower() for w in ("admin", "관리자", "운영자", "운영진", "관리", "투윈", "twowin", "staff", "운영", "공식", "official", "mod", "gm", "system", "시스템", "고객센터", "매니저", "manager")):
         return "사용할 수 없는 닉네임이에요."
     return None
 
@@ -80,12 +80,17 @@ def check_nick(nick):
 # ---------- helpers ----------
 def _ip():
     # Render(Cloudflare 앞단)는 CF-Connecting-IP/True-Client-IP 를 넣는다. 없으면 XFF 의 맨 오른쪽(프록시가 붙인 값).
-    for h in ("CF-Connecting-IP", "True-Client-IP"):
-        v = request.headers.get(h, "").strip()
-        if v:
-            return v
+    # Render 앞단 Cloudflare 가 CF-Connecting-IP 를 덮어쓴다(클라이언트 값은 버려짐). True-Client-IP 등은 위조 가능하므로 무시.
+    v = request.headers.get("CF-Connecting-IP", "").strip()
+    if v and re.match(r"^[0-9A-Fa-f:.]{3,45}$", v):
+        return v
     xf = [x.strip() for x in request.headers.get("X-Forwarded-For", "").split(",") if x.strip()]
     return (xf[-1] if xf else request.remote_addr) or "?"
+
+
+def _tag(ip):
+    """서버가 IP 해시로 정하는 #태그(4자리). 남의 태그를 흉내 낼 수 없다."""
+    return str(1000 + int(hashlib.sha256(("tag:" + ip).encode()).hexdigest()[:8], 16) % 9000)
 
 
 def _iph(ip):
@@ -175,14 +180,51 @@ def _load():
         pass
 
 
+def _cleaner():
+    """기록이 무한히 늘지 않게 1분마다 오래된 항목 정리."""
+    while True:
+        time.sleep(60)
+        now = time.time()
+        try:
+            with _lock:
+                for k in [k for k, d in _hist.items() if not d or now - d[-1] > 120]:
+                    del _hist[k]
+                for k in [k for k, d in _viol.items() if not d or now - d[-1] > 600]:
+                    del _viol[k]
+                for k in [k for k, u in _mute.items() if u <= now]:
+                    del _mute[k]
+                for ip in list(_cidip):
+                    m = _cidip[ip]
+                    for c in [c for c, t in m.items() if now - t > 40]:
+                        del m[c]
+                    if not m:
+                        del _cidip[ip]
+                for r in list(_online):
+                    o = _online[r]
+                    for c in [c for c, t in o.items() if now - t > 40]:
+                        del o[c]
+                    if not o and r not in _rooms:
+                        del _online[r]
+        except Exception:
+            pass
+
+
 _load()
 threading.Thread(target=_saver, daemon=True).start()
+threading.Thread(target=_cleaner, daemon=True).start()
+
+
+_cidip = {}                     # ip -> {cid: ts}  (접속자 수 부풀리기 방지)
+MAX_CID_PER_IP = 6
 
 
 def _online_count(room, cid, now):
     o = _online.setdefault(room, {})
     if cid and re.match(r"^[A-Za-z0-9]{8,32}$", cid):
-        o[cid] = now
+        mine = _cidip.setdefault(_ip(), {})
+        if cid in mine or len(mine) < MAX_CID_PER_IP:
+            mine[cid] = now
+            o[cid] = now
     for k in [k for k, t in o.items() if now - t > 40]:
         del o[k]
     return len(o)
@@ -219,11 +261,11 @@ def post(room):
     msgs = _room(room)
     body = request.get_json(silent=True) or {}
     nick = str(body.get("nick") or "").strip()
-    tag = str(body.get("tag") or "")
     text = re.sub(r"\s+", " ", re.sub(r"<[^>]*>", "", str(body.get("text") or ""))).strip()
     ip = _ip()
     now = time.time()
-    err = check_nick(nick) or (None if TAG_RE.match(tag) else "닉네임을 다시 정해 주세요.")
+    tag = _tag(ip)
+    err = check_nick(nick)
     if err:
         return jsonify({"ok": False, "error": err}), 400
     if not text:
