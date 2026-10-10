@@ -77,6 +77,8 @@ def fetch_day(kind, day):
                 ft = sc.get("fulltime") or {}
                 if ft.get("home") is not None:
                     lines.append(["후반", ft["home"] - ht["home"], ft["away"] - ht["away"]])
+                elif st in ("2H", "INT", "LIVE") and goals.get("home") is not None and goals.get("away") is not None:
+                    lines.append(["후반", goals["home"] - ht["home"], goals["away"] - ht["away"]])  # 진행 중 후반 = 현재 - 전반
                 et = sc.get("extratime") or {}
                 if et.get("home") is not None:
                     lines.append(["연장", et["home"], et["away"]])
@@ -171,11 +173,48 @@ def standings(kind, league):
     return groups, lab
 
 
-def events(g):
+def raw_events(g):
+    return get("football", "/fixtures/events", {"fixture": g["id"]})
+
+
+def _half(e):
+    tm = e.get("time") or {}
+    el = tm.get("elapsed") or 0
+    if "Shootout" in str(e.get("comments") or ""):
+        return "승부차기"
+    return "전반" if el <= 45 else "후반" if el <= 90 else "연장"
+
+
+def goals(g, rows):
+    """득점 목록 (실제 이벤트만). 실축·취소 제외. [{half,min,side,who,kind,ast}] 시간순."""
+    from teams_ko import ko
+    out = []
+    for e in rows or []:
+        if e.get("type") != "Goal":
+            continue
+        det = e.get("detail") or ""
+        if "Missed" in det:
+            continue
+        tm = e.get("time") or {}
+        tid = (e.get("team") or {}).get("id")
+        side = "home" if tid == g.get("home_id") else "away" if tid == g.get("away_id") else None
+        if side is None:
+            continue
+        half = _half(e)
+        mn = "" if half == "승부차기" else f"{tm.get('elapsed')}'" + (f"+{tm['extra']}" if tm.get("extra") else "")
+        out.append({"half": half, "min": mn, "side": side, "who": (e.get("player") or {}).get("name") or "",
+                    "kind": "자책골" if "Own" in det else "PK" if "Penalty" in det else "",
+                    "ast": (e.get("assist") or {}).get("name") or "", "o": (tm.get("elapsed") or 0) * 100 + (tm.get("extra") or 0)})
+    out.sort(key=lambda x: x["o"])
+    return out
+
+
+def events(g, rows=None):
     """축구 득점·카드 (실제 이벤트만). [{t,hot}] 최신순."""
     if g["kind"] != "football":
         return None
-    rows = get("football", "/fixtures/events", {"fixture": g["id"]})
+    if rows is None:
+        rows = raw_events(g)
     out = []
     for e in rows:
         tm = e.get("time") or {}

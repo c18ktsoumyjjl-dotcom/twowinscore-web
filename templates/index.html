@@ -30,7 +30,9 @@ function tbl(t){if(!t)return'';const ex=t.ext||[];const cell=v=>v==null?'<i clas
  return `<div class="lsw"><table class="ls6"><tr><th class="t">팀</th>${t.cols.map((c,j)=>`<th class="${cc(j)}">${esc(c)}</th>`).join('')}<th class="o">${esc(t.tlab)}</th>${ex.map(c=>`<th>${c}</th>`).join('')}</tr>`+
  t.rows.map((r,i)=>`<tr><td class="t">${esc(r.name)}${r.home?'<em>홈</em>':''}</td>${r.vals.map((v,j)=>{const o=t.rows[1-i].vals[j];return `<td class="${typeof v==='number'&&typeof o==='number'&&v>o?'hi':''}${cc(j)}">${cell(v)}</td>`}).join('')}<td class="o">${cell(r.T)}</td>${r.ext.map(cell).map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')+'</table></div>'}
 const RES={W:'승',L:'패',D:'무'};
-function pv(j){let h=tbl(j.table);
+function gls(G){if(!G)return'';const it=x=>`<b>${esc(x.min)}</b> ${esc(x.who||'득점')}${x.kind?` <em>${esc(x.kind)}</em>`:''}`;
+ return `<div class="pv-b gl8"><h4>득점</h4>`+G.halves.map(s=>`<div class="glh"><div class="glt"><span>${esc(s.lab)}</span>${s.h!=null?`<b>${s.h} : ${s.a}</b>`:''}</div>${s.items.length?s.items.map(x=>`<div class="glr ${x.side}"><span class="gL">${x.side==='home'?it(x):''}</span><i>⚽</i><span class="gR">${x.side==='away'?it(x):''}</span></div>`).join(''):'<p class="gln">득점 없음</p>'}</div>`).join('')+(G.missing?`<p class="gln">득점 ${G.missing}개는 상세 기록이 아직 들어오지 않았어요</p>`:'')+'</div>'}
+function pv(j){let h=tbl(j.table)+gls(j.goals);
  if(j.starters&&(j.starters.away||j.starters.home)){const p=x=>x?`<b>${esc(x.name)}</b>${x.era?` <small>ERA ${esc(x.era)}</small>`:''}`:'<small>미발표</small>';h+=`<div class="pv-b"><h4>선발 투수</h4><div class="two6"><div>${p(j.starters.away)}</div><div class="r">${p(j.starters.home)}</div></div></div>`}
  if(j.forms.length)h+=`<div class="pv-b"><h4>최근 5경기</h4>${j.forms.map(f=>`<div class="fm6"><span>${esc(f.name)}</span><span class="form">${f.rows.slice().reverse().map(r=>`<i class="r${r.r}">${RES[r.r]}</i>`).join('')}</span></div>`).join('')}</div>`;
  if(j.h2h)h+=`<div class="pv-b"><h4>맞대결 최근 ${j.h2h.n}경기</h4><p class="h6">${esc(j.L)} <b>${j.h2h.L}승</b> · <b>${j.h2h.R}승</b> ${esc(j.R)}</p></div>`;

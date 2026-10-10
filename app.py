@@ -239,7 +239,7 @@ def game(key):
     lh = v["left_home"]
     forms = [(v["L"]["name"], det["form_home"] if lh else det["form_away"]), (v["R"]["name"], det["form_away"] if lh else det["form_home"])]
     st = det.get("starters")
-    return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=plays.commentary(g),
+    return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=plays.commentary(g), gl=plays.goals(g),
                            forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st,
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
                            names={g["home"], g["away"]})
@@ -279,7 +279,7 @@ def api_preview(key):
     starters = det.get("starters")
     com = plays.commentary(g)
     return jsonify({"key": v["key"], "kind": g["kind"], "table": v["table"], "L": v["L"]["name"], "R": v["R"]["name"],
-                    "starters": starters, "forms": [f for f in forms if f["rows"]], "h2h": hsum, "pos": pos,
+                    "starters": starters, "goals": plays.goals(g), "forms": [f for f in forms if f["rows"]], "h2h": hsum, "pos": pos,
                     "plays": {"source": com["source"], "items": com["items"][:3]} if com and com.get("items") else None,
                     "url": f"/game/{v['key']}?d={d.isoformat()}"})
 

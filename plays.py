@@ -203,12 +203,41 @@ def _periods(g):
 def _football(g):
     import sports2
     ttl = 60 if g["state"] == "live" else 6 * 3600
-    items = _cached("fbev:" + str(g["id"]), ttl, lambda: sports2.events(g))
+    rows = _cached("fbraw:" + str(g["id"]), ttl, lambda: sports2.raw_events(g))
+    items = sports2.events(g, rows) if rows else None
     if not items:
         return None
     if g["state"] == "final":
         items = [{"t": f"🏁 경기 종료 · {g['home']} {g.get('home_score')} : {g.get('away_score')} {g['away']}", "hot": True}] + items
     return {"source": "경기 이벤트(API-Sports 득점·도움·카드·교체·VAR)", "items": items}
+
+
+def goals(g):
+    """축구 득점 타임라인: 전반/후반/연장/승부차기별 양 팀 득점. 이벤트 없으면 구간 점수만."""
+    if g.get("kind") != "football" or g.get("state") not in ("live", "final"):
+        return None
+    import sports2
+    ttl = 60 if g["state"] == "live" else 6 * 3600
+    try:
+        rows = _cached("fbraw:" + str(g["id"]), ttl, lambda: sports2.raw_events(g))
+        gl = sports2.goals(g, rows)
+    except Exception:
+        gl = []
+    sc = {l[0]: (l[1], l[2]) for l in g.get("lines") or []}
+    order = ["전반", "후반", "연장", "승부차기"]
+    labs = [x for x in order if x in sc or any(y["half"] == x for y in gl)]
+    if not labs and not gl:
+        return None
+    halves = []
+    for lab in labs:
+        its = [{k: y[k] for k in ("min", "side", "who", "kind", "ast")} for y in gl if y["half"] == lab]
+        h, a = sc.get(lab, (None, None))
+        if h is None and lab != "승부차기":
+            h, a = sum(1 for y in its if y["side"] == "home"), sum(1 for y in its if y["side"] == "away")
+        halves.append({"lab": lab, "h": h, "a": a, "items": its})
+    tot = (g.get("home_score") or 0) + (g.get("away_score") or 0)
+    got = sum(1 for y in gl if y["half"] != "승부차기")
+    return {"halves": halves, "missing": max(0, tot - got), "home": g["home"], "away": g["away"]}
 
 
 def commentary(g):
