@@ -361,6 +361,42 @@ def state(g):
     return "other"
 
 
+_FIN = {"FT", "AOT", "AP", "AET", "AW", "PEN"}
+
+
+def _season_forms(kind, league, season):
+    """리그 시즌 경기 1회 호출로 팀별 최근 5경기(W/L/D, 오래된→최근). standings 캐시와 함께 30분 보관."""
+    host = sports2.HOSTS.get(kind) if kind in NEW_KINDS else sb.HOSTS[kind]
+    import urllib.parse, urllib.request
+    url = host + "/games?" + urllib.parse.urlencode({"league": league, "season": season, "timezone": "Asia/Seoul"})
+    req = urllib.request.Request(url, headers={"x-apisports-key": os.environ.get("API_SPORTS_KEY", "")})
+    with urllib.request.urlopen(req, timeout=40) as r:
+        resp = json.loads(r.read().decode()).get("response") or []
+    def sc(v):
+        if isinstance(v, dict):
+            v = v.get("total")
+        try:
+            return int(v)
+        except (TypeError, ValueError):
+            return None
+    games = []
+    for x in resp:
+        if ((x.get("status") or {}).get("short")) not in _FIN:
+            continue
+        t, scs = x.get("teams") or {}, x.get("scores") or {}
+        h, a = sc(scs.get("home")), sc(scs.get("away"))
+        hid, aid = (t.get("home") or {}).get("id"), (t.get("away") or {}).get("id")
+        if h is None or a is None or hid is None:
+            continue
+        games.append((x.get("timestamp") or 0, hid, aid, h, a))
+    games.sort()
+    out = {}
+    for _ts, hid, aid, h, a in games:
+        for tid, me, op in ((hid, h, a), (aid, a, h)):
+            out[tid] = (out.get(tid, "") + ("W" if me > op else "L" if me < op else "D"))[-5:]
+    return out
+
+
 def standings(slug):
     kind, league = STANDING_SLUGS[slug]
     name = f"stand_{slug}.json"
@@ -371,12 +407,21 @@ def standings(slug):
     try:
         if kind in NEW_KINDS:
             data, label = sports2.standings(kind, league)
+            season = sports2.SEASON.get((kind, league), 2026)
         else:
             with _lock:
                 season, label = features.current_season(kind, league)
                 groups = features.fetch_standings(kind, league, season)
             groups = features._played_groups(groups)
-            data = [[sec, [{k: r.get(k) for k in ("rank", "team", "win", "lose", "pct", "pts", "played", "extra")} for r in rows]] for sec, rows in groups]
+            data = [[sec, [{k: r.get(k) for k in ("rank", "team", "win", "lose", "pct", "pts", "played", "extra", "tid")} for r in rows]] for sec, rows in groups]
+        if kind != "football":
+            try:
+                fm = _season_forms(kind, league, season)
+                for _sec, rows in data:
+                    for r in rows:
+                        r["form"] = fm.get(r.get("tid")) or ""
+            except Exception:
+                pass
         _wr(name, {"ts": now, "ok": True, "groups": data, "season": label})
         return data, label, True
     except Exception:

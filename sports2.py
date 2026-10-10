@@ -147,7 +147,7 @@ def standings(kind, league):
                 g = r.get("games") or {}
                 name = (r.get("group") or {}).get("name") or ""
                 tn, ten = ko(kind, (r.get("team") or {}).get("id"), (r.get("team") or {}).get("name"))
-                buckets.setdefault(name, []).append({"en": ten, "rank": r.get("position"), "team": tn, "played": g.get("played"),
+                buckets.setdefault(name, []).append({"tid": (r.get("team") or {}).get("id"), "en": ten, "rank": r.get("position"), "team": tn, "played": g.get("played"),
                              "win": (g.get("win") or {}).get("total"), "lose": (g.get("lose") or {}).get("total"),
                              "otl": (g.get("lose_overtime") or {}).get("total"), "pts": r.get("points")})
         for name, rows in buckets.items():
