@@ -25,12 +25,15 @@ app.config.update(SECRET_KEY=_sk, SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_S
 app.register_blueprint(members.bp)
 import admin_ext
 app.register_blueprint(admin_ext.bp)
+import vip
+app.register_blueprint(vip.bp)
 import admin_accts
 app.register_blueprint(admin_accts.bp)
 try:
     members.init_db()
     admin_ext.init_db()
     import levels; levels.init()
+    vip.init_db()
 except Exception:
     logging.getLogger("app").exception("member DB init failed")
 

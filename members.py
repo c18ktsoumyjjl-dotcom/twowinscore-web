@@ -445,7 +445,7 @@ def me_page():
     info = {"name": dec(r[0]), "phone": mask_phone(dec(r[1])), "birth": dec(r[2]), "tg": r[3], "created": r[4][:10]}
     nx = nick_next(m["id"])
     return render_template("member.html", page="me", mode="me", info=info, welcome=request.args.get("welcome"),
-                           nick_next=nx.strftime("%Y-%m-%d") if nx else None)
+                           nick_next=nx.strftime("%Y-%m-%d") if nx else None, cash_hist=__import__("vip").cash_logs(m["id"], 50))
 
 
 NICK_DAYS = 30
@@ -1062,8 +1062,11 @@ def admin():
     pages = max(1, (total + PER - 1) // PER)
     import admin_ext
     mc = admin_ext.memo_counts([m["id"] for m in ms])
+    import vip
+    vp = vip.many([m["id"] for m in ms])
     for m in ms:
         m["memos"] = mc.get(m["id"], 0)
+        m["vip"] = (vp.get(m["id"]) or {}).get("vip"); m["mega"] = (vp.get(m["id"]) or {}).get("mega", 0)
     return render_template("admin.html", mode="list", sec="members", ms=ms, s=s, page=page, pages=pages, total=total, stats=stats, tier=tier, sort=sort, tcounts=tcounts, tiers=levels.TIERS,
                            storage=storage_desc())
 

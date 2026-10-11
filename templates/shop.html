@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block head %}<link rel="stylesheet" href="/static/shop.css?v=1">{% endblock %}
+{% block body %}<div class="shop">
+<div class="sh-top"><h1>스코어샵</h1>{% if me %}<div class="sh-bal"><small>내 스코어캐시</small><b>{{ '{:,}'.format(cash or 0) }}</b><span>📣 {{vip.mega if vip else 0}}개</span></div>{% else %}<a class="sh-btn" href="/login?next=/shop">로그인하고 이용하기</a>{% endif %}</div>
+{% with m=get_flashed_messages() %}{% for x in m %}{% if x[:3]=='ok:' %}<p class="me-ok">{{x[3:]}}</p>{% else %}<p class="me-err">{{x}}</p>{% endif %}{% endfor %}{% endwith %}
+<section class="sh-sec"><h2>VIP 멤버십</h2>
+<div class="sh-vip"><img src="/static/vip/vip_gem_128.webp?v=1" srcset="/static/vip/vip_gem_256.webp?v=1 2x" width="96" height="96" alt="VIP"><div class="sh-vb"><h3>VIP {{vip_days}}일 {% if vip and vip.active %}<em>이용 중 · {{vip.until[:10]}}까지</em>{% endif %}</h3>
+<ul><li>채팅 닉네임 옆 <b>VIP 보석 배지</b></li><li>골드 닉네임 색 · <b>👑 VIP 회원</b> 칭호</li><li>골드 테두리 채팅 말풍선</li><li>매달 <b>확성기 3개</b> 무료</li></ul>
+<div class="sh-pr">{% if vip_price %}<b>{{ '{:,}'.format(vip_price) }}</b> 캐시{% else %}<b class="tbd">가격 추후 공개</b>{% endif %}</div>
+{% if vip_price and me %}<form method="post" action="/shop/buy" onsubmit="return confirm('VIP {{vip_days}}일을 구매할까요?')"><input type="hidden" name="_csrf" value="{{csrf_token()}}"><input type="hidden" name="item" value="vip"><button class="sh-btn pri">구독하기</button></form>{% else %}<button class="sh-btn" disabled>준비 중</button>{% endif %}</div></div></section>
+<section class="sh-sec"><h2>확성기 <small>채팅방 맨 위에 5분 동안 고정돼요</small></h2><div class="sh-grid">
+{% for k,(name,price,n) in items.items() %}<div class="sh-card{{' best' if n==30}}">{% if n==10 %}<i class="tag">20% 할인</i>{% elif n==30 %}<i class="tag">33% 할인</i>{% endif %}<div class="ico">📣<b>×{{n}}</b></div><h3>{{name}}</h3><p class="pr"><b>{{ '{:,}'.format(price) }}</b> 캐시</p>
+{% if me %}<form method="post" action="/shop/buy" onsubmit="return confirm('{{name}}를 {{ '{:,}'.format(price) }} 캐시로 살까요?')"><input type="hidden" name="_csrf" value="{{csrf_token()}}"><input type="hidden" name="item" value="{{k}}"><button class="sh-btn pri"{{' disabled' if (cash or 0) < price}}>{{ '구매하기' if (cash or 0) >= price else '캐시 부족' }}</button></form>{% else %}<a class="sh-btn" href="/login?next=/shop">로그인</a>{% endif %}</div>{% endfor %}</div></section>
+<section class="sh-sec"><h2>스코어캐시 충전 <small>1원 = 1캐시</small></h2><div class="sh-grid c4">
+{% for a in charge %}<div class="sh-card ch"><div class="ico">💎</div><h3>{{ '{:,}'.format(a) }} 캐시</h3><p class="pr"><b>{{ '{:,}'.format(a) }}</b>원</p>
+{% if pay_ready and me %}<form method="post" action="/shop/charge"><input type="hidden" name="_csrf" value="{{csrf_token()}}"><input type="hidden" name="amount" value="{{a}}"><button class="sh-btn pri">충전하기</button></form>{% else %}<button class="sh-btn" type="button" onclick="document.getElementById('shPay').hidden=false">충전하기</button>{% endif %}</div>{% endfor %}</div>
+<div class="sh-note" id="shPay" hidden><b>결제 준비 중</b> — 지금은 고객센터로 문의해 주세요. <a href="https://t.me/twowinscore_cs_bot" target="_blank" rel="noopener noreferrer">텔레그램 고객센터 열기</a></div></section>
+<section class="sh-sec sh-terms"><h2>꼭 확인해 주세요</h2><ul>
+<li>스코어캐시는 투윈스코어 안에서 아이템을 사는 데만 쓰는 유료 재화예요. 활동 점수(등급 점수)와는 별개예요.</li>
+<li>스코어캐시는 <b>현금 출금, 현금 환불, 다른 회원에게 양도, 상품·경품 교환이 모두 불가</b>해요.</li>
+<li>구매한 아이템(확성기, VIP)은 사용 여부와 관계없이 캐시로 되돌리지 않아요.</li>
+<li>확성기 메시지도 일반 채팅과 같은 규칙(링크·연락처·욕설·홍보 금지)이 적용되고, 규칙을 어기면 관리자가 바로 내릴 수 있어요(환불 없음).</li>
+<li>스코어샵은 경기 결과 예측·베팅과 관련이 없어요.</li></ul></section>
+</div>{% endblock %}

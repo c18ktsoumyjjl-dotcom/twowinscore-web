@@ -10,7 +10,7 @@ log = logging.getLogger("admin_ext")
 bp = Blueprint("admin_ext", __name__)
 
 MENU = [("members", "회원", "/admin"), ("stats", "통계", "/admin/stats"), ("bots", "봇 상태", "/admin/bots"),
-        ("settings", "설정", "/admin/settings"), ("admins", "└ 관리자 계정", "/admin/admins"), ("log", "접근 기록", "/admin/log"), ("otp", "OTP 재설정", "/admin/otp")]
+        ("mega", "확성기", "/admin/mega"), ("settings", "설정", "/admin/settings"), ("admins", "└ 관리자 계정", "/admin/admins"), ("log", "접근 기록", "/admin/log"), ("otp", "OTP 재설정", "/admin/otp")]
 
 BOTS = [("score", "@kr_twowin_bot", "채널 알림 · 그룹방 · 스코어 검색"),
         ("cscenter", "@twowinscore_cs_bot", "투윈스코어 고객센터"),
@@ -118,7 +118,9 @@ def member_page(mid):
     import levels
     m["lv"] = levels.info(mid)
     memos = q("SELECT id, body, admin, created_at FROM member_memo WHERE member_id=? ORDER BY id DESC", (mid,))
-    return render_template("admin.html", mode="member", sec="members", m=m, memos=memos, lv_tiers=levels.TIERS)
+    import vip
+    m["vip"] = vip.info(mid)
+    return render_template("admin.html", mode="member", sec="members", m=m, memos=memos, lv_tiers=levels.TIERS, mlogs=vip.mega_logs(mid), clogs=vip.cash_logs(mid))
 
 
 @bp.post("/admin/member/<int:mid>/memo")

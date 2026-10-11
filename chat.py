@@ -150,6 +150,8 @@ def _public(m):
     d = {"id": m["id"], "nick": m["nick"], "tag": m["tag"], "text": m["text"], "ts": m["ts"]}
     if m.get("lv"):
         d["lv"] = m["lv"]
+    if m.get("vip"):
+        d["vip"] = 1
     if m.get("src") == "tg":
         d["src"] = "tg"
     return d
@@ -263,7 +265,14 @@ def poll(room):
             out = out[-50:]
         n = _online_count(room, request.args.get("cid", ""), now)
         dels = list(_deleted.get(room) or [])
-    return jsonify({"messages": out, "deleted": dels, "online": n, "last": _seq[0]})
+    pin = None
+    try:
+        import vip, members
+        mm = members.current()
+        pin = vip.state(room, mm["id"] if mm else None)
+    except Exception:
+        pin = None
+    return jsonify({"messages": out, "deleted": dels, "online": n, "last": _seq[0], "pin": pin})
 
 
 @bp.get("/api/chat-online")
@@ -339,6 +348,12 @@ def post(room):
         li = levels.info(mem["id"])
         if li:
             m["lv"] = [li["name"], li["color"], li["i"]]
+        try:
+            import vip
+            if vip.is_vip(mem["id"]):
+                m["vip"] = 1
+        except Exception:
+            pass
         if promo is not None:
             levels.mark_seen(mem["id"], promo)
     out = {"ok": True, "message": _public(m)}

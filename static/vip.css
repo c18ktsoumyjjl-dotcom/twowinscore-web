@@ -1,0 +1,30 @@
+/* VIP 채팅 + 확성기 */
+.ch-n .vipi{width:17px;height:17px;vertical-align:-3px;margin-right:2px}
+.ch-n .nkv{font-weight:900;background:linear-gradient(90deg,#ffd24a,#ff8a2a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ch-n .vipt{display:inline-block;font-size:10.5px;font-weight:800;padding:0 6px;margin-left:4px;border-radius:8px;line-height:16px;background:rgba(255,190,60,.15);color:#ffbf3c;border:1px solid rgba(255,190,60,.4);vertical-align:1px}
+.ch-m.vip .ch-t{background:linear-gradient(135deg,rgba(64,48,12,.85),rgba(27,42,82,.9))!important;border:1px solid rgba(255,196,60,.6)!important;box-shadow:0 0 0 1px rgba(255,196,60,.1),0 3px 12px rgba(255,150,0,.16);color:#fff3d6!important;border-radius:4px 12px 12px 12px;padding:4px 9px}
+[data-theme=light] .ch-n .nkv{background:linear-gradient(90deg,#d98200,#e85d00);-webkit-background-clip:text;background-clip:text}
+[data-theme=light] .ch-n .vipt{background:#fff4dc;color:#b86a00;border-color:#f3c46a}
+[data-theme=light] .ch-m.vip .ch-t{background:linear-gradient(135deg,#fff8e6,#fff)!important;border-color:#f0b84a!important;color:#3a2500!important;box-shadow:0 3px 12px rgba(240,150,0,.15)}
+.ch-pin{display:none;position:relative;margin:6px 8px 4px;padding:8px 10px 8px 34px;border-radius:12px;background:linear-gradient(135deg,rgba(240,106,0,.22),rgba(20,38,79,.9));border:1px solid rgba(255,150,40,.6);box-shadow:0 4px 14px rgba(240,106,0,.2);font-size:13.5px;color:#fff;flex:none}
+.ch-pin.on{display:block}
+.ch-pin::before{content:"📣";position:absolute;left:9px;top:8px;font-size:16px}
+.ch-pin .pn{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:800;margin-bottom:2px}.ch-pin .pn img{width:16px;height:16px}
+.ch-pin .pt{word-break:break-word;font-weight:700}
+.ch-pin .pl{position:absolute;right:9px;top:8px;font-size:11px;font-weight:800;color:#ffd0a0;font-variant-numeric:tabular-nums}
+.ch-pin .pq{font-size:11px;color:#ffd0a0;margin-top:3px}
+[data-theme=light] .ch-pin{background:linear-gradient(135deg,#fff1e2,#fff);border-color:#f5a35a;color:#2b1a05;box-shadow:0 4px 14px rgba(240,106,0,.15)}
+[data-theme=light] .ch-pin .pl,[data-theme=light] .ch-pin .pq{color:#c25400}
+.ch-mega{flex:none;border:0;background:none;font-size:18px;line-height:1;padding:0 6px;cursor:pointer;position:relative;color:inherit}
+.ch-mega small{position:absolute;top:-4px;right:-2px;min-width:15px;height:15px;border-radius:8px;background:var(--or,#f06a00);color:#fff;font-size:10px;font-weight:800;line-height:15px;text-align:center}
+.ch-form.mg input{border-color:#f06a00!important;box-shadow:0 0 0 2px rgba(240,106,0,.25)}
+.ch-mgh{display:none;margin:0 8px 4px;font-size:12px;color:var(--or,#f06a00);font-weight:700}.ch-mgh.on{display:block}
+.vipc{display:flex;gap:12px;align-items:center;padding:12px 14px;margin:0 0 12px;border-radius:14px;background:var(--card);border:1px solid var(--line)}.vipc div{display:flex;flex-direction:column}.vipc small{color:var(--mu);font-size:12px}
+.vipc.on{background:linear-gradient(135deg,rgba(64,48,12,.6),var(--card));border-color:rgba(255,196,60,.6)}.vipc.on b{color:#ffbf3c}
+[data-theme=light] .vipc.on{background:linear-gradient(135deg,#fff6df,#fff)}[data-theme=light] .vipc.on b{color:#b86a00}
+.walc{display:flex;gap:10px;align-items:center;margin:0 0 14px}.walc>div{flex:1;padding:10px 12px;border-radius:12px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column}.walc small{font-size:12px;color:var(--mu)}.walc b{font-size:17px}.walc .mb{flex:none;width:auto}
+.chist table{width:100%;font-size:12.5px;border-collapse:collapse}.chist td{padding:5px 4px;border-bottom:1px solid var(--line)}.chist .p{color:#2ea36b;font-weight:800}.chist .m{color:#e0675a;font-weight:800}.chist summary{cursor:pointer;font-weight:800}
+.mpv{font-size:12px;margin:6px 0;color:var(--mu)}.mpv img{vertical-align:-3px}
+.ch-form .ch-mega{background:none!important;color:inherit;padding:0 4px!important;height:44px;font-size:19px}
+.ch-mega small:empty{display:none}
+.ch-pin .nkv{font-weight:900;background:linear-gradient(90deg,#ffd24a,#ff8a2a);-webkit-background-clip:text;background-clip:text;color:transparent}[data-theme=light] .ch-pin .nkv{background:linear-gradient(90deg,#d98200,#e85d00);-webkit-background-clip:text;background-clip:text}
