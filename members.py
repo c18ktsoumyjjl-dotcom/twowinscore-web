@@ -84,7 +84,7 @@ _conn = [None]
 
 def q(sql, args=(), one=False, fetch=True):
     if PG:
-        sql = sql.replace("?", "%s")
+        sql = sql.replace("%", "%%").replace("?", "%s")
     with _dblock:
         if _conn[0] is None:
             _conn[0] = _connect()
