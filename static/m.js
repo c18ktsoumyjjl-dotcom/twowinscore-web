@@ -31,3 +31,4 @@ addEventListener('touchstart',e=>{if(!MQ.matches||B.classList.contains('detail6'
 addEventListener('touchmove',e=>{if(y0==null)return;pd=Math.max(0,Math.min(110,(e.touches[0].clientY-y0)*.5));pt.style.transform=`translate(-50%,${pd-44}px) rotate(${pd*3}deg)`;pt.classList.toggle('rdy',pd>=60)},{passive:true});
 addEventListener('touchend',async()=>{if(y0==null)return;y0=null;if(pd>=60){pt.classList.add('spin');pt.style.transform='translate(-50%,18px)';try{if(window.TWload)await window.TWload();else{location.reload();return}}catch(e){}setTimeout(()=>{pt.classList.remove('spin','rdy');pt.style.transform=''},350)}else{pt.style.transform='';pt.classList.remove('rdy')}},{passive:true});
 })();
+;document.addEventListener('error',function(e){var i=e.target;if(i.tagName==='IMG'&&i.closest('.mt,.gm7t')&&!i.dataset.f){i.dataset.f=1;var s=document.createElement('span');s.className='nologo';i.replaceWith(s)}},true);
