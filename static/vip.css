@@ -46,3 +46,7 @@
 .ch-m.cbot time{float:right;margin-left:6px}
 .ch-poll button:disabled{cursor:default}.ch-poll button.on{border-color:#ff8a2a}.ch-poll .cpm{align-self:center;font-size:11px;opacity:.7;margin-left:4px}
 .gm7ch button.on{outline:2px solid #fff;outline-offset:-2px}
+.ch-poll button[data-s=L]{border-color:#e5484d;color:#ff6b6f}.ch-poll button[data-s=L]::before{background:rgba(229,72,77,.22)}
+.ch-poll button[data-s=R]{border-color:#3b82f6;color:#6ea8ff}.ch-poll button[data-s=R]::before{background:rgba(59,130,246,.22)}
+[data-theme=light] .ch-poll button[data-s=L]{color:#c62828;border-color:#e5484d}[data-theme=light] .ch-poll button[data-s=R]{color:#1d4ed8;border-color:#3b82f6}
+.ch-poll button.on[data-s=L]{background:#e5484d;color:#fff}.ch-poll button.on[data-s=R]{background:#3b82f6;color:#fff}.ch-poll button.on b{opacity:1}

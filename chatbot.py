@@ -107,12 +107,6 @@ def _events(g, boot):
                 tail = f"{y['min']} {who}{kind} · {g['home']} {h}:{a} {g['away']}"
                 lg = g.get("site_league") or ""
                 out.append((key, f"⚽ {lg} {tail}", f"⚽ [{lg}] {tail}", None))
-    if st == "scheduled" and g.get("start"):
-        mins = (g["start"] - datetime.now(data.SEOUL)).total_seconds() / 60
-        if 20 <= mins <= 35:
-            x = {"poll": {"room": room_of(g), "L": g["home"], "R": g["away"]}}
-            body = f"📣 {g.get('site_league') or ''} {g['start'].strftime('%H:%M')} 킥오프 · 어느 팀을 응원하세요?"
-            out.append((f"poll:{k0}", body, body, x))
     return out
 
 
@@ -142,21 +136,12 @@ def tick(alias, boot=False):
             # 처음 켜질 때: 이미 지난 골/종료는 보내지 않고 기억만 (응원 투표는 시간대가 맞으면 보냄)
             continue
         room = room_of(g)
-        polls = [e for e in new if e[3]]
-        rest = [e for e in new if not e[3]]
-        if rest:
-            post(room, "\n".join(e[1] for e in rest[-4:]), tg="\n".join(e[2] for e in rest[-4:]))
-        for e in polls:
-            post(room, e[1], e[3], nobridge=True)
-        lounge += new
-    if lounge:
-        polls = [e for e in lounge if e[3]]
-        rest = [e for e in lounge if not e[3]]
-        if rest:
-            more = f"\n외 {len(rest) - 6}건" if len(rest) > 6 else ""
-            post(chat.BRIDGE_ROOM, "\n".join(e[1] for e in rest[:6]) + more, tg="\n".join(e[2] for e in rest[:6]) + more)
-        for e in polls[:3]:
-            post(chat.BRIDGE_ROOM, e[1], e[3], nobridge=True)   # 투표는 텔레그램으로 안 보냄(그룹엔 점수 봇 투표가 따로 있음)
+        x = {"poll": {"room": room, "L": g["home"], "R": g["away"]}}   # 골 메시지에 응원 버튼(상세 페이지와 같은 집계)
+        new = new[-4:]
+        post(room, "\n".join(e[1] for e in new), x, tg="\n".join(e[2] for e in new))
+        lounge.append((new, x))
+    for new, x in lounge[:6]:
+        post(chat.BRIDGE_ROOM, "\n".join(e[1] for e in new), x, tg="\n".join(e[2] for e in new))
     _save()
 
 
@@ -197,23 +182,24 @@ def start(alias):
 
 
 def send_test():
-    """[테스트] 골 1개 + 응원 투표 1개를 홈 채팅에. 골은 텔레그램 그룹에도 감(투표는 안 감)."""
-    post(chat.BRIDGE_ROOM, "[테스트] ⚽ EPL 55' 사카(PK) · 토트넘 1:1 아스널",
-         tg="[테스트] ⚽ [EPL] 55' 사카(PK) · 토트넘 1:1 아스널")
+    """[테스트] 골 메시지 1개(응원 버튼 포함)를 홈 채팅에. 텔레그램엔 글자만."""
     try:
         gs, _ = data.games_for(datetime.now(data.SEOUL).date())
     except Exception:
         gs = []
     fb = [g for g in gs if g.get("kind") == "football"]
     pop = [x for x in fb if _ok_league(x.get("site_league"), {})]
-    g = next((x for x in pop + fb if x.get("state") == "scheduled"), (pop or fb or [None])[0])
-    if g:
-        post(chat.BRIDGE_ROOM, f"[테스트] 📣 {g.get('site_league') or ''} {g['home']} vs {g['away']} · 어느 팀을 응원하세요?",
-             {"poll": {"room": room_of(g), "L": g["home"], "R": g["away"]}}, nobridge=True)
-    return bool(g)
+    g = next((x for x in pop + fb if x.get("state") in ("scheduled", "live")), (pop or fb or [None])[0])
+    if not g:
+        post(chat.BRIDGE_ROOM, "[테스트] ⚽ EPL 55' 사카(PK) · 토트넘 1:1 아스널", tg="[테스트] ⚽ [EPL] 55' 사카(PK) · 토트넘 1:1 아스널")
+        return False
+    lg, h, a = g.get("site_league") or "", g["home"], g["away"]
+    post(chat.BRIDGE_ROOM, f"[테스트] ⚽ {lg} 55' 테스트선수 · {h} 1:1 {a}",
+         {"poll": {"room": room_of(g), "L": h, "R": a}}, tg=f"[테스트] ⚽ [{lg}] 55' 테스트선수 · {h} 1:1 {a}")
+    return True
 
 
-TEST_KEY = "chatbot_test_2"   # 새 테스트가 필요하면 이 키만 바꾸면 한 번 더 감
+TEST_KEY = "chatbot_test_3"   # 새 테스트가 필요하면 이 키만 바꾸면 한 번 더 감
 _tested = [False]
 
 
