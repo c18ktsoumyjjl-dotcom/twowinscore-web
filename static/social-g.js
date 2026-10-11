@@ -1,8 +1,22 @@
 (function(){if(window.__socg)return;window.__socg=1;const D=document;
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function marks(){if(!window.TW_ME)return;D.querySelectorAll('.mpb,a[href="/me"]:not(.mpa)').forEach(a=>{if(!a.querySelector('.dmbg'))a.insertAdjacentHTML('beforeend','<i class="dmbg" hidden></i>')})}
-let n=0;async function tick(){if(!window.TW_ME||D.hidden)return;try{const j=await (await fetch('/api/social/badge',{credentials:'same-origin',cache:'no-store'})).json();if(!j.ok)return;n=(j.dm||0)+(j.req||0);marks();D.querySelectorAll('.dmbg').forEach(b=>{b.textContent=n>99?'99+':n;b.hidden=!n})}catch(e){}}
-setTimeout(tick,1500);setInterval(tick,30000);D.addEventListener('visibilitychange',()=>{if(!D.hidden)tick()});
+const NT={freq:n=>`${n}님이 친구 요청을 보냈어요`,facc:n=>`${n}님이 친구 요청을 수락했어요`};
+const NU=x=>x.k==='freq'?'/friends?t=req':x.k==='facc'?'/friends?t=friends':'/friends?t=dm&peer='+x.a;
+function toast(x){let w=D.getElementById('twnt');if(!w){w=D.createElement('div');w.id='twnt';D.body.appendChild(w)}
+ const t=D.createElement('a');t.className='twnt '+x.k;t.href=NU(x);t.innerHTML=`<i>${x.k==='dm'?'💬':x.k==='freq'?'👋':'🤝'}</i><span>${x.k==='dm'?`<b>${esc(x.n)}</b> ${esc(x.b)}`:esc(NT[x.k](x.n))}</span><button type="button" aria-label="닫기">×</button>`;
+ t.onclick=e=>{if(e.target.tagName==='BUTTON'){e.preventDefault();t.remove();return}rd(x.id)};w.appendChild(t);setTimeout(()=>t.classList.add('on'),20);setTimeout(()=>{t.classList.remove('on');setTimeout(()=>t.remove(),300)},7000);
+ try{if(window.TWsnd&&TWsnd.on&&TWsnd.on()){}}catch(e){}}
+function rd(id){fetch('/api/social/notifs/read',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRF':window.TW_CSRF||''},body:JSON.stringify({id})}).catch(()=>{})}
+const LK=()=>'tw_nl_'+(window.TW_ME||'');
+let n=0;async function tick(){if(!window.TW_ME||D.hidden)return;try{const st=localStorage.getItem(LK());const after=st==null?'':('&after='+st);
+ const j=await (await fetch('/api/social/badge?x=1'+after,{credentials:'same-origin',cache:'no-store'})).json();if(!j.ok)return;
+ n=Math.max(j.noti||0,(j.dm||0)+(j.req||0));marks();D.querySelectorAll('.dmbg').forEach(b=>{b.textContent=n>99?'99+':n;b.hidden=!n});
+ const cur=+(localStorage.getItem(LK())||-1);
+ if(st!=null&&j.new){j.new.filter(x=>x.id>cur).reverse().slice(-3).forEach(x=>{if(x.k==='dm'&&String(window.TW_DMPEER||'')===String(x.a)){rd(x.id);return}toast(x)})}
+ if(j.top>cur)localStorage.setItem(LK(),j.top);window.dispatchEvent(new CustomEvent('tw:badge',{detail:j}))}catch(e){}}
+window.TWbadge=tick;
+setTimeout(tick,1200);setInterval(tick,12000);D.addEventListener('visibilitychange',()=>{if(!D.hidden)tick()});
 let card=null;function close(){if(card){card.remove();card=null}}
 D.addEventListener('click',async e=>{if(card&&!card.contains(e.target))close();
  const nEl=e.target.closest('.ch-m .ch-n');if(!nEl||nEl.closest('.cbot')||nEl.querySelector('.ch-tg,.ch-bot'))return;

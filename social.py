@@ -27,6 +27,8 @@ CREATE TABLE IF NOT EXISTS dm_msg(id {pk}, a BIGINT NOT NULL, b BIGINT NOT NULL,
 CREATE INDEX IF NOT EXISTS dm_msg_ab ON dm_msg(a,b,id);
 CREATE TABLE IF NOT EXISTS dm_read(member_id BIGINT NOT NULL, peer BIGINT NOT NULL, last_id BIGINT NOT NULL, PRIMARY KEY(member_id,peer));
 CREATE TABLE IF NOT EXISTS dm_report(id {pk}, ts TEXT NOT NULL, reporter BIGINT NOT NULL, msg_id BIGINT NOT NULL, a BIGINT NOT NULL, b BIGINT NOT NULL, reason TEXT, status TEXT NOT NULL DEFAULT 'open');
+CREATE TABLE IF NOT EXISTS notif(id {pk}, member_id BIGINT NOT NULL, kind TEXT NOT NULL, actor BIGINT, body TEXT, ts BIGINT NOT NULL, rd INTEGER NOT NULL DEFAULT 0);
+CREATE INDEX IF NOT EXISTS notif_mid ON notif(member_id,id);
 CREATE TABLE IF NOT EXISTS dm_blocked(id {pk}, ts TEXT NOT NULL, member_id BIGINT NOT NULL, peer BIGINT NOT NULL, body TEXT NOT NULL, reason TEXT)"""
 
 
@@ -180,6 +182,44 @@ def _dm_banned(mid):
     return None
 
 
+def notify(mid, kind, actor, body=""):
+    try:
+        if kind == "dm":
+            q("DELETE FROM notif WHERE member_id=? AND kind='dm' AND actor=? AND rd=0", (mid, actor), fetch=False)
+        q("INSERT INTO notif(member_id,kind,actor,body,ts) VALUES(?,?,?,?,?)", (mid, kind, actor, (body or "")[:80], int(time.time())), fetch=False)
+        if q("SELECT COUNT(*) FROM notif WHERE member_id=?", (mid,), one=True)[0] > 300:
+            q("DELETE FROM notif WHERE member_id=? AND id < (SELECT MIN(id) FROM (SELECT id FROM notif WHERE member_id=? ORDER BY id DESC LIMIT 200) t)", (mid, mid), fetch=False)
+    except Exception:
+        log.exception("notify")
+
+
+def _notifs(me, after=0, limit=30):
+    rows = q("SELECT id,kind,actor,body,ts,rd FROM notif WHERE member_id=? AND id>? ORDER BY id DESC LIMIT ?", (me, after, limit))
+    nk = {}
+    ids = list({r[2] for r in rows if r[2]})
+    if ids:
+        ph = ",".join("?" * len(ids))
+        nk = {r[0]: r[1] for r in q(f"SELECT id,nick FROM members WHERE id IN ({ph})", ids)}
+    return [{"id": r[0], "k": r[1], "a": r[2], "n": nk.get(r[2], "회원"), "b": r[3] or "", "ts": r[4], "rd": r[5]} for r in rows]
+
+
+@bp.get("/api/social/notifs")
+def notifs():
+    m = _me()
+    return jsonify({"ok": True, "items": _notifs(m["id"], 0, 50)})
+
+
+@bp.post("/api/social/notifs/read")
+def notifs_read():
+    m = _me(); _csrf()
+    i = (request.get_json(silent=True) or {}).get("id")
+    if i:
+        q("UPDATE notif SET rd=1 WHERE member_id=? AND id=?", (m["id"], int(i)), fetch=False)
+    else:
+        q("UPDATE notif SET rd=1 WHERE member_id=?", (m["id"],), fetch=False)
+    return jsonify({"ok": True})
+
+
 # ---------- 페이지 ----------
 @bp.route("/friends")
 def page():
@@ -203,7 +243,11 @@ def badge():
     u = q("""SELECT COUNT(*) FROM dm_msg d LEFT JOIN dm_read r ON r.member_id=? AND r.peer=d.sender
              WHERE (d.a=? OR d.b=?) AND d.sender<>? AND d.hidden=0 AND d.id>COALESCE(r.last_id,0)""", (me, me, me, me), one=True)[0]
     rq = q("SELECT COUNT(*) FROM friend WHERE (a=? OR b=?) AND status='pending' AND req_by<>?", (me, me, me), one=True)[0]
-    return jsonify({"ok": True, "dm": int(u), "req": int(rq)})
+    nu = q("SELECT COUNT(*) FROM notif WHERE member_id=? AND rd=0", (me,), one=True)[0]
+    after = request.args.get("after", type=int)
+    new = _notifs(me, after, 5) if after is not None else []
+    top = q("SELECT MAX(id) FROM notif WHERE member_id=?", (me,), one=True)[0] or 0
+    return jsonify({"ok": True, "dm": int(u), "req": int(rq), "noti": int(nu), "new": [x for x in new if not x["rd"]], "top": int(top)})
 
 
 @bp.get("/api/social/search")
@@ -292,6 +336,7 @@ def friend_act():
                 return jsonify({"ok": False, "error": "보낸 요청이 너무 많아요. 기존 요청을 정리해 주세요."}), 400
             try:
                 q("INSERT INTO friend(a,b,status,req_by,ts) VALUES(?,?,'pending',?,?)", (a, bb, me, M.now_s()), fetch=False)
+                notify(oid, "freq", me)
             except Exception:
                 pass
             return jsonify({"ok": True, "rel": "sent"})
@@ -302,6 +347,7 @@ def friend_act():
             if q("SELECT COUNT(*) FROM friend WHERE (a=? OR b=?) AND status='ok'", (x, x), one=True)[0] >= MAX_FRIENDS:
                 return jsonify({"ok": False, "error": f"친구는 {MAX_FRIENDS}명까지예요."}), 400
         q("UPDATE friend SET status='ok', ts=? WHERE a=? AND b=? AND status='pending' AND req_by=?", (M.now_s(), a, bb, oid), fetch=False)
+        notify(oid, "facc", me)
         return jsonify({"ok": True, "rel": "friend"})
     ok = {"decline": rel == "recv", "cancel": rel == "sent", "remove": rel == "friend"}[act]
     if not ok:
@@ -379,6 +425,7 @@ def msgs():
         if not q("SELECT 1 FROM dm_msg WHERE a=? AND b=? LIMIT 1", (a, b), one=True):
             return jsonify({"ok": False, "error": "친구끼리만 대화할 수 있어요."}), 403
     rows = rows[::-1]
+    q("UPDATE notif SET rd=1 WHERE member_id=? AND kind='dm' AND actor=? AND rd=0", (me, o[0]), fetch=False)
     if rows:
         lid = max(r[0] for r in rows)
         if q("SELECT 1 FROM dm_read WHERE member_id=? AND peer=?", (me, o[0]), one=True):
@@ -418,6 +465,7 @@ def send():
         return jsonify({"ok": False, "error": bad}), 400
     a, bb = _pair(me, o[0])
     q("INSERT INTO dm_msg(a,b,sender,body,ts,sus) VALUES(?,?,?,?,?,?)", (a, bb, me, text, int(time.time()), flags or None), fetch=False)
+    notify(o[0], "dm", me, text[:60])
     r = q("SELECT MAX(id) FROM dm_msg WHERE a=? AND b=? AND sender=?", (a, bb, me), one=True)
     return jsonify({"ok": True, "item": {"id": r[0], "me": 1, "text": text, "ts": int(time.time())}})
 

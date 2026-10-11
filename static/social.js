@@ -7,7 +7,9 @@ const who=c=>`<span class="soc-who">${c.on!=null?`<i class="dot ${c.on?'on':''}"
 const btn=(t,a,id,cls)=>`<button class="soc-sm ${cls||''}" data-a="${a}" data-id="${id}">${t}</button>`;
 let tab=R.dataset.tab||'friends',peer=+R.dataset.peer||0,last=0,timer=0;
 function show(t){tab=t;R.querySelectorAll('.soc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));R.querySelectorAll('.soc-p').forEach(p=>p.hidden=p.dataset.p!==t||!!peer);$('room').hidden=!peer;
- if(!peer){t==='dm'?loadConv():t==='find'?0:loadFr()}}
+ if(!peer){t==='dm'?loadConv():t==='find'?0:t==='noti'?loadNoti():loadFr()}}
+async function loadNoti(){const j=await api('/api/social/notifs');if(!j.ok)return;const T={freq:'님이 친구 요청을 보냈어요',facc:'님이 친구 요청을 수락했어요'};
+ $('lNoti').innerHTML=j.items.map(x=>`<li class="nt ${x.rd?'':'un'}"><a href="${x.k==='freq'?'/friends?t=req':x.k==='facc'?'/friends?t=friends':'/friends?t=dm&peer='+x.a}" data-nid="${x.id}"><i>${x.k==='dm'?'💬':x.k==='freq'?'👋':'🤝'}</i><span>${x.k==='dm'?`<b>${esc(x.n)}</b> ${esc(x.b)}`:`<b>${esc(x.n)}</b>${T[x.k]}`}</span><small>${new Date(x.ts*1000).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}</small></a></li>`).join('')||empty('알림이 없어요.')}
 function empty(t){return `<li class="soc-e">${t}</li>`}
 async function loadFr(){const j=await api('/api/social/friends');if(!j.ok)return;
  $('lFriends').innerHTML=j.friends.map(c=>`<li>${who(c)}<span>${btn('대화','dm',c.id,'pri')}${btn('삭제','remove',c.id)}</span></li>`).join('')||empty('아직 친구가 없어요. 회원검색이나 채팅 닉네임을 눌러 친구를 추가해 보세요.');
@@ -34,13 +36,15 @@ async function pull(first){if(!peer)return;const j=await api('/api/social/msgs?p
  j.items.forEach(m=>{if(!box.querySelector(`[data-mid="${m.id}"]`))box.insertAdjacentHTML('beforeend',msgHtml(m));last=Math.max(last,m.id)});
  if(first&&!j.items.length)box.innerHTML='<p class="soc-e">첫 메시지를 보내 보세요.</p>';if(first||atEnd)box.scrollTop=box.scrollHeight;
  $('rForm').hidden=j.rel!=='friend'||j.blocked}
-function open(id){peer=id;last=0;show('dm');history.replaceState(history.state,'','/friends?t=dm&peer='+id);pull(true);clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)pull(false)},4000)}
-$('rBack').onclick=()=>{peer=0;clearInterval(timer);history.replaceState(history.state,'','/friends?t=dm');show('dm')};
+function open(id){peer=id;window.TW_DMPEER=id;last=0;show('dm');history.replaceState(history.state,'','/friends?t=dm&peer='+id);pull(true);clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)pull(false)},4000)}
+$('rBack').onclick=()=>{peer=0;window.TW_DMPEER=0;clearInterval(timer);history.replaceState(history.state,'','/friends?t=dm');show('dm')};
 $('rBlock').onclick=async()=>{const on=$('rBlock').dataset.on==='1';if(on&&!confirm('이 회원을 차단할까요? 친구에서도 삭제돼요.'))return;await api('/api/social/block',{id:+$('rBlock').dataset.id,on:on?1:0});pull(true)};
 $('rForm').onsubmit=async e=>{e.preventDefault();const v=$('rText').value.trim();if(!v)return;const j=await api('/api/social/send',{peer,text:v});const er=$('rErr');
  if(j.ok){$('rText').value='';er.hidden=true;const box=$('rMsgs');box.querySelector('.soc-e')?.remove();if(!box.querySelector(`[data-mid="${j.item.id}"]`))box.insertAdjacentHTML('beforeend',msgHtml(j.item));last=Math.max(last,j.item.id);box.scrollTop=box.scrollHeight}
  else{er.textContent=j.error||'보낼 수 없어요.';er.hidden=false}};
 $('socHide').onchange=e=>api('/api/social/privacy',{hide:e.target.checked?1:0});
-async function badges(){const j=await api('/api/social/badge');if(!j.ok)return;$('sbReq').textContent=j.req;$('sbReq').hidden=!j.req;$('sbDm').textContent=j.dm;$('sbDm').hidden=!j.dm}
+async function badges(){const j=await api('/api/social/badge');if(!j.ok)return;$('sbReq').textContent=j.req;$('sbReq').hidden=!j.req;$('sbDm').textContent=j.dm;$('sbDm').hidden=!j.dm;$('sbNt').textContent=j.noti;$('sbNt').hidden=!j.noti}
+$('nAll').onclick=async()=>{await api('/api/social/notifs/read',{});loadNoti();badges();window.TWbadge&&TWbadge()};
+R.addEventListener('click',e=>{const a=e.target.closest('[data-nid]');if(a)api('/api/social/notifs/read',{id:+a.dataset.nid})},true);
 setInterval(()=>{if(!document.hidden){badges();if(!peer&&tab==='dm')loadConv()}},15000);badges();
-if(peer)open(peer);else show(tab);})();
+if(peer)open(peer);else show(tab);if(location.search.includes('t=dm&peer'))0;})();
