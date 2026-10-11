@@ -15,9 +15,9 @@
 {% if pay_ready and me %}<form method="post" action="/shop/charge"><input type="hidden" name="_csrf" value="{{csrf_token()}}"><input type="hidden" name="amount" value="{{a}}"><button class="sh-btn pri">충전하기</button></form>{% else %}<button class="sh-btn" type="button" onclick="document.getElementById('shPay').hidden=false">충전하기</button>{% endif %}</div>{% endfor %}</div>
 <div class="sh-note" id="shPay" hidden><b>결제 준비 중</b> — 지금은 고객센터로 문의해 주세요. <a href="https://t.me/twowinscore_cs_bot" target="_blank" rel="noopener noreferrer">텔레그램 고객센터 열기</a></div></section>
 <section class="sh-sec sh-terms"><h2>꼭 확인해 주세요</h2><ul>
-<li>스코어캐시는 투윈스코어 안에서 아이템을 사는 데만 쓰는 유료 재화예요. 활동 점수(등급 점수)와는 별개예요.</li>
-<li>스코어캐시는 <b>현금 출금, 현금 환불, 다른 회원에게 양도, 상품·경품 교환이 모두 불가</b>해요.</li>
-<li>구매한 아이템(확성기, VIP)은 사용 여부와 관계없이 캐시로 되돌리지 않아요.</li>
-<li>확성기 메시지도 일반 채팅과 같은 규칙(링크·연락처·욕설·홍보 금지)이 적용되고, 규칙을 어기면 관리자가 바로 내릴 수 있어요(환불 없음).</li>
-<li>스코어샵은 경기 결과 예측·베팅과 관련이 없어요.</li></ul></section>
+<li>스코어캐시는 투윈스코어 안에서 아이템을 사는 데만 쓰는 유료 재화예요. 활동 점수(등급 점수)와는 별개입니다.</li>
+<li>스코어캐시는 현금 출금, 현금 환불, 다른 회원에게 양도, 상품·경품 교환이 모두 불가합니다.</li>
+<li>구매한 아이템(확성기, VIP)은 사용 여부와 관계없이 환불 불가능입니다.</li>
+<li>확성기 메시지도 일반 채팅과 같은 규칙(링크·연락처·욕설·홍보 금지)이 적용되고, 규칙을 어기면 관리자가 바로 내릴 수 있습니다(환불 없음).</li>
+<li>스코어샵은 경기 결과 예측·베팅과 관련이 없습니다.</li></ul></section>
 </div>{% endblock %}
