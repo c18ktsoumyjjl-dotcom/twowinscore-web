@@ -174,3 +174,4 @@ body.mapp .mh #chips button[data-f="기타"]{border-style:dashed}
 [data-theme=light] body.mapp .mh #chips button:not(.on){background:#fff;border-color:#d7deeb;color:#3a4660}
 [data-theme=light] body.mapp .mh #chips button.lv:not(.on){color:#e53935;border-color:#f3a5a5}
 [data-theme=light] body.mapp .mh #chips button.on{background:#0b1630;border-color:#0b1630;color:#fff}
+.mtab a{min-width:0;font-size:10.5px;letter-spacing:-.3px;white-space:nowrap}.mtab svg{width:22px;height:22px}
