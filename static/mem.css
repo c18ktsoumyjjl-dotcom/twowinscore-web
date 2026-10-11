@@ -273,3 +273,8 @@ body.adm .side .nb{margin-left:6px;background:#e8620c;color:#fff;border-radius:9
 .dmsplit .dmsr select{width:100%!important;margin:0}
 .dmsplit .dmdel button{height:auto!important;min-height:0;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;color:#9aa3b5;font-size:12px;font-weight:600}
 .dmsplit .dmdel button:hover{color:#e53935!important}
+.dmsplit .dmsx{display:grid;grid-template-columns:minmax(0,1fr) 64px;gap:6px}
+.dmsplit .dmsx .dmsr{display:contents}
+.dmsplit .dmsx input[name=why]{grid-column:1;height:34px!important;padding:0 8px;border:1px solid #d7deeb;border-radius:9px;font-size:13.5px;background:#fff}
+.dmsplit .dmsx select{grid-column:1;height:34px!important;padding:0 8px;border:1px solid #d7deeb;border-radius:9px;font-size:13.5px;background:#fff}
+.dmsplit .dmsx .danger{grid-column:2;grid-row:1/span 2;align-self:end;width:64px;padding:0!important}
