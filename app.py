@@ -43,6 +43,8 @@ import music
 app.register_blueprint(music.bp)
 import admin_accts
 app.register_blueprint(admin_accts.bp)
+import social
+app.register_blueprint(social.bp)
 try:
     members.init_db()
     admin_ext.init_db()
@@ -51,6 +53,7 @@ try:
     activity.init_db()
     music.init_db()
     deposit.init_db()
+    social.init_db()
 except Exception:
     logging.getLogger("app").exception("member DB init failed")
 
