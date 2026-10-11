@@ -9,7 +9,7 @@ import threading, time
 from collections import deque
 
 app = Flask(__name__)
-app.config["MAX_CONTENT_LENGTH"] = 6 * 1024 * 1024  # 이미지 업로드(관리자)만 6MB, 나머지는 아래 _body_limit 에서 16KB
+app.config["MAX_CONTENT_LENGTH"] = 9 * 1024 * 1024  # 이미지 업로드(관리자)만 6MB, 나머지는 아래 _body_limit 에서 16KB
 app.register_blueprint(chat.bp)
 
 # ---------- 회원 / 관리자 ----------
@@ -31,6 +31,8 @@ import activity
 app.register_blueprint(activity.bp)
 import adminstats
 app.register_blueprint(adminstats.bp)
+import music
+app.register_blueprint(music.bp)
 import admin_accts
 app.register_blueprint(admin_accts.bp)
 try:
@@ -39,6 +41,7 @@ try:
     import levels; levels.init()
     vip.init_db()
     activity.init_db()
+    music.init_db()
 except Exception:
     logging.getLogger("app").exception("member DB init failed")
 
@@ -50,7 +53,9 @@ _rl, _rl_lock = {}, threading.Lock()
 
 @app.before_request
 def _body_limit():
-    if request.path != "/admin/settings/hero" and (request.content_length or 0) > 16 * 1024:
+    n = request.content_length or 0
+    lim = {"/admin/settings/hero": 6 * 1024 * 1024, "/admin/music/upload": 9 * 1024 * 1024}.get(request.path, 16 * 1024)
+    if n > lim:
         abort(413)
 
 

@@ -214,3 +214,8 @@ body.adm .sgh[aria-expanded=true]{color:#fff}body.adm .sg a{font-size:14.5px;col
 body.adm .sg a:hover{color:#fff;background:rgba(255,255,255,.06)}body.adm .sg a.on,body.adm .sg a[aria-current]{color:#fff;background:rgba(255,122,26,.16);box-shadow:inset 3px 0 0 #ff7a1a}
 #toast .ti{background:#0f1a33;border-color:#0f1a33}
 @media(max-width:820px){body.adm main{padding:16px 14px 50px}body.adm main .cards b{font-size:24px}}
+
+body.adm main .mup{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}body.adm main .mup label{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:600}
+body.adm main .mup input[type=file]{padding:6px;min-height:auto}body.adm main .mtr audio{height:34px;width:250px}body.adm main .mtr tr.off td{opacity:.55}
+body.adm main .tg{display:inline-flex;gap:6px;align-items:center;font-size:14px}body.adm main .tg input{min-height:auto;width:18px;height:18px}
+body.adm main .chart{height:170px}

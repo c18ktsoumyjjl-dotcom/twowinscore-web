@@ -2,7 +2,7 @@
    득점 알림음/입장 효과음과 겹치면 BGM 볼륨을 잠깐 낮춤(덕킹). */
 (function(){
 if(window.TWBgm){window.TWBgm.mount&&window.TWBgm.mount();return}
-const TR=[1,2,3,4,5].map(n=>'/static/bgm/bgm'+n+'_v1.mp3');
+const TR=(Array.isArray(window.TW_BGM)&&window.TW_BGM.length?window.TW_BGM.map(x=>x.u):[1,2,3,4,5].map(n=>'/static/bgm/bgm'+n+'_v1.mp3'));
 const K='tw_bgm',KS='tw_bgm_st',VOL=.3;
 const on=()=>localStorage.getItem(K)!=='off'; // 기본 켬
 let st;try{st=JSON.parse(localStorage.getItem(KS))||{}}catch(e){st={}}
@@ -46,7 +46,7 @@ function mount(){const s=document.getElementById('sndBtn');const host=s?(s.close
  if(!pop){pop=document.createElement('div');pop.id='bgmPop';pop.hidden=true;pop.setAttribute('role','dialog');pop.setAttribute('aria-label','BGM 설정');
  pop.innerHTML='<div class="bh"><span>배경음악</span><button class="sw" type="button" role="switch" aria-label="BGM 켜기/끄기"></button></div><div class="vr"><div class="sl" role="slider" tabindex="0" aria-label="볼륨" aria-valuemin="0" aria-valuemax="100"><div class="tk"></div><div class="fl"></div><div class="th"></div></div><span class="pc"></span></div><div class="tr"><span class="tn"></span><button class="nx" type="button">다음 곡 ▶</button></div>';
  }if(!pop.isConnected)document.body.appendChild(pop);if(pop._ok){hook();return}pop._ok=1;const sw=pop.querySelector('.sw'),sl=pop.querySelector('.sl'),fl=pop.querySelector('.fl'),th=pop.querySelector('.th'),pc=pop.querySelector('.pc'),tn=pop.querySelector('.tn');
- ui=()=>{const p=Math.round(vol*100);fl.style.width=p+'%';th.style.left=p+'%';pc.textContent=p+'%';sl.setAttribute('aria-valuenow',p);sw.classList.toggle('on',on());sw.setAttribute('aria-checked',on());tn.textContent='트랙 '+(idx+1)+' / '+TR.length};
+ ui=()=>{const p=Math.round(vol*100);fl.style.width=p+'%';th.style.left=p+'%';pc.textContent=p+'%';sl.setAttribute('aria-valuenow',p);sw.classList.toggle('on',on());sw.setAttribute('aria-checked',on());tn.textContent=((window.TW_BGM&&TW_BGM[idx]&&TW_BGM[idx].t)?TW_BGM[idx].t+' · ':'')+(idx+1)+' / '+TR.length};
  const place=()=>{const r=btn.getBoundingClientRect(),W=innerWidth,w=232;let l=Math.round(r.left+r.width/2-w/2);l=Math.max(8,Math.min(l,W-w-8));pop.style.top=Math.round(r.bottom+8)+'px';pop.style.left=l+'px'};
  openPop=()=>{ui();pop.hidden=false;place()};closePop=()=>{pop.hidden=true};
  pop.addEventListener('click',e=>e.stopPropagation());pop.addEventListener('pointerdown',e=>e.stopPropagation());
