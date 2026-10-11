@@ -16,10 +16,12 @@ _lk = threading.Lock()
 def init_db():
     pk = "BIGSERIAL PRIMARY KEY" if PG else "INTEGER PRIMARY KEY AUTOINCREMENT"
     q(f"CREATE TABLE IF NOT EXISTS bgm_tracks(id {pk}, title TEXT NOT NULL, ord INTEGER NOT NULL DEFAULT 0, enabled INTEGER NOT NULL DEFAULT 1, src TEXT, size INTEGER DEFAULT 0, etag TEXT, created_at TEXT)", fetch=False)
+    for n in range(1, 6):  # 기본 트랙: 44.1kHz -> 48kHz 판(v2)으로 교체 (iOS Web Audio 리샘플링 떨림 방지)
+        q("UPDATE bgm_tracks SET src=? WHERE src=?", (f"/static/bgm/bgm{n}_v2.mp3", f"/static/bgm/bgm{n}_v1.mp3"), fetch=False)
     if not q("SELECT id FROM bgm_tracks LIMIT 1"):
         for n in range(1, 6):
-            if os.path.exists(os.path.join(os.path.dirname(__file__), "static", "bgm", f"bgm{n}_v1.mp3")):
-                q("INSERT INTO bgm_tracks(title,ord,enabled,src,created_at) VALUES(?,?,?,?,?)", (f"기본 트랙 {n}", n * 10, 1, f"/static/bgm/bgm{n}_v1.mp3", M.now_s()), fetch=False)
+            if os.path.exists(os.path.join(os.path.dirname(__file__), "static", "bgm", f"bgm{n}_v2.mp3")):
+                q("INSERT INTO bgm_tracks(title,ord,enabled,src,created_at) VALUES(?,?,?,?,?)", (f"기본 트랙 {n}", n * 10, 1, f"/static/bgm/bgm{n}_v2.mp3", M.now_s()), fetch=False)
 
 
 def _url(r):
@@ -75,7 +77,7 @@ def _encode(data):
         i, o = os.path.join(d, "in.mp3"), os.path.join(d, "out.mp3")
         open(i, "wb").write(data)
         try:
-            subprocess.run([ff, "-v", "error", "-y", "-i", i, "-map", "0:a:0", "-map_metadata", "-1", "-vn", "-ac", "2", "-ar", "44100", "-b:a", "128k", o], timeout=120, check=True)
+            subprocess.run([ff, "-v", "error", "-y", "-i", i, "-map", "0:a:0", "-map_metadata", "-1", "-vn", "-ac", "2", "-ar", "48000", "-b:a", "128k", o], timeout=120, check=True)
             out = open(o, "rb").read()
             return out if 0 < len(out) < len(data) else data
         except Exception as e:

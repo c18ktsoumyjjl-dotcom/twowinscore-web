@@ -2,19 +2,19 @@
    득점 알림음/입장 효과음과 겹치면 BGM 볼륨을 잠깐 낮춤(덕킹). */
 (function(){
 if(window.TWBgm){window.TWBgm.mount&&window.TWBgm.mount();return}
-const TR=(Array.isArray(window.TW_BGM)&&window.TW_BGM.length?window.TW_BGM.map(x=>x.u):[1,2,3,4,5].map(n=>'/static/bgm/bgm'+n+'_v1.mp3'));
+const TR=(Array.isArray(window.TW_BGM)&&window.TW_BGM.length?window.TW_BGM.map(x=>x.u):[1,2,3,4,5].map(n=>'/static/bgm/bgm'+n+'_v2.mp3'));
 const K='tw_bgm',KS='tw_bgm_st',VOL=.3;
 const on=()=>localStorage.getItem(K)!=='off'; // 기본 켬
 let st;try{st=JSON.parse(localStorage.getItem(KS))||{}}catch(e){st={}}
 let ctx=null,g=null;const WA=(window.AudioContext||window.webkitAudioContext)&&matchMedia('(pointer:coarse)').matches;
 function av(){if(!a)return;const v=vol*duck;if(g){try{g.gain.setTargetAtTime(v,ctx.currentTime,.03)}catch(e){g.gain.value=v}a.volume=1}else a.volume=v}
-function wa(){if(!WA||!a)return;try{if(!ctx){const C=window.AudioContext||window.webkitAudioContext;ctx=new C();g=ctx.createGain();ctx.createMediaElementSource(a).connect(g);g.connect(ctx.destination);av()}if(ctx.state!=='running')ctx.resume().catch(()=>{})}catch(e){g=null}}
+function wa(){if(!WA||!a)return;try{if(!ctx){const C=window.AudioContext||window.webkitAudioContext;ctx=(()=>{try{return new C({latencyHint:'playback'})}catch(e){return new C()}})();g=ctx.createGain();ctx.createMediaElementSource(a).connect(g);g.connect(ctx.destination);av()}if(ctx.state!=='running')ctx.resume().catch(()=>{})}catch(e){g=null}}
 ['pointerdown','touchend','click'].forEach(v=>addEventListener(v,()=>{if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})},{capture:true,passive:true}));
 let idx=(st.i|0)%TR.length,vol=typeof st.v==='number'?st.v:VOL,duck=1,a=null,btn=null;
 function save(){localStorage.setItem(KS,JSON.stringify({i:idx,t:a?Math.floor(a.currentTime||0):(st.t|0),v:vol}))}
 function el(){if(a)return a;a=new Audio();a.crossOrigin='anonymous';a.preload='none';a.setAttribute('playsinline','');
  a.addEventListener('ended',()=>{idx=(idx+1)%TR.length;st.t=0;load(0);a.play().catch(()=>{});save();ui()});
- a.addEventListener('timeupdate',()=>{if(((a.currentTime|0)%3)===0)save()});
+ let ls=0;a.addEventListener('timeupdate',()=>{const n=Date.now();if(n-ls>5000){ls=n;save()}});
  addEventListener('pagehide',save);document.addEventListener('visibilitychange',save);return a}
 function load(t){el();a.src=TR[idx];if(t>0){const f=()=>{try{a.currentTime=t}catch(e){}a.removeEventListener('loadedmetadata',f)};a.addEventListener('loadedmetadata',f)}}
 function setDuck(d){duck=d;av()}
