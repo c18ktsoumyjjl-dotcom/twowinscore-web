@@ -110,6 +110,15 @@ def settle():
                  FROM cash_log GROUP BY m ORDER BY m DESC LIMIT 12""")
     topc = q(f"""SELECT c.member_id, m.nick, SUM(c.delta) s, COUNT(*) FROM cash_log c LEFT JOIN members m ON m.id=c.member_id
                 WHERE c.ts>=? AND c.ts<=? AND c.delta>0 AND c.kind IN ('charge','admin') GROUP BY c.member_id, m.nick ORDER BY s DESC LIMIT 10""", a)
+    cr = {r[0]: r for r in q(f"""SELECT substr(ts,1,10) d, COUNT(*), SUM(delta), SUM(CASE WHEN kind='admin' THEN delta ELSE 0 END), SUM(CASE WHEN kind='charge' THEN delta ELSE 0 END)
+                 FROM cash_log WHERE {w} AND delta>0 AND kind IN ('charge','admin') GROUP BY d""", a)}
+    import datetime as _dt
+    d0, d1 = _dt.date.fromisoformat(f), _dt.date.fromisoformat(to)
+    days = [(d1 - _dt.timedelta(i)).isoformat() for i in range(min((d1 - d0).days, 365), -1, -1)]
+    chg = [(d, int(cr[d][1]) if d in cr else 0, int(cr[d][2] or 0) if d in cr else 0, int(cr[d][3] or 0) if d in cr else 0, int(cr[d][4] or 0) if d in cr else 0) for d in days]
+    chg_tot = (sum(x[1] for x in chg), sum(x[2] for x in chg), sum(x[3] for x in chg), sum(x[4] for x in chg))
+    chart = [(x[0], x[2]) for x in chg[-92:]]
+    chart_max = max([c for _, c in chart] + [1])
     if request.args.get("csv"):
         rows = q(f"""SELECT c.ts, c.member_id, m.nick, c.kind, c.delta, c.balance, c.reason, c.admin FROM cash_log c LEFT JOIN members m ON m.id=c.member_id
                     WHERE c.ts>=? AND c.ts<=? ORDER BY c.id""", a)
@@ -120,7 +129,7 @@ def settle():
         M.alog("settle csv %s~%s" % (f, to))
         return Response("\ufeff" + buf.getvalue(), mimetype="text/csv",
                         headers={"Content-Disposition": f"attachment; filename=settle_{f}_{to}.csv"})
-    return render_template("admin.html", mode="settle", sec="settle", f=f, to=to, tot=tot, items=items, daily=daily, monthly=monthly, topc=topc)
+    return render_template("admin.html", mode="settle", sec="settle", f=f, to=to, tot=tot, items=items, chg=chg, chg_tot=chg_tot, chart=chart, chart_max=chart_max, daily=daily, monthly=monthly, topc=topc)
 
 
 # ---------- 상점관리 ----------
@@ -164,6 +173,7 @@ def dash():
          "chat": dict(_kvs("chatn:", [t])).get(t, 0),
          "pins": len([p for p in vip.all_pins() if p["pos"] == 0]),
          "mega_today": q("SELECT COUNT(*) FROM mega_log WHERE reason LIKE '사용%' AND ts LIKE ?", (t + "%",), one=True)[0],
+         "cash_today_n": q("SELECT COUNT(*) FROM cash_log WHERE delta>0 AND kind IN ('charge','admin') AND ts LIKE ?", (t + "%",), one=True)[0],
          "cash_today": q("SELECT COALESCE(SUM(delta),0) FROM cash_log WHERE delta>0 AND kind IN ('charge','admin') AND ts LIKE ?", (t + "%",), one=True)[0]}
     bots = []
     try:
