@@ -24,3 +24,9 @@
 .sh-sum .usdt{font-size:12.5px;color:var(--mu);margin:0 0 10px}.sh-sum .sh-btn{max-width:260px}
 .sh-note pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px;margin:10px 0}.sh-note .nb{display:flex;gap:8px;flex-wrap:wrap}.sh-note .nb .sh-btn{width:auto;flex:1;min-width:140px;margin:0}
 @media(max-width:900px){.sh-grid.c5{grid-template-columns:repeat(3,1fr)}}@media(max-width:700px){.sh-grid.c5{grid-template-columns:repeat(2,1fr)}.sh-sum .sh-btn{max-width:none}}
+
+.sh-usdt{display:flex;gap:14px;align-items:center;margin:10px 0 12px;padding:12px;border-radius:14px;border:1px solid rgba(38,161,123,.45);background:rgba(38,161,123,.08)}
+.sh-usdt img{flex:none;border-radius:10px;background:#fff;padding:4px}.sh-usdt .ub{min-width:0}.sh-usdt .ul{color:#26a17b;font-size:15px}
+.sh-usdt .ua{margin:4px 0 8px;font-size:13px;word-break:break-all}.sh-usdt code{font-weight:800;font-size:13px}.sh-usdt .ucp{width:auto;padding:0 14px;margin:0}
+.sh-usdt .un{font-size:12px;color:var(--mu);margin:8px 0 0}
+@media(max-width:600px){.sh-usdt{flex-direction:column;text-align:center}}
