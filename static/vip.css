@@ -57,6 +57,6 @@
 .hero5:has(.mpp:not([hidden])){z-index:300}.hero5 .mpp[style*=fixed]{z-index:1000}
 .walc{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch;grid-auto-rows:64px}.walc>div,.walc .mb{min-height:62px;box-sizing:border-box;margin:0!important}
 .walc .mb{width:100%!important;display:flex!important;align-items:center;justify-content:center;gap:6px;border-radius:12px;height:auto!important;font-weight:800}.walc .mb .dmbg{position:static;margin:0}
-@media(min-width:821px){.walc{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:821px){.walc{grid-template-columns:1fr 1fr}}
 .mact{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px}.mact .mab{display:flex;align-items:center;justify-content:center;height:42px;padding:0 8px;border-radius:11px;border:1px solid var(--or);background:transparent;color:var(--or)!important;font:inherit;font-size:13.5px;font-weight:800;text-decoration:none;cursor:pointer;white-space:nowrap;box-sizing:border-box}.mact .mab:first-child{background:var(--or);color:#fff!important}.mact .mab.on{background:rgba(255,122,26,.14)}
 .chist:not([open]){display:none}
