@@ -187,6 +187,7 @@ def start(alias):
     if os.environ.get("CHATBOT", "1") == "0":
         return False
     try:
+        os.makedirs(data.CACHE, exist_ok=True)
         f = open(os.path.join(data.CACHE, "chatbot.lock"), "w")
         fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except OSError:

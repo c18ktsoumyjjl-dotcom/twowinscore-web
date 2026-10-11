@@ -136,6 +136,7 @@ def start(order):
     if os.environ.get("WARMER", "1") == "0":
         return False
     try:
+        os.makedirs(data.CACHE, exist_ok=True)
         f = open(os.path.join(data.CACHE, "warmer.lock"), "w")
         fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except OSError:
