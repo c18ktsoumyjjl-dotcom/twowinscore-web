@@ -39,7 +39,7 @@
 </div><aside class="dchat" id="dchat"><div class="grab" id="grab"></div><section class="box chatbox" id="gamechat"></section></aside></div>
 <div class="shade" id="shade"></div><button class="fab cfab" id="cfab">💬 채팅 <span id="unread"></span></button>
 {% endblock %}
-{% block js %}<button class="sndhint" id="sndHint" hidden>소리 켜기</button><script src="/static/sound.js?v=19"></script><script src="/static/chat.js?v=11"></script><link rel="stylesheet" href="/static/ins.css?v=4"><script src="/static/vote.js?v=5b"></script><script>TWVote.scan()</script><link rel="stylesheet" href="/static/gm7.css?v=3"><script src="/static/gm7.js?v=2"></script><script>(function(){const W=matchMedia('(min-width:1024px)'),body=document.body,un=document.getElementById('unread');let n=0;
+{% block js %}<button class="sndhint" id="sndHint" hidden>소리 켜기</button><script src="/static/sound.js?v=19"></script><script src="/static/chat.js?v=13"></script><link rel="stylesheet" href="/static/ins.css?v=4"><script src="/static/vote.js?v=5b"></script><script>TWVote.scan()</script><link rel="stylesheet" href="/static/gm7.css?v=3"><script src="/static/gm7.js?v=2"></script><script>(function(){const W=matchMedia('(min-width:1024px)'),body=document.body,un=document.getElementById('unread');let n=0;
 const isOpen=()=>body.classList.contains('sheet');
 function openS(){if(W.matches){body.classList.remove('dcoff');localStorage.removeItem('tw_gchat_off');return}body.classList.add('sheet');n=0;un.textContent='';}
 function closeS(){if(W.matches){body.classList.add('dcoff');localStorage.setItem('tw_gchat_off','1')}body.classList.remove('sheet');document.getElementById('dchat').style.transform=''}

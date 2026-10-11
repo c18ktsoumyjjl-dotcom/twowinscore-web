@@ -53,7 +53,7 @@ def room_of(g):
     return "game-" + str(g["key"]).replace(":", "-")
 
 
-def post(room, text, extra=None):
+def post(room, text, extra=None, tg=None):
     """봇 메시지 한 개를 방에 넣어요(필터·속도제한 없이, 서버 내부에서만)."""
     now = time.time()
     if room == chat.BRIDGE_ROOM:
@@ -68,6 +68,8 @@ def post(room, text, extra=None):
         m = {"id": chat._seq[0], "nick": NICK, "tag": TAG, "text": text[:400], "ts": int(now), "iph": "bot", "ip": "bot", "src": "bot"}
         if extra:
             m["x"] = extra
+        if tg:
+            m["tg"] = tg[:400]
         msgs.append(m)
         chat._save_soon()
     _last_room[room] = now
@@ -98,11 +100,11 @@ def _events(g, boot):
                 else:
                     a += 1
                 key = f"goal:{k0}:{y['side']}:{y['o']}:{i}"
-                team = g["home"] if y["side"] == "home" else g["away"]
-                who = (y["who"] or "").strip()
-                kind = f" ({y['kind']})" if y["kind"] else ""
-                body = f"⚽ 골! {y['min']} {team}{' — ' + who if who else ''}{kind} · {_score_txt(g, h, a)}"
-                out.append((key, body, f"[{g['site_league']}] {body}", None))
+                who = (y["who"] or "").strip() or (g["home"] if y["side"] == "home" else g["away"])
+                kind = f"({y['kind']})" if y["kind"] else ""
+                tail = f"{y['min']} {who}{kind} · {g['home']} {h}:{a} {g['away']}"
+                lg = g.get("site_league") or ""
+                out.append((key, f"⚽ {lg} {tail}", f"⚽ [{lg}] {tail}", None))
     return out
 
 
@@ -135,7 +137,7 @@ def tick(alias, boot=False):
         polls = [e for e in new if e[3]]
         rest = [e for e in new if not e[3]]
         if rest:
-            post(room, "\n".join(e[1] for e in rest[-4:]))
+            post(room, "\n".join(e[1] for e in rest[-4:]), tg="\n".join(e[2] for e in rest[-4:]))
         for e in polls:
             post(room, e[1], e[3])
         lounge += new
@@ -143,7 +145,8 @@ def tick(alias, boot=False):
         polls = [e for e in lounge if e[3]]
         rest = [e for e in lounge if not e[3]]
         if rest:
-            post(chat.BRIDGE_ROOM, "\n".join(e[2] for e in rest[:6]) + (f"\n외 {len(rest) - 6}건" if len(rest) > 6 else ""))
+            more = f"\n외 {len(rest) - 6}건" if len(rest) > 6 else ""
+            post(chat.BRIDGE_ROOM, "\n".join(e[1] for e in rest[:6]) + more, tg="\n".join(e[2] for e in rest[:6]) + more)
         for e in polls[:3]:
             post(chat.BRIDGE_ROOM, e[2], e[3])
     _save()

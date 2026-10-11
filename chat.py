@@ -527,7 +527,7 @@ def bridge_out():
         last = _seq[0]
         if since < 0 or since > last:          # 첫 호출 또는 웹 재시작으로 번호가 줄었음
             return jsonify({"messages": [], "last": last})
-        out = [{"id": m["id"], "nick": m["nick"], "tag": (m.get("lv") or [m["tag"]])[0], "text": m["text"], **({"bot": 1} if m.get("src") == "bot" else {})}
+        out = [{"id": m["id"], "nick": m["nick"], "tag": (m.get("lv") or [m["tag"]])[0], "text": m.get("tg") or m["text"], **({"bot": 1} if m.get("src") == "bot" else {})}
                for m in (_rooms.get(BRIDGE_ROOM) or []) if m["id"] > since and m.get("src") != "tg" and now - m["ts"] < 120]
     return jsonify({"messages": out[:50], "last": last})
 
