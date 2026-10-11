@@ -558,12 +558,17 @@ def bridge_out():
     except ValueError:
         since = -1
     now = time.time()
+    try:   # 웹 알림 봇 글(골·응원)을 텔레그램에도 보낼지: site_kv chatbot_tg=1 일 때만 (기본 꺼짐)
+        from admin_ext import kv_get
+        bot_ok = kv_get("chatbot_tg") == "1"
+    except Exception:
+        bot_ok = False
     with _lock:
         last = _seq[0]
         if since < 0 or since > last:          # 첫 호출 또는 웹 재시작으로 번호가 줄었음
             return jsonify({"messages": [], "last": last})
         out = [{"id": m["id"], "nick": m["nick"], "tag": (m.get("lv") or [m["tag"]])[0], "text": m.get("tg") or m["text"], **({"bot": 1} if m.get("src") == "bot" else {})}
-               for m in (_rooms.get(BRIDGE_ROOM) or []) if m["id"] > since and m.get("src") != "tg" and not m.get("nobridge") and now - m["ts"] < 120]
+               for m in (_rooms.get(BRIDGE_ROOM) or []) if m["id"] > since and m.get("src") != "tg" and not m.get("nobridge") and (m.get("src") != "bot" or bot_ok) and now - m["ts"] < 120]
     return jsonify({"messages": out[:50], "last": last})
 
 

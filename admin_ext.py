@@ -186,6 +186,19 @@ def heartbeat():
     return jsonify({"ok": True})
 
 
+@bp.route("/admin/chatbot/tg", methods=["POST"])
+@admin_required
+def chatbot_tg():
+    from members import super_required as _s
+    @_s
+    def go():
+        on = request.form.get("on") == "1"
+        kv_set("chatbot_tg", "1" if on else None)
+        flash("텔레그램 그룹으로 골 알림 보내기: " + ("켬" if on else "끔"))
+        return redirect("/admin/bots")
+    return go()
+
+
 @bp.route("/admin/chatbot/test", methods=["POST"])
 @admin_required
 def chatbot_test():
