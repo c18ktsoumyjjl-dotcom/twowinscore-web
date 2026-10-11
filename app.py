@@ -57,6 +57,11 @@ try:
     deposit.init_db()
     social.init_db()
     feed.init_db()
+    with app.app_context():
+        try:
+            admin_ext.rebuild_today()
+        except Exception:
+            logging.getLogger('app').exception('visit rebuild')
 except Exception:
     logging.getLogger("app").exception("member DB init failed")
 

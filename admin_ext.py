@@ -30,6 +30,7 @@ HB_STALE = 180  # 초
 _SCHEMA = """CREATE TABLE IF NOT EXISTS member_memo(id {pk}, member_id BIGINT NOT NULL, body TEXT NOT NULL, admin TEXT, created_at TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS member_memo_mid ON member_memo(member_id);
 CREATE TABLE IF NOT EXISTS visits(day TEXT NOT NULL, h TEXT NOT NULL, PRIMARY KEY(day, h));
+CREATE TABLE IF NOT EXISTS visit_alias(day TEXT NOT NULL, h TEXT NOT NULL, PRIMARY KEY(day, h));
 CREATE TABLE IF NOT EXISTS site_kv(k TEXT PRIMARY KEY, v TEXT NOT NULL, updated_at TEXT);
 CREATE TABLE IF NOT EXISTS site_media(name TEXT PRIMARY KEY, mime TEXT NOT NULL, data {blob} NOT NULL, etag TEXT NOT NULL, updated_at TEXT)"""
 _ok = [False]
@@ -83,30 +84,112 @@ def kv_set(k, v):
 
 # ---------- 방문자 ----------
 BOT_RE = re.compile(r"bot|crawl|spider|slurp|preview|facebookexternalhit|curl|wget|python|httpx|go-http|java/|headless|lighthouse|monitor|uptime|render", re.I)
+BOT_RE2 = re.compile(r"yeti|daum|bingpreview|mediapartners|adsbot|bytespider|petalbot|ia_archiver|scrap|validator|pingdom|statuscake|axios|okhttp|node-fetch|aiohttp|scrapy|phantom|selenium|puppeteer|playwright", re.I)
 _seen, _seen_day = set(), [""]
+VID = "tw_vid"
+
+
+def _os(ua):
+    u = ua.lower()
+    for k, v in (("iphone", "ios"), ("ipad", "ios"), ("android", "and"), ("windows", "win"), ("mac os", "mac"), ("cros", "cros"), ("linux", "lin")):
+        if k in u:
+            return v
+    return "etc"
+
+
+def _ipk(ip):
+    """IPv6 는 /64 (프라이버시 주소 회전 대응)."""
+    if ":" in ip:
+        return ":".join((ip.split(":") + ["0"] * 4)[:4]) + "::/64"
+    return ip
+
+
+def _keys(day, mid, vid, ip, ua):
+    """한 사람을 가리키는 키들 (우선순위: 회원 > 쿠키 > IP(/64)+OS). UA 전체는 쓰지 않음(사파리/홈화면 앱/텔레그램·카톡 인앱 브라우저가 같은 사람)."""
+    raw = ([f"m:{mid}"] if mid else []) + ([f"v:{vid}"] if vid else []) + [f"i:{_ipk(ip)}|{_os(ua)}"]
+    key = current_app.secret_key.encode()
+    return [hmac.new(key, f"{day}|{r}".encode(), hashlib.sha256).hexdigest()[:32] for r in raw]
+
+
+def _is_bot(ua):
+    return not ua or bool(BOT_RE.search(ua) or BOT_RE2.search(ua))
+
+
+def _record_keys(day, ks):
+    """이미 아는 키가 하나라도 있으면 새 키만 별칭으로 저장(카운트 안 함). 없으면 첫 키로 1명 카운트."""
+    ph = ",".join("?" * len(ks))
+    known = {r[0] for r in q(f"SELECT h FROM visits WHERE day=? AND h IN ({ph})", [day] + ks)} | {r[0] for r in q(f"SELECT h FROM visit_alias WHERE day=? AND h IN ({ph})", [day] + ks)}
+    rest = [k for k in ks if k not in known]
+    if not known and rest:
+        q("INSERT INTO visits(day,h) VALUES(?,?) ON CONFLICT DO NOTHING", (day, rest[0]), fetch=False)
+        rest = rest[1:]
+    for k in rest:
+        q("INSERT INTO visit_alias(day,h) VALUES(?,?) ON CONFLICT DO NOTHING", (day, k), fetch=False)
 
 
 @bp.before_app_request
 def _count_visit():
+    """하루(KST) 방문자 1명 = 같은 사람. HTML 페이지 GET 만 (정적·API·관리자·서비스워커·프리패치·PJAX 조각·봇 제외)."""
     if not _ok[0] or request.method != "GET":
         return
     p = request.path
-    if p.startswith(("/static", "/api", "/admin", "/media", "/favicon", "/manifest", "/sw", "/robots", "/sitemap")) or "." in p.rsplit("/", 1)[-1]:
+    if p.startswith(("/static", "/api", "/admin", "/media", "/favicon", "/manifest", "/sw", "/robots", "/sitemap", "/feed/img", "/healthz")) or "." in p.rsplit("/", 1)[-1]:
+        return
+    if (request.headers.get("Sec-Purpose", "") + request.headers.get("Purpose", "") + request.headers.get("X-Moz", "")).lower().find("prefetch") >= 0:
         return
     ua = request.headers.get("User-Agent", "")
-    if not ua or BOT_RE.search(ua) or session.get("adm_id"):
+    if _is_bot(ua) or session.get("adm_id"):
         return
+    vid = request.cookies.get(VID, "")
+    if not re.fullmatch(r"[A-Za-z0-9_-]{16,40}", vid or ""):
+        vid = ""
+        request.environ["tw_new_vid"] = __import__("secrets").token_urlsafe(18)
     day = datetime.now(KST).strftime("%Y-%m-%d")
-    h = hmac.new(current_app.secret_key.encode(), f"{day}|{M.ip()}|{ua}".encode(), hashlib.sha256).hexdigest()[:32]
+    m = M.current()
+    try:
+        ks = _keys(day, m["id"] if m else None, vid or request.environ.get("tw_new_vid"), M.ip(), ua)
+    except Exception:
+        return
     if _seen_day[0] != day:
         _seen.clear(); _seen_day[0] = day
-    if h in _seen:
+    if all(k in _seen for k in ks):
         return
-    _seen.add(h)
+    _seen.update(ks)
     try:
-        q("INSERT INTO visits(day,h) VALUES(?,?) ON CONFLICT DO NOTHING", (day, h), fetch=False)
+        _record_keys(day, ks)
     except Exception:
         log.exception("visit insert")
+
+
+@bp.after_app_request
+def _set_vid(r):
+    v = request.environ.get("tw_new_vid")
+    if v and r.status_code < 400 and r.mimetype == "text/html":
+        r.set_cookie(VID, v, max_age=400 * 86400, httponly=True, samesite="Lax", secure=current_app.config.get("SESSION_COOKIE_SECURE", True))
+    return r
+
+
+def rebuild_today():
+    """오늘(KST) 방문자 수를 access_log 기준 새 방식(회원 / IP(/64)+OS)으로 다시 계산. 1회만 (site_kv visit_v2)."""
+    day = datetime.now(KST).strftime("%Y-%m-%d")
+    try:  # 여러 워커 동시 실행 대비: 먼저 자리 잡은 1곳만 재계산
+        q("INSERT INTO site_kv(k,v,updated_at) VALUES('visit_v2','{}',?)", (M.now_s(),), fetch=False)
+    except Exception:
+        return None
+    before = q("SELECT COUNT(*) FROM visits WHERE day=?", (day,), one=True)[0]
+    rows = q("SELECT ip,member_id,ua FROM access_log WHERE ts>=? AND ts<? ORDER BY id", (day, day + " 99"))
+    if not rows:
+        q("UPDATE site_kv SET v=? WHERE k='visit_v2'", (json.dumps({"day": day, "before": before, "after": before, "log_rows": 0}),), fetch=False)
+        return before, before
+    q("DELETE FROM visits WHERE day=?", (day,), fetch=False); q("DELETE FROM visit_alias WHERE day=?", (day,), fetch=False)
+    for ip, mid, ua in rows:
+        if _is_bot(ua or ""):
+            continue
+        _record_keys(day, _keys(day, mid, None, ip or "?", ua or ""))
+    after = q("SELECT COUNT(*) FROM visits WHERE day=?", (day,), one=True)[0]
+    q("UPDATE site_kv SET v=?, updated_at=? WHERE k='visit_v2'", (json.dumps({"day": day, "before": before, "after": after, "log_rows": len(rows)}), M.now_s()), fetch=False)
+    log.info("visit counter v2: today %s before=%s after=%s", day, before, after)
+    return before, after
 
 
 def visit_stats():
@@ -114,7 +197,13 @@ def visit_stats():
     days = [(today - timedelta(days=i)).isoformat() for i in range(29, -1, -1)]
     rows = dict(q("SELECT day, COUNT(*) FROM visits WHERE day>=? GROUP BY day", (days[0],)))
     series = [(d, rows.get(d, 0)) for d in days]
-    return {"today": series[-1][1], "yday": series[-2][1], "d7": sum(c for _, c in series[-7:]),
+    fx = None
+    try:
+        r = q("SELECT v FROM site_kv WHERE k='visit_v2'", one=True)
+        fx = (json.loads(r[0]) or None) if r else None
+    except Exception:
+        pass
+    return {"fix": fx, "today": series[-1][1], "yday": series[-2][1], "d7": sum(c for _, c in series[-7:]),
             "d30": sum(c for _, c in series), "series": series, "max": max([c for _, c in series] + [1])}
 
 
