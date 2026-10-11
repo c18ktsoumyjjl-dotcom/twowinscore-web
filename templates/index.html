@@ -59,7 +59,7 @@ function mrow(g,sc,ch,lead,on,op){const st=g.halt?`<b class="hl">⏸ ${esc(g.hal
  const mid=sc?`<b class="${lead==='L'?'w':''}">${g.L.score}</b><em>:</em><b class="${lead==='R'?'w':''}">${g.R.score}</b>`:`<span class="vs">${g.state==='scheduled'?'VS':esc(g.badge)}</span>`;
  return `<div class="mr ${g.state} ${ch?'flash':''} ${op?'op':''}" role="button" tabindex="0" data-k="${esc(g.key)}"><div class="ms">${st}${g.sub&&g.state==='scheduled'?`<small>${esc(g.sub)}</small>`:''}</div>${mtm(g.L,'L')}<div class="mc">${mid}</div>${mtm(g.R,'R')}<button class="mst ${on?'on':''}" data-g="${esc(g.key)}" onclick="toggleGame(this.dataset.g,event)" aria-label="즐겨찾기">${on?'★':'☆'}</button></div><div class="pv6 ${op?'open':''}" data-k="${esc(g.key)}"><div class="pvin">${PV[g.key]||'<p class="empty">불러오는 중…</p>'}</div></div>`}
 /* 기타 리그: 접힌 상태 기본, 펼칠 때만 /api/games/other 로 불러와요 */
-const OK={'축구':'football','야구':'baseball','농구':'basketball','배구':'volleyball','아이스하키':'hockey'};let OTH=null,OTT=0,OTL=false;
+var OK={'축구':'football','야구':'baseball','농구':'basketball','배구':'volleyball','아이스하키':'hockey'},OTH=null,OTT=0,OTL=false;
 function ALL(){return OTH?DATA.games.concat(OTH):DATA.games}
 function oOpen(){return localStorage.getItem('tw_oth')==='1'}
 async function oLoad(){if(OTL)return;OTL=true;try{const r=await fetch('/api/games/other?d='+D,{cache:'no-store'});OTH=((await r.json()).games||[]).map(g=>(g.other=1,g));OTT=Date.now()}catch(e){OTH=OTH||[];OTT=Date.now()}OTL=false;render()}
