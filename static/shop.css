@@ -30,3 +30,17 @@
 .sh-usdt .ua{margin:4px 0 8px;font-size:13px;word-break:break-all}.sh-usdt code{font-weight:800;font-size:13px}.sh-usdt .ucp{width:auto;padding:0 14px;margin:0}
 .sh-usdt .un{font-size:12px;color:var(--mu);margin:8px 0 0}
 @media(max-width:600px){.sh-usdt{flex-direction:column;text-align:center}}
+
+.dep-f{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}.dep-f label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700}.dep-f label small{color:var(--mu);font-weight:500}
+.dep-f input{height:42px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--tx);padding:0 12px;font:inherit;font-size:15px}
+.dep-f .sh-btn{grid-column:1/-1;max-width:none}.dep-h{grid-column:1/-1;margin:0;font-size:12.5px;color:var(--mu)}
+.dep-my h3{margin:0 0 10px;font-size:15px}.dep-r{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}.dep-r:first-of-type{border-top:0}
+.dep-b{display:flex;flex-direction:column;font-size:14px}.dep-b small{color:var(--mu);font-size:12px}.dep-rs{color:#e5534b!important}
+.dep-st{flex:none;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800}.dep-st.pending{background:rgba(255,138,42,.15);color:#ff8a2a}.dep-st.approved{background:rgba(46,204,113,.15);color:#2ecc71}.dep-st.rejected{background:rgba(229,83,75,.15);color:#e5534b}
+@media(max-width:600px){.dep-f{grid-template-columns:1fr}}
+
+.vplans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 8px}.vplan{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:16px 10px 12px;border-radius:14px;background:var(--bg2,rgba(255,255,255,.04));border:1px solid var(--line)}
+.vplan.best{border-color:#f2b84b;box-shadow:0 6px 20px rgba(242,184,75,.18)}.vplan .tag{position:absolute;top:-9px;right:10px}.vplan .vm{font-size:18px}.vplan .vd{font-size:12px;color:var(--mu)}
+.vplan .vp{margin:6px 0 0;font-size:13px}.vplan .vp b{font-size:20px;color:#f2b84b}.vplan .vpm{color:var(--mu);font-size:11.5px;margin-bottom:8px}.vplan form,.vplan .sh-btn{width:100%}.vnote{font-size:12.5px;color:var(--mu);margin:4px 0 0}
+@media(max-width:600px){.vplans{grid-template-columns:1fr}.vplan{flex-direction:row;flex-wrap:wrap;justify-content:space-between;text-align:left}.vplan form,.vplan .sh-btn{flex:1 1 100%}}
+.vplan .vmg{font-size:12.5px;margin-top:4px}.vplan .vmg b{color:#ff8a2a}

@@ -181,4 +181,4 @@ def dash():
     except Exception:
         bots = []
     recent = q("SELECT id, nick, created_at FROM members ORDER BY id DESC LIMIT 5")
-    return render_template("admin.html", mode="dash", sec="dash", d=d, recent=recent, bots=bots)
+    return render_template("admin.html", dep=__import__("deposit").counts(), mode="dash", sec="dash", d=d, recent=recent, bots=bots)

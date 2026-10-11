@@ -191,7 +191,7 @@ def _lv_visit():
 
 @bp.before_app_request
 def _csrf_check():
-    if request.method == "POST" and (request.path.startswith(("/login", "/signup", "/logout", "/me", "/admin", "/find"))):
+    if request.method == "POST" and (request.path.startswith(("/login", "/signup", "/logout", "/me", "/admin", "/find", "/shop"))):
         t = request.form.get("_csrf", "")
         if not t or not hmac.compare_digest(t, session.get("_csrf", "")):
             abort(400, "CSRF")
@@ -449,7 +449,7 @@ def me_page():
     info = {"name": dec(r[0]), "phone": mask_phone(dec(r[1])), "birth": dec(r[2]), "tg": r[3], "created": r[4][:10]}
     nx = nick_next(m["id"])
     return render_template("member.html", page="me", mode="me", info=info, welcome=request.args.get("welcome"),
-                           nick_next=nx.strftime("%Y-%m-%d") if nx else None, cash_hist=__import__("vip").cash_logs(m["id"], 50))
+                           nick_next=nx.strftime("%Y-%m-%d") if nx else None, cash_hist=__import__("vip").cash_logs(m["id"], 50), deps=__import__("deposit").mine(m["id"], 10))
 
 
 NICK_DAYS = 30

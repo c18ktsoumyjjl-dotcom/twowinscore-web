@@ -9,6 +9,8 @@ import threading, time
 from collections import deque
 
 app = Flask(__name__)
+import adminpath
+adminpath.install(app)
 app.config["MAX_CONTENT_LENGTH"] = 9 * 1024 * 1024  # 이미지 업로드(관리자)만 6MB, 나머지는 아래 _body_limit 에서 16KB
 app.register_blueprint(chat.bp)
 
@@ -31,6 +33,10 @@ import activity
 app.register_blueprint(activity.bp)
 import adminstats
 app.register_blueprint(adminstats.bp)
+import deposit
+app.register_blueprint(deposit.bp)
+import news
+app.register_blueprint(news.bp)
 import music
 app.register_blueprint(music.bp)
 import admin_accts
@@ -42,6 +48,7 @@ try:
     vip.init_db()
     activity.init_db()
     music.init_db()
+    deposit.init_db()
 except Exception:
     logging.getLogger("app").exception("member DB init failed")
 
@@ -346,7 +353,7 @@ def game(key):
     return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=plays.commentary(g), gl=plays.goals(g),
                            forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st,
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
-                           names={g["home"], g["away"]}, points=insights.points(g, det), vote=_vinfo(g, v))
+                           names={g["home"], g["away"]}, gnews=news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]), points=insights.points(g, det), vote=_vinfo(g, v))
 
 
 def _find(key):

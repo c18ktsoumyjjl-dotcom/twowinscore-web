@@ -48,7 +48,16 @@ def _bust():
 
 @bp.app_context_processor
 def _ctx():
-    return {"bgm_list": playlist}
+    return {"bgm_list": playlist, "intro_on": intro_on}
+
+
+def intro_on():
+    """입장 효과음(휘슬+함성) — 기본 꺼짐. 관리자가 음악관리에서 켜고 끌 수 있어요."""
+    try:
+        from admin_ext import kv_get
+        return kv_get("intro_on") == "1"
+    except Exception:
+        return False
 
 
 def _is_mp3(b):
@@ -105,6 +114,18 @@ def upload():
     q("INSERT INTO site_media(name,mime,data,etag,updated_at) VALUES(?,?,?,?,?)", (f"bgm:{tid}", "audio/mpeg", data, etag, M.now_s()), fetch=False)
     _bust(); alog("bgm upload", f"#{tid} {title} {len(data)//1024}KB")
     flash(f"'{title}' 트랙을 추가했어요 ({len(data)/1048576:.1f}MB)."); return redirect("/admin/music")
+
+
+@bp.post("/admin/music/intro")
+@M.admin_required
+@super_required
+def intro_toggle():
+    from admin_ext import kv_set
+    on = request.form.get("on") == "1"
+    kv_set("intro_on", "1" if on else None)
+    alog("intro " + ("on" if on else "off"))
+    flash("입장 효과음을 켰어요." if on else "입장 효과음을 껐어요.")
+    return redirect("/admin/music")
 
 
 @bp.post("/admin/music/save")

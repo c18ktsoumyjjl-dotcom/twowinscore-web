@@ -28,3 +28,7 @@
 .ch-form .ch-mega{background:none!important;color:inherit;padding:0 4px!important;height:44px;font-size:19px}
 .ch-mega small:empty{display:none}
 .ch-pin .nkv{font-weight:900;background:linear-gradient(90deg,#ffd24a,#ff8a2a);-webkit-background-clip:text;background-clip:text;color:transparent}[data-theme=light] .ch-pin .nkv{background:linear-gradient(90deg,#d98200,#e85d00);-webkit-background-clip:text;background-clip:text}
+
+.depsec h3{margin:0 0 8px;font-size:15px}.depsec .dep-r{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line,#22386b)}.depsec .dep-r:first-of-type{border-top:0}
+.depsec .dep-b{display:flex;flex-direction:column;font-size:14px}.depsec .dep-b small{opacity:.75;font-size:12px}.depsec .dep-rs{color:#e5534b;opacity:1!important}
+.dep-st{flex:none;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800;height:fit-content}.dep-st.pending{background:rgba(255,138,42,.15);color:#ff8a2a}.dep-st.approved{background:rgba(46,204,113,.15);color:#1fa45a}.dep-st.rejected{background:rgba(229,83,75,.15);color:#e5534b}

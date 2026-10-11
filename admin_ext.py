@@ -14,7 +14,7 @@ MENU_GROUPS = [
     ("g_dash", "", "대시보드", [("dash", "한눈에 보기", "/admin/dash")]),
     ("g_members", "", "회원관리", [("members", "회원목록", "/admin"), ("activity", "회원활동내역", "/admin/activity")]),
     ("g_chat", "", "채팅관리", [("mega", "확성기", "/admin/mega")]),
-    ("g_shop", "", "상점관리", [("cash", "캐시 내역", "/admin/cash"), ("vips", "VIP 회원", "/admin/vips")]),
+    ("g_shop", "", "상점관리", [("deposits", "입금신청", "/admin/deposits"), ("cash", "캐시 내역", "/admin/cash"), ("vips", "VIP 회원", "/admin/vips")]),
     ("g_stats", "", "통계관리", [("stats", "사이트통계", "/admin/stats"), ("settle", "정산통계", "/admin/settle")]),
     ("g_ops", "", "운영", [("bots", "봇 상태", "/admin/bots"), ("settings", "사이트 설정", "/admin/settings"), ("music", "음악관리", "/admin/music")]),
     ("g_admin", "", "관리자", [("admins", "관리자 계정", "/admin/admins"), ("log", "접근 기록", "/admin/log"), ("otp", "OTP 재설정", "/admin/otp")]),

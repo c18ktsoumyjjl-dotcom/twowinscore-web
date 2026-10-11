@@ -10,7 +10,7 @@ log = logging.getLogger("vip")
 bp = Blueprint("vip", __name__)
 _ok = [False]
 _lk = threading.RLock()
-MONTHLY = 3
+MONTHLY = 50   # VIP 월간 무료 확성기 (이 숫자 하나만 바꾸면 전부 반영)
 PIN_SEC = 300
 MAX_TEXT = 80
 QMAX = 10
@@ -53,7 +53,7 @@ def _mlog(mid, delta, reason, admin=None):
 
 
 def info(mid):
-    """{'active','until','mega'} · VIP 이면 이번 달 무료 확성기 3개를 자동 지급(한 번만)."""
+    """{'active','until','mega'} · VIP 이면 이번 달 무료 확성기 MONTHLY개를 자동 지급(한 번만)."""
     if not _ok[0] or not mid:
         return None
     with _lk:
@@ -92,7 +92,7 @@ def _ctx():
         m = M.current()
     except Exception:
         m = None
-    return {"vip": info(m["id"]) if m else None}
+    return {"vip": info(m["id"]) if m else None, "vip_monthly": MONTHLY}
 
 
 # ---------- 확성기 고정 ----------
@@ -280,7 +280,10 @@ def admin_mega_remove():
 # ---------- 스코어캐시 (유료 재화: 1원 = 1캐시 · 출금/환전/양도/경품 교환 불가) ----------
 CHARGE = [5000, 10000, 30000, 50000, 100000]
 QTY_MAX = 10
-VIP_PRICE = None      # 가격 미정 → 구매 불가, '가격 추후 공개'
+VIP_PLANS = {"vip1": {"m": 1, "days": 30, "price": 200000, "off": 0},
+             "vip2": {"m": 2, "days": 60, "price": 360000, "off": 10},
+             "vip3": {"m": 3, "days": 90, "price": 480000, "off": 20}}
+VIP_PRICE = VIP_PLANS["vip1"]["price"]
 VIP_DAYS = 30
 ITEMS = {"mega1": ("확성기 1개", 1000, 1), "mega10": ("확성기 10개", 8000, 10), "mega30": ("확성기 30개", 20000, 30)}
 
@@ -321,8 +324,9 @@ def cash_logs(mid, n=30):
 def shop():
     import payments
     m = M.current()
-    return render_template("shop.html", page="shop", items=ITEMS, charge=CHARGE, vip_price=VIP_PRICE, vip_days=VIP_DAYS,
-                           cash=cash_of(m["id"]) if m else None, pay_ready=payments.ready())
+    return render_template("shop.html", page="shop", items=ITEMS, charge=CHARGE, vip_price=VIP_PRICE, vip_days=VIP_DAYS, vip_plans=VIP_PLANS,
+                           cash=cash_of(m["id"]) if m else None, pay_ready=payments.ready(),
+                           deps=__import__("deposit").mine(m["id"]) if m else [])
 
 
 @bp.post("/shop/buy")
@@ -345,17 +349,18 @@ def shop_buy():
             q("UPDATE members SET mega=mega+? WHERE id=?", (n, m["id"]), fetch=False)
             _mlog(m["id"], n, "스코어샵 구매 (" + name + ")")
             flash(f"ok:{name} 구매 완료! 남은 캐시 {new:,}")
-        elif it == "vip" and VIP_PRICE:
-            new = cash_change(m["id"], -VIP_PRICE, "buy", f"VIP {VIP_DAYS}일")
+        elif it in VIP_PLANS:
+            pl = VIP_PLANS[it]
+            new = cash_change(m["id"], -pl["price"], "buy", f"VIP {pl['m']}개월")
             if new is None:
                 flash("스코어캐시가 부족해요."); return redirect("/shop")
             cur = q("SELECT vip_until FROM members WHERE id=?", (m["id"],), one=True)[0]
             base = _now()
             if cur and cur > _fmt(base):
                 base = datetime.strptime(cur, "%Y-%m-%d %H:%M").replace(tzinfo=KST)
-            q("UPDATE members SET vip_until=? WHERE id=?", (_fmt(base + timedelta(days=VIP_DAYS)), m["id"]), fetch=False)
+            q("UPDATE members SET vip_until=? WHERE id=?", (_fmt(base + timedelta(days=pl["days"])), m["id"]), fetch=False)
             info(m["id"])
-            flash(f"ok:VIP {VIP_DAYS}일 구독 완료!")
+            flash(f"ok:VIP {pl['m']}개월 구매 완료! {_fmt(base + timedelta(days=pl['days']))}까지 · 남은 캐시 {new:,}")
         else:
             abort(400)
     return redirect("/shop")
