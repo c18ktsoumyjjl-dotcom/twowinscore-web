@@ -27,6 +27,8 @@ import admin_ext
 app.register_blueprint(admin_ext.bp)
 import vip
 app.register_blueprint(vip.bp)
+import activity
+app.register_blueprint(activity.bp)
 import admin_accts
 app.register_blueprint(admin_accts.bp)
 try:
@@ -34,6 +36,7 @@ try:
     admin_ext.init_db()
     import levels; levels.init()
     vip.init_db()
+    activity.init_db()
 except Exception:
     logging.getLogger("app").exception("member DB init failed")
 

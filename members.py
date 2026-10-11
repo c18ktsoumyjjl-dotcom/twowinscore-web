@@ -426,6 +426,10 @@ def login():
             else:
                 _keep_admin_clear(); session.permanent = True; session["uid"] = r[0]
                 q("UPDATE members SET last_login=? WHERE id=?", (now_s(), r[0]), fetch=False)
+                try:
+                    q("UPDATE members SET last_ip=? WHERE id=?", (ip()[:45], r[0]), fetch=False)
+                except Exception:
+                    pass
                 return redirect(nxt)
     return render_template("member.html", page="login", mode="auth", tab="login", lid=lid, errs=errs, nxt=nxt, pv=pv_on())
 

@@ -154,3 +154,6 @@ body.adm:not(.mopen) .side{display:flex}body.adm.mopen .side{flex-direction:colu
 .side .sg.open>.sgi>div{padding-bottom:6px}
 .side .sgi a{padding:9px 14px;font-size:13.5px;border-left:1px solid var(--line);border-radius:0 10px 10px 0}
 @media(max-width:820px){body.adm .side{flex-direction:column!important;overflow:visible;position:static;padding:8px 10px;gap:2px}.side .sgi a{white-space:normal}.side a.on{box-shadow:inset 3px 0 0 var(--or)!important}}
+
+.acttbl td{font-size:13px;white-space:nowrap}.acttbl .pth{max-width:320px;overflow:hidden;text-overflow:ellipsis}.acttbl tr.hot td{background:rgba(231,76,60,.1)}.hotc{color:#ff8a7a;font-weight:800}
+.hotip{display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;border-radius:8px;background:rgba(231,76,60,.14);border:1px solid rgba(231,76,60,.45);color:#ffb3a8;font-size:12.5px}.hotip b{color:#ff8a7a}
