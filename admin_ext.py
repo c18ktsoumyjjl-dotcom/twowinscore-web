@@ -207,7 +207,15 @@ def bot_status():
 @bp.route("/admin/bots")
 @admin_required
 def bots_page():
-    return render_template("admin.html", mode="bots", sec="bots", bots=bot_status())
+    import warmer
+    ws = warmer.status()
+    if ws:
+        hrs = max(0.1, (time.time() - ws.get("since", time.time())) / 3600)
+        ws["per_day_warm"] = int(ws.get("calls_warm", 0) / hrs * 24)
+        ws["per_day_all"] = int(ws.get("calls_all", 0) / hrs * 24)
+        ws["hrs"] = round(hrs, 1)
+        ws["ago"] = int(time.time() - ws.get("ts", 0))
+    return render_template("admin.html", mode="bots", sec="bots", bots=bot_status(), ws=ws)
 
 
 # ---------- 설정: 공지 배너 / 메인 이미지 ----------

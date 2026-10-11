@@ -360,6 +360,9 @@ def _g0(d):
 
 _g0pool = None
 
+import warmer
+warmer.start(league_order)
+
 
 @app.route("/live")
 def live():
