@@ -13,7 +13,7 @@ def alog(action, target=""):
 log = logging.getLogger("social")
 bp = Blueprint("social", __name__)
 _ok = [False]
-MAX_FRIENDS = 200
+MAX_FRIENDS = 2000  # 최대 팔로잉
 MAX_LEN = 300
 ONLINE_SEC = 120
 NOTICE = "운영 정책 위반 방지를 위해 1:1 대화는 관리자가 확인할 수 있습니다."
@@ -22,6 +22,8 @@ GENERIC = "요청을 처리할 수 없어요."
 
 SCHEMA = """CREATE TABLE IF NOT EXISTS friend(a BIGINT NOT NULL, b BIGINT NOT NULL, status TEXT NOT NULL, req_by BIGINT NOT NULL, ts TEXT NOT NULL, PRIMARY KEY(a,b));
 CREATE INDEX IF NOT EXISTS friend_b ON friend(b);
+CREATE TABLE IF NOT EXISTS follow(src BIGINT NOT NULL, dst BIGINT NOT NULL, ts TEXT NOT NULL, PRIMARY KEY(src,dst));
+CREATE INDEX IF NOT EXISTS follow_dst ON follow(dst);
 CREATE TABLE IF NOT EXISTS mblock(member_id BIGINT NOT NULL, target BIGINT NOT NULL, ts TEXT NOT NULL, PRIMARY KEY(member_id,target));
 CREATE TABLE IF NOT EXISTS dm_msg(id {pk}, a BIGINT NOT NULL, b BIGINT NOT NULL, sender BIGINT NOT NULL, body TEXT NOT NULL, ts BIGINT NOT NULL, sus TEXT, hidden INTEGER NOT NULL DEFAULT 0);
 CREATE INDEX IF NOT EXISTS dm_msg_ab ON dm_msg(a,b,id);
@@ -45,9 +47,25 @@ def init_db():
                 q(a, fetch=False)
             except Exception:
                 pass
+        _migrate_follow()
         _ok[0] = True
     except Exception:
         log.exception("social init failed")
+
+
+def _migrate_follow():
+    """친구 → 팔로우 1회 이전: 친구(ok)=맞팔, 대기 요청=요청자→상대 팔로우. 이전한 행은 status='migrated'."""
+    rows = q("SELECT a,b,status,req_by,ts FROM friend WHERE status IN ('ok','pending')")
+    for a, b, st, by, ts in rows:
+        pairs = [(a, b), (b, a)] if st == "ok" else [(by, b if by == a else a)]
+        for x, y in pairs:
+            try:
+                q("INSERT INTO follow(src,dst,ts) VALUES(?,?,?)", (x, y, ts), fetch=False)
+            except Exception:
+                pass
+    if rows:
+        q("UPDATE friend SET status='migrated' WHERE status IN ('ok','pending')", fetch=False)
+        log.info("follow migration: %d friend rows", len(rows))
 
 
 # ---------- 필터 ----------
@@ -159,13 +177,17 @@ def _cards(rows):
 
 
 def _rel(me, other):
-    a, b = _pair(me, other)
-    r = q("SELECT status,req_by FROM friend WHERE a=? AND b=?", (a, b), one=True)
-    if not r:
-        return "none"
-    if r[0] == "ok":
+    """friend=맞팔, sent=내가 팔로우, recv=상대가 나를 팔로우, none."""
+    r = {x[0] for x in q("SELECT src FROM follow WHERE (src=? AND dst=?) OR (src=? AND dst=?)", (me, other, other, me))}
+    if me in r and other in r:
         return "friend"
-    return "sent" if r[1] == me else "recv"
+    return "sent" if me in r else ("recv" if other in r else "none")
+
+
+def follow_counts(mid):
+    a = q("SELECT COUNT(*) FROM follow WHERE dst=?", (mid,), one=True)[0]
+    b = q("SELECT COUNT(*) FROM follow WHERE src=?", (mid,), one=True)[0]
+    return int(a), int(b)
 
 
 def _blocked(x, y):
@@ -242,7 +264,7 @@ def badge():
     me = m["id"]
     u = q("""SELECT COUNT(*) FROM dm_msg d LEFT JOIN dm_read r ON r.member_id=? AND r.peer=d.sender
              WHERE (d.a=? OR d.b=?) AND d.sender<>? AND d.hidden=0 AND d.id>COALESCE(r.last_id,0)""", (me, me, me, me), one=True)[0]
-    rq = q("SELECT COUNT(*) FROM friend WHERE (a=? OR b=?) AND status='pending' AND req_by<>?", (me, me, me), one=True)[0]
+    rq = 0  # 팔로우는 승인 없음 (새 팔로워는 알림으로)
     nu = q("SELECT COUNT(*) FROM notif WHERE member_id=? AND rd=0", (me,), one=True)[0]
     after = request.args.get("after", type=int)
     new = _notifs(me, after, 5) if after is not None else []
@@ -279,81 +301,63 @@ def profile():
 
 @bp.get("/api/social/friends")
 def friends():
+    """팔로잉/팔로워 목록. ?id=회원 으로 다른 회원 목록도 (로그인 회원 공개). rel 은 나 기준."""
     m = _me(); me = m["id"]
-    rows = q("SELECT a,b,status,req_by FROM friend WHERE a=? OR b=?", (me, me))
-    other = {(r[1] if r[0] == me else r[0]): (r[2], r[3]) for r in rows}
-    blk = [r[0] for r in q("SELECT target FROM mblock WHERE member_id=?", (me,))]
-    ids = list(set(other) | set(blk))
-    info = {}
+    who = request.args.get("id", type=int) or me
+    if who != me and (not _member(mid=who) or _blocked(me, who)):
+        return jsonify({"ok": False, "error": GENERIC}), 404
+    ing = [r[0] for r in q("SELECT dst FROM follow WHERE src=? ORDER BY ts DESC LIMIT 2000", (who,))]
+    ers = [r[0] for r in q("SELECT src FROM follow WHERE dst=? ORDER BY ts DESC LIMIT 2000", (who,))]
+    blk = [r[0] for r in q("SELECT target FROM mblock WHERE member_id=?", (me,))] if who == me else []
+    ids = list(set(ing) | set(ers) | set(blk))
+    info, hid = {}, {}
     if ids:
         ph = ",".join("?" * len(ids))
         for c in _cards(q(f"SELECT id,nick,hide_online FROM members WHERE id IN ({ph}) AND status='active'", ids)):
             info[c["id"]] = c
         hid = {r[0]: r[1] for r in q(f"SELECT id,hide_online FROM members WHERE id IN ({ph})", ids)}
-    out = {"friends": [], "recv": [], "sent": [], "blocked": []}
-    for oid, (st, by) in other.items():
-        c = info.get(oid)
-        if not c:
-            continue
-        c = dict(c)
-        if st == "ok":
-            c["on"] = 1 if (online(oid) and not hid.get(oid)) else 0
-            out["friends"].append(c)
-        else:
-            out["recv" if by != me else "sent"].append(c)
-    out["blocked"] = [info[i] for i in blk if i in info]
-    out["friends"].sort(key=lambda c: (-c["on"], c["nick"]))
-    return jsonify({"ok": True, **out, "max": MAX_FRIENDS})
+    mine_ing = set(ing) if who == me else {r[0] for r in q("SELECT dst FROM follow WHERE src=?", (me,))}
+    mine_ers = set(ers) if who == me else {r[0] for r in q("SELECT src FROM follow WHERE dst=?", (me,))}
+    def card(i):
+        c = dict(info[i])
+        c["rel"] = "self" if i == me else ("friend" if i in mine_ing and i in mine_ers else "sent" if i in mine_ing else "recv" if i in mine_ers else "none")
+        if c["rel"] == "friend":
+            c["on"] = 1 if (online(i) and not hid.get(i)) else 0
+        return c
+    out = {"following": [card(i) for i in ing if i in info], "followers": [card(i) for i in ers if i in info], "blocked": [info[i] for i in blk if i in info]}
+    out["friends"] = [c for c in out["following"] if c["rel"] == "friend"]
+    return jsonify({"ok": True, **out, "max": MAX_FRIENDS, "self": who == me})
 
 
 @bp.post("/api/social/friend")
 def friend_act():
+    """팔로우: req/accept=팔로우, cancel/remove=언팔로우, decline=팔로워 삭제."""
     m = _me(); _csrf(); me = m["id"]
     b = request.get_json(silent=True) or {}
     act = b.get("act")
     o = _member(mid=b.get("id")) if b.get("id") else _member(nick=str(b.get("nick") or "")[:12])
-    if not o or o[0] == me or act not in ("req", "accept", "decline", "cancel", "remove"):
+    if not o or o[0] == me or act not in ("req", "accept", "decline", "cancel", "remove", "follow", "unfollow"):
         return jsonify({"ok": False, "error": GENERIC}), 400
-    oid = o[0]; a, bb = _pair(me, oid)
-    rel = _rel(me, oid)
-    if act == "req":
-        if M.limited("fr:" + str(me), 20, 3600):
-            return jsonify({"ok": False, "error": "친구 요청이 너무 많아요. 잠시 후 다시 해 주세요."}), 429
+    oid = o[0]
+    if act in ("req", "accept", "follow"):
         if _blocked(me, oid):
             return jsonify({"ok": False, "error": GENERIC}), 400
-        if rel == "friend":
-            return jsonify({"ok": True, "rel": rel})
-        if rel == "recv":
-            act = "accept"
-        elif rel == "sent":
-            return jsonify({"ok": True, "rel": rel})
-        else:
-            n = q("SELECT COUNT(*) FROM friend WHERE (a=? OR b=?) AND status='ok'", (me, me), one=True)[0]
-            if n >= MAX_FRIENDS:
-                return jsonify({"ok": False, "error": f"친구는 {MAX_FRIENDS}명까지예요."}), 400
-            pend = q("SELECT COUNT(*) FROM friend WHERE req_by=? AND status='pending'", (me,), one=True)[0]
-            if pend >= 50:
-                return jsonify({"ok": False, "error": "보낸 요청이 너무 많아요. 기존 요청을 정리해 주세요."}), 400
+        if not q("SELECT 1 FROM follow WHERE src=? AND dst=?", (me, oid), one=True):
+            if M.limited("fl:" + str(me), 60, 3600):
+                return jsonify({"ok": False, "error": "팔로우를 너무 많이 했어요. 잠시 후 다시 해 주세요."}), 429
+            if q("SELECT COUNT(*) FROM follow WHERE src=?", (me,), one=True)[0] >= MAX_FRIENDS:
+                return jsonify({"ok": False, "error": f"팔로잉은 {MAX_FRIENDS:,}명까지예요."}), 400
             try:
-                q("INSERT INTO friend(a,b,status,req_by,ts) VALUES(?,?,'pending',?,?)", (a, bb, me, M.now_s()), fetch=False)
-                notify(oid, "freq", me)
+                q("INSERT INTO follow(src,dst,ts) VALUES(?,?,?)", (me, oid, M.now_s()), fetch=False)
+                if not q("SELECT 1 FROM notif WHERE member_id=? AND kind='follow' AND actor=? AND ts>?", (oid, me, int(time.time()) - 86400), one=True):
+                    notify(oid, "follow", me)
             except Exception:
                 pass
-            return jsonify({"ok": True, "rel": "sent"})
-    if act == "accept":
-        if rel != "recv":
-            return jsonify({"ok": False, "error": GENERIC}), 400
-        for x in (me, oid):
-            if q("SELECT COUNT(*) FROM friend WHERE (a=? OR b=?) AND status='ok'", (x, x), one=True)[0] >= MAX_FRIENDS:
-                return jsonify({"ok": False, "error": f"친구는 {MAX_FRIENDS}명까지예요."}), 400
-        q("UPDATE friend SET status='ok', ts=? WHERE a=? AND b=? AND status='pending' AND req_by=?", (M.now_s(), a, bb, oid), fetch=False)
-        notify(oid, "facc", me)
-        return jsonify({"ok": True, "rel": "friend"})
-    ok = {"decline": rel == "recv", "cancel": rel == "sent", "remove": rel == "friend"}[act]
-    if not ok:
-        return jsonify({"ok": False, "error": GENERIC}), 400
-    q("DELETE FROM friend WHERE a=? AND b=?", (a, bb), fetch=False)
-    return jsonify({"ok": True, "rel": "none"})
+    elif act == "decline":
+        q("DELETE FROM follow WHERE src=? AND dst=?", (oid, me), fetch=False)
+    else:
+        q("DELETE FROM follow WHERE src=? AND dst=?", (me, oid), fetch=False)
+    return jsonify({"ok": True, "rel": _rel(me, oid), "counts": follow_counts(oid)})
 
 
 @bp.post("/api/social/block")
@@ -368,7 +372,7 @@ def block():
             q("INSERT INTO mblock(member_id,target,ts) VALUES(?,?,?)", (me, o[0], M.now_s()), fetch=False)
         except Exception:
             pass
-        a, bb = _pair(me, o[0]); q("DELETE FROM friend WHERE a=? AND b=?", (a, bb), fetch=False)
+        q("DELETE FROM follow WHERE (src=? AND dst=?) OR (src=? AND dst=?)", (me, o[0], o[0], me), fetch=False)
     else:
         q("DELETE FROM mblock WHERE member_id=? AND target=?", (me, o[0]), fetch=False)
     return jsonify({"ok": True})
@@ -423,7 +427,7 @@ def msgs():
     rows = q("SELECT id,sender,body,ts FROM dm_msg WHERE a=? AND b=? AND hidden=0 AND id>? ORDER BY id DESC LIMIT 200", (a, b, after))
     if rel != "friend" and not rows and not after:
         if not q("SELECT 1 FROM dm_msg WHERE a=? AND b=? LIMIT 1", (a, b), one=True):
-            return jsonify({"ok": False, "error": "친구끼리만 대화할 수 있어요."}), 403
+            return jsonify({"ok": False, "error": "맞팔로우한 회원끼리만 대화할 수 있어요."}), 403
     rows = rows[::-1]
     q("UPDATE notif SET rd=1 WHERE member_id=? AND kind='dm' AND actor=? AND rd=0", (me, o[0]), fetch=False)
     if rows:
@@ -452,7 +456,7 @@ def send():
     if len(text) > MAX_LEN:
         return jsonify({"ok": False, "error": f"{MAX_LEN}자까지 쓸 수 있어요."}), 400
     if _rel(me, o[0]) != "friend" or _blocked(me, o[0]):
-        return jsonify({"ok": False, "error": "친구끼리만 대화할 수 있어요."}), 403
+        return jsonify({"ok": False, "error": "맞팔로우한 회원끼리만 대화할 수 있어요."}), 403
     if _dm_banned(me):
         return jsonify({"ok": False, "error": "1:1 대화 이용이 제한된 계정이에요. 고객센터로 문의해 주세요."}), 403
     import chat

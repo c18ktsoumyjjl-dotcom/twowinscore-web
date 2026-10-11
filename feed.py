@@ -1,6 +1,6 @@
-"""회원 피드(인스타그램형). 프로필(/u/<닉네임>)로만 접근. 친구·본인만 원본, 비친구는 서버에서 만든 흐린 썸네일만.
+"""회원 피드(인스타그램형). 프로필(/u/<닉네임>)로 접근. 로그인 회원은 모두 열람(차단 관계 제외), 게시는 프로 등급부터.
 저장소: R2_* 환경변수가 모두 있고 boto3 가 있으면 Cloudflare R2, 아니면 DB(Postgres bytea / SQLite BLOB)."""
-import io, os, time, logging
+import io, os, re, time, logging
 from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify, render_template, redirect, abort, Response, flash
 import members as M
@@ -13,14 +13,16 @@ _ok = [False]
 MAX_IMG, MAX_BYTES, MAX_CAP, DAY_LIMIT = 5, 10 * 1024 * 1024, 500, 10
 FULL, THUMB, BLUR = 1440, 400, 40
 # 업로드 권한(운영자 결정용): 최소 등급 index(0=아마추어=전원), VIP 전용 여부
-POST_MIN_TIER = int(os.environ.get("FEED_MIN_TIER", "0") or 0)
+POST_MIN_TIER = int(os.environ.get("FEED_MIN_TIER", "2") or 0)  # 2=프로
 POST_VIP_ONLY = os.environ.get("FEED_VIP_ONLY") == "1"
-LOCKED = "친구가 되면 볼 수 있어요"
+LOCKED = "볼 수 없는 게시물이에요."
 
 SCHEMA = """CREATE TABLE IF NOT EXISTS feed_post(id {pk}, member_id BIGINT NOT NULL, body TEXT NOT NULL DEFAULT '', n INTEGER NOT NULL DEFAULT 0, ts BIGINT NOT NULL, hidden INTEGER NOT NULL DEFAULT 0, del_reason TEXT, likes INTEGER NOT NULL DEFAULT 0);
 CREATE INDEX IF NOT EXISTS feed_post_m ON feed_post(member_id,id);
 CREATE TABLE IF NOT EXISTS feed_img(post_id BIGINT NOT NULL, idx INTEGER NOT NULL, kind TEXT NOT NULL, mime TEXT NOT NULL, data {blob}, r2key TEXT, PRIMARY KEY(post_id,idx,kind));
 CREATE TABLE IF NOT EXISTS feed_like(post_id BIGINT NOT NULL, member_id BIGINT NOT NULL, PRIMARY KEY(post_id,member_id));
+CREATE TABLE IF NOT EXISTS feed_cmt(id {pk}, post_id BIGINT NOT NULL, member_id BIGINT NOT NULL, body TEXT NOT NULL, ts BIGINT NOT NULL, hidden INTEGER NOT NULL DEFAULT 0);
+CREATE INDEX IF NOT EXISTS feed_cmt_p ON feed_cmt(post_id,id);
 CREATE TABLE IF NOT EXISTS feed_report(id {pk}, ts TEXT NOT NULL, reporter BIGINT NOT NULL, post_id BIGINT NOT NULL, reason TEXT, status TEXT NOT NULL DEFAULT 'open')"""
 
 
@@ -31,10 +33,11 @@ def init_db():
         pk = "BIGSERIAL PRIMARY KEY" if M.PG else "INTEGER PRIMARY KEY AUTOINCREMENT"
         for s in SCHEMA.format(pk=pk, blob="BYTEA" if M.PG else "BLOB").split(";"):
             q(s, fetch=False)
-        try:
-            q("ALTER TABLE members ADD COLUMN feed_until TEXT", fetch=False)
-        except Exception:
-            pass
+        for a in ("ALTER TABLE members ADD COLUMN feed_until TEXT", "ALTER TABLE feed_report ADD COLUMN cmt_id BIGINT", "ALTER TABLE feed_post ADD COLUMN ncmt INTEGER NOT NULL DEFAULT 0"):
+            try:
+                q(a, fetch=False)
+            except Exception:
+                pass
         _ok[0] = True
         log.info("feed storage: %s", storage_desc())
     except Exception:
@@ -150,10 +153,32 @@ def _ago(ts):
     return datetime.fromtimestamp(ts, KST).strftime("%Y.%m.%d")
 
 
+CMT_MAX = 300
+
+
 def _counts(mid):
     np = q("SELECT COUNT(*) FROM feed_post WHERE member_id=? AND hidden=0", (mid,), one=True)[0]
-    nf = q("SELECT COUNT(*) FROM friend WHERE (a=? OR b=?) AND status='ok'", (mid, mid), one=True)[0]
-    return int(np), int(nf)
+    return int(np), S.follow_counts(mid)
+
+
+def can_post(mid):
+    """(가능 여부, 포인트, 프로까지 필요 점수, 진행률%)."""
+    import levels, vip
+    pts = levels.many([mid]).get(mid, 0)
+    goal = levels.TIERS[min(POST_MIN_TIER, len(levels.TIERS) - 1)][1]
+    ok = levels.tier_of(pts) >= POST_MIN_TIER and not (POST_VIP_ONLY and not vip.many([mid]).get(mid, {}).get("vip"))
+    return ok, pts, max(0, goal - pts), min(100, int(pts * 100 / goal)) if goal else 100
+
+
+def _cmts(pid, me, owner):
+    rows = q("SELECT id,member_id,body,ts FROM feed_cmt WHERE post_id=? AND hidden=0 ORDER BY id DESC LIMIT 200", (pid,))[::-1]
+    ids = list({r[1] for r in rows})
+    cards = {}
+    if ids:
+        ph = ",".join("?" * len(ids))
+        cards = {c["id"]: c for c in S._cards(q(f"SELECT id,nick,0 FROM members WHERE id IN ({ph})", ids))}
+    return [{"id": r[0], "body": r[2], "ago": _ago(r[3]), "who": cards.get(r[1], {"id": r[1], "nick": "회원", "lv": None, "vip": 0}),
+             "del": r[1] == me or owner == me, "mine": r[1] == me} for r in rows]
 
 
 def _need():
@@ -178,8 +203,11 @@ def profile(nick):
     S.touch(m["id"])
     card = S._cards([(r[0], r[1], r[3])])[0]
     rel = "self" if r[0] == m["id"] else S._rel(m["id"], r[0])
-    np, nf = _counts(r[0])
-    return render_template("feed.html", missing=False, page="feed", p=card, rel=rel, np=np, nf=nf, can=_can_see(m["id"], r[0]),
+    np, (ners, ning) = _counts(r[0])
+    cp = can_post(m["id"]) if rel == "self" else (True, 0, 0, 100)
+    import levels
+    return render_template("feed.html", missing=False, page="feed", p=card, rel=rel, np=np, ners=ners, ning=ning, can=_can_see(m["id"], r[0]),
+                           cp=cp, goal_name=levels.TIERS[POST_MIN_TIER][0], goal_pts=levels.TIERS[POST_MIN_TIER][1],
                            on=1 if (S.online(r[0]) and not r[3] and rel == "friend") else 0, maxcap=MAX_CAP, maxn=MAX_IMG,
                            ban=_feed_banned(m["id"]) if rel == "self" else None, pid=request.args.get("p", type=int) or 0)
 
@@ -212,7 +240,7 @@ def post(pid):
         return jsonify({"ok": False, "error": LOCKED}), 403
     liked = q("SELECT 1 FROM feed_like WHERE post_id=? AND member_id=?", (pid, m["id"]), one=True) is not None
     card = S._cards([(p[1], (q("SELECT nick FROM members WHERE id=?", (p[1],), one=True) or ("?",))[0], 0)])[0]
-    return jsonify({"ok": True, "p": {"id": p[0], "body": p[2], "imgs": [f"/feed/img/{p[0]}/{i}/o" for i in range(p[3])], "ago": _ago(p[4]),
+    return jsonify({"ok": True, "cmts": _cmts(pid, m["id"], p[1]), "p": {"id": p[0], "body": p[2], "imgs": [f"/feed/img/{p[0]}/{i}/o" for i in range(p[3])], "ago": _ago(p[4]),
                     "at": datetime.fromtimestamp(p[4], KST).strftime("%Y.%m.%d %H:%M"), "likes": p[5], "liked": liked, "mine": p[1] == m["id"], "who": card}})
 
 
@@ -242,10 +270,8 @@ def create():
     m = _need(); S._csrf()
     if _feed_banned(m["id"]):
         return jsonify({"ok": False, "error": "피드 이용이 제한된 상태예요."}), 403
-    if POST_MIN_TIER or POST_VIP_ONLY:
-        import levels, vip
-        if levels.tier_of(levels.many([m["id"]]).get(m["id"], 0)) < POST_MIN_TIER or (POST_VIP_ONLY and not vip.many([m["id"]]).get(m["id"], {}).get("vip")):
-            return jsonify({"ok": False, "error": "아직 게시물을 올릴 수 없는 등급이에요."}), 403
+    if not can_post(m["id"])[0]:
+        return jsonify({"ok": False, "error": "게시물은 프로 등급부터 올릴 수 있어요."}), 403
     n24 = q("SELECT COUNT(*) FROM feed_post WHERE member_id=? AND ts>?", (m["id"], int(time.time()) - 86400), one=True)[0]
     if n24 >= DAY_LIMIT:
         return jsonify({"ok": False, "error": f"게시물은 하루 {DAY_LIMIT}개까지 올릴 수 있어요."}), 429
@@ -306,6 +332,24 @@ def act(pid, act):
         n = q("SELECT COUNT(*) FROM feed_like WHERE post_id=?", (pid,), one=True)[0]
         q("UPDATE feed_post SET likes=? WHERE id=?", (n, pid), fetch=False)
         return jsonify({"ok": True, "liked": on, "likes": n})
+    if act == "cmt":
+        if _feed_banned(m["id"]):
+            return jsonify({"ok": False, "error": "피드 이용이 제한된 상태예요."}), 403
+        body = re.sub(r"\s+", " ", ((request.get_json(silent=True) or {}).get("body") or "")).strip()
+        if not body:
+            return jsonify({"ok": False, "error": "댓글을 입력해 주세요."}), 400
+        if len(body) > CMT_MAX:
+            return jsonify({"ok": False, "error": f"댓글은 {CMT_MAX}자까지 쓸 수 있어요."}), 400
+        if M.limited("fc:" + str(m["id"]), 10, 60) or M.limited("fcd:" + str(m["id"]), 200, 86400):
+            return jsonify({"ok": False, "error": "댓글을 너무 빨리 쓰고 있어요. 잠시 후 다시 해 주세요."}), 429
+        bad, _ = S.check_dm(body)
+        if bad:
+            return jsonify({"ok": False, "error": bad}), 400
+        q("INSERT INTO feed_cmt(post_id,member_id,body,ts) VALUES(?,?,?,?)", (pid, m["id"], body, int(time.time())), fetch=False)
+        q("UPDATE feed_post SET ncmt=(SELECT COUNT(*) FROM feed_cmt WHERE post_id=? AND hidden=0) WHERE id=?", (pid, pid), fetch=False)
+        if p[0] != m["id"]:
+            S.notify(p[0], "cmt", m["id"], f"{pid}|{body[:60]}")
+        return jsonify({"ok": True, "cmts": _cmts(pid, m["id"], p[0])})
     if act == "report":
         if p[0] == m["id"]:
             return jsonify({"ok": False, "error": "내 게시물이에요."}), 400
@@ -313,6 +357,28 @@ def act(pid, act):
             return jsonify({"ok": True})
         why = ((request.get_json(silent=True) or {}).get("reason") or "")[:100]
         q("INSERT INTO feed_report(ts,reporter,post_id,reason) VALUES(?,?,?,?)", (M.now_s(), m["id"], pid, why), fetch=False)
+        return jsonify({"ok": True})
+    abort(404)
+
+
+@bp.post("/api/feed/cmt/<int:cid>/<act>")
+def cmt_act(cid, act):
+    m = _need(); S._csrf()
+    c = q("SELECT c.post_id,c.member_id,p.member_id FROM feed_cmt c JOIN feed_post p ON p.id=c.post_id WHERE c.id=? AND c.hidden=0 AND p.hidden=0", (cid,), one=True)
+    if not c or not _can_see(m["id"], c[2]):
+        return jsonify({"ok": False, "error": "댓글이 없어요."}), 404
+    if act == "del":
+        if m["id"] not in (c[1], c[2]):
+            abort(403)
+        q("UPDATE feed_cmt SET hidden=? WHERE id=?", (2 if m["id"] == c[1] else 3, cid), fetch=False)
+        q("UPDATE feed_post SET ncmt=(SELECT COUNT(*) FROM feed_cmt WHERE post_id=? AND hidden=0) WHERE id=?", (c[0], c[0]), fetch=False)
+        return jsonify({"ok": True, "cmts": _cmts(c[0], m["id"], c[2])})
+    if act == "report":
+        if c[1] == m["id"]:
+            return jsonify({"ok": False, "error": "내 댓글이에요."}), 400
+        if not q("SELECT 1 FROM feed_report WHERE cmt_id=? AND reporter=? AND status='open'", (cid, m["id"]), one=True):
+            why = ((request.get_json(silent=True) or {}).get("reason") or "")[:100]
+            q("INSERT INTO feed_report(ts,reporter,post_id,reason,cmt_id) VALUES(?,?,?,?,?)", (M.now_s(), m["id"], c[0], why, cid), fetch=False)
         return jsonify({"ok": True})
     abort(404)
 
@@ -352,11 +418,14 @@ def adm_view(pid):
     r = q("SELECT p.id,p.member_id,m.nick,p.body,p.n,p.ts,p.likes,p.hidden,p.del_reason,m.feed_until,m.status FROM feed_post p JOIN members m ON m.id=p.member_id WHERE p.id=?", (pid,), one=True)
     if not r:
         abort(404)
-    reps = q("SELECT id,ts,reporter,reason,status FROM feed_report WHERE post_id=? ORDER BY id DESC", (pid,))
-    nk = S._nicks([x[2] for x in reps])
+    reps = q("SELECT id,ts,reporter,reason,status,cmt_id FROM feed_report WHERE post_id=? ORDER BY id DESC", (pid,))
+    cm = q("SELECT id,member_id,body,ts,hidden FROM feed_cmt WHERE post_id=? ORDER BY id", (pid,))
+    nk = S._nicks([x[2] for x in reps] + [x[1] for x in cm])
+    rc = {x[5] for x in reps if x[5] and x[4] == "open"}
     p = {"id": r[0], "mid": r[1], "nick": r[2], "body": r[3], "n": r[4], "at": datetime.fromtimestamp(r[5], KST).strftime("%Y-%m-%d %H:%M"), "likes": r[6],
          "hid": r[7], "why": r[8], "fu": r[9], "st": r[10], "np": _counts(r[1])[0],
-         "reps": [{"id": x[0], "ts": x[1][5:16], "who": nk.get(x[2], ("?",))[0], "reason": x[3] or "-", "st": x[4]} for x in reps]}
+         "reps": [{"id": x[0], "ts": x[1][5:16], "who": nk.get(x[2], ("?",))[0], "reason": (("[댓글] " if x[5] else "") + (x[3] or "-")), "st": x[4]} for x in reps],
+         "cmts": [{"id": x[0], "mid": x[1], "who": nk.get(x[1], ("?",))[0], "body": x[2], "ts": datetime.fromtimestamp(x[3], KST).strftime("%m-%d %H:%M"), "hid": x[4], "rep": x[0] in rc} for x in cm]}
     S.alog("feed view", pid)
     return render_template("_feed_panel.html", p=p)
 
@@ -383,6 +452,13 @@ def adm_act():
         q("UPDATE feed_post SET hidden=1, del_reason=? WHERE id=?", (why, pid), fetch=False)
         q("UPDATE feed_report SET status='done' WHERE post_id=?", (pid,), fetch=False)
         S.alog(f"feed post delete #{pid}: {why}", mid); msg = "게시물을 삭제했어요."
+    elif a == "cdel":
+        cid = request.form.get("cid", type=int)
+        q("UPDATE feed_cmt SET hidden=1 WHERE id=?", (cid,), fetch=False)
+        q("UPDATE feed_report SET status='done' WHERE cmt_id=?", (cid,), fetch=False)
+        if pid:
+            q("UPDATE feed_post SET ncmt=(SELECT COUNT(*) FROM feed_cmt WHERE post_id=? AND hidden=0) WHERE id=?", (pid, pid), fetch=False)
+        S.alog(f"feed comment delete #{cid} (post #{pid}): {why}", mid); msg = "댓글을 삭제했어요."
     elif a == "report_done" and pid:
         q("UPDATE feed_report SET status='done' WHERE post_id=?", (pid,), fetch=False)
         S.alog(f"feed reports done #{pid}", mid); msg = "신고를 처리 완료로 표시했어요."

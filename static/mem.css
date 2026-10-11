@@ -291,3 +291,7 @@ body.adm .side .nb{margin-left:6px;background:#e8620c;color:#fff;border-radius:9
 .fdlog{padding:14px 16px;overflow:auto}.fdimgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}.fdimgs img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block;background:#eef1f6}
 .fdcap{white-space:pre-wrap;word-break:break-word;font-size:14.5px;line-height:1.6;margin:12px 0 0;padding:12px 14px;background:#f6f8fc;border:1px solid #e3e8f1;border-radius:12px}
 .fdh{margin:16px 0 8px;font-size:14px}.fdrep{display:flex;gap:8px;align-items:center;font-size:13.5px;padding:8px 0;border-bottom:1px solid #eef1f6}.fdrep span:nth-child(3){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fdrep time{color:#9aa3b5;font-size:12px}
+.fdcm{display:flex;gap:8px;align-items:baseline;font-size:13.5px;padding:8px 0;border-bottom:1px solid #eef1f6}.fdcm b{flex:none}.fdcm>span:nth-of-type(1){flex:1;min-width:0;word-break:break-word}.fdcm time{flex:none;color:#9aa3b5;font-size:12px}
+.fdcm.rep{background:#fff6ef;box-shadow:inset 3px 0 0 #ff8a3d;padding-left:8px}.fdcm.hid{opacity:.55}.fdcm .pill{flex:none}
+.fdcdel button{height:auto!important;min-height:0;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;color:#9aa3b5!important;font-size:12px!important;font-weight:600!important;cursor:pointer}.fdcdel button:hover{color:#e53935!important}
+.fdno{color:#9aa3b5;font-size:13px;margin:4px 0}

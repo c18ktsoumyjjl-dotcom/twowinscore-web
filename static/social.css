@@ -54,3 +54,5 @@ body.mapp #twnt{left:12px;right:12px;bottom:auto;top:calc(env(safe-area-inset-to
 .dmb{display:flex;align-items:flex-end;gap:5px}
 .rd1{font-style:normal;font-size:11px;font-weight:800;color:#ff7a1a;line-height:1;margin-bottom:3px}.rd1[hidden]{display:none}
 a.soc-sm{display:inline-block;text-decoration:none;line-height:normal}.soc-l li>span{display:flex;flex-wrap:nowrap;align-items:center;flex:none}
+.soc-hint{margin:0 0 10px;font-size:13px;color:var(--mu)}
+.sb[hidden]{display:none!important}.soc-l li{flex-wrap:wrap;row-gap:8px}.soc-l li>span{margin-left:auto;gap:0}.soc-l li .soc-who{flex:1 1 auto;min-width:0}

@@ -1,9 +1,9 @@
-{% extends "base.html" %}{% block title %}친구 · 대화 | 투윈스코어{% endblock %}{% block robots %}noindex,nofollow{% endblock %}{% block head %}<meta name="robots" content="noindex"><link rel="stylesheet" href="/static/social.css?v=5">{% endblock %}
+{% extends "base.html" %}{% block title %}팔로우 · 대화 | 투윈스코어{% endblock %}{% block robots %}noindex,nofollow{% endblock %}{% block head %}<meta name="robots" content="noindex"><link rel="stylesheet" href="/static/social.css?v=7">{% endblock %}
 {% block body %}<div class="soc" id="soc" data-tab="{{tab}}" data-peer="{{peer}}">
-<div class="soc-top"><h1>친구 · 대화</h1><label class="soc-hide"><input type="checkbox" id="socHide" {{'checked' if hide}}> 접속 상태 숨기기</label></div>
-<div class="soc-tabs" role="tablist"><button data-t="friends">친구</button><button data-t="req">요청 <i class="sb" id="sbReq" hidden></i></button><button data-t="dm">대화 <i class="sb" id="sbDm" hidden></i></button><button data-t="find">회원검색</button><button data-t="noti">알림 <i class="sb" id="sbNt" hidden></i></button></div>
-<section class="soc-p" data-p="friends"><ul class="soc-l" id="lFriends"></ul></section>
-<section class="soc-p" data-p="req"><h3>받은 요청</h3><ul class="soc-l" id="lRecv"></ul><h3>보낸 요청</h3><ul class="soc-l" id="lSent"></ul><h3>차단한 회원</h3><ul class="soc-l" id="lBlk"></ul></section>
+<div class="soc-top"><h1>팔로우 · 대화</h1><label class="soc-hide"><input type="checkbox" id="socHide" {{'checked' if hide}}> 접속 상태 숨기기</label></div>
+<div class="soc-tabs" role="tablist"><button data-t="friends">팔로잉</button><button data-t="req">팔로워 <i class="sb" id="sbReq" hidden></i></button><button data-t="dm">대화 <i class="sb" id="sbDm" hidden></i></button><button data-t="noti">알림 <i class="sb" id="sbNt" hidden></i></button><button data-t="find">회원검색</button></div>
+<section class="soc-p" data-p="friends"><p class="soc-hint">서로 팔로우(맞팔)하면 1:1 대화를 할 수 있고 접속 상태가 보여요.</p><ul class="soc-l" id="lFriends"></ul></section>
+<section class="soc-p" data-p="req"><ul class="soc-l" id="lFollowers"></ul><h3>차단한 회원</h3><ul class="soc-l" id="lBlk"></ul></section>
 <section class="soc-p" data-p="dm"><ul class="soc-l" id="lConv"></ul></section>
 <section class="soc-p" data-p="noti"><div class="soc-nh"><button type="button" class="soc-sm" id="nAll">모두 읽음</button></div><ul class="soc-l soc-nl" id="lNoti"></ul></section>
 <section class="soc-p" data-p="find"><form id="fFind" class="soc-find"><input id="qFind" maxlength="12" placeholder="닉네임으로 검색" autocomplete="off"><button>검색</button></form><ul class="soc-l" id="lFind"></ul></section>
@@ -11,4 +11,4 @@
 <p class="soc-notice">{{notice}}</p><div class="soc-msgs" id="rMsgs"></div>
 <form class="soc-in" id="rForm"><input id="rText" maxlength="300" placeholder="메시지 입력 (연락처·메신저 아이디 공유 금지)" autocomplete="off"><button>보내기</button></form><p class="soc-err" id="rErr" hidden></p></section>
 <p class="soc-foot">{{notice}} 연락처·메신저 아이디·링크 공유와 홍보는 금지되며 위반 시 이용이 제한될 수 있어요.</p>
-</div><script src="/static/social.js?v=5"></script>{% endblock %}
+</div><script src="/static/social.js?v=6"></script>{% endblock %}

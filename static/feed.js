@@ -12,17 +12,27 @@ async function load(reset){if(loading)return;loading=true;const j=await api(`/ap
  $('fdEmpty').hidden=!!(G.children.length)}
 load(true);
 const io='IntersectionObserver' in window?new IntersectionObserver(es=>{if(es[0].isIntersecting&&more)load()}):null;if(io)io.observe($('fdEmpty'));
-// 친구추가/수락
-R.addEventListener('click',async e=>{const b=e.target.closest('[data-fa]');if(!b)return;b.disabled=true;const j=await post('/api/social/friend',{act:b.dataset.fa,id:mid});
- if(j.ok){if(j.rel==='friend')location.reload();else R.querySelectorAll('[data-fa]').forEach(x=>{x.outerHTML='<span class="fd-b ghost">친구 요청함</span>'})}else{b.disabled=false;alert(j.error||'요청을 처리할 수 없어요.')}});
+// 팔로우
+const BT={friend:['맞팔로우 ✓','unfollow',''],sent:['팔로잉 ✓','unfollow',''],recv:['맞팔로우','follow','pri'],none:['팔로우','follow','pri']};
+async function fol(b,id,act){if(act==='unfollow'&&!confirm('팔로우를 취소할까요?'))return null;b.disabled=true;const j=await post('/api/social/friend',{act,id});b.disabled=false;if(!j.ok){alert(j.error||'요청을 처리할 수 없어요.');return null}return j}
+R.addEventListener('click',async e=>{const b=e.target.closest('[data-fa]');if(b){const j=await fol(b,mid,b.dataset.fa);if(j)location.reload();return}
+ const l=e.target.closest('[data-fl]');if(l)openList(l.dataset.fl)});
+const L=$('fdList');
+async function openList(k){$('flTitle').textContent=k==='followers'?'팔로워':'팔로잉';$('flList').innerHTML='<li class="fd-fe">불러오는 중…</li>';L.hidden=false;D.documentElement.classList.add('fd-lockscroll');
+ const j=await api('/api/social/friends?id='+mid);if(!j.ok){$('flList').innerHTML='<li class="fd-fe">불러오지 못했어요.</li>';return}const a=j[k]||[];
+ $('flList').innerHTML=a.map(c=>`<li><a href="/u/${encodeURIComponent(c.nick)}" class="fd-fw">${whoS(c)}</a>${c.rel==='self'?'':`<button type="button" class="fd-b ${BT[c.rel][2]}" data-fid="${c.id}" data-act="${BT[c.rel][1]}">${BT[c.rel][0]}</button>`}</li>`).join('')||`<li class="fd-fe">${k==='followers'?'아직 팔로워가 없어요.':'아직 팔로우한 회원이 없어요.'}</li>`}
+L.addEventListener('click',async e=>{if(e.target.closest('[data-x]')){L.hidden=true;D.documentElement.classList.remove('fd-lockscroll');return}const b=e.target.closest('[data-fid]');if(!b)return;
+ const j=await fol(b,+b.dataset.fid,b.dataset.act);if(j){const t=BT[j.rel]||BT.none;b.textContent=t[0];b.dataset.act=t[1];b.className='fd-b '+t[2]}});
 // 게시물 보기
 const V=$('fdView');let cur=null;
+const whoS=w=>`${w.lv&&/^[0-4]$/.test(String(w.lv[2]))?`<img src="/static/tiers/t${w.lv[2]}_32.webp?v=1" width="18" height="18" alt="">`:''}<b class="${w.vip?'vipn':''}">${esc(w.nick)}</b>${w.vip?'<img src="/static/vip/vip_gem_32.webp?v=1" width="15" height="15" alt="VIP">':''}`;
 function who(w){const lv=w.lv&&/^[0-4]$/.test(String(w.lv[2]))?`<img src="/static/tiers/t${w.lv[2]}_32.webp?v=1" width="18" height="18" alt="">`:'';return `${lv}<b class="${w.vip?'vipn':''}">${esc(w.nick)}</b>${w.vip?'<img src="/static/vip/vip_gem_32.webp?v=1" width="15" height="15" alt="VIP">':''}`}
 function car(imgs){if(!imgs.length)return '';return `<div class="fd-sl" tabindex="0">${imgs.map((u,i)=>`<div class="fd-s1"><img src="${esc(u)}" alt="사진 ${i+1}" ${i?'loading="lazy"':''}></div>`).join('')}</div>${imgs.length>1?`<button type="button" class="fd-nav p" aria-label="이전">‹</button><button type="button" class="fd-nav n" aria-label="다음">›</button><div class="fd-dots">${imgs.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>`:''}`}
+function cmts(a){$('pvCmts').innerHTML=a.map(c=>`<li data-cid="${c.id}"><a class="fd-cw" href="/u/${encodeURIComponent(c.who.nick)}">${whoS(c.who)}</a><span class="fd-ct">${esc(c.body)}</span><span class="fd-cm"><time>${esc(c.ago)}</time>${c.del?'<button type="button" data-ca="del">삭제</button>':''}${c.mine?'':'<button type="button" data-ca="report">신고</button>'}</span></li>`).join('')||'<li class="fd-ce">첫 댓글을 남겨 보세요.</li>'}
 async function openPost(id,push){const j=await api('/api/feed/post/'+id);if(!j.ok){alert(j.error||'볼 수 없는 게시물이에요.');return}const p=j.p;cur=p;
  const c=$('pvCar');c.innerHTML=car(p.imgs);c.classList.toggle('txt',!p.imgs.length);if(!p.imgs.length)c.innerHTML=`<div class="fd-tbig"><p>${esc(p.body)}</p></div>`;
  $('pvWho').innerHTML=who(p.who);$('pvWho2').innerHTML=who(p.who);
- $('pvCap').innerHTML=p.imgs.length&&p.body?`<p><b>${esc(p.who.nick)}</b> ${esc(p.body)}</p>`:'';
+ $('pvCap').innerHTML=(p.imgs.length&&p.body?`<p class="fd-cp"><b>${esc(p.who.nick)}</b> ${esc(p.body)}</p>`:'')+'<ul class="fd-cl" id="pvCmts"></ul>';cmts(j.cmts||[]);$('pvCErr').hidden=true;
  $('pvLikes').textContent='좋아요 '+p.likes+'개';$('pvLike').classList.toggle('on',p.liked);$('pvAt').textContent=p.ago;$('pvAt').title=p.at;
  $('pvMenu').innerHTML=$('pvMenu2').innerHTML=p.mine?'<button type="button" class="fd-sm" data-pa="del">삭제</button>':'<button type="button" class="fd-sm" data-pa="report">신고</button>';
  V.hidden=false;D.documentElement.classList.add('fd-lockscroll');if(push!==false)history.replaceState(history.state,'',location.pathname+'?p='+id);
@@ -30,16 +40,20 @@ async function openPost(id,push){const j=await api('/api/feed/post/'+id);if(!j.o
 function closeV(){V.hidden=true;cur=null;D.documentElement.classList.remove('fd-lockscroll');history.replaceState(history.state,'',location.pathname)}
 G.addEventListener('click',e=>{const t=e.target.closest('[data-p]');if(t)openPost(+t.dataset.p)});
 V.addEventListener('click',async e=>{if(e.target.closest('[data-x]')){closeV();return}
+ const ca=e.target.closest('[data-ca]');if(ca&&cur){const cid=ca.closest('[data-cid]').dataset.cid;if(ca.dataset.ca==='del'){if(!confirm('댓글을 삭제할까요?'))return;const j=await post(`/api/feed/cmt/${cid}/del`);if(j.ok)cmts(j.cmts);else alert(j.error||'')}else{const r=prompt('신고 사유를 적어 주세요 (선택)','');if(r===null)return;const j=await post(`/api/feed/cmt/${cid}/report`,{reason:r});alert(j.ok?'신고했어요. 운영자가 확인할게요.':(j.error||''))}return}
  const nv=e.target.closest('.fd-nav');if(nv){const sl=V.querySelector('.fd-sl');sl.scrollBy({left:(nv.classList.contains('n')?1:-1)*sl.clientWidth,behavior:'smooth'});return}
  if(e.target.closest('#pvLike')&&cur){const j=await post(`/api/feed/post/${cur.id}/like`);if(j.ok){$('pvLike').classList.toggle('on',j.liked);$('pvLikes').textContent='좋아요 '+j.likes+'개'}else alert(j.error||'');return}
  const a=e.target.closest('[data-pa]');if(a&&cur){if(a.dataset.pa==='del'){if(!confirm('이 게시물을 삭제할까요?'))return;const j=await post(`/api/feed/post/${cur.id}/del`);if(j.ok){closeV();location.reload()}else alert(j.error||'')}
   else{const r=prompt('신고 사유를 적어 주세요 (선택)','');if(r===null)return;const j=await post(`/api/feed/post/${cur.id}/report`,{reason:r});alert(j.ok?'신고했어요. 운영자가 확인할게요.':(j.error||''))}}});
-D.addEventListener('keydown',function k(e){if(!D.body.contains(R)){D.removeEventListener('keydown',k);return}if(e.key==='Escape'){if(!V.hidden)closeV();if(!U.hidden)closeU()}});
+$('pvCForm').onsubmit=async e=>{e.preventDefault();if(!cur)return;const t=$('pvCText'),v=t.value.trim();if(!v)return;$('pvCGo').disabled=true;const j=await post(`/api/feed/post/${cur.id}/cmt`,{body:v});$('pvCGo').disabled=false;
+ if(j.ok){t.value='';$('pvCErr').hidden=true;cmts(j.cmts);const ul=$('pvCmts');ul.lastElementChild&&ul.lastElementChild.scrollIntoView({block:'nearest'})}else{$('pvCErr').textContent=j.error||'댓글을 남기지 못했어요.';$('pvCErr').hidden=false}};
+D.addEventListener('keydown',function k(e){if(!D.body.contains(R)){D.removeEventListener('keydown',k);return}if(e.key==='Escape'){if(!V.hidden)closeV();if(U&&!U.hidden)closeU();[L,TS].forEach(x=>{if(x&&!x.hidden){x.hidden=true;D.documentElement.classList.remove('fd-lockscroll')}})}});
 if(+R.dataset.pid&&see)openPost(+R.dataset.pid,false);
 // 업로드
 const U=$('fdUp'),F=$('upFiles'),P=$('upPrev'),T=$('upText');let files=[];
 function closeU(){U.hidden=true;D.documentElement.classList.remove('fd-lockscroll')}
-const nb=$('fdNew');if(nb)nb.onclick=()=>{U.hidden=false;D.documentElement.classList.add('fd-lockscroll');$('upErr').textContent=''};
+const nb=$('fdNew'),TS=$('fdTier');if(nb)nb.onclick=()=>{if(nb.dataset.can!=='1'&&TS){TS.hidden=false;D.documentElement.classList.add('fd-lockscroll');return}U.hidden=false;D.documentElement.classList.add('fd-lockscroll');$('upErr').textContent=''};
+if(TS)TS.addEventListener('click',e=>{if(e.target.closest('[data-x]')){TS.hidden=true;D.documentElement.classList.remove('fd-lockscroll')}});
 U.addEventListener('click',e=>{if(e.target.closest('[data-x]'))closeU();const r=e.target.closest('[data-rm]');if(r){files.splice(+r.dataset.rm,1);prev()}});
 function prev(){P.innerHTML=files.map((f,i)=>`<div class="fd-pi"><img src="${f.u}" alt=""><button type="button" data-rm="${i}" aria-label="빼기">✕</button></div>`).join('');$('upPick').classList.toggle('full',files.length>=MAXN)}
 async function shrink(f){if(f.size<=1.5*1024*1024&&/jpe?g|png|webp/i.test(f.type))return f;try{const bm=await createImageBitmap(f);const s=Math.min(1,2048/Math.max(bm.width,bm.height));const cv=D.createElement('canvas');cv.width=Math.round(bm.width*s);cv.height=Math.round(bm.height*s);cv.getContext('2d').drawImage(bm,0,0,cv.width,cv.height);
