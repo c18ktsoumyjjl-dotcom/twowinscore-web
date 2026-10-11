@@ -564,3 +564,9 @@ body:not(.gm7c) .gm7ch{display:none}
  body.detail6:not(.mapp):not(.dcoff) main.wrap{margin-left:max(380px,calc(380px + (100vw - 380px - 1168px)/2))!important;margin-right:auto!important}
 }
 @media(min-width:1240px){body.chat-open:not(.mapp) .sbar{margin-left:380px!important;max-width:none!important}body.chat-open:not(.mapp) .sbar .wrap{margin-left:max(0px,calc((100vw - 380px - 1168px)/2))!important}}
+/* 기타 리그 */
+#other{margin-top:18px}
+.oth-h{display:flex;align-items:center;gap:8px;width:100%;padding:13px 16px;border-radius:12px;border:1px dashed rgba(160,172,196,.35);background:rgba(255,255,255,.03);color:inherit;font:inherit;font-weight:800;font-size:15px;cursor:pointer;margin:0 0 10px}
+.oth-h small{font-weight:600;opacity:.65;font-size:12.5px}.oth-h .oth-c{margin-left:auto;width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);transition:transform .2s;opacity:.7}
+.oth-h.on .oth-c{transform:rotate(-135deg)}.oth-h:hover{background:rgba(255,255,255,.06)}
+.light .oth-h,[data-theme=light] .oth-h{background:#fff;border-color:#c9cfdb;color:#1a2236}

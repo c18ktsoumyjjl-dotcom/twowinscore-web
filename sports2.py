@@ -62,13 +62,17 @@ def _period(kind, st, elapsed):
             "FT": "종료", "AOT": "연장 종료", "AP": "슛아웃 종료"}.get(st, st)
 
 
-def fetch_day(kind, day):
+def fetch_day(kind, day, other=None):
+    """other 리스트를 주면 화이트리스트 밖 경기(기타 리그)를 거기에 담아요(같은 API 호출, 추가 비용 없음)."""
     out = []
     if kind == "football":
         for raw in get(kind, "/fixtures", {"date": day.isoformat(), "timezone": "Asia/Seoul"}):
             lg = (raw.get("league") or {}).get("id")
+            olab = None
             if (kind, lg) not in LEAGUES:
-                continue
+                if other is None:
+                    continue
+                olab = other_label(raw)
             fx, t, goals = raw.get("fixture") or {}, raw.get("teams") or {}, raw.get("goals") or {}
             st = (fx.get("status") or {}).get("short") or ""
             sc = raw.get("score") or {}
@@ -91,12 +95,17 @@ def fetch_day(kind, day):
                     lines.append(["승부차기", pk["home"], pk["away"]])
             out.append(_mk(kind, lg, fx.get("id"), fx.get("date"), st, t, goals.get("home"), goals.get("away"),
                            _period(kind, st, (fx.get("status") or {}).get("elapsed")), lines, raw.get("league", {}).get("round"),
-                           (fx.get("status") or {}).get("long"), _fb_reason(raw)))
+                           (fx.get("status") or {}).get("long"), _fb_reason(raw), olab))
+            if olab:
+                other.append(out.pop())
     else:
         for raw in get(kind, "/games", {"date": day.isoformat(), "timezone": "Asia/Seoul"}):
             lg = (raw.get("league") or {}).get("id")
+            olab = None
             if (kind, lg) not in LEAGUES:
-                continue
+                if other is None:
+                    continue
+                olab = other_label(raw)
             st = (raw.get("status") or {}).get("short") or ""
             sc, per = raw.get("scores") or {}, raw.get("periods") or {}
             lines = []
@@ -109,8 +118,34 @@ def fetch_day(kind, day):
                     except ValueError:
                         pass
             out.append(_mk(kind, lg, raw.get("id"), raw.get("date"), st, raw.get("teams") or {}, sc.get("home"), sc.get("away"),
-                           _period(kind, st, None), lines, None, (raw.get("status") or {}).get("long"), None))
+                           _period(kind, st, None), lines, None, (raw.get("status") or {}).get("long"), None, olab))
+            if olab:
+                other.append(out.pop())
     return [g for g in out if g]
+
+
+COUNTRY_KO = {"England": "잉글랜드", "Spain": "스페인", "Italy": "이탈리아", "Germany": "독일", "France": "프랑스",
+              "Netherlands": "네덜란드", "Portugal": "포르투갈", "Belgium": "벨기에", "Scotland": "스코틀랜드", "Turkey": "튀르키예",
+              "Greece": "그리스", "Russia": "러시아", "Ukraine": "우크라이나", "Poland": "폴란드", "Czech-Republic": "체코",
+              "Austria": "오스트리아", "Switzerland": "스위스", "Denmark": "덴마크", "Sweden": "스웨덴", "Norway": "노르웨이",
+              "Finland": "핀란드", "Croatia": "크로아티아", "Serbia": "세르비아", "Romania": "루마니아", "Hungary": "헝가리",
+              "USA": "미국", "Canada": "캐나다", "Mexico": "멕시코", "Brazil": "브라질", "Argentina": "아르헨티나",
+              "Chile": "칠레", "Colombia": "콜롬비아", "Uruguay": "우루과이", "Peru": "페루", "Ecuador": "에콰도르",
+              "Japan": "일본", "China": "중국", "South-Korea": "한국", "Australia": "호주", "Saudi-Arabia": "사우디",
+              "Iran": "이란", "Qatar": "카타르", "UAE": "UAE", "India": "인도", "Indonesia": "인도네시아", "Thailand": "태국",
+              "Vietnam": "베트남", "Egypt": "이집트", "Morocco": "모로코", "Nigeria": "나이지리아", "Ghana": "가나",
+              "South-Africa": "남아공", "World": "국제", "Europe": "유럽", "Asia": "아시아", "Cuba": "쿠바",
+              "Israel": "이스라엘", "Slovakia": "슬로바키아", "Slovenia": "슬로베니아", "Bulgaria": "불가리아", "Ireland": "아일랜드",
+              "Wales": "웨일스", "Iceland": "아이슬란드", "Lithuania": "리투아니아", "Latvia": "라트비아", "Estonia": "에스토니아",
+              "Kazakhstan": "카자흐스탄", "Belarus": "벨라루스", "Paraguay": "파라과이", "Bolivia": "볼리비아", "Venezuela": "베네수엘라", "Albania": "알바니아", "Bosnia": "보스니아", "Cyprus": "키프로스", "Georgia": "조지아", "Armenia": "아르메니아", "Azerbaijan": "아제르바이잔", "Moldova": "몰도바", "North-Macedonia": "북마케도니아", "Montenegro": "몬테네그로", "Kosovo": "코소보", "Luxembourg": "룩셈부르크", "Malta": "몰타", "Algeria": "알제리", "Tunisia": "튀니지", "Kenya": "케냐", "Costa-Rica": "코스타리카", "Honduras": "온두라스", "Guatemala": "과테말라", "Puerto-Rico": "푸에르토리코", "Philippines": "필리핀", "Malaysia": "말레이시아", "Singapore": "싱가포르", "Taiwan": "대만", "Hong-Kong": "홍콩", "New-Zealand": "뉴질랜드"}
+
+
+def other_label(raw):
+    lg = raw.get("league") or {}
+    c = lg.get("country") if isinstance(lg.get("country"), str) else ((raw.get("country") or {}).get("name") or "")
+    c = COUNTRY_KO.get(c, c or "")
+    n = lg.get("name") or "기타"
+    return (c + " " + n).strip()[:60]
 
 
 def _fb_reason(raw):
@@ -122,7 +157,7 @@ def _fb_reason(raw):
     return None
 
 
-def _mk(kind, lg, gid, date, st, t, hs, as_, period, lines, rnd, slong=None, reason=None):
+def _mk(kind, lg, gid, date, st, t, hs, as_, period, lines, rnd, slong=None, reason=None, olab=None):
     try:
         start = datetime.fromisoformat(str(date).replace("Z", "+00:00")).astimezone(SEOUL)
     except Exception:
@@ -134,7 +169,7 @@ def _mk(kind, lg, gid, date, st, t, hs, as_, period, lines, rnd, slong=None, rea
     return {"home_en": hen, "away_en": aen,"key": f"{kind}:{lg}:{gid}", "id": gid, "kind": kind, "league": lg, "start": start.isoformat(), "status": st,
             "home": hn, "away": an, "home_id": h.get("id"), "away_id": a.get("id"),
             "home_logo": h.get("logo"), "away_logo": a.get("logo"), "home_score": hs, "away_score": as_,
-            "period": period, "lines": lines, "label": LEAGUES[(kind, lg)], "round": rnd,
+            "period": period, "lines": lines, "label": olab or LEAGUES[(kind, lg)], "round": rnd, **({"other": 1} if olab else {}),
             "status_long": slong, "halt_reason": reason}
 
 

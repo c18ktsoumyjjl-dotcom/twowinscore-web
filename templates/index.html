@@ -58,6 +58,25 @@ function mtm(t,s){const lg=t.logo?`<img src="${esc(t.logo)}" alt="" loading="laz
 function mrow(g,sc,ch,lead,on,op){const st=g.halt?`<b class="hl">⏸ ${esc(g.halt)}</b>${g.reason?`<small class="hr">${esc(g.reason)}</small>`:''}`:g.state==='live'?`<i class="pd"></i><b>${esc(g.badge)}</b>`:g.state==='scheduled'?`<b class="tt">${esc(g.time)}</b>`:`<span>${esc(g.badge)}</span>`;
  const mid=sc?`<b class="${lead==='L'?'w':''}">${g.L.score}</b><em>:</em><b class="${lead==='R'?'w':''}">${g.R.score}</b>`:`<span class="vs">${g.state==='scheduled'?'VS':esc(g.badge)}</span>`;
  return `<div class="mr ${g.state} ${ch?'flash':''} ${op?'op':''}" role="button" tabindex="0" data-k="${esc(g.key)}"><div class="ms">${st}${g.sub&&g.state==='scheduled'?`<small>${esc(g.sub)}</small>`:''}</div>${mtm(g.L,'L')}<div class="mc">${mid}</div>${mtm(g.R,'R')}<button class="mst ${on?'on':''}" data-g="${esc(g.key)}" onclick="toggleGame(this.dataset.g,event)" aria-label="즐겨찾기">${on?'★':'☆'}</button></div><div class="pv6 ${op?'open':''}" data-k="${esc(g.key)}"><div class="pvin">${PV[g.key]||'<p class="empty">불러오는 중…</p>'}</div></div>`}
+/* 기타 리그: 접힌 상태 기본, 펼칠 때만 /api/games/other 로 불러와요 */
+const OK={'축구':'football','야구':'baseball','농구':'basketball','배구':'volleyball','아이스하키':'hockey'};let OTH=null,OTT=0,OTL=false;
+function oOpen(){return localStorage.getItem('tw_oth')==='1'}
+async function oLoad(){if(OTL)return;OTL=true;try{const r=await fetch('/api/games/other?d='+D,{cache:'no-store'});OTH=(await r.json()).games||[];OTT=Date.now()}catch(e){OTH=OTH||[]}OTL=false;oRender()}
+function oRender(){const LS=document.getElementById('list');if(!LS||!DATA)return;let el=document.getElementById('other');if(!el||el.parentNode!==LS){if(el)el.remove();el=document.createElement('div');el.id='other';LS.appendChild(el)}const q=Q.trim().toLowerCase(),m=MOB.matches;
+ if(F!=='all'){el.innerHTML='';return}
+ const kn=OK[SP],on=DATA.other_n||{},n=SP==='전체'?Object.values(on).reduce((a,b)=>a+b,0):(on[kn]||0);
+ if(!n&&!(OTH&&OTH.length)){el.innerHTML='';return}
+ const op=oOpen();if(op&&(!OTH||Date.now()-OTT>60000))oLoad();
+ let h=`<button class="oth-h ${op?'on':''}" type="button" aria-expanded="${op}"><span>기타 리그</span><small>${n}경기</small><i class="oth-c"></i></button>`;
+ if(op){if(!OTH)h+='<p class="empty">불러오는 중…</p>';else{let v=OTH.filter(g=>SP==='전체'||g.kind===kn);if(q)v=v.filter(g=>(g.L.name+' '+g.R.name+' '+g.league).toLowerCase().includes(q));
+  const sr={live:0,scheduled:1};const L=new Map();v.forEach(g=>{if(!L.has(g.league))L.set(g.league,[]);L.get(g.league).push(g)});
+  const lk=[...L.entries()].map(([l,x])=>({l,x,lv:x.filter(g=>g.state==='live').length}));lk.sort((a,b)=>(b.lv>0)-(a.lv>0)||a.x[0].kind.localeCompare(b.x[0].kind)||a.l.localeCompare(b.l,'ko'));
+  for(const {l,x,lv} of lk){x.sort((a,b)=>(sr[a.state]??2)-(sr[b.state]??2)||a.ts-b.ts);
+   h+=m?`<section class="msec"><h2 class="mlg"><span class="ln">${x[0].emoji} ${esc(l)}</span><small>${x.length}경기${lv?` · <i>LIVE ${lv}</i>`:''}</small></h2>${x.map(row).join('')}</section>`
+       :`<section><h2><span class="lh">${x[0].emoji} ${esc(l)}</span>${lv?`<span class="ha5">LIVE ${lv}</span>`:''}</h2>${x.map(row).join('')}</section>`}
+  if(!lk.length)h+=`<p class="empty">${q?'검색 결과가 없어요.':'기타 리그 경기가 없어요.'}</p>`}}
+ el.innerHTML=h;LS.querySelectorAll(':scope>.mempty,:scope>.empty').forEach(x=>x.remove());el.querySelector('.oth-h').onclick=()=>{localStorage.setItem('tw_oth',oOpen()?'0':'1');oRender()};
+ try{TWVote.scan(el,true)}catch(e){}}
 function mrender(all,q){const lv=s=>(s==='전체'?all:all.filter(g=>g.sport===s)).filter(g=>g.state==='live').length;const cnt=s=>s==='전체'?all.length:all.filter(g=>g.sport===s).length;
  const nlv=all.filter(g=>g.state==='live').length;
  document.getElementById('sports').innerHTML=(nlv?`<button class="mlv ${F==='live'?'on':''}" data-live="1"><i class="pd"></i>LIVE ${nlv}</button>`:'')+SPORTS.filter(s=>s==='전체'||cnt(s)).map(s=>`<button class="${s===SP&&F!=='live'?'on':''}" data-s="${s}">${s} <small>${cnt(s)}</small>${s!=='전체'&&lv(s)?`<i class="lc">${lv(s)}</i>`:''}</button>`).join('');
@@ -77,7 +96,7 @@ function mrender(all,q){const lv=s=>(s==='전체'?all:all.filter(g=>g.sport===s)
  document.getElementById('status').innerHTML=(DATA.failed.length?'<span class="warn">일부 종목을 불러오지 못했어요 · </span>':'')+(live?'<i class="dot"></i> 실시간 · ':'')+DATA.updated+' 기준';
  if(SNDQ){SNDQ=false;TWSound.play()}
  all.forEach(g=>PREV[g.key]=g.L.score+':'+g.R.score)}
-function render(){if(!DATA)return;document.getElementById('feat').style.display=F==='all'&&SP==='전체'&&!Q.trim()?'':'none';if(MOB.matches)return mrender(DATA.games,Q.trim().toLowerCase());const all=DATA.games,q=Q.trim().toLowerCase();
+function render(){if(!DATA)return;document.getElementById('feat').style.display=F==='all'&&SP==='전체'&&!Q.trim()?'':'none';if(MOB.matches){mrender(DATA.games,Q.trim().toLowerCase());return oRender()}const all=DATA.games,q=Q.trim().toLowerCase();
  const cnt=s=>s==='전체'?all.length:all.filter(g=>g.sport===s).length;if(!SPORTS.includes(SP))SP='전체';
  document.getElementById('sports').innerHTML=SPORTS.map(s=>`<button class="${s===SP?'on':''}" data-s="${s}">${s}${cnt(s)?` <small>${cnt(s)}</small>`:''}</button>`).join('');
  const gs=SP==='전체'?all:all.filter(g=>g.sport===SP);
@@ -95,7 +114,7 @@ function render(){if(!DATA)return;document.getElementById('feat').style.display=
  const lab=k=>k==='baseball'?'<span class="ha5">원정 | 홈</span>':'<span class="ha5">홈 | 원정</span>';
  const SR={live:0,scheduled:1,finished:2};for(const l of leagues){const x=rest.filter(g=>g.league===l).sort((a,b)=>(SR[a.state]??2)-(SR[b.state]??2)||a.ts-b.ts);if(x.length)h+=`<section><h2><span class="lh">${x[0].emoji} ${esc(l)}</span>${lab(x[0].kind)}</h2>${x.map(row).join('')}</section>`}
  document.getElementById('list').innerHTML=h||`<p class="empty">${q?'검색 결과가 없어요.':F==='live'?'지금 진행 중인 경기가 없어요.':'이 날 경기가 없어요.'}</p>`;
- TWVote.scan(document.getElementById('list'),true);const live=gs.some(g=>g.state==='live');
+ TWVote.scan(document.getElementById('list'),true);oRender();const live=gs.some(g=>g.state==='live');
  document.getElementById('status').innerHTML=(DATA.failed.length?'<span class="warn">일부 종목을 불러오지 못했어요 · </span>':'')+(live?'<i class="dot"></i> 실시간 · 점수 '+(DATA.upstream||15)+'초마다 갱신 · ':'')+DATA.updated+' 기준';
  if(SNDQ){SNDQ=false;TWSound.play()}
  all.forEach(g=>PREV[g.key]=g.L.score+':'+g.R.score)}

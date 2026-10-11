@@ -183,18 +183,22 @@ def _sport_day0(kind, day, today):
 
 def _sport_fetch(kind, day, name, c, now):
     try:
-        games = _fetch_raw(kind, day)
-        _wr(name, {"ts": now, "ok": True, "games": games})
+        other = []
+        games = _fetch_raw(kind, day, other)
+        _wr(name, {"ts": now, "ok": True, "games": games, "other": other})
         return [_de(g) for g in games], True
     except Exception:
         old = (c or {}).get("games") or []
-        _wr(name, {"ts": now, "ok": False, "games": old})
+        _wr(name, {"ts": now, "ok": False, "games": old, "other": (c or {}).get("other") or []})
         return [_de(g) for g in old], False
 
 
-def _fetch_raw(kind, day):
+def _fetch_raw(kind, day, other=None):
     if kind in NEW_KINDS:
-        return sports2.fetch_day(kind, day)
+        res = sports2.fetch_day(kind, day, other)
+        if other:
+            other[:] = [_ser(g) if not isinstance(g.get("start"), str) else g for g in other]
+        return res
     """API-Sports 1회 호출. 봇의 parse_game 을 그대로 쓰고, 야구 이닝/안타/실책만 원본에서 덧붙인다."""
     raws = sb.api_get(sb.HOSTS[kind], {"date": day.isoformat(), "timezone": "Asia/Seoul"})
     out = []
@@ -202,6 +206,17 @@ def _fetch_raw(kind, day):
         lid = (raw.get("league") or {}).get("id")
         meta = sb.LEAGUE_BY_KEY.get((kind, lid))
         if not meta or (kind, lid) not in SITE_KEYS:
+            if other is None or (kind, lid) in SITE_KEYS:
+                continue
+            try:
+                lab = sports2.other_label(raw)
+                og = sb.parse_game(raw, {"kind": kind, "league": lid, "emoji": "", "label": lab})
+                if og:
+                    og["status_long"] = (raw.get("status") or {}).get("long")
+                    og["other"] = 1
+                    other.append(_ser(og))
+            except Exception:
+                pass
             continue
         g = sb.parse_game(raw, meta)
         if not g:
@@ -224,7 +239,33 @@ def find_game(key, day):
     for g in games:
         if str(g["key"]) == key:
             return g
+    for g in others_for(day, refresh=False):
+        if str(g["key"]) == key:
+            return g
     return None
+
+
+def others_for(day, refresh=True):
+    """기타 리그(화이트리스트 밖) 경기. 주 목록과 같은 API 응답에서 나온 것이라 추가 호출 없음."""
+    if refresh:
+        games_for(day)
+    out = []
+    for kind in ("football", "basketball", "hockey", "volleyball", "baseball"):
+        c = _rd(f"games_{kind}_{day.isoformat()}.json") or {}
+        for raw in c.get("other") or []:
+            try:
+                g = _de(raw)
+            except Exception:
+                continue
+            if g["start"].date() != day:
+                continue
+            g["site_order"], g["site_league"] = 1000, g.get("label") or "기타"
+            g["other"] = 1
+            g["state"] = state(g)
+            out.append(g)
+    rank = {"live": 0, "scheduled": 1, "final": 2}
+    out.sort(key=lambda g: (g["kind"], g["site_league"], rank.get(g["state"], 3), g["start"], str(g["key"])))
+    return out
 
 
 _flocks = {}

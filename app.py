@@ -331,7 +331,38 @@ def _games_payload(d):
     upstream = min([data.live_ttl(k) for k in lk], default=None)
     return {"upstream": upstream, "date": d.isoformat(), "label": day_label(d), "failed": failed,
             "updated": datetime.now(data.SEOUL).strftime("%H:%M:%S"),
-            "games": [view(g) for g in games]}
+            "games": [view(g) for g in games], "other_n": _other_n(d)}
+
+
+def _other_n(d):
+    try:
+        os_ = data.others_for(d, refresh=False)
+        if d == today() and datetime.now(data.SEOUL).hour < 6:
+            os_ = [g for g in data.others_for(d - timedelta(days=1), refresh=False) if g["state"] == "live"] + os_
+        n = {}
+        for g in os_:
+            n[g["kind"]] = n.get(g["kind"], 0) + 1
+        return n
+    except Exception:
+        return {}
+
+
+@app.route("/api/games/other")
+def api_games_other():
+    """기타 리그 — 펼칠 때만 불러요."""
+    d = parse_day(request.args.get("d"))
+    gs = data.others_for(d)
+    if d == today() and datetime.now(data.SEOUL).hour < 6:
+        gs = [g for g in data.others_for(d - timedelta(days=1), refresh=False) if g["state"] == "live"] + gs
+    out = []
+    for g in gs:
+        try:
+            out.append(view(g))
+        except Exception:
+            pass
+    r = jsonify({"games": out})
+    r.headers["Cache-Control"] = "no-store"
+    return r
 
 
 @app.route("/")
