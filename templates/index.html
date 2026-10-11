@@ -65,7 +65,7 @@ function oMore(n){return n?'<p class="oth-note">비인기 경기는 경기검색
 function ALL(){return OTH?DATA.games.concat(OTH):DATA.games}
 var OOPEN=false,OCK='';try{Object.keys(localStorage).forEach(k=>{if(k.startsWith('tw_oth'))localStorage.removeItem(k)})}catch(e){}function oOpen(){const k=SP+'|'+F;if(k!==OCK){OCK=k;OOPEN=false}return OOPEN}
 async function oLoad(){if(OTL)return;OTL=true;try{const r=await fetch('/api/games/other?d='+D,{cache:'no-store'});OTH=((await r.json()).games||[]).map(g=>(g.other=1,g));OTT=Date.now()}catch(e){OTH=OTH||[];OTT=Date.now()}OTL=false;render()}
-function oRender(){if(!OTH||Date.now()-OTT>60000)oLoad();const LS=document.getElementById('list');if(!LS||!DATA)return;let el=document.getElementById('other');if(!el||el.parentNode!==LS){if(el)el.remove();el=document.createElement('div');el.id='other';LS.appendChild(el)}const q=Q.trim().toLowerCase(),m=MOB.matches;
+function oRender(){if(!OTH||Date.now()-OTT>60000)oLoad();const LS=document.getElementById('list');if(!LS||!DATA)return;oOpen();let el=document.getElementById('other');if(!el||el.parentNode!==LS){if(el)el.remove();el=document.createElement('div');el.id='other';LS.appendChild(el)}const q=Q.trim().toLowerCase(),m=MOB.matches;
  if(F!=='all'||q){el.innerHTML='';return}
  const kn=OK[SP],on=DATA.other_n||{},n=OTH?OTH.filter(g=>SP==='전체'||g.kind===kn).length:(SP==='전체'?Object.values(on).reduce((a,b)=>a+b,0):(on[kn]||0));
  if(!n&&!(OTH&&OTH.length)){el.innerHTML='';return}
