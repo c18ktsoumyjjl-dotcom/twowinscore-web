@@ -374,7 +374,7 @@ def post(room):
 
 # ---------- 응원 (경기별 두 팀 카운터, 메모리) ----------
 _cheer, _cheer_ip = {}, {}
-CHEER_MAX = 5
+CHEER_MAX = 1   # 경기당 1번 (IP·회원 각각), 채팅 투표와 상세 페이지 응원이 같은 집계
 _cheer_used = {}  # "ip:<ip>|room" / "m:<id>|room" -> [count, first_ts]  (36h expiry)
 
 
@@ -399,6 +399,39 @@ def _cheer_left(ks, now):
         if v:
             used = max(used, v[0])
     return max(0, CHEER_MAX - used)
+
+
+def _cheer_side(ks):
+    for k in ks:
+        v = _cheer_used.get(k)
+        if v and len(v) > 2:
+            return v[2]
+    return None
+
+
+def _cheer_db_init():
+    """응원 기록을 DB에 남겨 재시작해도 1인 1표 유지(36시간)."""
+    try:
+        import members
+        members.q("CREATE TABLE IF NOT EXISTS cheer_vote (k TEXT PRIMARY KEY, room TEXT NOT NULL, side TEXT NOT NULL, ts BIGINT NOT NULL, main INTEGER NOT NULL DEFAULT 0)")
+        cut = int(time.time() - 36 * 3600)
+        members.q("DELETE FROM cheer_vote WHERE ts<?", (cut,))
+        for k, room, side, ts, main in members.q("SELECT k,room,side,ts,main FROM cheer_vote") or []:
+            _cheer_used[k] = [1, ts, side]
+            if main:
+                c = _cheer.setdefault(room, [0, 0]); c[0 if side == "L" else 1] += 1
+    except Exception as e:
+        print("cheer db:", e)
+
+
+def _cheer_db_save(ks, room, side, now):
+    try:
+        import members
+        for i, k in enumerate(ks):
+            members.q("INSERT INTO cheer_vote (k,room,side,ts,main) VALUES (?,?,?,?,?) ON CONFLICT (k) DO NOTHING",
+                      (k, room, side, int(now), 1 if i == 0 else 0))
+    except Exception as e:
+        print("cheer save:", e)
 _CHEER_RE = re.compile(r"^[A-Za-z0-9_\-]{1,80}$")
 
 
@@ -410,7 +443,8 @@ def cheer_get(room):
     with _lock:
         c = _cheer.get(room) or [0, 0]
         left = _cheer_left(ks, time.time())
-    return jsonify({"L": c[0], "R": c[1], "left": left, "max": CHEER_MAX})
+        mine = _cheer_side(ks)
+    return jsonify({"L": c[0], "R": c[1], "left": left, "max": CHEER_MAX, "mine": mine})
 
 
 @bp.post("/api/cheer/<room>")
@@ -430,7 +464,7 @@ def cheer_post(room):
         if left <= 0:
             c = _cheer.get(room) or [0, 0]
             return jsonify({"ok": False, "limit": True, "left": 0, "max": CHEER_MAX,
-                            "msg": "이 경기 응원은 5번까지예요", "L": c[0], "R": c[1]}), 429
+                            "msg": "이미 응원했어요", "mine": _cheer_side(ks), "L": c[0], "R": c[1]}), 429
         if len(_cheer_ip) > 20000:
             for k in [k for k, t in _cheer_ip.items() if now - t > 5]:
                 del _cheer_ip[k]
@@ -444,8 +478,9 @@ def cheer_post(room):
         c = _cheer.setdefault(room, [0, 0])
         c[0 if side == "L" else 1] += 1
         for k in ks:
-            v = _cheer_used.setdefault(k, [0, now]); v[0] += 1
-        res = {"ok": True, "L": c[0], "R": c[1], "left": left - 1, "max": CHEER_MAX}
+            _cheer_used[k] = [1, now, side]
+        res = {"ok": True, "L": c[0], "R": c[1], "left": 0, "max": CHEER_MAX, "mine": side}
+    _cheer_db_save(ks, room, side, now)
     try:
         import levels
         if mem:

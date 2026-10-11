@@ -1,8 +1,8 @@
 function pollHtml(p){return `<span class="ch-poll" data-room="${esc(p.room)}"><button type="button" data-s="L"><span>${esc(p.L)}</span><b>0%</b></button><button type="button" data-s="R"><span>${esc(p.R)}</span><b>0%</b></button></span>`}
 function pollBind(d,p){const box=d.querySelector('.ch-poll');if(!/^game-[A-Za-z0-9-]{1,80}$/.test(p.room))return;const u='/api/cheer/'+encodeURIComponent(p.room);
- const show=j=>{if(j&&typeof j.L==='number'){const t=Math.max(1,j.L+j.R);box.querySelectorAll('button').forEach(b=>{const v=b.dataset.s==='L'?j.L:j.R;b.querySelector('b').textContent=(j.L+j.R?Math.round(v*100/t):0)+'%';b.style.setProperty('--p',Math.round(v*100/t)+'%')})}};
+ const show=j=>{if(j&&typeof j.L==='number'){const t=Math.max(1,j.L+j.R);box.querySelectorAll('button').forEach(b=>{const v=b.dataset.s==='L'?j.L:j.R;b.querySelector('b').textContent=(j.L+j.R?Math.round(v*100/t):0)+'%';b.style.setProperty('--p',Math.round(v*100/t)+'%');b.classList.toggle('on',j.mine===b.dataset.s);if(j.mine)b.disabled=true})}};
  fetch(u).then(r=>r.json()).then(show).catch(()=>{});
- box.onclick=e=>{const b=e.target.closest('button');if(!b)return;fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({side:b.dataset.s})}).then(r=>r.json()).then(j=>{show(j);if(j.ok)b.classList.add('on');else if(j.msg){b.title=j.msg}}).catch(()=>{})}}
+ box.onclick=e=>{const b=e.target.closest('button');if(!b)return;fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({side:b.dataset.s})}).then(r=>r.json()).then(j=>{show(j);if(!j.ok&&j.msg&&!box.querySelector('.cpm')){const n=document.createElement('small');n.className='cpm';n.textContent=j.msg;box.appendChild(n)}}).catch(()=>{})}}
 /* 투윈스코어 채팅: 가입 없음, 2.5초 폴링 */
 (function(){
 const LS='tw_nick',CID_K='tw_cid';

@@ -44,3 +44,5 @@
 .ch-m.cbot .ch-av,.ch-m.cbot img.av,.ch-m.cbot .av{display:none!important}.ch-m.cbot time{display:inline;margin-left:4px}
 .ch-m.cbot::before,.ch-m.cbot::after{display:none!important;content:none!important}
 .ch-m.cbot time{float:right;margin-left:6px}
+.ch-poll button:disabled{cursor:default}.ch-poll button.on{border-color:#ff8a2a}.ch-poll .cpm{align-self:center;font-size:11px;opacity:.7;margin-left:4px}
+.gm7ch button.on{outline:2px solid #fff;outline-offset:-2px}
