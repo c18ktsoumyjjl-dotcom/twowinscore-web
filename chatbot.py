@@ -53,7 +53,7 @@ def room_of(g):
     return "game-" + str(g["key"]).replace(":", "-")
 
 
-def post(room, text, extra=None, tg=None):
+def post(room, text, extra=None, tg=None, nobridge=False):
     """봇 메시지 한 개를 방에 넣어요(필터·속도제한 없이, 서버 내부에서만)."""
     now = time.time()
     if room == chat.BRIDGE_ROOM:
@@ -70,6 +70,8 @@ def post(room, text, extra=None, tg=None):
             m["x"] = extra
         if tg:
             m["tg"] = tg[:400]
+        if nobridge:
+            m["nobridge"] = 1
         msgs.append(m)
         chat._save_soon()
     _last_room[room] = now
@@ -105,6 +107,12 @@ def _events(g, boot):
                 tail = f"{y['min']} {who}{kind} · {g['home']} {h}:{a} {g['away']}"
                 lg = g.get("site_league") or ""
                 out.append((key, f"⚽ {lg} {tail}", f"⚽ [{lg}] {tail}", None))
+    if st == "scheduled" and g.get("start"):
+        mins = (g["start"] - datetime.now(data.SEOUL)).total_seconds() / 60
+        if 20 <= mins <= 35:
+            x = {"poll": {"room": room_of(g), "L": g["home"], "R": g["away"]}}
+            body = f"📣 {g.get('site_league') or ''} {g['start'].strftime('%H:%M')} 킥오프 · 어느 팀을 응원하세요?"
+            out.append((f"poll:{k0}", body, body, x))
     return out
 
 
@@ -139,7 +147,7 @@ def tick(alias, boot=False):
         if rest:
             post(room, "\n".join(e[1] for e in rest[-4:]), tg="\n".join(e[2] for e in rest[-4:]))
         for e in polls:
-            post(room, e[1], e[3])
+            post(room, e[1], e[3], nobridge=True)
         lounge += new
     if lounge:
         polls = [e for e in lounge if e[3]]
@@ -148,7 +156,7 @@ def tick(alias, boot=False):
             more = f"\n외 {len(rest) - 6}건" if len(rest) > 6 else ""
             post(chat.BRIDGE_ROOM, "\n".join(e[1] for e in rest[:6]) + more, tg="\n".join(e[2] for e in rest[:6]) + more)
         for e in polls[:3]:
-            post(chat.BRIDGE_ROOM, e[2], e[3])
+            post(chat.BRIDGE_ROOM, e[1], e[3], nobridge=True)   # 투표는 텔레그램으로 안 보냄(그룹엔 점수 봇 투표가 따로 있음)
     _save()
 
 
@@ -160,6 +168,7 @@ def _loop(alias):
         tick(alias, boot=first)
         _st["boot"] = 1
         _save()
+        _test_once()
     except Exception as e:
         log.warning("chatbot boot: %s", e)
     while True:
@@ -184,3 +193,30 @@ def start(alias):
     _lockf[0] = f
     threading.Thread(target=_loop, args=(alias,), daemon=True, name="chatbot").start()
     return True
+
+
+def send_test():
+    """[테스트] 골 1개 + 응원 투표 1개를 홈 채팅에. 골은 텔레그램 그룹에도 감(투표는 안 감)."""
+    gs, _ = data.games_for(datetime.now(data.SEOUL).date())
+    fb = [g for g in gs if g.get("kind") == "football"]
+    pop = [x for x in fb if _ok_league(x.get("site_league"), {})]
+    g = next((x for x in pop + fb if x.get("state") == "scheduled"), (pop or fb or [None])[0])
+    post(chat.BRIDGE_ROOM, "[테스트] ⚽ EPL 55' 사카(PK) · 토트넘 1:1 아스널",
+         tg="[테스트] ⚽ [EPL] 55' 사카(PK) · 토트넘 1:1 아스널")
+    if g:
+        post(chat.BRIDGE_ROOM, f"[테스트] 📣 {g.get('site_league') or ''} {g['home']} vs {g['away']} · 어느 팀을 응원하세요?",
+             {"poll": {"room": room_of(g), "L": g["home"], "R": g["away"]}}, nobridge=True)
+    return bool(g)
+
+
+def _test_once():
+    """배포 직후 한 번만(사장님 요청 테스트). DB 표시로 재시작해도 다시 안 보냄."""
+    try:
+        from admin_ext import kv_get, kv_set
+        if kv_get("chatbot_test_1") == "1":
+            return
+        kv_set("chatbot_test_1", "1")
+        send_test()
+        log.warning("chatbot: test messages posted")
+    except Exception as e:
+        log.warning("chatbot test: %s", e)

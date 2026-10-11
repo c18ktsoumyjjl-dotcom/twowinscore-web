@@ -186,6 +186,19 @@ def heartbeat():
     return jsonify({"ok": True})
 
 
+@bp.route("/admin/chatbot/test", methods=["POST"])
+@admin_required
+def chatbot_test():
+    from members import super_required as _s
+    @_s
+    def go():
+        import chatbot
+        chatbot.send_test()
+        flash("테스트 알림을 홈 채팅에 보냈어요.")
+        return redirect("/admin/bots")
+    return go()
+
+
 def bot_status():
     out, now = [], time.time()
     for key, handle, desc in BOTS:
