@@ -63,7 +63,7 @@ var OK={'축구':'football','야구':'baseball','농구':'basketball','배구':'
 var OLIM=20;function oCut(v){const sr={live:0,scheduled:1},o=v.filter(g=>g.other),lc={};o.forEach(g=>lc[g.league]=(lc[g.league]||0)+1);const f=g=>{try{return isFav(g)}catch(e){return false}};o.sort((a,b)=>f(b)-f(a)||(sr[a.state]??2)-(sr[b.state]??2)||(lc[b.league]-lc[a.league])||a.ts-b.ts);const keep=new Set(o.filter(f).concat(o.filter(g=>!f(g)).slice(0,OLIM)));return [v.filter(g=>!g.other||keep.has(g)),Math.max(0,o.length-keep.size)]}
 function oMore(n){return n?'<p class="oth-note">비인기 경기는 경기검색 하시면 보입니다. 검색후 즐겨찾기 이용 해주세요.</p>':''}
 function ALL(){return OTH?DATA.games.concat(OTH):DATA.games}
-function oOpen(){return localStorage.getItem('tw_oth_'+SP)==='1'}
+var OOPEN={};try{Object.keys(localStorage).forEach(k=>{if(k.startsWith('tw_oth'))localStorage.removeItem(k)})}catch(e){}function oOpen(){return !!OOPEN[SP]}
 async function oLoad(){if(OTL)return;OTL=true;try{const r=await fetch('/api/games/other?d='+D,{cache:'no-store'});OTH=((await r.json()).games||[]).map(g=>(g.other=1,g));OTT=Date.now()}catch(e){OTH=OTH||[];OTT=Date.now()}OTL=false;render()}
 function oRender(){if(!OTH||Date.now()-OTT>60000)oLoad();const LS=document.getElementById('list');if(!LS||!DATA)return;let el=document.getElementById('other');if(!el||el.parentNode!==LS){if(el)el.remove();el=document.createElement('div');el.id='other';LS.appendChild(el)}const q=Q.trim().toLowerCase(),m=MOB.matches;
  if(F!=='all'||q){el.innerHTML='';return}
@@ -78,7 +78,7 @@ function oRender(){if(!OTH||Date.now()-OTT>60000)oLoad();const LS=document.getEl
    h+=m?`<section class="msec"><h2 class="mlg"><span class="ln">${x[0].emoji} ${esc(l)}</span><small>${x.length}경기${lv?` · <i>LIVE ${lv}</i>`:''}</small><button class="mlf ${flg().includes(l)?'on':''}" data-l="${esc(l)}" onclick="toggleLg(this.dataset.l,event)" aria-label="리그 즐겨찾기">${flg().includes(l)?'★':'☆'}</button></h2>${x.map(row).join('')}</section>`
        :`<section><h2><span class="lh">${x[0].emoji} ${esc(l)}</span>${lv?`<span class="ha5">LIVE ${lv}</span>`:''}</h2>${x.map(row).join('')}</section>`}
   h+=oMore(OMN);if(!lk.length)h+=`<p class="empty">${q?'검색 결과가 없어요.':'기타 리그 경기가 없어요.'}</p>`}}
- el.innerHTML=h;LS.querySelectorAll(':scope>.mempty,:scope>.empty').forEach(x=>x.remove());el.querySelector('.oth-h').onclick=()=>{localStorage.setItem('tw_oth_'+SP,oOpen()?'0':'1');oRender()};
+ el.innerHTML=h;LS.querySelectorAll(':scope>.mempty,:scope>.empty').forEach(x=>x.remove());el.querySelector('.oth-h').onclick=()=>{OOPEN[SP]=!oOpen();oRender()};
  try{TWVote.scan(el,true)}catch(e){}}
 function mrender(all,q){const AL=ALL();const lv=s=>(s==='전체'?AL:AL.filter(g=>g.sport===s)).filter(g=>g.state==='live').length;const cnt=s=>s==='전체'?AL.length:AL.filter(g=>g.sport===s).length;
  const nlv=AL.filter(g=>g.state==='live').length,noth=(SP==='전체'?AL:AL.filter(g=>g.sport===SP)).filter(g=>g.other).length;
