@@ -37,4 +37,4 @@ function init(){const b=document.getElementById('sndBtn'),m=document.getElementB
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 window.TWSound={_a:INTRO,play,mode,test,want:fav=>mode()==='all'||(mode()==='fav'&&fav)};
 })();
-(function(){if(document.querySelector('script[src*="bgm.js"]'))return;const s=document.createElement('script');s.src='/static/bgm.js?v=5';document.head.appendChild(s)})();
+(function(){if(document.querySelector('script[src*="bgm.js"]'))return;const s=document.createElement('script');s.src='/static/bgm.js?v=6';document.head.appendChild(s)})();

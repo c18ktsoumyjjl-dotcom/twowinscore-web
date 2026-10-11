@@ -152,3 +152,7 @@ body.gm7on .gm7t img{filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}}
 @media(max-width:1023px){[data-theme=light] body.gm7on .gm7{background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.93) 50%,#fff 80%),url(/static/mh_bg.webp) center top/100% auto no-repeat,#fff;box-shadow:0 4px 16px rgba(19,33,63,.1);border-bottom:1px solid #e2e7f1}
 [data-theme=light] body.gm7on .gm7t img{filter:drop-shadow(0 1px 2px rgba(19,33,63,.2))}}
 .mh .mds,.mh .sports5{overscroll-behavior-x:contain}
+/* iOS Safari: 상단 툴바/상태바 뒤로 보이는 영역 덮기 */
+body.mapp .mh::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:300px;background:var(--bg2);pointer-events:none}
+[data-theme=light] body.mapp .mh::before{background:#fff}
+@media(max-width:1023px){body.gm7on .gm7::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:300px;background:var(--bg2);pointer-events:none}[data-theme=light] body.gm7on .gm7::before{background:#fff}}

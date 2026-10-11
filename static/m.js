@@ -24,7 +24,7 @@ if(mds){const p=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(Date.U
  list&&list.addEventListener('touchstart',e=>{if(!MQ.matches||e.touches.length>1||e.target.closest('.lsw,table,input'))return s0=null;s0={x:e.touches[0].clientX,y:e.touches[0].clientY,t:Date.now()}},{passive:true});
  list&&list.addEventListener('touchmove',e=>{if(!s0)return;const dx=e.touches[0].clientX-s0.x,dy=e.touches[0].clientY-s0.y;if(Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>12){s0=null;list.style.transform='';return}if(Math.abs(dx)>12)list.style.transform=`translateX(${dx*.35}px)`},{passive:true});
  list&&list.addEventListener('touchend',e=>{if(!s0)return;const dx=e.changedTouches[0].clientX-s0.x;list.style.transform='';const q=s0;s0=null;
-  if(Math.abs(dx)>80&&Date.now()-q.t<800){const n=days[i+(dx<0?1:-1)];if(n){list.classList.add(dx<0?'gol':'gor');location.href='/?d='+n}}},{passive:true});}
+  if(Math.abs(dx)>80&&Date.now()-q.t<800){const n=days[i+(dx<0?1:-1)];if(n){list.classList.add(dx<0?'gol':'gor');(window.TWnav?TWnav('/?d='+n):location.href='/?d='+n)}}},{passive:true});}
 /* 당겨서 새로고침 */
 const pt=document.getElementById('mptr');let y0=null,pd=0;
 let x0=0;addEventListener('touchstart',e=>{if(!MQ.matches||B.classList.contains('detail6')||scrollY>0||e.touches.length>1||e.target.closest('.mds,.sports5,.lsw,.sheet,#lounge,.dchat,input,textarea,[type=range]'))return y0=null;y0=e.touches[0].clientY;x0=e.touches[0].clientX;pd=0},{passive:true});
