@@ -241,7 +241,7 @@ def bots_page():
         ws["per_day_all"] = int(ws.get("calls_all", 0) / hrs * 24)
         ws["hrs"] = round(hrs, 1)
         ws["ago"] = int(time.time() - ws.get("ts", 0))
-    return render_template("admin.html", mode="bots", sec="bots", bots=bot_status(), ws=ws)
+    return render_template("admin.html", mode="bots", sec="bots", bots=bot_status(), ws=ws, kv_get=kv_get)
 
 
 # ---------- 설정: 공지 배너 / 메인 이미지 ----------
