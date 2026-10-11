@@ -143,3 +143,14 @@ body.adm:not(.mopen) .side{display:flex}body.adm.mopen .side{flex-direction:colu
 @media (prefers-reduced-motion:reduce){.nkp.t4{animation:none}}
 .ch-m.mine .ch-n .nkp.t3{color:#fff}.ch-m.mine .ch-n .nkp.t4{color:#2a1c00}
 .nkp+small{margin-left:4px!important}
+
+/* v11: 사이드 메뉴 아코디언 */
+.side .sg{display:flex;flex-direction:column}
+.side .sgh{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 14px;border:0;border-radius:10px;background:none;color:var(--tx);font:inherit;font-weight:800;font-size:14px;cursor:pointer;text-align:left}
+.side .sgh:hover{background:var(--card)}.side .sg.here>.sgh{color:var(--or)}
+.side .sgh .chev{transition:transform .22s ease;opacity:.7}.side .sg.open>.sgh .chev{transform:rotate(180deg)}
+.side .sgi{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.side .sg.open>.sgi{grid-template-rows:1fr}
+.side .sgi>div{overflow:hidden;display:flex;flex-direction:column;gap:2px;padding-left:10px}
+.side .sg.open>.sgi>div{padding-bottom:6px}
+.side .sgi a{padding:9px 14px;font-size:13.5px;border-left:1px solid var(--line);border-radius:0 10px 10px 0}
+@media(max-width:820px){body.adm .side{flex-direction:column!important;overflow:visible;position:static;padding:8px 10px;gap:2px}.side .sgi a{white-space:normal}.side a.on{box-shadow:inset 3px 0 0 var(--or)!important}}

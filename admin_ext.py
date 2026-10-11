@@ -9,8 +9,15 @@ from members import q, admin_required, alog, KST, PG
 log = logging.getLogger("admin_ext")
 bp = Blueprint("admin_ext", __name__)
 
-MENU = [("members", "회원", "/admin"), ("stats", "통계", "/admin/stats"), ("bots", "봇 상태", "/admin/bots"),
-        ("mega", "확성기", "/admin/mega"), ("settings", "설정", "/admin/settings"), ("admins", "└ 관리자 계정", "/admin/admins"), ("log", "접근 기록", "/admin/log"), ("otp", "OTP 재설정", "/admin/otp")]
+# 사이드 메뉴: (그룹키, 그룹 이름, [(키, 이름, 경로), ...]) · 회원 상세(메모·VIP·캐시·확성기)는 회원 목록에서 들어감
+MENU_GROUPS = [
+    ("g_members", "회원", [("members", "회원 목록", "/admin")]),
+    ("g_chat", "채팅/확성기", [("mega", "확성기 고정 관리", "/admin/mega")]),
+    ("g_stats", "통계", [("stats", "방문자 통계", "/admin/stats"), ("bots", "봇 상태", "/admin/bots")]),
+    ("g_settings", "설정", [("settings", "사이트 설정", "/admin/settings"), ("admins", "관리자 계정", "/admin/admins"),
+                          ("log", "접근 기록", "/admin/log"), ("otp", "OTP 재설정", "/admin/otp")]),
+]
+MENU = [it for _, _, items in MENU_GROUPS for it in items]
 
 BOTS = [("score", "@kr_twowin_bot", "채널 알림 · 그룹방 · 스코어 검색"),
         ("cscenter", "@twowinscore_cs_bot", "투윈스코어 고객센터"),
@@ -41,7 +48,8 @@ def init_db():
 def _ctx():
     from flask import g as _g
     _sup = (_g.get("admin") or {}).get("super")
-    return {"adm_menu": [m for m in MENU if m[0] != "admins" or _sup], "adm_me": _g.get("admin"), "site_banner": banner() if _ok[0] else None, "hero_v": hero_ver() if _ok[0] else None}
+    groups = [(gk, gl, [it for it in items if it[0] != "admins" or _sup]) for gk, gl, items in MENU_GROUPS]
+    return {"adm_menu": [m for m in MENU if m[0] != "admins" or _sup], "adm_groups": [g for g in groups if g[2]], "adm_me": _g.get("admin"), "site_banner": banner() if _ok[0] else None, "hero_v": hero_ver() if _ok[0] else None}
 
 
 # ---------- key/value 설정 (프로세스 캐시) ----------
