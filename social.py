@@ -434,7 +434,8 @@ def msgs():
             q("INSERT INTO dm_read(member_id,peer,last_id) VALUES(?,?,?)", (me, o[0], lid), fetch=False)
     c = _cards([(o[0], o[1], o[3])])[0]
     c["on"] = 1 if online(o[0]) and not o[3] else 0
-    return jsonify({"ok": True, "peer": c, "rel": rel, "blocked": _blocked(me, o[0]),
+    pr = q("SELECT last_id FROM dm_read WHERE member_id=? AND peer=?", (o[0], me), one=True)
+    return jsonify({"ok": True, "peer": c, "rel": rel, "blocked": _blocked(me, o[0]), "pread": int(pr[0]) if pr else 0,
                     "items": [{"id": r[0], "me": 1 if r[1] == me else 0, "text": r[2], "ts": r[3]} for r in rows]})
 
 
@@ -554,7 +555,8 @@ def adm_view(a, b):
         mem[x] = {"id": x, "nick": nk.get(x, ("?",))[0], "dm": r[0] if r else None, "st": r[1] if r else "?"}
     if request.args.get("r") != "1":
         alog("dm view", f"{a},{b}")
-    items = [{"id": r[0], "s": r[1], "sn": nk.get(r[1], ("?",))[0], "body": r[2], "ts": datetime.fromtimestamp(r[3], KST).strftime("%m-%d %H:%M:%S"),
+    rd = {r[0]: r[1] for r in q("SELECT member_id,last_id FROM dm_read WHERE (member_id=? AND peer=?) OR (member_id=? AND peer=?)", (a, b, b, a))}
+    items = [{"id": r[0], "s": r[1], "sn": nk.get(r[1], ("?",))[0], "body": r[2], "read": r[0] <= rd.get(b if r[1] == a else a, 0), "ts": datetime.fromtimestamp(r[3], KST).strftime("%m-%d %H:%M:%S"),
               "sus": r[4], "hid": r[5], "rep": r[0] in rep, "left": r[1] == a} for r in rows]
     if request.args.get("part") == "1":
         return render_template("_dm_panel.html", items=items, pa=mem[a], pb=mem[b], a=a, b=b)

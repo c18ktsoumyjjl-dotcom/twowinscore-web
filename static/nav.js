@@ -21,6 +21,7 @@ let busy=false,pend=null;
 async function go(url,push,sy){if(busy){pend=[url,push,sy];return}busy=true;let r,h;try{r=await N.fetch(url,{credentials:'same-origin',headers:{'X-TW-Nav':'1'}});h=await r.text()}catch(e){location.href=url;return}
  if(!r.ok||!/text\/html/.test(r.headers.get('content-type')||'')||new URL(r.url).origin!==location.origin){location.href=url;return}
  const nd=new DOMParser().parseFromString(h,'text/html');if(!nd.body||nd.querySelector('body.adm')){location.href=url;return}
+ const V=d=>{const m={};d.querySelectorAll('link[rel=stylesheet][href^="/static/"],script[src^="/static/"]').forEach(x=>{const u=(x.getAttribute('href')||x.getAttribute('src')).split('?');m[u[0]]=u[1]||''});return m};{const a=V(nd),c=V(document);if(Object.keys(a).some(k=>k in c&&c[k]!==a[k])){location.href=url;return}}
  if(push){history.replaceState(Object.assign({},history.state,{tw:1,y:scrollY}),'');history.pushState({tw:1,y:0},'',r.url)}
  cleanup();
  D.title=nd.title;['description','theme-color','robots'].forEach(k=>{const a=D.querySelector('meta[name="'+k+'"]'),b=nd.querySelector('meta[name="'+k+'"]');if(a&&b&&k!=='theme-color')a.content=b.content});

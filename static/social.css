@@ -48,3 +48,8 @@ body.mapp #twnt{left:12px;right:12px;bottom:auto;top:calc(env(safe-area-inset-to
 .soc-nl li{padding:0}.soc-nl li a{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;color:inherit;text-decoration:none}
 .soc-nl li a i{font-style:normal}.soc-nl li a span{flex:1;min-width:0;font-size:14px}.soc-nl li a small{color:var(--mu);font-size:12px;white-space:nowrap}
 .soc-nl li.un{border-color:rgba(255,122,26,.55);background:rgba(255,122,26,.07)}
+.soc-msgs .dmsg{display:flex;flex-direction:column;align-items:flex-start}.soc-msgs .dmsg.me{align-items:flex-end}
+.dmhd{display:flex;align-items:center;gap:4px;font-size:12.5px;margin:4px 0 3px 2px}.dmhd b{font-weight:800}.dmhd .tnm{font-size:11px;font-weight:800}
+.dmhd b.vipn{background:linear-gradient(90deg,#ffd257,#ff8a1f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.dmb{display:flex;align-items:flex-end;gap:5px}
+.rd1{font-style:normal;font-size:11px;font-weight:800;color:#ff7a1a;line-height:1;margin-bottom:3px}.rd1[hidden]{display:none}
