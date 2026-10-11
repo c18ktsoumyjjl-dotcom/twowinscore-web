@@ -11,7 +11,7 @@ function rd(id){fetch('/api/social/notifs/read',{method:'POST',credentials:'same
 const LK=()=>'tw_nl_'+(window.TW_ME||'');
 let n=0;async function tick(){if(!window.TW_ME||D.hidden)return;try{const st=localStorage.getItem(LK());const after=st==null?'':('&after='+st);
  const j=await (await fetch('/api/social/badge?x=1'+after,{credentials:'same-origin',cache:'no-store'})).json();if(!j.ok)return;
- n=Math.max(j.noti||0,(j.dm||0)+(j.req||0));marks();D.querySelectorAll('.dmbg').forEach(b=>{b.textContent=n>99?'99+':n;b.hidden=!n});
+ n=Math.max(j.noti||0,(j.dm||0)+(j.req||0));marks();const f=(j.dm||0)+(j.req||0),nt=j.noti||0,S=(b,v)=>{b.textContent=v>99?'99+':v;b.hidden=!v};D.querySelectorAll('.dmbg').forEach(b=>S(b,b.closest('.mpa')?(b.closest('.mpa').dataset.k==='nt'?nt:f):n));
  const cur=+(localStorage.getItem(LK())||-1);
  if(st!=null&&j.new){j.new.filter(x=>x.id>cur).reverse().slice(-3).forEach(x=>{if(x.k==='dm'&&String(window.TW_DMPEER||'')===String(x.a)){rd(x.id);return}toast(x)})}
  if(j.top>cur)localStorage.setItem(LK(),j.top);window.dispatchEvent(new CustomEvent('tw:badge',{detail:j}))}catch(e){}}
