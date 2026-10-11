@@ -5,7 +5,7 @@ const K='tw_snd',IK='tw_intro';
 const mode=()=>localStorage.getItem(K)||'fav';
 const siteIntro=()=>window.TW_INTRO===1;
 const introOn=()=>siteIntro()&&localStorage.getItem(IK)!=='off';
-const mk=(src,vol)=>{const a=new Audio(src);a.preload='auto';a.volume=vol;a.setAttribute('playsinline','');return a};
+const mk=(src,vol)=>{const a=new Audio(src);a.preload='none';a.volume=vol;a.setAttribute('playsinline','');return a};
 const INTRO=mk('/static/intro.mp3?v=4',.6),CHIME=mk('/static/chime.mp3?v=1',.7);
 let unlocked=false;
 function hint(){const h=document.getElementById('sndHint');if(h)h.hidden=unlocked||mode()==='off'}

@@ -35,6 +35,8 @@ import adminstats
 app.register_blueprint(adminstats.bp)
 import deposit
 app.register_blueprint(deposit.bp)
+import logos
+app.register_blueprint(logos.bp)
 import news
 app.register_blueprint(news.bp)
 import music
@@ -148,6 +150,19 @@ def _any_err(e):
 WD = "월화수목금토일"
 EMO = {"baseball": "⚾", "basketball": "🏀", "volleyball": "🏐", "football": "⚽", "hockey": "🏒"}
 SPORT_KO = {"football": "축구", "baseball": "야구", "basketball": "농구", "volleyball": "배구", "hockey": "아이스하키"}
+# 홈 '전체' 리그 순서(한국 인기순). 여기만 바꾸면 PC·모바일 모두 반영. 목록에 없는 리그는 원래 순서대로 뒤에.
+LEAGUE_POP = ["KBO", "EPL", "MLB", "NBA", "K리그1", "챔피언스리그", "라리가", "KBL", "V리그 남자", "V리그 여자", "NPB", "분데스리가",
+              "세리에A", "리그1", "K리그2", "WKBL", "유로파리그", "컨퍼런스리그", "J1리그", "NHL", "챔피언십", "MLS", "사우디 리그"]
+_POP_ALIAS = {"컴퍼런스리그": "컨퍼런스리그", "UEFA 컨퍼런스리그": "컨퍼런스리그", "UEFA 챔피언스리그": "챔피언스리그", "UEFA 유로파리그": "유로파리그",
+              "V리그남자": "V리그 남자", "V리그여자": "V리그 여자", "사우디": "사우디 리그", "사우디 프로리그": "사우디 리그"}
+_POP = {n: i for i, n in enumerate(LEAGUE_POP)}
+
+
+def league_order(name, site_order):
+    i = _POP.get(_POP_ALIAS.get(name, name))
+    return i if i is not None else 1000 + (site_order or 0)
+
+
 SHORT = {"V리그 남자": "V리그 남", "V리그 여자": "V리그 여", "튀르키예 여자 술탄라르": "튀르키예 여자"}
 TABS = [("kbo", "KBO"), ("mlb", "MLB"), ("npb", "NPB"), ("kbl", "KBL"), ("wkbl", "WKBL"),
         ("vm", "V리그 남"), ("vw", "V리그 여"), ("nba", "NBA"),
@@ -224,8 +239,8 @@ def halt_info(g):
 
 def view(g):
     left_home = g["kind"] != "baseball"   # 야구: 원정 왼쪽/홈 오른쪽, 그 외: 홈 왼쪽
-    h = {"name": g["home"], "en": g.get("home_en"), "score": g.get("home_score"), "tag": "홈", "logo": g.get("home_logo"), "id": g.get("home_id")}
-    a = {"name": g["away"], "en": g.get("away_en"), "score": g.get("away_score"), "tag": "원정", "logo": g.get("away_logo"), "id": g.get("away_id")}
+    h = {"name": g["home"], "en": g.get("home_en"), "score": g.get("home_score"), "tag": "홈", "logo": logos.url(g.get("home_logo")), "id": g.get("home_id")}
+    a = {"name": g["away"], "en": g.get("away_en"), "score": g.get("away_score"), "tag": "원정", "logo": logos.url(g.get("away_logo")), "id": g.get("away_id")}
     L, R = (h, a) if left_home else (a, h)
     st = g["state"]
     show = st in ("live", "final") and L["score"] is not None and R["score"] is not None
@@ -248,7 +263,7 @@ def view(g):
     if g.get("if_necessary"):
         sub.append("필요 시 개최")
     return {"key": str(g["key"]), "kind": g["kind"], "league": SHORT.get(g["site_league"], g["site_league"]),
-            "lorder": g["site_order"], "emoji": EMO[g["kind"]], "state": st, "badge": badge,
+            "lorder": league_order(g["site_league"], g["site_order"]), "emoji": EMO[g["kind"]], "state": st, "badge": badge,
             "time": g["start"].strftime("%H:%M"), "ts": g["start"].timestamp(), "L": L, "R": R,
             "lines": lines, "sub": " · ".join(sub), "left_home": left_home, "sport": SPORT_KO[g["kind"]],
             "table": period_table(g), "halt": halt, "reason": reason}
@@ -303,7 +318,10 @@ def period_table(g):
 
 @app.route("/api/games")
 def api_games():
-    d = parse_day(request.args.get("d"))
+    return jsonify(_games_payload(parse_day(request.args.get("d"))))
+
+
+def _games_payload(d):
     games, failed = data.games_for(d)
     if d == today() and datetime.now(data.SEOUL).hour < 6:   # 자정 넘어 이어지는 전날 경기
         prev, f2 = data.games_for(d - timedelta(days=1))
@@ -311,9 +329,9 @@ def api_games():
         failed = sorted(set(failed + f2))
     lk = sorted({g["kind"] for g in games if g["state"] == "live"})
     upstream = min([data.live_ttl(k) for k in lk], default=None)
-    return jsonify({"upstream": upstream, "date": d.isoformat(), "label": day_label(d), "failed": failed,
-                    "updated": datetime.now(data.SEOUL).strftime("%H:%M:%S"),
-                    "games": [view(g) for g in games]})
+    return {"upstream": upstream, "date": d.isoformat(), "label": day_label(d), "failed": failed,
+            "updated": datetime.now(data.SEOUL).strftime("%H:%M:%S"),
+            "games": [view(g) for g in games]}
 
 
 @app.route("/")
@@ -324,7 +342,23 @@ def index():
                            yday=(t - timedelta(days=1)).isoformat(), today=t.isoformat(),
                            tmr=(t + timedelta(days=1)).isoformat(),
                            dmin=(t - timedelta(days=14)).isoformat(), dmax=(t + timedelta(days=7)).isoformat(),
-                           f=request.args.get("f", "all"))
+                           f=request.args.get("f", "all"), g0=_g0(d))
+
+
+def _g0(d):
+    """첫 화면용 경기 목록을 HTML 안에 넣어 API 왕복 없이 바로 그려요."""
+    import concurrent.futures as cf
+    global _g0pool
+    if _g0pool is None:
+        _g0pool = cf.ThreadPoolExecutor(2)
+    fut = _g0pool.submit(_games_payload, d)
+    try:
+        return fut.result(timeout=float(os.environ.get("G0_TIMEOUT", "0.8")))   # 캐시가 비어 오래 걸리면 HTML 은 먼저 보내고 화면이 API 로 받아요
+    except Exception:
+        return None
+
+
+_g0pool = None
 
 
 @app.route("/live")

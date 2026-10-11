@@ -61,7 +61,7 @@ function hook(){ // 효과음 연동: 알림음 재생 시 덕킹, 입장 효과
  const S=window.TWSound;if(S&&S!==S0){S0=S;const p0=S.play;S.play=function(){if(a&&!a.paused)duckFor(2500);return p0.apply(this,arguments)};
   const I=S._a;if(I){I.addEventListener('play',()=>setDuck(.2));['ended','pause'].forEach(v=>I.addEventListener(v,()=>setDuck(1)))}}
 }
-function init(){css();mount(); if(on()){start()}}  // 자동재생 시도, 막히면 첫 상호작용에 시작(arm)
+function init(){css();mount(); if(on()){if(matchMedia('(pointer:coarse)').matches)arm();else if(document.readyState==='complete')setTimeout(start,800);else addEventListener('load',()=>setTimeout(start,800),{once:true})}}  // 첫 화면 다 그린 뒤에만 음악 받기  // 자동재생 시도, 막히면 첫 상호작용에 시작(arm)
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 window.TWBgm={mount,toggle,on,get idx(){return idx},get el(){return a},setVol,get vol(){return vol}};
 })();

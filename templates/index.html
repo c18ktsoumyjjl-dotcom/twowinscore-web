@@ -15,7 +15,7 @@
 <div class="mds" id="mds" data-d="{{d}}" data-today="{{today}}" data-min="{{dmin}}" data-max="{{dmax}}"></div><div class="wrap dlabel">{{label}}</div>{% endblock %}
 {% block body %}<button id="chatFab" class="fab">💬 라운지 <span id="fabN"></span></button><aside id="lounge" class="lounge" hidden></aside><div id="status" class="status"></div><div id="feat" class="ft8" hidden></div><div id="list"><p class="empty">불러오는 중…</p></div>{% endblock %}
 {% block js %}<button class="sndhint" id="sndHint" hidden>소리 켜기</button><script src="/static/sound.js?v=19"></script><script src="/static/fx.js?v=2" defer></script><script src="/static/chat.js?v=10"></script><link rel="stylesheet" href="/static/ins.css?v=7"><script src="/static/vote.js?v=6"></script><script>
-const D="{{d}}";const SPORTS=['전체','축구','야구','농구','배구','아이스하키'];let SP=localStorage.getItem('tw_sport')||'전체',OPEN=null,PV={};let F=new URLSearchParams(location.search).get('f')||'all',Q='',DATA=null,PREV={};
+window.__G={{ g0|tojson }};const D="{{d}}";const SPORTS=['전체','축구','야구','농구','배구','아이스하키'];let SP=localStorage.getItem('tw_sport')||'전체',OPEN=null,PV={};let F=new URLSearchParams(location.search).get('f')||'all',Q='',DATA=null,PREV={};
 const fav=()=>{try{return JSON.parse(localStorage.getItem('tw_fav')||'[]')}catch(e){return[]}};
 const fk=(g,s)=>g.kind+':'+g[s].id;
 const isFav=g=>{const f=fav();return f.includes(fk(g,'L'))||f.includes(fk(g,'R'))};
@@ -69,7 +69,7 @@ function mrender(all,q){const lv=s=>(s==='전체'?all:all.filter(g=>g.sport===s)
  if(pin.length)h+=`<section class="msec"><h2 class="mlg pin"><span class="ln">★ 즐겨찾는 팀</span><small>${pin.length}경기</small></h2>${pin.map(row).join('')}</section>`;
  const rest=F==='all'?v.filter(g=>!isFav(g)):v;const L=new Map();rest.forEach(g=>{if(!L.has(g.league))L.set(g.league,[]);L.get(g.league).push(g)});
  const lk=[...L.entries()].map(([l,x])=>({l,x,f:fl.includes(l)?0:1,n:x.filter(g=>g.state==='live').length,o:x[0].lorder}));
- lk.sort((a,b)=>a.f-b.f||(b.n?1:0)-(a.n?1:0)||a.o-b.o);
+ lk.sort((a,b)=>a.f-b.f||a.o-b.o);
  for(const {l,x,n,f} of lk){x.sort(ord);const c=COL.has(l);h+=`<section class="msec ${c?'col':''}"><h2 class="mlg" data-l="${esc(l)}"><span class="ln">${x[0].emoji} ${esc(l)}</span><small>${x.length}경기${n?` · <i>LIVE ${n}</i>`:''}</small><button class="mlf ${f?'':'on'}" data-l="${esc(l)}" onclick="toggleLg(this.dataset.l,event)" aria-label="리그 즐겨찾기">${f?'☆':'★'}</button><span class="chev">›</span></h2>${c?'':x.map(row).join('')}</section>`}
  document.getElementById('list').innerHTML=h||`<div class="mempty">${q?'검색 결과가 없어요.':F==='live'?'지금 진행 중인 경기가 없어요.':F==='fav'?'<b>☆</b>즐겨찾는 팀이나 리그가 없어요.<br>경기 오른쪽 ☆ 또는 리그 이름 옆 ☆를 누르면 여기에 모여요.':'이 날 경기가 없어요.'}</div>`;
  document.querySelectorAll('.mtab a').forEach(a=>{const t=a.dataset.t;if(t==='score')a.classList.toggle('on',F!=='fav');if(t==='fav')a.classList.toggle('on',F==='fav')});
@@ -88,12 +88,12 @@ function render(){if(!DATA)return;document.getElementById('feat').style.display=
  document.getElementById('chips').innerHTML=chips.map(c=>`<button class="${c[0]===F?'on':''} ${c[0]==='live'?'lv':''}" data-f="${esc(c[0])}">${esc(c[1])}</button>`).join('');
  let v=gs.filter(g=>F==='all'||(F==='live'?g.state==='live':F==='fav'?isFav(g):g.league===F));
  if(q)v=v.filter(g=>(g.L.name+' '+g.R.name+' '+g.league).toLowerCase().includes(q));
- const rank=g=>g.state==='live'?(isFav(g)?0:1):(isFav(g)?1.5:2);
+ const rank=g=>isFav(g)?(g.state==='live'?0:1.5):2;
  const pin=v.filter(g=>rank(g)<2).sort((a,b)=>rank(a)-rank(b)||a.ts-b.ts);
  const rest=v.filter(g=>rank(g)>=2);let h='';
  if(pin.length)h+=`<section><h2 class="pin"><span class="lh">${pin.some(g=>g.state==='live')?'● 진행 중':''}${pin.some(g=>g.state==='live')&&pin.some(isFav)?' · ':''}${pin.some(isFav)?'★ 즐겨찾기':''}</span></h2>${pin.map(row).join('')}</section>`;
  const lab=k=>k==='baseball'?'<span class="ha5">원정 | 홈</span>':'<span class="ha5">홈 | 원정</span>';
- for(const l of leagues){const x=rest.filter(g=>g.league===l);if(x.length)h+=`<section><h2><span class="lh">${x[0].emoji} ${esc(l)}</span>${lab(x[0].kind)}</h2>${x.map(row).join('')}</section>`}
+ const SR={live:0,scheduled:1,finished:2};for(const l of leagues){const x=rest.filter(g=>g.league===l).sort((a,b)=>(SR[a.state]??2)-(SR[b.state]??2)||a.ts-b.ts);if(x.length)h+=`<section><h2><span class="lh">${x[0].emoji} ${esc(l)}</span>${lab(x[0].kind)}</h2>${x.map(row).join('')}</section>`}
  document.getElementById('list').innerHTML=h||`<p class="empty">${q?'검색 결과가 없어요.':F==='live'?'지금 진행 중인 경기가 없어요.':'이 날 경기가 없어요.'}</p>`;
  TWVote.scan(document.getElementById('list'),true);const live=gs.some(g=>g.state==='live');
  document.getElementById('status').innerHTML=(DATA.failed.length?'<span class="warn">일부 종목을 불러오지 못했어요 · </span>':'')+(live?'<i class="dot"></i> 실시간 · 점수 '+(DATA.upstream||15)+'초마다 갱신 · ':'')+DATA.updated+' 기준';
@@ -105,7 +105,7 @@ document.getElementById('list').addEventListener('keydown',e=>{if(e.key==='Enter
 document.getElementById('chips').onclick=e=>{const b=e.target.closest('button');if(b){F=b.dataset.f;render()}};
 document.getElementById('q').oninput=e=>{Q=e.target.value;render()};
 document.getElementById('cal').onchange=e=>{if(e.target.value)location.href='/?d='+e.target.value};
-async function load(){try{const r=await fetch('/api/games?d='+D,{cache:'no-store'});DATA=await r.json();render();if(OPEN&&Date.now()-(PV[OPEN+'@']||0)>30000&&DATA.games.some(g=>g.key===OPEN&&g.state==='live'))loadPv(OPEN)}catch(e){document.getElementById('status').textContent='연결이 불안정해요. 다시 시도 중…'}}
+async function load(){try{if(window.__G){DATA=window.__G;window.__G=null}else{const r=await fetch('/api/games?d='+D,{cache:'no-store'});DATA=await r.json()}render();if(OPEN&&Date.now()-(PV[OPEN+'@']||0)>30000&&DATA.games.some(g=>g.key===OPEN&&g.state==='live'))loadPv(OPEN)}catch(e){document.getElementById('status').textContent='연결이 불안정해요. 다시 시도 중…'}}
 const LG=document.getElementById('lounge'),FAB=document.getElementById('chatFab');let CH=null;
 const fabN=n=>document.getElementById('fabN').textContent=n?n+'명':'';
 const DW=matchMedia('(min-width:1024px)'),SBS=matchMedia('(min-width:1240px)');

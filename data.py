@@ -161,6 +161,19 @@ def _sport_day0(kind, day, today):
         ttl *= 1 + (sum(map(ord, name)) % 17) / 100   # 종목/날짜마다 만료를 조금씩 엇갈리게(한꺼번에 새로 받지 않게)
         if now - c["ts"] < ttl:
             return [_de(g) for g in games], c.get("ok", False)
+        # 만료된 캐시는 바로 돌려주고 새 자료는 뒤에서 받아요(다음 새로고침/5초 폴링에 반영)
+        if not _bg_refresh.get(name):
+            _bg_refresh[name] = 1
+            def _r():
+                try:
+                    with _flight(name):
+                        c2 = _rd(name)
+                        if not (c2 and c2.get("ts", 0) > c["ts"]):
+                            _sport_fetch(kind, day, name, c, time.time())
+                finally:
+                    _bg_refresh.pop(name, None)
+            threading.Thread(target=_r, daemon=True).start()
+        return [_de(g) for g in games], c.get("ok", False)
     with _flight(name):
         c2 = _rd(name)
         if c2 and c2.get("ts", 0) >= now:      # 기다리는 동안 다른 요청이 이미 받아옴
@@ -241,6 +254,23 @@ def _detail(g):
     ttl = 30 * 60 if g["state"] != "scheduled" else 15 * 60
     if c and time.time() - c["ts"] < ttl:
         return c["d"]
+    if c and not _bg_refresh.get(name):   # 오래된 캐시가 있으면 바로 주고 뒤에서 갱신
+        _bg_refresh[name] = 1
+        def _r():
+            try:
+                _detail_fetch(g)
+            finally:
+                _bg_refresh.pop(name, None)
+        threading.Thread(target=_r, daemon=True).start()
+        return c["d"]
+    return _detail_fetch(g)
+
+
+_bg_refresh = {}
+
+
+def _detail_fetch(g):
+    name = "detail_" + str(g["key"]).replace(":", "_") + ".json"
     import starters, injuries
     from concurrent.futures import ThreadPoolExecutor
     kind, league = g["kind"], g["league"]
