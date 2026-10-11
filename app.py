@@ -590,7 +590,7 @@ MANIFEST = {"name": "투윈스코어 TWOWIN", "short_name": "투윈스코어 TWO
                       {"src": "/static/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}
 
 SW_JS = """// 투윈스코어 서비스워커: /static/ 정적 파일만 캐시. API·페이지는 절대 캐시하지 않음(항상 네트워크).
-const C='tw-static-v1';
+const C='tw-static-v2';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);
