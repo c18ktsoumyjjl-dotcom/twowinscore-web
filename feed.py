@@ -128,9 +128,7 @@ def _can_see(me, owner):
         return False
     if me == owner:
         return True
-    if S._blocked(me, owner):
-        return False
-    return S._rel(me, owner) == "friend"
+    return not S._blocked(me, owner)  # 로그인 회원은 모두 열람 (차단 관계만 제외)
 
 
 def _feed_banned(mid):

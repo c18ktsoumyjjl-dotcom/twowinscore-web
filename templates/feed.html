@@ -16,7 +16,6 @@
 </div></div>
 <div class="fd-tabs"><span class="on"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>게시물</span></div>
 <div class="fd-gw"><div class="fd-g" id="fdGrid"></div>
-{% if not can %}<div class="fd-lock"><div class="fd-lc"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M7 11V8a5 5 0 0 1 10 0v3M5 11h14v9H5z"/></svg><b>친구가 되면 볼 수 있어요</b><small>{{p.nick}}님과 친구가 되면 사진과 글을 볼 수 있어요.</small>{% if rel=='sent' %}<span class="fd-b ghost">친구 요청함</span>{% elif rel=='recv' %}<button type="button" class="fd-b pri" data-fa="accept">친구 수락</button>{% else %}<button type="button" class="fd-b pri" data-fa="req">친구추가</button>{% endif %}</div></div>{% endif %}
 </div>
 <p class="fd-empty" id="fdEmpty" hidden>{% if rel=='self' %}첫 게시물을 올려 보세요.{% else %}아직 게시물이 없어요.{% endif %}</p>
 <p class="fd-foot">연락처·메신저 아이디·링크 공유, 홍보·도박 관련 게시물은 금지되며 운영자가 삭제하거나 이용을 제한할 수 있어요.</p>
@@ -25,4 +24,4 @@
 <div class="fd-mod" id="fdUp" hidden><div class="fd-mb" data-x></div><form class="fd-up" id="fdForm"><div class="fd-ph"><button type="button" class="fd-x" data-x aria-label="닫기">‹</button><b>새 게시물</b><button class="fd-post pri" id="upGo">올리기</button></div>
 <div class="fd-ub"><label class="fd-pick" id="upPick"><input type="file" id="upFiles" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/*" multiple hidden><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 7h3l2-2h6l2 2h3v12H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg><span>사진 선택 (최대 {{maxn}}장 · 장당 10MB)</span></label><div class="fd-prev" id="upPrev"></div>
 <textarea id="upText" maxlength="{{maxcap}}" rows="5" placeholder="문구 입력… (연락처·메신저 아이디·링크 공유 금지)"></textarea><div class="fd-uc"><span id="upErr" class="fd-err"></span><small id="upCnt">0/{{maxcap}}</small></div></div></form></div>
-<script src="/static/feed.js?v=2"></script>{% endif %}{% endblock %}
+<script src="/static/feed.js?v=3"></script>{% endif %}{% endblock %}
