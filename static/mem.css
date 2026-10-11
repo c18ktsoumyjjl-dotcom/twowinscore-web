@@ -237,3 +237,15 @@ body.adm .side .nb{margin-left:6px;background:#e8620c;color:#fff;border-radius:9
 .dmwho{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.dmp{background:#fff;border:1px solid #e3e8f1;border-radius:12px;padding:12px}.dmsx{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.dmsx input{flex:1;min-width:120px}
 .dmlog{display:flex;flex-direction:column;gap:8px;max-width:820px}.dmm{max-width:75%;background:#fff;border:1px solid #e3e8f1;border-radius:12px;padding:8px 12px}.dmm.r{align-self:flex-end;background:#eef3ff}.dmm.sus{border-color:#ff8a3d;box-shadow:0 0 0 2px #ffe2cc}.dmm.hid{opacity:.5}.dmm p{margin:4px 0;white-space:pre-wrap;word-break:break-word}.dmm .dmh small{color:#7b8499}.dmm form{text-align:right}
 @media(max-width:760px){.dmwho{grid-template-columns:1fr}.dmm{max-width:92%}}
+/* 마이페이지 드롭다운 메뉴 (리스트형) */
+.mpp .mpm{display:flex;flex-direction:column;margin:10px -14px 0;border-top:1px solid var(--line)}
+.mpp .mpa{display:flex;align-items:center;justify-content:flex-start;gap:10px;height:46px;padding:0 16px;border-radius:0;background:transparent;color:var(--tx)!important;font-weight:700;font-size:14.5px;border-bottom:1px solid var(--line);text-decoration:none}
+.mpp .mpa svg{flex:none;color:var(--or)}.mpp .mpa span{flex:1}.mpp .mpa .chev{color:var(--mu);font-size:18px;font-weight:400}
+.mpp .mpa:hover,.mpp .mpa:active{background:rgba(255,122,26,.08)}
+.mpp .mpa .dmbg{margin:0}
+.mpp form{margin:12px 0 0}.mpp .mpo{height:38px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--mu);font-weight:700}
+.mpp .mpo:hover{color:#ff5b5b;border-color:rgba(255,91,91,.5)}
+[data-theme=light] .mpp{background:#fff;color:#0b1630;border-color:#d7deeb}
+[data-theme=light] .mpp .mpa{color:#0b1630!important;border-color:#e6ebf3}[data-theme=light] .mpp .mpm{border-color:#e6ebf3}
+/* 모바일: 화면 안에 꽉 차게 (좌우 여백) */
+body.mapp .mpp,body.mapp .mic .mpw .mpp{position:fixed;left:10px;right:10px;width:auto;top:calc(env(safe-area-inset-top,0px) + 58px);max-height:calc(100dvh - env(safe-area-inset-top,0px) - 140px);overflow-y:auto;z-index:1000}

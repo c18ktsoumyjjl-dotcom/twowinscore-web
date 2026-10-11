@@ -50,3 +50,8 @@
 .ch-poll button[data-s=R]{border-color:#3b82f6;color:#6ea8ff}.ch-poll button[data-s=R]::before{background:rgba(59,130,246,.22)}
 [data-theme=light] .ch-poll button[data-s=L]{color:#c62828;border-color:#e5484d}[data-theme=light] .ch-poll button[data-s=R]{color:#1d4ed8;border-color:#3b82f6}
 .ch-poll button.on[data-s=L]{background:#e5484d;color:#fff}.ch-poll button.on[data-s=R]{background:#3b82f6;color:#fff}.ch-poll button.on b{opacity:1}
+.hero5 .mpp img{max-height:none;-webkit-mask-image:none;mask-image:none;object-fit:contain;object-position:center}
+.mpp .mpv img{display:inline-block;width:16px!important;height:16px!important}
+.mpp .mpl img{display:block;width:48px!important;height:48px!important}
+.hero5 .mpp .dmbg{display:inline-block}.hero5 .mpp .dmbg[hidden]{display:none}
+.hero5:has(.mpp:not([hidden])){z-index:300}.hero5 .mpp[style*=fixed]{z-index:1000}

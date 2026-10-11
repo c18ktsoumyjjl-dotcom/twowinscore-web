@@ -18,3 +18,8 @@ D.addEventListener('click',async e=>{if(card&&!card.contains(e.target))close();
  const b=card.querySelector('[data-pa]');if(b)b.onclick=async ev=>{ev.stopPropagation();b.disabled=true;let k;try{k=await (await fetch('/api/social/friend',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRF':window.TW_CSRF||''},body:JSON.stringify({act:b.dataset.pa,id:p.id})})).json()}catch(x){k={ok:false}}
   if(card)card.querySelector('.pc-a').innerHTML=`<p class="pc-m">${k.ok?(k.rel==='friend'?'친구가 됐어요!':'친구 요청을 보냈어요.'):esc(k.error||'요청을 처리할 수 없어요.')}</p>`}},true);
 addEventListener('scroll',close,{passive:true});})();
+;(function(){/* 히어로(overflow:hidden) 안의 마이페이지 드롭다운이 잘리지 않게 fixed 로 띄움 */
+function fix(){if(document.body.classList.contains('mapp'))return;document.querySelectorAll('.hero5 .mpw').forEach(w=>{const p=w.querySelector('.mpp'),b=w.querySelector('.mpb');if(!p||!b)return;if(p.hidden){p.style.position='';return}
+ const r=b.getBoundingClientRect();p.style.position='fixed';p.style.top=(r.bottom+8)+'px';p.style.right=Math.max(8,innerWidth-r.right-4)+'px';p.style.left='auto';p.style.maxHeight=(innerHeight-r.bottom-20)+'px';p.style.overflowY='auto'})}
+document.addEventListener('click',e=>{if(e.target.closest('.mpb'))setTimeout(fix,0)});addEventListener('resize',fix);
+addEventListener('scroll',()=>{document.querySelectorAll('.hero5 .mpp:not([hidden])').forEach(p=>{if(p.style.position==='fixed')fix()})},{passive:true});})();
