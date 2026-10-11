@@ -123,3 +123,32 @@ body.mapp .mt .nologo{width:28px;height:28px;background:linear-gradient(135deg,#
 @media(max-width:1023px){body.gm7on .gm7{background:linear-gradient(180deg,rgba(8,14,32,.25),rgba(10,18,40,.8) 50%,var(--bg2) 80%),url(/static/mh_bg.webp) center top/100% auto no-repeat,var(--bg2);box-shadow:0 6px 18px rgba(0,0,0,.4)}
 body.gm7on .gm7t img{filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}}
 body.mapp:not(.detail6) .mh{top:calc(-48px - env(safe-area-inset-top))}
+/* v6: 모바일 라이트모드 */
+[data-theme=light] body.mapp{background:#eef2f8}
+[data-theme=light] body.mapp .mh{background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.93) 45%,#fff 75%),url(/static/mh_bg.webp) center top/100% auto no-repeat,#fff;border-bottom:1px solid #e2e7f1;box-shadow:0 4px 16px rgba(19,33,63,.08)}
+[data-theme=light] body.mapp .mtop .logo{color:#0b1630;text-shadow:none}
+[data-theme=light] body.mapp .mtop .logo .s{background:linear-gradient(180deg,#ff8a2a,#e85d00);-webkit-background-clip:text;background-clip:text;color:transparent}
+[data-theme=light] body.mapp .mtop button,[data-theme=light] body.mapp .mtop a:not(.logo){color:#13213f}
+[data-theme=light] body.mapp .mtop svg{stroke:#13213f}
+[data-theme=light] body.mapp .mh .mds a{color:#4a5878}
+[data-theme=light] body.mapp .mh .mds a b{color:#0b1630}
+[data-theme=light] body.mapp .mh .sports5{border-top:1px solid #edf0f6}
+[data-theme=light] body.mapp .mh .sports5 button{background:#f4f6fb;border-color:#dfe5f0;color:#13213f;backdrop-filter:none}
+[data-theme=light] body.mapp .mh .sports5 button small{color:#6a7896}
+[data-theme=light] body.mapp .mh .sports5 button.on{background:linear-gradient(180deg,#ff8a2a,#f06a00);border-color:#f06a00;color:#fff;box-shadow:0 4px 12px rgba(240,106,0,.28)}
+[data-theme=light] body.mapp .mh .sports5 button.on small{color:#fff3e8}
+[data-theme=light] body.mapp .mh .sports5 .mlv{background:#fff;color:#d93636;border-color:rgba(217,54,54,.35)}
+[data-theme=light] body.mapp .mh .sports5 .mlv.on{background:#e03e3e;color:#fff}
+[data-theme=light] body.mapp .mr{background:#fff;border:1px solid #e4e9f2;box-shadow:0 2px 10px rgba(19,33,63,.06)}
+[data-theme=light] body.mapp .mr.live{background:linear-gradient(90deg,rgba(224,62,62,.09),#fff 34%)}
+[data-theme=light] body.mapp .mr.op{background:#f7f9fd}
+[data-theme=light] body.mapp .mr.live .mc b{color:#0b1630}
+[data-theme=light] body.mapp .mr .mc b.w{color:#e85d00}
+[data-theme=light] body.mapp .mt{color:#0b1630}
+[data-theme=light] body.mapp .mr.final .mt:not(.win),[data-theme=light] body.mapp .mr.final .mc b{color:#6a7896}
+[data-theme=light] body.mapp .mt img{filter:drop-shadow(0 1px 1px rgba(19,33,63,.15))}
+[data-theme=light] body.mapp .mt .nologo{background:linear-gradient(135deg,#eef2f8,#dfe5f0);border-color:#d5dceb}
+[data-theme=light] body.mapp .mtab{background:rgba(255,255,255,.96);border-top:1px solid #e2e7f1;box-shadow:0 -4px 16px rgba(19,33,63,.06)}
+[data-theme=light] body.mapp .mtab a{color:#6a7896}[data-theme=light] body.mapp .mtab a.on{color:#f06a00}
+@media(max-width:1023px){[data-theme=light] body.gm7on .gm7{background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.93) 50%,#fff 80%),url(/static/mh_bg.webp) center top/100% auto no-repeat,#fff;box-shadow:0 4px 16px rgba(19,33,63,.1);border-bottom:1px solid #e2e7f1}
+[data-theme=light] body.gm7on .gm7t img{filter:drop-shadow(0 1px 2px rgba(19,33,63,.2))}}
