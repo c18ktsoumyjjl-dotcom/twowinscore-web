@@ -364,6 +364,7 @@ import warmer
 warmer.start(league_order)
 import chatbot
 chatbot.start(_POP_ALIAS)
+chatbot.install(app)
 
 
 @app.route("/live")

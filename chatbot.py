@@ -164,21 +164,19 @@ def _loop(alias):
     _load()
     first = not _st.get("boot")
     time.sleep(15)
-    threading.Thread(target=_test_once, daemon=True, name="chatbot-test").start()
     try:
         tick(alias, boot=first)
         _st["boot"] = 1
         _save()
     except Exception as e:
         log.warning("chatbot boot: %s", e)
-    _test_once()
     while True:
         time.sleep(LOOP)
         try:
             tick(alias)
         except Exception as e:
             log.warning("chatbot: %s", e)
-        _test_once()
+
 
 
 _lockf = [None]
@@ -215,6 +213,7 @@ def send_test():
     return bool(g)
 
 
+TEST_KEY = "chatbot_test_2"   # 새 테스트가 필요하면 이 키만 바꾸면 한 번 더 감
 _tested = [False]
 
 
@@ -222,11 +221,23 @@ def _test_once():
     """배포 직후 한 번만(사장님 요청 테스트). DB 표시로 재시작해도 다시 안 보냄."""
     try:
         from admin_ext import kv_get, kv_set
-        if _tested[0] or kv_get("chatbot_test_1") == "1":
+        if _tested[0]:
             return
         _tested[0] = True
-        kv_set("chatbot_test_1", "1")
+        if kv_get(TEST_KEY) == "1":
+            return
+        kv_set(TEST_KEY, "1")
         send_test()
         log.warning("chatbot: test messages posted")
     except Exception as e:
         log.warning("chatbot test: %s", e)
+
+
+def install(app):
+    """한 번만 도는 테스트를 첫 채팅 요청(요청 스레드)에서 실행 — 백그라운드 스레드 상태와 무관."""
+    from flask import request
+
+    @app.before_request
+    def _chatbot_test_hook():
+        if not _tested[0] and request.path.startswith("/api/chat/"):
+            _test_once()
