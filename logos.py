@@ -28,6 +28,9 @@ def _make(sport, tid):
     return out.getvalue()
 
 
+_mk_sem = __import__("threading").BoundedSemaphore(2)
+
+
 @bp.route("/lg/<sport>/<int:tid>.webp")
 def logo(sport, tid):
     if sport not in SPORTS or tid > 10**8:
@@ -43,6 +46,8 @@ def logo(sport, tid):
             import time
             if time.time() - _fail.get(k, 0) < 600:
                 return redirect(f"https://media.api-sports.io/{sport}/teams/{tid}.png")
+            if not _mk_sem.acquire(blocking=False):   # 동시에 새로 만드는 건 2개까지 — 나머지는 원본으로 바로 (서버 스레드 보호)
+                return redirect(f"https://media.api-sports.io/{sport}/teams/{tid}.png")
             try:
                 b = _make(sport, tid)
                 os.makedirs(DIR, exist_ok=True)
@@ -50,6 +55,8 @@ def logo(sport, tid):
             except Exception as e:
                 log.warning("logo %s: %s", k, e); _fail[k] = time.time()
                 return redirect(f"https://media.api-sports.io/{sport}/teams/{tid}.png")
+            finally:
+                _mk_sem.release()
         with _lk:
             if len(_mem) > 3000:
                 _mem.clear()
