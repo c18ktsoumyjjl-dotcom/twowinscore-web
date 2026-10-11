@@ -122,3 +122,4 @@ body.mapp .mt img{width:28px;height:28px;filter:drop-shadow(0 1px 2px rgba(0,0,0
 body.mapp .mt .nologo{width:28px;height:28px;background:linear-gradient(135deg,#24365f,#1a2a4c);border:1px solid rgba(255,255,255,.1)}
 @media(max-width:1023px){body.gm7on .gm7{background:linear-gradient(180deg,rgba(8,14,32,.25),rgba(10,18,40,.8) 50%,var(--bg2) 80%),url(/static/mh_bg.webp) center top/100% auto no-repeat,var(--bg2);box-shadow:0 6px 18px rgba(0,0,0,.4)}
 body.gm7on .gm7t img{filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}}
+body.mapp:not(.detail6) .mh{top:calc(-48px - env(safe-area-inset-top))}
