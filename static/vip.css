@@ -55,3 +55,6 @@
 .mpp .mpl img{display:block;width:48px!important;height:48px!important}
 .hero5 .mpp .dmbg{display:inline-block}.hero5 .mpp .dmbg[hidden]{display:none}
 .hero5:has(.mpp:not([hidden])){z-index:300}.hero5 .mpp[style*=fixed]{z-index:1000}
+.walc{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch;grid-auto-rows:64px}.walc>div,.walc .mb{min-height:62px;box-sizing:border-box;margin:0!important}
+.walc .mb{width:100%!important;display:flex!important;align-items:center;justify-content:center;gap:6px;border-radius:12px;height:auto!important;font-weight:800}.walc .mb .dmbg{position:static;margin:0}
+@media(min-width:821px){.walc{grid-template-columns:repeat(4,1fr)}}
