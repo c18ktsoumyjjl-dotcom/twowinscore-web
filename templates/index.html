@@ -60,8 +60,8 @@ function mrow(g,sc,ch,lead,on,op){const st=g.halt?`<b class="hl">⏸ ${esc(g.hal
  return `<div class="mr ${g.state} ${ch?'flash':''} ${op?'op':''}" role="button" tabindex="0" data-k="${esc(g.key)}"><div class="ms">${st}${g.sub&&g.state==='scheduled'?`<small>${esc(g.sub)}</small>`:''}</div>${mtm(g.L,'L')}<div class="mc">${mid}</div>${mtm(g.R,'R')}<button class="mst ${on?'on':''}" data-g="${esc(g.key)}" onclick="toggleGame(this.dataset.g,event)" aria-label="즐겨찾기">${on?'★':'☆'}</button></div><div class="pv6 ${op?'open':''}" data-k="${esc(g.key)}"><div class="pvin">${PV[g.key]||'<p class="empty">불러오는 중…</p>'}</div></div>`}
 /* 기타 리그: 접힌 상태 기본, 펼칠 때만 /api/games/other 로 불러와요 */
 var OK={'축구':'football','야구':'baseball','농구':'basketball','배구':'volleyball','아이스하키':'hockey'},OTH=null,OTT=0,OTL=false;
-var OLIM=20;function oCut(v){const sr={live:0,scheduled:1};const o=v.filter(g=>g.other).sort((a,b)=>(sr[a.state]??2)-(sr[b.state]??2)||a.ts-b.ts),keep=new Set(o.slice(0,OLIM));return [v.filter(g=>!g.other||keep.has(g)),Math.max(0,o.length-OLIM)]}
-function oMore(n){return n?`<button class="oth-more" type="button" onclick="OLIM+=20;render()">기타 리그 더 보기 (+${n})</button>`:''}
+var OLIM=20;function oCut(v){const sr={live:0,scheduled:1},o=v.filter(g=>g.other),lc={};o.forEach(g=>lc[g.league]=(lc[g.league]||0)+1);const f=g=>{try{return isFav(g)}catch(e){return false}};o.sort((a,b)=>f(b)-f(a)||(sr[a.state]??2)-(sr[b.state]??2)||(lc[b.league]-lc[a.league])||a.ts-b.ts);const keep=new Set(o.filter(f).concat(o.filter(g=>!f(g)).slice(0,OLIM)));return [v.filter(g=>!g.other||keep.has(g)),Math.max(0,o.length-keep.size)]}
+function oMore(n){return n?'<p class="oth-note">비인기 경기는 경기검색 하시면 보입니다. 검색후 즐겨찾기 이용 해주세요.</p>':''}
 function ALL(){return OTH?DATA.games.concat(OTH):DATA.games}
 function oOpen(){return localStorage.getItem('tw_oth')==='1'}
 async function oLoad(){if(OTL)return;OTL=true;try{const r=await fetch('/api/games/other?d='+D,{cache:'no-store'});OTH=((await r.json()).games||[]).map(g=>(g.other=1,g));OTT=Date.now()}catch(e){OTH=OTH||[];OTT=Date.now()}OTL=false;render()}
