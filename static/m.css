@@ -160,3 +160,4 @@ body.mapp .mh::before{content:"";position:absolute;left:0;right:0;bottom:100%;he
 body.mapp:not(.detail6) .mh{position:fixed;left:0;right:0;top:0}
 body.mapp:not(.detail6){padding-top:var(--mhh,153px)}
 body.mapp[data-page=standings] .bar{top:var(--mhh,calc(49px + env(safe-area-inset-top)))}
+#sports .moth{border-style:dashed}
