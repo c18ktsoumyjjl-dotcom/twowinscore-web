@@ -152,3 +152,4 @@ body.mapp:not(.detail6) .mh{top:calc(-48px - env(safe-area-inset-top))}
 [data-theme=light] body.mapp .mtab a{color:#6a7896}[data-theme=light] body.mapp .mtab a.on{color:#f06a00}
 @media(max-width:1023px){[data-theme=light] body.gm7on .gm7{background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.93) 50%,#fff 80%),url(/static/mh_bg.webp) center top/100% auto no-repeat,#fff;box-shadow:0 4px 16px rgba(19,33,63,.1);border-bottom:1px solid #e2e7f1}
 [data-theme=light] body.gm7on .gm7t img{filter:drop-shadow(0 1px 2px rgba(19,33,63,.2))}}
+.mh .mds,.mh .sports5{overscroll-behavior-x:contain}

@@ -6,19 +6,23 @@ const TR=[1,2,3,4,5].map(n=>'/static/bgm/bgm'+n+'_v1.mp3');
 const K='tw_bgm',KS='tw_bgm_st',VOL=.3;
 const on=()=>localStorage.getItem(K)!=='off'; // 기본 켬
 let st;try{st=JSON.parse(localStorage.getItem(KS))||{}}catch(e){st={}}
+let ctx=null,g=null;const WA=(window.AudioContext||window.webkitAudioContext)&&matchMedia('(pointer:coarse)').matches;
+function av(){if(!a)return;const v=vol*duck;if(g){try{g.gain.setTargetAtTime(v,ctx.currentTime,.03)}catch(e){g.gain.value=v}a.volume=1}else a.volume=v}
+function wa(){if(!WA||!a)return;try{if(!ctx){const C=window.AudioContext||window.webkitAudioContext;ctx=new C();g=ctx.createGain();ctx.createMediaElementSource(a).connect(g);g.connect(ctx.destination);av()}if(ctx.state!=='running')ctx.resume().catch(()=>{})}catch(e){g=null}}
+['pointerdown','touchend','click'].forEach(v=>addEventListener(v,()=>{if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})},{capture:true,passive:true}));
 let idx=(st.i|0)%TR.length,vol=typeof st.v==='number'?st.v:VOL,duck=1,a=null,btn=null;
 function save(){localStorage.setItem(KS,JSON.stringify({i:idx,t:a?Math.floor(a.currentTime||0):(st.t|0),v:vol}))}
-function el(){if(a)return a;a=new Audio();a.preload='none';a.setAttribute('playsinline','');a.volume=vol*duck;
+function el(){if(a)return a;a=new Audio();a.crossOrigin='anonymous';a.preload='none';a.setAttribute('playsinline','');
  a.addEventListener('ended',()=>{idx=(idx+1)%TR.length;st.t=0;load(0);a.play().catch(()=>{});save();ui()});
  a.addEventListener('timeupdate',()=>{if(((a.currentTime|0)%3)===0)save()});
  addEventListener('pagehide',save);document.addEventListener('visibilitychange',save);return a}
 function load(t){el();a.src=TR[idx];if(t>0){const f=()=>{try{a.currentTime=t}catch(e){}a.removeEventListener('loadedmetadata',f)};a.addEventListener('loadedmetadata',f)}}
-function setDuck(d){duck=d;if(a)a.volume=vol*duck}
+function setDuck(d){duck=d;av()}
 let dt;function duckFor(ms){setDuck(.25);clearTimeout(dt);dt=setTimeout(()=>setDuck(1),ms)}
-function start(){el();if(!a.src)load(st.t|0);const p=a.play();paint();if(p)p.then(paint,()=>{});return p?p.catch(()=>{arm()}):Promise.resolve()}
+function start(){el();wa();av();if(!a.src)load(st.t|0);const p=a.play();paint();if(p)p.then(paint,()=>{});return p?p.catch(()=>{arm()}):Promise.resolve()}
 function stop(){if(a){save();a.pause()}paint()}
 let ui=()=>{};
-function setVol(v){vol=Math.round(Math.max(0,Math.min(1,v))*100)/100;if(a)a.volume=vol*duck;save();paint();ui()}
+function setVol(v){vol=Math.round(Math.max(0,Math.min(1,v))*100)/100;av();save();paint();ui()}
 function toggle0(){if(on()){localStorage.setItem(K,'off');stop()}else{localStorage.setItem(K,'on');start()}}
 function toggle(){if(on()&&a&&a.paused&&!a.ended){start();return}
  if(on()){localStorage.setItem(K,'off');stop()}else{localStorage.setItem(K,'on');start()}}

@@ -27,8 +27,8 @@ if(mds){const p=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(Date.U
   if(Math.abs(dx)>80&&Date.now()-q.t<800){const n=days[i+(dx<0?1:-1)];if(n){list.classList.add(dx<0?'gol':'gor');location.href='/?d='+n}}},{passive:true});}
 /* 당겨서 새로고침 */
 const pt=document.getElementById('mptr');let y0=null,pd=0;
-addEventListener('touchstart',e=>{if(!MQ.matches||B.classList.contains('detail6')||scrollY>0||e.touches.length>1)return y0=null;y0=e.touches[0].clientY;pd=0},{passive:true});
-addEventListener('touchmove',e=>{if(y0==null)return;pd=Math.max(0,Math.min(110,(e.touches[0].clientY-y0)*.5));pt.style.transform=`translate(-50%,${pd-44}px) rotate(${pd*3}deg)`;pt.classList.toggle('rdy',pd>=60)},{passive:true});
+let x0=0;addEventListener('touchstart',e=>{if(!MQ.matches||B.classList.contains('detail6')||scrollY>0||e.touches.length>1||e.target.closest('.mds,.sports5,.lsw,.sheet,#lounge,.dchat,input,textarea,[type=range]'))return y0=null;y0=e.touches[0].clientY;x0=e.touches[0].clientX;pd=0},{passive:true});
+addEventListener('touchmove',e=>{if(y0==null)return;const dy=e.touches[0].clientY-y0,dx=e.touches[0].clientX-x0;if(Math.abs(dx)>Math.abs(dy)||dy<10){if(Math.abs(dx)>12){y0=null;pt.style.transform='';pt.classList.remove('rdy')}return}pd=Math.max(0,Math.min(110,(e.touches[0].clientY-y0)*.5));pt.style.transform=`translate(-50%,${pd-44}px) rotate(${pd*3}deg)`;pt.classList.toggle('rdy',pd>=60)},{passive:true});
 addEventListener('touchend',async()=>{if(y0==null)return;y0=null;if(pd>=60){pt.classList.add('spin');pt.style.transform='translate(-50%,18px)';try{if(window.TWload)await window.TWload();else{location.reload();return}}catch(e){}setTimeout(()=>{pt.classList.remove('spin','rdy');pt.style.transform=''},350)}else{pt.style.transform='';pt.classList.remove('rdy')}},{passive:true});
 })();
 ;document.addEventListener('error',function(e){var i=e.target;if(i.tagName==='IMG'&&i.closest('.mt,.gm7t')&&!i.dataset.f){i.dataset.f=1;var s=document.createElement('span');s.className='nologo';i.replaceWith(s)}},true);
