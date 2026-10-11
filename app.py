@@ -424,7 +424,45 @@ def game(key):
     return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=plays.commentary(g), gl=plays.goals(g),
                            forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st,
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
-                           names={g["home"], g["away"]}, gnews=news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]), points=insights.points(g, det), vote=_vinfo(g, v))
+                           names={g["home"], g["away"]}, gnews=news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]), points=insights.points(g, det), vote=_vinfo(g, v), seo=_game_seo(g, v))
+
+
+SPORT_KO = {"football": "축구", "baseball": "야구", "basketball": "농구", "volleyball": "배구", "hockey": "아이스하키"}
+JL_SPORT = {"football": "Soccer", "baseball": "Baseball", "basketball": "Basketball", "volleyball": "Volleyball", "hockey": "Ice Hockey"}
+
+
+def _game_seo(g, v):
+    """경기 상세 SEO: 제목·설명·JSON-LD(SportsEvent). 사실만(점수·시간·리그)."""
+    L, R = v["L"]["name"], v["R"]["name"]
+    home, away = g["home"], g["away"]
+    lg = g.get("site_league") or ""
+    st = g.get("state")
+    day = g["start"].strftime("%Y년 %-m월 %-d일 %H:%M")
+    sc = f"{v['L']['score']}:{v['R']['score']}" if v["L"].get("score") is not None and v["R"].get("score") is not None else ""
+    if st == "live":
+        title = f"{L} vs {R} 실시간 스코어 {sc} ({lg}) | 투윈스코어"
+    elif st == "final":
+        title = f"{L} vs {R} 경기 결과 {sc} ({lg}) | 투윈스코어"
+    else:
+        title = f"{L} vs {R} 실시간 스코어 · {lg} {g['start'].strftime('%-m월 %-d일')} | 투윈스코어"
+    desc = (f"{day} {lg} {L} vs {R} 경기 " + ("실시간 스코어 " + sc if st == "live" else ("최종 결과 " + sc if st == "final" else "실시간 스코어와 중계 정보")) +
+            f". 최근 전적, 맞대결, 순위와 팬 응원 투표를 투윈스코어에서 확인하세요.")
+    url = "https://twowinscore.com/game/" + str(g["key"])
+    status = {"live": "https://schema.org/EventScheduled", "final": "https://schema.org/EventScheduled",
+              "postponed": "https://schema.org/EventPostponed", "cancelled": "https://schema.org/EventCancelled"}.get(st, "https://schema.org/EventScheduled")
+    ld = {"@context": "https://schema.org", "@type": "SportsEvent", "name": f"{home} vs {away}", "url": url,
+          "startDate": g["start"].isoformat(), "eventStatus": status, "sport": JL_SPORT.get(g["kind"], ""),
+          "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+          "homeTeam": {"@type": "SportsTeam", "name": home}, "awayTeam": {"@type": "SportsTeam", "name": away},
+          "competitor": [{"@type": "SportsTeam", "name": home}, {"@type": "SportsTeam", "name": away}],
+          "superEvent": {"@type": "SportsEvent", "name": lg},
+          "location": {"@type": "Place", "name": g.get("venue") or lg, "address": g.get("venue") or lg},
+          "organizer": {"@type": "Organization", "name": lg}, "image": "https://twowinscore.com/static/og.jpg",
+          "description": desc}
+    bc = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "투윈스코어", "item": "https://twowinscore.com/"},
+        {"@type": "ListItem", "position": 2, "name": f"{L} vs {R}", "item": url}]}
+    return {"title": title, "desc": desc, "url": url, "ld": [ld, bc]}
 
 
 def _find(key):

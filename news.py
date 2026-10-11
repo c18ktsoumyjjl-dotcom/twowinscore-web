@@ -1,7 +1,7 @@
 """스포츠뉴스 — 네이버 스포츠 '많이 본 뉴스' 목록(제목·언론사·시간·썸네일)만 보여주고 기사는 네이버로 연결해요. 본문은 가져오지 않아요."""
 import json, time, threading, logging, urllib.request, urllib.parse
 from datetime import datetime
-from flask import Blueprint, render_template, request, Response
+from flask import abort, Blueprint, render_template, request, Response
 
 log = logging.getLogger("news")
 bp = Blueprint("news", __name__)
@@ -129,13 +129,55 @@ def page():
 
 @bp.route("/sitemap.xml")
 def sitemap():
+    """사이트맵 인덱스: 고정 페이지 + 날짜별 경기(어제·오늘·내일). 관리자 경로는 넣지 않음."""
+    from datetime import datetime, timedelta
+    import data
     base = "https://twowinscore.com"
-    urls = ["/", "/standings", "/news"] + [f"/news?s={s}" for s, _, _ in SPORTS[1:]] + ["/shop", "/privacy"]
-    x = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + "".join(
-        f"<url><loc>{base}{urllib.parse.quote(u, safe='/?=&')}</loc><changefreq>{'hourly' if 'news' in u or u == '/' else 'daily'}</changefreq></url>".replace("&", "&amp;") for u in urls) + "</urlset>"
-    return Response(x, mimetype="application/xml", headers={"Cache-Control": "public, max-age=3600"})
+    t = datetime.now(data.SEOUL)
+    days = [(t.date() + timedelta(days=i)).isoformat() for i in (-1, 0, 1)]
+    x = '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+    x += f"<sitemap><loc>{base}/sitemap-pages.xml</loc><lastmod>{t.date().isoformat()}</lastmod></sitemap>"
+    x += "".join(f"<sitemap><loc>{base}/sitemap-games-{d}.xml</loc><lastmod>{t.isoformat(timespec='seconds')}</lastmod></sitemap>" for d in days)
+    x += "</sitemapindex>"
+    return Response(x, mimetype="application/xml", headers={"Cache-Control": "public, max-age=1800"})
+
+
+def _urlset(items):
+    x = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+    for loc, freq, pri in items:
+        x += f"<url><loc>{loc.replace('&', '&amp;')}</loc><changefreq>{freq}</changefreq><priority>{pri}</priority></url>"
+    return Response(x + "</urlset>", mimetype="application/xml", headers={"Cache-Control": "public, max-age=1800"})
+
+
+@bp.route("/sitemap-pages.xml")
+def sitemap_pages():
+    import data
+    base = "https://twowinscore.com"
+    items = [(base + "/", "always", "1.0"), (base + "/standings", "daily", "0.8"), (base + "/news", "hourly", "0.7")]
+    items += [(base + f"/news?s={s}", "hourly", "0.6") for s, _, _ in SPORTS[1:]]
+    items += [(base + f"/standings?league={sl}", "daily", "0.7") for sl in data.STANDING_SLUGS if sl != "kbo"]
+    items += [(base + "/shop", "monthly", "0.3"), (base + "/privacy", "yearly", "0.2")]
+    return _urlset(items)
+
+
+@bp.route("/sitemap-games-<d>.xml")
+def sitemap_games(d):
+    from datetime import date
+    import data
+    try:
+        day = date.fromisoformat(d)
+    except ValueError:
+        abort(404)
+    base = "https://twowinscore.com"
+    try:
+        games, _ = data.games_for(day)
+    except Exception:
+        games = []
+    items = [(base + "/?d=" + day.isoformat(), "hourly", "0.6")]
+    items += [(f"{base}/game/{g['key']}", "always" if g.get("state") == "live" else "hourly", "0.8") for g in games]
+    return _urlset(items)
 
 
 @bp.route("/robots.txt")
 def robots():
-    return Response("User-agent: *\nDisallow: /api/\nAllow: /\nSitemap: https://twowinscore.com/sitemap.xml\n", mimetype="text/plain")
+    return Response("User-agent: *\nDisallow: /api/\nDisallow: /me\nDisallow: /login\nDisallow: /logout\nAllow: /\n\nUser-agent: Yeti\nAllow: /\nDisallow: /api/\n\nSitemap: https://twowinscore.com/sitemap.xml\n", mimetype="text/plain")

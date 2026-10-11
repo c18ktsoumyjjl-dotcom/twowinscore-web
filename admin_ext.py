@@ -52,7 +52,7 @@ def _ctx():
     from flask import g as _g
     _sup = (_g.get("admin") or {}).get("super")
     groups = [(gk, gi, gl, [it for it in items if it[0] not in SUPER_ONLY or _sup]) for gk, gi, gl, items in MENU_GROUPS]
-    return {"adm_menu": [m for m in MENU if m[0] not in SUPER_ONLY or _sup], "adm_groups": [g for g in groups if g[3]], "adm_me": _g.get("admin"), "site_banner": banner() if _ok[0] else None, "hero_v": hero_ver() if _ok[0] else None}
+    return {"adm_menu": [m for m in MENU if m[0] not in SUPER_ONLY or _sup], "adm_groups": [g for g in groups if g[3]], "adm_me": _g.get("admin"), "site_banner": banner() if _ok[0] else None, "hero_v": hero_ver() if _ok[0] else None, "seo_verify": (kv_get("seo_verify") or None) if _ok[0] else None}
 
 
 # ---------- key/value 설정 (프로세스 캐시) ----------
@@ -263,7 +263,27 @@ MAX_IMG = 5 * 1024 * 1024
 @bp.route("/admin/settings")
 @admin_required
 def settings_page():
-    return render_template("admin.html", mode="settings", sec="settings", b=kv_get("banner") or {}, colors=COLORS, hv=hero_ver())
+    return render_template("admin.html", mode="settings", sec="settings", b=kv_get("banner") or {}, colors=COLORS, hv=hero_ver(), sv=kv_get("seo_verify") or {})
+
+
+@bp.post("/admin/settings/seo")
+@admin_required
+def seo_save():
+    """구글 서치콘솔·네이버 서치어드바이저 소유 확인 코드(meta content 값만)."""
+    from members import super_required as _s
+    @_s
+    def go():
+        def clean(v):
+            v = (v or "").strip()
+            m = re.search(r'content=["\']([^"\']+)["\']', v)   # meta 태그 통째로 붙여도 값만 뽑음
+            v = m.group(1) if m else v
+            return v if re.match(r"^[A-Za-z0-9_\-]{10,100}$", v) else ""
+        g, n = clean(request.form.get("google")), clean(request.form.get("naver"))
+        kv_set("seo_verify", {"google": g, "naver": n} if (g or n) else None)
+        alog("seo_verify", ("G" if g else "") + ("N" if n else ""))
+        flash("검색엔진 소유 확인 코드를 저장했어요." + ("" if (g or n) or not (request.form.get("google") or request.form.get("naver")) else " (형식이 맞지 않아 비웠어요)"))
+        return redirect("/admin/settings")
+    return go()
 
 
 @bp.post("/admin/settings/banner")
