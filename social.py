@@ -504,15 +504,26 @@ def adm_view(a, b):
     for x in (a, b):
         r = q("SELECT dm_until,status FROM members WHERE id=?", (x,), one=True)
         mem[x] = {"id": x, "nick": nk.get(x, ("?",))[0], "dm": r[0] if r else None, "st": r[1] if r else "?"}
-    alog("dm view", f"{a},{b}")
+    if request.args.get("r") != "1":
+        alog("dm view", f"{a},{b}")
     items = [{"id": r[0], "s": r[1], "sn": nk.get(r[1], ("?",))[0], "body": r[2], "ts": datetime.fromtimestamp(r[3], KST).strftime("%m-%d %H:%M:%S"),
               "sus": r[4], "hid": r[5], "rep": r[0] in rep, "left": r[1] == a} for r in rows]
+    if request.args.get("part") == "1":
+        return render_template("_dm_panel.html", items=items, pa=mem[a], pb=mem[b], a=a, b=b)
     return render_template("admin.html", mode="dmview", sec="dm", items=items, pa=mem[a], pb=mem[b], a=a, b=b)
 
 
 @bp.post("/admin/dm/act")
 @admin_required
 def adm_act():
+    from flask import get_flashed_messages
+    r = _adm_act()
+    if request.headers.get("X-Fetch") == "1":
+        return jsonify({"ok": True, "msg": " ".join(get_flashed_messages()) or "적용했어요."})
+    return r
+
+
+def _adm_act():
     act = request.form.get("act", "")
     mid = request.form.get("mid", type=int)
     why = request.form.get("why", "").strip()[:100] or "-"

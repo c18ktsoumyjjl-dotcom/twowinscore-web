@@ -2,7 +2,7 @@
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const H={'Content-Type':'application/json','X-CSRF':window.TW_CSRF||''};
 const api=(u,b)=>fetch(u,b?{method:'POST',headers:H,body:JSON.stringify(b),credentials:'same-origin'}:{credentials:'same-origin',cache:'no-store'}).then(r=>r.json().catch(()=>({ok:false,error:'요청을 처리할 수 없어요.'})));
-const lv=c=>(c.lv&&/^[0-4]$/.test(String(c.lv[2]))?`<img src="/static/tiers/t${c.lv[2]}_32.webp?v=1" width="16" height="16" alt="">`:'')+(c.vip?'<img src="/static/vip/vip_gem_32.webp?v=1" width="16" height="16" alt="VIP">':'');
+const lv=c=>(c.lv?`<small class="tnm t${esc(c.lv[2])}" style="color:${/^#[0-9a-f]{3,8}$/i.test(c.lv[1])?c.lv[1]:'inherit'}">${esc(c.lv[0])}</small>`:'')+(c.lv&&/^[0-4]$/.test(String(c.lv[2]))?`<img src="/static/tiers/t${c.lv[2]}_32.webp?v=1" width="16" height="16" alt="">`:'')+(c.vip?'<img src="/static/vip/vip_gem_32.webp?v=1" width="16" height="16" alt="VIP">':'');
 const who=c=>`<span class="soc-who">${c.on!=null?`<i class="dot ${c.on?'on':''}"></i>`:''}${lv(c)}<b class="${c.vip?'vipn':''}">${esc(c.nick)}</b></span>`;
 const btn=(t,a,id,cls)=>`<button class="soc-sm ${cls||''}" data-a="${a}" data-id="${id}">${t}</button>`;
 let tab=R.dataset.tab||'friends',peer=+R.dataset.peer||0,last=0,timer=0;

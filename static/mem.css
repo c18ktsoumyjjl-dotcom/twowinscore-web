@@ -249,3 +249,10 @@ body.adm .side .nb{margin-left:6px;background:#e8620c;color:#fff;border-radius:9
 [data-theme=light] .mpp .mpa{color:#0b1630!important;border-color:#e6ebf3}[data-theme=light] .mpp .mpm{border-color:#e6ebf3}
 /* 모바일: 화면 안에 꽉 차게 (좌우 여백) */
 body.mapp .mpp,body.mapp .mic .mpw .mpp{position:fixed;left:10px;right:10px;width:auto;top:calc(env(safe-area-inset-top,0px) + 58px);max-height:calc(100dvh - env(safe-area-inset-top,0px) - 140px);overflow-y:auto;z-index:1000}
+.dmsplit{display:grid;grid-template-columns:minmax(380px,44%) 1fr;gap:14px;align-items:start}
+.dmleft{min-width:0}.dmright{position:sticky;top:12px;background:#fff;border:1px solid #e3e8f1;border-radius:14px;padding:12px;min-height:420px;max-height:calc(100vh - 40px);display:flex;flex-direction:column;overflow:hidden}
+.dmright .dmlog{flex:1;overflow-y:auto;max-width:none;padding:4px 2px}.dmright .dmwho{margin:8px 0}
+.dmrow{cursor:pointer}.dmrow.on td{background:#eaf1ff!important}.dmrow:hover td{background:#f5f8ff}
+.dmph{display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid #e3e8f1}.dmph small{margin-left:auto}.dmback{display:none;border:0;background:none;font-size:26px;line-height:1;cursor:pointer;color:#1a2236}
+.dmsplit .dml{max-width:220px}
+@media(max-width:1000px){.dmsplit{grid-template-columns:1fr}.dmright{position:fixed;inset:0;top:0;z-index:500;border-radius:0;max-height:none;transform:translateX(100%);transition:transform .25s ease}.dmsplit.show .dmright{transform:none}.dmback{display:block}}

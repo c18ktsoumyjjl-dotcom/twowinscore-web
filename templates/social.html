@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% block title %}친구 · 대화 | 투윈스코어{% endblock %}{% block robots %}noindex,nofollow{% endblock %}{% block head %}<meta name="robots" content="noindex"><link rel="stylesheet" href="/static/social.css?v=1">{% endblock %}
+{% extends "base.html" %}{% block title %}친구 · 대화 | 투윈스코어{% endblock %}{% block robots %}noindex,nofollow{% endblock %}{% block head %}<meta name="robots" content="noindex"><link rel="stylesheet" href="/static/social.css?v=2">{% endblock %}
 {% block body %}<div class="soc" id="soc" data-tab="{{tab}}" data-peer="{{peer}}">
 <div class="soc-top"><h1>친구 · 대화</h1><label class="soc-hide"><input type="checkbox" id="socHide" {{'checked' if hide}}> 접속 상태 숨기기</label></div>
 <div class="soc-tabs" role="tablist"><button data-t="friends">친구</button><button data-t="req">요청 <i class="sb" id="sbReq" hidden></i></button><button data-t="dm">대화 <i class="sb" id="sbDm" hidden></i></button><button data-t="find">회원검색</button></div>
@@ -10,4 +10,4 @@
 <p class="soc-notice">{{notice}}</p><div class="soc-msgs" id="rMsgs"></div>
 <form class="soc-in" id="rForm"><input id="rText" maxlength="300" placeholder="메시지 입력 (연락처·메신저 아이디 공유 금지)" autocomplete="off"><button>보내기</button></form><p class="soc-err" id="rErr" hidden></p></section>
 <p class="soc-foot">{{notice}} 연락처·메신저 아이디·링크 공유와 홍보는 금지되며 위반 시 이용이 제한될 수 있어요.</p>
-</div><script src="/static/social.js?v=1"></script>{% endblock %}
+</div><script src="/static/social.js?v=2"></script>{% endblock %}
