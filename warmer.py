@@ -58,7 +58,7 @@ def _due(g, now):
         return True
     if g["state"] == "live":
         return age > _ttl(g)
-    if g["state"] == "finished":
+    if g["state"] == "final":
         return False                      # 끝난 경기는 한 번만
     return bool(soon) and age > _ttl(g)
 

@@ -362,6 +362,8 @@ _g0pool = None
 
 import warmer
 warmer.start(league_order)
+import chatbot
+chatbot.start(_POP_ALIAS)
 
 
 @app.route("/live")
