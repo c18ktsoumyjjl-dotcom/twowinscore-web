@@ -341,6 +341,11 @@ def post(room):
             for k in ks:
                 _guest[k] = _guest.get(k, 0) + 1
         _save_soon()
+    try:
+        import adminstats
+        adminstats.chat_hit()
+    except Exception:
+        pass
     promo = None
     if mem:
         import levels

@@ -11,13 +11,16 @@ bp = Blueprint("admin_ext", __name__)
 
 # 사이드 메뉴: (그룹키, 그룹 이름, [(키, 이름, 경로), ...]) · 회원 상세(메모·VIP·캐시·확성기)는 회원 목록에서 들어감
 MENU_GROUPS = [
-    ("g_members", "회원관리", [("members", "회원목록", "/admin"), ("activity", "회원활동내역", "/admin/activity")]),
-    ("g_chat", "채팅/확성기", [("mega", "확성기 고정 관리", "/admin/mega")]),
-    ("g_stats", "통계", [("stats", "방문자 통계", "/admin/stats"), ("bots", "봇 상태", "/admin/bots")]),
-    ("g_settings", "설정", [("settings", "사이트 설정", "/admin/settings")]),
-    ("g_admin", "관리자", [("admins", "관리자 계정", "/admin/admins"), ("log", "접근 기록", "/admin/log"), ("otp", "OTP 재설정", "/admin/otp")]),
+    ("g_dash", "📊", "대시보드", [("dash", "한눈에 보기", "/admin/dash")]),
+    ("g_members", "👥", "회원관리", [("members", "회원목록", "/admin"), ("activity", "회원활동내역", "/admin/activity")]),
+    ("g_chat", "💬", "채팅관리", [("mega", "확성기", "/admin/mega")]),
+    ("g_shop", "🛒", "상점관리", [("cash", "캐시 내역", "/admin/cash"), ("vips", "VIP 회원", "/admin/vips")]),
+    ("g_stats", "📈", "통계관리", [("stats", "사이트통계", "/admin/stats"), ("settle", "정산통계", "/admin/settle")]),
+    ("g_ops", "⚙️", "운영", [("bots", "봇 상태", "/admin/bots"), ("settings", "사이트 설정", "/admin/settings")]),
+    ("g_admin", "🔐", "관리자", [("admins", "관리자 계정", "/admin/admins"), ("log", "접근 기록", "/admin/log"), ("otp", "OTP 재설정", "/admin/otp")]),
 ]
-MENU = [it for _, _, items in MENU_GROUPS for it in items]
+MENU = [it for _, _, _, items in MENU_GROUPS for it in items]
+SUPER_ONLY = ("admins", "activity", "settle", "cash")
 
 BOTS = [("score", "@kr_twowin_bot", "채널 알림 · 그룹방 · 스코어 검색"),
         ("cscenter", "@twowinscore_cs_bot", "투윈스코어 고객센터"),
@@ -48,8 +51,8 @@ def init_db():
 def _ctx():
     from flask import g as _g
     _sup = (_g.get("admin") or {}).get("super")
-    groups = [(gk, gl, [it for it in items if it[0] not in ("admins", "activity") or _sup]) for gk, gl, items in MENU_GROUPS]
-    return {"adm_menu": [m for m in MENU if m[0] not in ("admins", "activity") or _sup], "adm_groups": [g for g in groups if g[2]], "adm_me": _g.get("admin"), "site_banner": banner() if _ok[0] else None, "hero_v": hero_ver() if _ok[0] else None}
+    groups = [(gk, gi, gl, [it for it in items if it[0] not in SUPER_ONLY or _sup]) for gk, gi, gl, items in MENU_GROUPS]
+    return {"adm_menu": [m for m in MENU if m[0] not in SUPER_ONLY or _sup], "adm_groups": [g for g in groups if g[3]], "adm_me": _g.get("admin"), "site_banner": banner() if _ok[0] else None, "hero_v": hero_ver() if _ok[0] else None}
 
 
 # ---------- key/value 설정 (프로세스 캐시) ----------
@@ -163,10 +166,6 @@ def memo_counts(ids):
 
 
 # ---------- 통계 ----------
-@bp.route("/admin/stats")
-@admin_required
-def stats_page():
-    return render_template("admin.html", mode="stats", sec="stats", v=visit_stats())
 
 
 # ---------- 봇 상태 ----------

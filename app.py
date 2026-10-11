@@ -29,6 +29,8 @@ import vip
 app.register_blueprint(vip.bp)
 import activity
 app.register_blueprint(activity.bp)
+import adminstats
+app.register_blueprint(adminstats.bp)
 import admin_accts
 app.register_blueprint(admin_accts.bp)
 try:

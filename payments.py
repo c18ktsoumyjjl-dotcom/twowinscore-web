@@ -12,7 +12,8 @@ def ready():
     return PROVIDER is not None
 
 
-def start_charge(member_id, amount):
+def start_charge(member_id, amount, items=None):
+    """items: [(패키지 캐시, 수량), ...] · amount: 합계(원)"""
     if not ready():
         return None
     raise NotImplementedError

@@ -16,3 +16,11 @@
 .sh-terms ul{margin:0;padding:14px 14px 14px 30px;border-radius:14px;background:var(--card);border:1px solid var(--line);font-size:13px;line-height:1.8;color:var(--mu)}.sh-terms b{color:var(--tx)}
 [data-theme=light] .sh-vip{background:linear-gradient(135deg,#fff6df,#ffffff 60%);color:#13213f;border-color:#f0b84a}[data-theme=light] .sh-vb ul{color:#4a5878}[data-theme=light] .sh-vb b,[data-theme=light] .sh-pr .tbd,[data-theme=light] .sh-vb h3 em{color:#b86a00}
 @media(max-width:700px){.sh-grid,.sh-grid.c4{grid-template-columns:repeat(2,1fr)}.sh-vip{flex-direction:column;text-align:center}.sh-vb ul{text-align:left}.sh-vip .sh-btn{max-width:none}.sh-top{flex-wrap:wrap}}
+
+.sh-grid.c5{grid-template-columns:repeat(5,1fr)}.sh-card.ch.pick{border-color:var(--or);box-shadow:0 6px 18px rgba(240,106,0,.2)}
+.qty{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px}.qty button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--tx);font-size:18px;font-weight:800;cursor:pointer}
+.qty button:active{transform:scale(.95)}.qty input{width:44px;height:34px;text-align:center;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit;font-weight:800;font-size:16px;-moz-appearance:textfield}.qty input::-webkit-inner-spin-button{display:none}
+.sh-sum{margin-top:14px;padding:14px 16px;border-radius:16px;background:var(--card);border:1px solid var(--line)}.sh-sum .ln{font-size:13.5px;line-height:1.7}.sh-sum .tt{display:flex;align-items:baseline;gap:10px;margin:8px 0 6px;padding-top:8px;border-top:1px dashed var(--line)}.sh-sum .tt b{font-size:22px;color:var(--or)}.sh-sum .tt em{font-style:normal;color:var(--mu);font-size:13px}
+.sh-sum .usdt{font-size:12.5px;color:var(--mu);margin:0 0 10px}.sh-sum .sh-btn{max-width:260px}
+.sh-note pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px;margin:10px 0}.sh-note .nb{display:flex;gap:8px;flex-wrap:wrap}.sh-note .nb .sh-btn{width:auto;flex:1;min-width:140px;margin:0}
+@media(max-width:900px){.sh-grid.c5{grid-template-columns:repeat(3,1fr)}}@media(max-width:700px){.sh-grid.c5{grid-template-columns:repeat(2,1fr)}.sh-sum .sh-btn{max-width:none}}

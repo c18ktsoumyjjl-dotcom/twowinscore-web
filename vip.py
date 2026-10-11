@@ -278,7 +278,8 @@ def admin_mega_remove():
 
 
 # ---------- 스코어캐시 (유료 재화: 1원 = 1캐시 · 출금/환전/양도/경품 교환 불가) ----------
-CHARGE = [5000, 10000, 30000, 50000]
+CHARGE = [5000, 10000, 30000, 50000, 100000]
+QTY_MAX = 10
 VIP_PRICE = None      # 가격 미정 → 구매 불가, '가격 추후 공개'
 VIP_DAYS = 30
 ITEMS = {"mega1": ("확성기 1개", 1000, 1), "mega10": ("확성기 10개", 8000, 10), "mega30": ("확성기 30개", 20000, 30)}
@@ -369,10 +370,15 @@ def shop_charge():
     t = request.form.get("_csrf", "")
     if not t or not hmac.compare_digest(t, session.get("_csrf", "")):
         abort(400, "CSRF")
-    amt = request.form.get("amount", type=int)
-    if amt not in CHARGE:
+    sel = []
+    for part in (request.form.get("items") or "").split(",")[:len(CHARGE)]:
+        mm = re.match(r"^(\d+)x(\d+)$", part.strip())
+        if mm and int(mm.group(1)) in CHARGE and 1 <= int(mm.group(2)) <= QTY_MAX:
+            sel.append((int(mm.group(1)), int(mm.group(2))))
+    if not sel:
         abort(400)
-    url = payments.start_charge(m["id"], amt)
+    amt = sum(a_ * n_ for a_, n_ in sel)
+    url = payments.start_charge(m["id"], amt, sel)
     if not url:
         flash("결제 준비 중이에요. 고객센터로 문의해 주세요."); return redirect("/shop")
     return redirect(url)
