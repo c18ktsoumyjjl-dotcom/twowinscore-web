@@ -168,15 +168,16 @@ def _loop(alias):
         tick(alias, boot=first)
         _st["boot"] = 1
         _save()
-        _test_once()
     except Exception as e:
         log.warning("chatbot boot: %s", e)
+    _test_once()
     while True:
         time.sleep(LOOP)
         try:
             tick(alias)
         except Exception as e:
             log.warning("chatbot: %s", e)
+        _test_once()
 
 
 _lockf = [None]
@@ -197,7 +198,10 @@ def start(alias):
 
 def send_test():
     """[테스트] 골 1개 + 응원 투표 1개를 홈 채팅에. 골은 텔레그램 그룹에도 감(투표는 안 감)."""
-    gs, _ = data.games_for(datetime.now(data.SEOUL).date())
+    try:
+        gs, _ = data.games_for(datetime.now(data.SEOUL).date())
+    except Exception:
+        gs = []
     fb = [g for g in gs if g.get("kind") == "football"]
     pop = [x for x in fb if _ok_league(x.get("site_league"), {})]
     g = next((x for x in pop + fb if x.get("state") == "scheduled"), (pop or fb or [None])[0])
@@ -215,8 +219,8 @@ def _test_once():
         from admin_ext import kv_get, kv_set
         if kv_get("chatbot_test_1") == "1":
             return
-        kv_set("chatbot_test_1", "1")
         send_test()
+        kv_set("chatbot_test_1", "1")
         log.warning("chatbot: test messages posted")
     except Exception as e:
         log.warning("chatbot test: %s", e)
