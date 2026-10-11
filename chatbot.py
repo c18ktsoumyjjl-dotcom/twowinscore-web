@@ -215,14 +215,18 @@ def send_test():
     return bool(g)
 
 
+_tested = [False]
+
+
 def _test_once():
     """배포 직후 한 번만(사장님 요청 테스트). DB 표시로 재시작해도 다시 안 보냄."""
     try:
         from admin_ext import kv_get, kv_set
-        if kv_get("chatbot_test_1") == "1":
+        if _tested[0] or kv_get("chatbot_test_1") == "1":
             return
-        send_test()
+        _tested[0] = True
         kv_set("chatbot_test_1", "1")
+        send_test()
         log.warning("chatbot: test messages posted")
     except Exception as e:
         log.warning("chatbot test: %s", e)
