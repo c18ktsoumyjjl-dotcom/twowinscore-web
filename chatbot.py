@@ -164,6 +164,7 @@ def _loop(alias):
     _load()
     first = not _st.get("boot")
     time.sleep(15)
+    threading.Thread(target=_test_once, daemon=True, name="chatbot-test").start()
     try:
         tick(alias, boot=first)
         _st["boot"] = 1
@@ -199,6 +200,8 @@ def start(alias):
 
 def send_test():
     """[테스트] 골 1개 + 응원 투표 1개를 홈 채팅에. 골은 텔레그램 그룹에도 감(투표는 안 감)."""
+    post(chat.BRIDGE_ROOM, "[테스트] ⚽ EPL 55' 사카(PK) · 토트넘 1:1 아스널",
+         tg="[테스트] ⚽ [EPL] 55' 사카(PK) · 토트넘 1:1 아스널")
     try:
         gs, _ = data.games_for(datetime.now(data.SEOUL).date())
     except Exception:
@@ -206,8 +209,6 @@ def send_test():
     fb = [g for g in gs if g.get("kind") == "football"]
     pop = [x for x in fb if _ok_league(x.get("site_league"), {})]
     g = next((x for x in pop + fb if x.get("state") == "scheduled"), (pop or fb or [None])[0])
-    post(chat.BRIDGE_ROOM, "[테스트] ⚽ EPL 55' 사카(PK) · 토트넘 1:1 아스널",
-         tg="[테스트] ⚽ [EPL] 55' 사카(PK) · 토트넘 1:1 아스널")
     if g:
         post(chat.BRIDGE_ROOM, f"[테스트] 📣 {g.get('site_league') or ''} {g['home']} vs {g['away']} · 어느 팀을 응원하세요?",
              {"poll": {"room": room_of(g), "L": g["home"], "R": g["away"]}}, nobridge=True)
