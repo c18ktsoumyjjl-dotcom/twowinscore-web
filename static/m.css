@@ -161,3 +161,16 @@ body.mapp:not(.detail6) .mh{position:fixed;left:0;right:0;top:0}
 body.mapp:not(.detail6){padding-top:var(--mhh,153px)}
 body.mapp[data-page=standings] .bar{top:var(--mhh,calc(49px + env(safe-area-inset-top)))}
 #sports .moth{border-style:dashed}
+
+body.mapp .mh #chips{display:flex;gap:6px;margin:0;padding:0 12px 9px;overflow-x:auto;justify-content:flex-start;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x;-webkit-overflow-scrolling:touch}
+body.mapp .mh #chips[hidden]{display:none}
+body.mapp .mh #chips::-webkit-scrollbar{display:none}
+body.mapp .mh #chips>:first-child{margin-left:0}body.mapp .mh #chips>:last-child{margin-right:0}
+body.mapp .mh #chips button{flex:none;min-height:0;padding:5px 11px;border-radius:15px;font-size:12.5px;font-weight:700;background:transparent;border:1px solid var(--line);color:var(--mu)}
+body.mapp .mh #chips button.on{background:var(--tx);border-color:var(--tx);color:var(--bg)}
+body.mapp .mh #chips button.lv{color:var(--live);border-color:rgba(255,77,77,.55)}
+body.mapp .mh #chips button.lv.on{background:var(--live);border-color:var(--live);color:#fff}
+body.mapp .mh #chips button[data-f="기타"]{border-style:dashed}
+[data-theme=light] body.mapp .mh #chips button:not(.on){background:#fff;border-color:#d7deeb;color:#3a4660}
+[data-theme=light] body.mapp .mh #chips button.lv:not(.on){color:#e53935;border-color:#f3a5a5}
+[data-theme=light] body.mapp .mh #chips button.on{background:#0b1630;border-color:#0b1630;color:#fff}

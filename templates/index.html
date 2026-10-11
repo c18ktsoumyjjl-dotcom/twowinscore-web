@@ -83,8 +83,13 @@ function oRender(){if(!OTH||Date.now()-OTT>60000)oLoad();const LS=document.getEl
 function mrender(all,q){const AL=ALL();const lv=s=>(s==='전체'?AL:AL.filter(g=>g.sport===s)).filter(g=>g.state==='live').length;const cnt=s=>s==='전체'?AL.length:AL.filter(g=>g.sport===s).length;
  const nlv=AL.filter(g=>g.state==='live').length,noth=(SP==='전체'?AL:AL.filter(g=>g.sport===SP)).filter(g=>g.other).length;
  document.getElementById('sports').innerHTML=(nlv?`<button class="mlv ${F==='live'?'on':''}" data-live="1"><i class="pd"></i>LIVE ${nlv}</button>`:'')+SPORTS.filter(s=>s==='전체'||cnt(s)).map(s=>`<button class="${s===SP&&F!=='live'?'on':''}" data-s="${s}">${s} <small>${cnt(s)}</small>${s!=='전체'&&lv(s)?`<i class="lc">${lv(s)}</i>`:''}</button>`).join('')+(noth?`<button class="moth ${F==='기타'?'on':''}" data-oth="1">기타 리그 <small>${noth}</small></button>`:'');
- const gs=SP==='전체'||F==='live'?AL:AL.filter(g=>g.sport===SP);if(!['all','live','fav','기타'].includes(F))F='all';
- let v=gs.filter(g=>F==='all'?(!g.other||q||isFav(g)||flg().includes(g.league)):F==='live'?g.state==='live':F==='기타'?g.other:isFav(g)||flg().includes(g.league));
+ const gs=SP==='전체'||F==='live'?AL:AL.filter(g=>g.sport===SP),gmm=gs.filter(g=>!g.other);
+ const mlg=[...new Map(gmm.map(g=>[g.league,g.lorder])).entries()].sort((a,b)=>a[1]-b[1]).map(x=>x[0]);
+ if(!['all','live','fav','기타','slive'].includes(F)&&!mlg.includes(F))F='all';
+ {const mc=document.getElementById('chips');if(mc){const on=SP!=='전체'&&F!=='live';mc.hidden=!on;mc.classList.toggle('mch',on);if(on){const nl=gs.filter(g=>g.state==='live').length,no=gs.length-gmm.length;
+  const C=[...(nl?[['slive','● LIVE '+nl]]:[]),['all','전체 '+gmm.length],...mlg.map(l=>[l,l+' '+gmm.filter(g=>g.league===l).length]),...(no?[['기타','기타 리그 '+no]]:[])];
+  mc.innerHTML=C.map(c=>`<button class="${c[0]===F?'on':''} ${c[0]==='slive'?'lv':''}" data-f="${esc(c[0])}">${esc(c[1])}</button>`).join('')}}}
+ let v=gs.filter(g=>F==='all'?(!g.other||q||isFav(g)||flg().includes(g.league)):F==='live'||F==='slive'?g.state==='live':F==='기타'?g.other:F==='fav'?isFav(g)||flg().includes(g.league):g.league===F);
 let OMN=0;if(q)v=v.filter(g=>(g.L.name+' '+g.R.name+' '+g.league).toLowerCase().includes(q));
  if(F==='기타'&&!q){const c=oCut(v);v=c[0];OMN=c[1]}
  const sr={live:0,scheduled:1};const ord=(a,b)=>(sr[a.state]??2)-(sr[b.state]??2)||a.ts-b.ts;const fl=flg();let h='';
