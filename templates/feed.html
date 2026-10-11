@@ -1,0 +1,28 @@
+{% extends "base.html" %}{% block title %}{% if missing %}회원 피드{% else %}{{p.nick}} 피드{% endif %} | 투윈스코어{% endblock %}{% block robots %}noindex,nofollow{% endblock %}{% block head %}<meta name="robots" content="noindex"><link rel="stylesheet" href="/static/feed.css?v=3">{% endblock %}
+{% block body %}{% if missing %}<div class="fd"><p class="fd-miss">회원을 찾을 수 없어요.</p><p class="fd-miss"><a href="/friends?t=find">회원검색으로 가기 ›</a></p></div>{% else %}
+<div class="fd" id="fd" data-mid="{{p.id}}" data-rel="{{rel}}" data-see="{{1 if can else 0}}" data-pid="{{pid}}" data-maxcap="{{maxcap}}" data-maxn="{{maxn}}">
+<div class="fd-h">
+<div class="fd-av">{% if p.lv and p.lv[2] in (0,1,2,3,4) %}<img src="/static/tiers/t{{p.lv[2]}}_128.webp?v=1" width="96" height="96" alt="{{p.lv[0]}}">{% endif %}{% if on %}<i class="fd-on" title="접속 중"></i>{% endif %}</div>
+<div class="fd-i">
+<div class="fd-n"><h1 class="{{'vipn' if p.vip}}">{{p.nick}}</h1>{% if p.vip %}<img class="fd-vip" src="/static/vip/vip_gem_32.webp?v=1" srcset="/static/vip/vip_gem_64.webp?v=1 2x" width="20" height="20" alt="VIP"><span class="fd-viptx">VIP</span>{% endif %}</div>
+{% if p.lv %}<p class="fd-t"><img src="/static/tiers/t{{p.lv[2]}}_32.webp?v=1" width="16" height="16" alt=""><span style="color:{{p.lv[1]}}">{{p.lv[0]}}</span></p>{% endif %}
+<ul class="fd-s"><li><b>{{np}}</b>게시물</li><li><b>{{nf}}</b>친구</li></ul>
+<div class="fd-a">{% if rel=='self' %}<button type="button" class="fd-b pri" id="fdNew"{% if ban %} disabled title="피드 이용 제한 중"{% endif %}><span aria-hidden="true">＋</span> 새 게시물</button><a class="fd-b" href="/friends">친구 · 대화</a>
+{% elif rel=='friend' %}<a class="fd-b pri" href="/friends?t=dm&peer={{p.id}}">대화하기</a><span class="fd-b ghost">✓ 친구</span>
+{% elif rel=='sent' %}<span class="fd-b ghost">친구 요청함</span>
+{% elif rel=='recv' %}<button type="button" class="fd-b pri" data-fa="accept">친구 수락</button>
+{% else %}<button type="button" class="fd-b pri" data-fa="req">친구추가</button>{% endif %}</div>
+{% if ban %}<p class="fd-ban">피드 이용이 제한된 상태예요{% if ban!='perm' %} ({{ban[:16]}}까지){% endif %}.</p>{% endif %}
+</div></div>
+<div class="fd-tabs"><span class="on"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>게시물</span></div>
+<div class="fd-gw"><div class="fd-g" id="fdGrid"></div>
+{% if not can %}<div class="fd-lock"><div class="fd-lc"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M7 11V8a5 5 0 0 1 10 0v3M5 11h14v9H5z"/></svg><b>친구가 되면 볼 수 있어요</b><small>{{p.nick}}님과 친구가 되면 사진과 글을 볼 수 있어요.</small>{% if rel=='sent' %}<span class="fd-b ghost">친구 요청함</span>{% elif rel=='recv' %}<button type="button" class="fd-b pri" data-fa="accept">친구 수락</button>{% else %}<button type="button" class="fd-b pri" data-fa="req">친구추가</button>{% endif %}</div></div>{% endif %}
+</div>
+<p class="fd-empty" id="fdEmpty" hidden>{% if rel=='self' %}첫 게시물을 올려 보세요.{% else %}아직 게시물이 없어요.{% endif %}</p>
+<p class="fd-foot">연락처·메신저 아이디·링크 공유, 홍보·도박 관련 게시물은 금지되며 운영자가 삭제하거나 이용을 제한할 수 있어요.</p>
+</div>
+<div class="fd-mod" id="fdView" hidden><div class="fd-mb" data-x></div><div class="fd-pv" role="dialog" aria-modal="true"><div class="fd-ph"><button type="button" class="fd-x" data-x aria-label="닫기">‹</button><span class="fd-pw" id="pvWho"></span><span class="fd-pm" id="pvMenu"></span></div><div class="fd-car" id="pvCar"></div><div class="fd-side"><div class="fd-ph fd-ph2"><span class="fd-pw" id="pvWho2"></span><span class="fd-pm" id="pvMenu2"></span><button type="button" class="fd-xx" data-x aria-label="닫기">✕</button></div><div class="fd-cap" id="pvCap"></div><div class="fd-act"><button type="button" class="fd-like" id="pvLike" aria-label="좋아요"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 20.5s-7.5-4.6-9.2-9.3C1.6 7.8 4 4.5 7.3 4.5c2 0 3.6 1.1 4.7 2.7 1.1-1.6 2.7-2.7 4.7-2.7 3.3 0 5.7 3.3 4.5 6.7-1.7 4.7-9.2 9.3-9.2 9.3z"/></svg></button><b id="pvLikes">0</b><time id="pvAt"></time></div></div></div></div>
+<div class="fd-mod" id="fdUp" hidden><div class="fd-mb" data-x></div><form class="fd-up" id="fdForm"><div class="fd-ph"><button type="button" class="fd-x" data-x aria-label="닫기">‹</button><b>새 게시물</b><button class="fd-post pri" id="upGo">올리기</button></div>
+<div class="fd-ub"><label class="fd-pick" id="upPick"><input type="file" id="upFiles" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/*" multiple hidden><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 7h3l2-2h6l2 2h3v12H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg><span>사진 선택 (최대 {{maxn}}장 · 장당 10MB)</span></label><div class="fd-prev" id="upPrev"></div>
+<textarea id="upText" maxlength="{{maxcap}}" rows="5" placeholder="문구 입력… (연락처·메신저 아이디·링크 공유 금지)"></textarea><div class="fd-uc"><span id="upErr" class="fd-err"></span><small id="upCnt">0/{{maxcap}}</small></div></div></form></div>
+<script src="/static/feed.js?v=2"></script>{% endif %}{% endblock %}

@@ -11,7 +11,7 @@ from collections import deque
 app = Flask(__name__)
 import adminpath
 adminpath.install(app)
-app.config["MAX_CONTENT_LENGTH"] = 9 * 1024 * 1024  # 이미지 업로드(관리자)만 6MB, 나머지는 아래 _body_limit 에서 16KB
+app.config["MAX_CONTENT_LENGTH"] = 52 * 1024 * 1024  # 이미지 업로드(관리자)만 6MB, 나머지는 아래 _body_limit 에서 16KB
 app.register_blueprint(chat.bp)
 
 # ---------- 회원 / 관리자 ----------
@@ -45,6 +45,8 @@ import admin_accts
 app.register_blueprint(admin_accts.bp)
 import social
 app.register_blueprint(social.bp)
+import feed
+app.register_blueprint(feed.bp)
 try:
     members.init_db()
     admin_ext.init_db()
@@ -54,19 +56,20 @@ try:
     music.init_db()
     deposit.init_db()
     social.init_db()
+    feed.init_db()
 except Exception:
     logging.getLogger("app").exception("member DB init failed")
 
 # ---------- 보안: IP별 요청 제한 ----------
 # (경로 접두어, 1분 최대). 캐시에서 나가는 폴링은 같은 와이파이·통신사 공유 IP 를 고려해 넉넉히.
-RATE = [("/admin", 120), ("/api/preview/", 20), ("/api/vote", 60), ("/api/chat", 300), ("/api/games", 300), ("/api/", 120), ("/game/", 60)]
+RATE = [("/admin/feed/img", 1200), ("/admin", 120), ("/api/preview/", 20), ("/api/vote", 60), ("/api/chat", 300), ("/api/games", 300), ("/api/", 120), ("/game/", 60)]
 _rl, _rl_lock = {}, threading.Lock()
 
 
 @app.before_request
 def _body_limit():
     n = request.content_length or 0
-    lim = {"/admin/settings/hero": 6 * 1024 * 1024, "/admin/music/upload": 9 * 1024 * 1024}.get(request.path, 16 * 1024)
+    lim = {"/admin/settings/hero": 6 * 1024 * 1024, "/admin/music/upload": 9 * 1024 * 1024, "/api/feed/post": 51 * 1024 * 1024}.get(request.path, 16 * 1024)
     if n > lim:
         abort(413)
 

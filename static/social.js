@@ -4,6 +4,7 @@ const H={'Content-Type':'application/json','X-CSRF':window.TW_CSRF||''};
 const api=(u,b)=>fetch(u,b?{method:'POST',headers:H,body:JSON.stringify(b),credentials:'same-origin'}:{credentials:'same-origin',cache:'no-store'}).then(r=>r.json().catch(()=>({ok:false,error:'요청을 처리할 수 없어요.'})));
 const lv=c=>(c.lv?`<small class="tnm t${esc(c.lv[2])}" style="color:${/^#[0-9a-f]{3,8}$/i.test(c.lv[1])?c.lv[1]:'inherit'}">${esc(c.lv[0])}</small>`:'')+(c.lv&&/^[0-4]$/.test(String(c.lv[2]))?`<img src="/static/tiers/t${c.lv[2]}_32.webp?v=1" width="16" height="16" alt="">`:'')+(c.vip?'<img src="/static/vip/vip_gem_32.webp?v=1" width="16" height="16" alt="VIP">':'');
 const who=c=>`<span class="soc-who">${c.on!=null?`<i class="dot ${c.on?'on':''}"></i>`:''}${lv(c)}<b class="${c.vip?'vipn':''}">${esc(c.nick)}</b></span>`;
+const fdl=c=>`<a class="soc-sm" href="/u/${encodeURIComponent(c.nick)}">피드</a>`;
 const btn=(t,a,id,cls)=>`<button class="soc-sm ${cls||''}" data-a="${a}" data-id="${id}">${t}</button>`;
 let tab=R.dataset.tab||'friends',peer=+R.dataset.peer||0,last=0,timer=0;
 function show(t){tab=t;R.querySelectorAll('.soc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));R.querySelectorAll('.soc-p').forEach(p=>p.hidden=p.dataset.p!==t||!!peer);$('room').hidden=!peer;
@@ -12,7 +13,7 @@ async function loadNoti(){const j=await api('/api/social/notifs');if(!j.ok)retur
  $('lNoti').innerHTML=j.items.map(x=>`<li class="nt ${x.rd?'':'un'}"><a href="${x.k==='freq'?'/friends?t=req':x.k==='facc'?'/friends?t=friends':'/friends?t=dm&peer='+x.a}" data-nid="${x.id}"><i>${x.k==='dm'?'💬':x.k==='freq'?'👋':'🤝'}</i><span>${x.k==='dm'?`<b>${esc(x.n)}</b> ${esc(x.b)}`:`<b>${esc(x.n)}</b>${T[x.k]}`}</span><small>${new Date(x.ts*1000).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}</small></a></li>`).join('')||empty('알림이 없어요.')}
 function empty(t){return `<li class="soc-e">${t}</li>`}
 async function loadFr(){const j=await api('/api/social/friends');if(!j.ok)return;
- $('lFriends').innerHTML=j.friends.map(c=>`<li>${who(c)}<span>${btn('대화','dm',c.id,'pri')}${btn('삭제','remove',c.id)}</span></li>`).join('')||empty('아직 친구가 없어요. 회원검색이나 채팅 닉네임을 눌러 친구를 추가해 보세요.');
+ $('lFriends').innerHTML=j.friends.map(c=>`<li>${who(c)}<span>${fdl(c)}${btn('대화','dm',c.id,'pri')}${btn('삭제','remove',c.id)}</span></li>`).join('')||empty('아직 친구가 없어요. 회원검색이나 채팅 닉네임을 눌러 친구를 추가해 보세요.');
  $('lRecv').innerHTML=j.recv.map(c=>`<li>${who(c)}<span>${btn('수락','accept',c.id,'pri')}${btn('거절','decline',c.id)}</span></li>`).join('')||empty('받은 요청이 없어요.');
  $('lSent').innerHTML=j.sent.map(c=>`<li>${who(c)}<span>${btn('요청 취소','cancel',c.id)}</span></li>`).join('')||empty('보낸 요청이 없어요.');
  $('lBlk').innerHTML=j.blocked.map(c=>`<li>${who(c)}<span>${btn('차단 해제','unblock',c.id)}</span></li>`).join('')||empty('차단한 회원이 없어요.');}
@@ -20,7 +21,7 @@ async function loadConv(){const j=await api('/api/social/convs');if(!j.ok)return
  $('lConv').innerHTML=j.items.map(c=>`<li class="cv" data-a="dm" data-id="${c.id}">${who(c)}<span class="cvl">${c.mine?'나: ':''}${esc(c.last)}</span>${c.unread?`<i class="sb">${c.unread}</i>`:''}</li>`).join('')||empty('대화가 없어요. 친구 목록에서 \'대화\'를 눌러 시작하세요.');}
 const relBtn=c=>c.rel==='friend'?btn('대화','dm',c.id,'pri'):c.rel==='sent'?'<em class="mu">요청함</em>':c.rel==='recv'?btn('수락','accept',c.id,'pri'):btn('친구추가','req',c.id,'pri');
 $('fFind').onsubmit=async e=>{e.preventDefault();const v=$('qFind').value.trim();if(!v)return;const j=await api('/api/social/search?q='+encodeURIComponent(v));
- $('lFind').innerHTML=j.ok?(j.items.map(c=>`<li>${who(c)}<span>${relBtn(c)}</span></li>`).join('')||empty('검색 결과가 없어요.')):empty(esc(j.error||''))};
+ $('lFind').innerHTML=j.ok?(j.items.map(c=>`<li>${who(c)}<span>${fdl(c)}${relBtn(c)}</span></li>`).join('')||empty('검색 결과가 없어요.')):empty(esc(j.error||''))};
 R.addEventListener('click',async e=>{const t=e.target.closest('.soc-tabs button');if(t){peer=0;show(t.dataset.t);return}
  const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=+b.dataset.id;
  if(a==='dm'){open(id);return}

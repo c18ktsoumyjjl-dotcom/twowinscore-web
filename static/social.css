@@ -53,3 +53,4 @@ body.mapp #twnt{left:12px;right:12px;bottom:auto;top:calc(env(safe-area-inset-to
 .dmhd b.vipn{background:linear-gradient(90deg,#ffd257,#ff8a1f);-webkit-background-clip:text;background-clip:text;color:transparent}
 .dmb{display:flex;align-items:flex-end;gap:5px}
 .rd1{font-style:normal;font-size:11px;font-weight:800;color:#ff7a1a;line-height:1;margin-bottom:3px}.rd1[hidden]{display:none}
+a.soc-sm{display:inline-block;text-decoration:none;line-height:normal}.soc-l li>span{display:flex;flex-wrap:nowrap;align-items:center;flex:none}
