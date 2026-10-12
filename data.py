@@ -234,7 +234,14 @@ def _fetch_raw(kind, day, other=None):
     return out
 
 
-def find_game(key, day):
+def find_game(key, day, _nx=True):
+    g = _find_game(key, day)
+    if g is None and _nx and str(key).startswith("football:") and day == datetime.now(SEOUL).date():
+        g = _find_game(key, day + timedelta(days=1))   # 홈 목록의 '내일' 축구 (24시간 창)
+    return g
+
+
+def _find_game(key, day):
     games, _ = games_for(day)
     for g in games:
         if str(g["key"]) == key:

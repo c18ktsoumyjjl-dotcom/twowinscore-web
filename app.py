@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request, abort, jsonify, redirect
 import data
+import curation
 import chat
 import plays
 import insights
@@ -338,11 +339,43 @@ def _games_payload(d):
         prev, f2 = data.games_for(d - timedelta(days=1))
         games = [g for g in prev if g["state"] == "live"] + games
         failed = sorted(set(failed + f2))
+    games = games + _nx_main(d)
     lk = sorted({g["kind"] for g in games if g["state"] == "live"})
     upstream = min([data.live_ttl(k) for k in lk], default=None)
     return {"upstream": upstream, "date": d.isoformat(), "label": day_label(d), "failed": failed,
             "updated": datetime.now(data.SEOUL).strftime("%H:%M:%S"),
-            "games": [view(g) for g in games], "other_n": _other_n(d)}
+            "games": _cur([view(g) for g in games], games, d), "other_n": _other_n(d)}
+
+
+def _nx_main(d):
+    """오늘 화면: 내일 날짜지만 24시간 안에 시작하는 축구도 같이 (라이브스코어 기준)."""
+    if d != today():
+        return []
+    try:
+        gs, _ = data.games_for(d + timedelta(days=1))
+        return curation.next_day_football(gs, datetime.now(data.SEOUL))
+    except Exception:
+        return []
+
+
+def _nx_other(d):
+    if d != today():
+        return []
+    try:
+        return curation.next_day_football(data.others_for(d + timedelta(days=1), refresh=False), datetime.now(data.SEOUL))
+    except Exception:
+        return []
+
+
+def _cur(views, games, d):
+    """큐레이션: 숨길 경기에 hide=True (검색·즐겨찾기로는 보여요). 내일 경기는 시각에 '내일' 표시."""
+    now, it = datetime.now(data.SEOUL), d == today()
+    for v, g in zip(views, games):
+        if curation.hidden(g, now, it):
+            v["hide"] = True
+        if g["start"].date() != d and g["start"].date() > d and v["state"] == "scheduled":
+            v["badge"] = "내일 " + v["badge"]
+    return views
 
 
 def _other_n(d):
@@ -350,8 +383,12 @@ def _other_n(d):
         os_ = data.others_for(d, refresh=False)
         if d == today() and datetime.now(data.SEOUL).hour < 6:
             os_ = [g for g in data.others_for(d - timedelta(days=1), refresh=False) if g["state"] == "live"] + os_
+        os_ = os_ + _nx_other(d)
+        now, it = datetime.now(data.SEOUL), d == today()
         n = {}
         for g in os_:
+            if curation.hidden(g, now, it):
+                continue
             n[g["kind"]] = n.get(g["kind"], 0) + 1
         return n
     except Exception:
@@ -365,10 +402,11 @@ def api_games_other():
     gs = data.others_for(d)
     if d == today() and datetime.now(data.SEOUL).hour < 6:
         gs = [g for g in data.others_for(d - timedelta(days=1), refresh=False) if g["state"] == "live"] + gs
+    gs = gs + _nx_other(d)
     out = []
     for g in gs:
         try:
-            out.append(view(g))
+            out.append(_cur([view(g)], [g], d)[0])
         except Exception:
             pass
     r = jsonify({"games": out})
