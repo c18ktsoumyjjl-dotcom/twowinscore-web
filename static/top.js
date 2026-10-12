@@ -3,7 +3,8 @@
 const kind0=S.dataset.kind,K=S.dataset.k,Q=location.search,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function goBack(e){if(e)e.preventDefault();const r=document.referrer;let same=false;try{same=r&&new URL(r).origin===location.origin}catch(x){}
  const d=new URLSearchParams(Q).get('d'),home='/'+(d?'?d='+encodeURIComponent(d):'');let left=false;addEventListener('pagehide',()=>{left=true},{once:true});
- if(history.length>1&&same){history.back();setTimeout(()=>{if(!left&&location.pathname.startsWith('/game/'))location.href=home},700)}else location.href=home}
+ const nav=u=>{if(window.TWnav)TWnav(u);else location.href=u};const bgm=!!(window.TWBgm&&TWBgm.el&&!TWBgm.el.paused);
+ if(history.length>1&&same){const p0=location.href;history.back();setTimeout(()=>{if(!left&&location.href===p0)nav(home)},bgm?2500:700)}else nav(home)}
 const bk=document.getElementById('tpbk');if(bk)bk.addEventListener('click',goBack);
 function tgBack(){try{const tg=window.Telegram&&Telegram.WebApp;if(tg&&tg.BackButton&&(tg.initData||tg.platform&&tg.platform!=='unknown')){tg.BackButton.show();tg.BackButton.onClick(()=>goBack())}}catch(e){}}
 const inTg=window.TelegramWebviewProxy||/tgWebApp/.test(location.hash)||/tgWebApp/.test(sessionStorage.getItem('tw_tg')||'');if(/tgWebApp/.test(location.hash))try{sessionStorage.setItem('tw_tg','tgWebApp')}catch(e){}
