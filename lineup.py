@@ -155,8 +155,13 @@ def get(g):
     try:
         if g.get("league") == 5:
             return _kbo(g, live)
-        if g.get("league") == 1:
-            return _mlb(g, live)
+        if g.get("league") in (1, 2):
+            r = None
+            try:
+                r = ov_lineup(g)
+            except Exception:
+                r = None
+            return r or (_mlb(g, live) if g.get("league") == 1 else None)
     except Exception:
         return None
     return None
@@ -270,7 +275,13 @@ def bso(g):
         if b is None or s is None or o is None:
             return None
         return {"b": min(b, 3), "s": min(s, 2), "o": min(o, 2), "r": [_on(cs.get("base1")), _on(cs.get("base2")), _on(cs.get("base3"))]}
-    if g.get("league") == 1:
+    if g.get("league") in (1, 2):
+        try:
+            r = ov_bso(g)
+        except Exception:
+            r = None
+        if r or g.get("league") == 2:
+            return r
         st = S._mlb(g)
         pk = st and st.get("_pk")
         if not pk:
@@ -354,6 +365,25 @@ def _field_kbo(g, live):
     return out
 
 
+EV_KO = {"single": "1루타", "double": "2루타", "triple": "3루타", "home_run": "홈런", "walk": "볼넷", "intent_walk": "고의4구", "hit_by_pitch": "몸에 맞는 공",
+         "strikeout": "삼진", "strikeout_double_play": "삼진 병살", "field_out": "범타 아웃", "force_out": "포스 아웃", "grounded_into_double_play": "병살타",
+         "double_play": "병살", "triple_play": "삼중살", "sac_fly": "희생플라이", "sac_bunt": "희생번트", "fielders_choice": "야수선택", "fielders_choice_out": "야수선택 아웃",
+         "field_error": "실책 출루", "catcher_interf": "타격방해", "stolen_base_2b": "2루 도루", "stolen_base_3b": "3루 도루", "caught_stealing_2b": "2루 도루 실패",
+         "wild_pitch": "폭투", "passed_ball": "포일", "balk": "보크", "pickoff_1b": "견제 아웃", "sac_fly_double_play": "희생플라이 병살"}
+
+
+def _ko_play(x):
+    r = x.get("result") or {}
+    lab = EV_KO.get(r.get("eventType"))
+    if not lab:
+        return None   # 영어 그대로 두지 않음: 모르는 이벤트는 생략
+    nm = ((x.get("matchup") or {}).get("batter") or {}).get("fullName") or ""
+    if r.get("eventType") == "home_run":
+        rb = r.get("rbi") or 1
+        return f"{nm} 홈런! {'솔로' if rb == 1 else ('만루홈런' if rb == 4 else f'{rb}점')}".strip()
+    return f"{nm} : {lab}" if nm else lab
+
+
 def _field_mlb(g, live):
     st = S._mlb(g)
     pk = st and st.get("_pk")
@@ -390,9 +420,9 @@ def _field_mlb(g, live):
         if p.get("id"):
             s = (pl("home" if top else "away", p["id"]).get("stats") or {}).get("pitching") or {}
             out["pitcher"] = {"name": p.get("fullName"), "sub": "투수", "line": f"오늘 {s.get('inningsPitched')}이닝 {s.get('numberOfPitches', 0)}구 {s.get('strikeOuts', 0)}삼진" if s else ""}
-        pb = _cache(("fldp", pk), 15, lambda: _j(f"https://statsapi.mlb.com/api/v1.1/game/{pk}/feed/live?fields=liveData,plays,allPlays,result,description"))
+        pb = _cache(("fldp", pk), 15, lambda: _j(f"https://statsapi.mlb.com/api/v1.1/game/{pk}/feed/live?fields=liveData,plays,allPlays,result,eventType,rbi,matchup,batter,fullName"))
         ap = (((pb or {}).get("liveData") or {}).get("plays") or {}).get("allPlays") or []
-        out["plays"] = [x["result"]["description"] for x in reversed(ap) if (x.get("result") or {}).get("description")][:3]
+        out["plays"] = [p for p in (_ko_play(x) for x in reversed(ap)) if p][:3]
     return out
 
 
@@ -409,8 +439,13 @@ def field(g):
     try:
         if g.get("league") == 5:
             r = _field_kbo(g, live)
-        elif g.get("league") == 1:
-            r = _field_mlb(g, live)
+        elif g.get("league") in (1, 2):
+            try:
+                r = ov_field(g, live)
+            except Exception:
+                r = None
+            if not r and g.get("league") == 1:
+                r = _field_mlb(g, live)
         else:
             r = None
     except Exception:
@@ -418,3 +453,154 @@ def field(g):
     if r:
         r["live"] = live
     return r
+
+
+# ---------- 해외야구(MLB·NPB): 네이버 스포츠 한글 문자중계/기록 ----------
+import re as _re
+from datetime import timedelta as _td
+OVC = {1: "mlb", 2: "npb"}
+
+
+def _ov_match(g):
+    cat = OVC.get(g.get("league"))
+    if not cat:
+        return None
+    st = g["start"]
+    d0, d1 = (st - _td(days=1)).strftime("%Y-%m-%d"), (st + _td(days=1)).strftime("%Y-%m-%d")
+    games = _cache(("ovs", cat, d0), 300, lambda: (_j("https://api-gw.sports.naver.com/schedule/games?fields=basic,schedule,baseball"
+                                                       f"&upperCategoryId=wbaseball&categoryId={cat}&fromDate={d0}&toDate={d1}&size=100", NAVER_H).get("result") or {}).get("games") or [])
+    h, a = _nm(g["home"]), _nm(g["away"])
+    ok = lambda x, y: bool(x) and bool(y) and (x in y or y in x)
+    best = None
+    for x in games or []:
+        nh, na = _nm(x.get("homeTeamName")), _nm(x.get("awayTeamName"))
+        try:
+            from datetime import datetime as _dt
+            t = _dt.fromisoformat(x["gameDateTime"]).replace(tzinfo=st.tzinfo)
+            dt = abs((t - st).total_seconds())
+        except Exception:
+            dt = 0
+        if dt > 8 * 3600:
+            continue
+        if ok(nh, h) and ok(na, a):
+            best = (x["gameId"], False)
+        elif ok(nh, a) and ok(na, h) and not best:
+            best = (x["gameId"], True)
+        elif not best and dt <= 3 * 3600 and g.get("home_score") is not None and (x.get("homeTeamScore"), x.get("awayTeamScore")) == (g.get("home_score"), g.get("away_score")) \
+                and (ok(nh[:2], h) or ok(na[:2], a)):
+            best = (x["gameId"], False)   # 표기 차이(시카고W 등): 시간·점수·팀명 앞글자 일치
+    return best
+
+
+def _ov_relay(gid, live):
+    return _cache(("ovr", gid), 10 if live else 600, lambda: (_j(f"https://api-gw.sports.naver.com/schedule/games/{gid}/relay", NAVER_H).get("result") or {}).get("textRelayData"))
+
+
+def _ov_record(gid, live):
+    return _cache(("ovb", gid), 25 if live else 600, lambda: (_j(f"https://api-gw.sports.naver.com/schedule/games/{gid}/record", NAVER_H).get("result") or {}).get("recordData"))
+
+
+def _live(g):
+    try:
+        return data.state(g) == "live"
+    except Exception:
+        return False
+
+
+def ov_lineup(g):
+    m = _ov_match(g)
+    if not m:
+        return None
+    gid, swap = m
+    rd = _ov_record(gid, _live(g))
+    if not rd or not (rd.get("awayBatter") or rd.get("homeBatter")):
+        return None
+    def side(k):
+        bat, pit, seen = [], [], set()
+        for x in rd.get(k + "Batter") or []:
+            o = x.get("batOrder")
+            bat.append({"id": x.get("playerId") or x.get("name"), "o": o, "sub": o in seen, "name": x.get("name"), "pos": x.get("posName") or "",
+                        "avg": _avg(x.get("avg")), "ab": x.get("ab"), "r": x.get("run"), "h": x.get("hit"), "rbi": x.get("rbi"), "bb": x.get("bb"), "so": x.get("so"), "hr": x.get("hr")})
+            seen.add(o)
+        for x in rd.get(k + "Pitcher") or []:
+            pit.append({"id": x.get("playerId") or x.get("name"), "name": x.get("name"), "ip": (x.get("inn") or "").replace(".0", "") or None, "h": x.get("hit"), "r": x.get("run", x.get("r")),
+                        "er": x.get("er"), "bb": x.get("bb"), "so": x.get("so"), "np": x.get("bf"), "era": x.get("era"), "dec": x.get("wls") or ""})
+        return {"bat": bat, "pit": pit, "pre": False}
+    a, h = side("away"), side("home")
+    if swap:
+        a, h = h, a
+    return {"src": "네이버 스포츠", "away": a, "home": h}
+
+
+def _ov_state(g):
+    m = _ov_match(g)
+    if not m:
+        return None, None, None
+    gid, swap = m
+    return _ov_relay(gid, _live(g)), swap, gid
+
+
+def ov_bso(g):
+    t, swap, _ = _ov_state(g)
+    bc = ((t or {}).get("baseInfo") or {}).get("ballCount") or {}
+    if not bc or bc.get("o") is None or bc.get("o") == 3:
+        return None
+    return {"b": min(bc.get("b") or 0, 3), "s": min(bc.get("s") or 0, 2), "o": min(bc.get("o") or 0, 2), "r": [bool(bc.get("base1")), bool(bc.get("base2")), bool(bc.get("base3"))]}
+
+
+_PITCH = _re.compile(r"^\d+구\s")
+
+
+def ov_field(g, live):
+    t, swap, gid = _ov_state(g)
+    if not t:
+        return None
+    bi = t.get("baseInfo") or {}
+    isc = bi.get("inningScore") or {}
+    ia, ih = list(isc.get("away") or []), list(isc.get("home") or [])
+    rh = bi.get("rheb") or {}
+    A, H = (rh.get("home") or {}, rh.get("away") or {}) if swap else (rh.get("away") or {}, rh.get("home") or {})
+    if swap:
+        ia, ih = ih, ia
+    n = max(9, len(ia), len(ih))
+    out = {"src": "네이버 스포츠", "ls": {"n": n, "away": {"inn": ia + [""] * (n - len(ia)), "r": A.get("r"), "h": A.get("h"), "e": A.get("e")},
+                                      "home": {"inn": ih + [""] * (n - len(ih)), "r": H.get("r"), "h": H.get("h"), "e": H.get("e")}}}
+    if not live:
+        return out
+    bc = bi.get("ballCount") or {}
+    top = str(t.get("homeOrAway")) == "0"
+    inn = t.get("inn")
+    out["inn"] = f"{inn}회{'초' if top else '말'}" if inn else (t.get("statusInfo") or "")
+    out["cur"] = {"inn": inn, "top": top != bool(swap)}
+    between = bc.get("o") == 3
+    out["between"] = between
+    out["bases"] = [None if between else (bc.get(f"base{i}") or None) for i in (1, 2, 3)]
+    out["b"], out["s"], out["o"] = (0, 0, 0) if between else (min(bc.get("b") or 0, 3), min(bc.get("s") or 0, 2), min(bc.get("o") or 0, 2))
+    rd = _ov_record(gid, live) or {}
+    if not between:
+        bid = bc.get("batterId")
+        bs = next((x for x in (rd.get(("away" if top else "home") + "Batter") or []) if x.get("playerId") == bid), None)
+        if bc.get("batter"):
+            out["batter"] = {"name": bc["batter"], "sub": f"{bs.get('batOrder')}번타자" if bs else "타자",
+                             "line": (f"오늘 {bs.get('ab', 0)}타수 {bs.get('hit', 0)}안타" + (f" {bs['hr']}홈런" if bs.get("hr") else "") + (f" {bs['rbi']}타점" if bs.get("rbi") else "")) if bs else ""}
+        dk = "home" if top else "away"
+        pn, pid = bi.get(dk + "Pitcher"), bi.get(dk + "PitcherId")
+        ps = next((x for x in (rd.get(dk + "Pitcher") or []) if x.get("playerId") == pid), None)
+        if pn:
+            line = []
+            if ps:
+                line += [f"{ps.get('inn')}이닝"] if ps.get("inn") else []
+            if bi.get(dk + "PitcherPitchBallCount"):
+                line.append(f"{bi[dk + 'PitcherPitchBallCount']}구")
+            if ps:
+                line += [f"{ps.get('so', 0)}삼진", f"{ps.get('er', 0)}자책"]
+            out["pitcher"] = {"name": pn, "sub": "투수", "line": ("오늘 " + " ".join(line)) if line else ""}
+    plays = []
+    for r in t.get("textRelays") or []:
+        lines = [_re.sub(r"<[^>]+>", "", x).strip() for x in (r.get("text") or "").split("<br/>")]
+        for x in reversed([x for x in lines if x and not _PITCH.match(x)]):
+            plays.append(x)
+        if len(plays) >= 3:
+            break
+    out["plays"] = plays[:3]
+    return out

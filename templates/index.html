@@ -70,7 +70,7 @@ function bsoH(g){const x=g.state==='live'&&BS[g.key];if(!x)return'';const C={B:'
  const bs=(on,cx,cy)=>`<rect x="${cx-3.6}" y="${cy-3.6}" width="7.2" height="7.2" transform="rotate(45 ${cx} ${cy})" fill="${on?'#ffb020':'rgba(127,140,170,.25)'}" stroke="${on?'#ff8a3d':'rgba(127,140,170,.6)'}" stroke-width=".8"/>`;
  const sv=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 22" width="56" height="22">${bs(x.r[1],11,6)}${bs(x.r[2],5,12.5)}${bs(x.r[0],17,12.5)}${row('B',x.b,3,4)}${row('S',x.s,2,11)}${row('O',x.o,2,18)}</svg>`;
  return `<img class="bso" width="56" height="22" alt="볼 ${x.b} 스트라이크 ${x.s} 아웃 ${x.o}" src="data:image/svg+xml,${encodeURIComponent(sv)}">`}
-async function bsoTick(){if(document.hidden||!DATA)return;const ks=DATA.games.filter(g=>g.state==='live'&&/^baseball:(5|1):/.test(g.key)).map(g=>g.key);
+async function bsoTick(){if(document.hidden||!DATA)return;const ks=DATA.games.filter(g=>g.state==='live'&&/^baseball:(5|1|2):/.test(g.key)).map(g=>g.key);
  if(!ks.length){if(BSJ!==''){for(const k in BS)delete BS[k];BSJ='';render()}return}
  try{const j=await (await fetch('/api/bso?d='+D+'&k='+ks.slice(0,20).map(encodeURIComponent).join(','))).json();const js=JSON.stringify(j);if(js===BSJ)return;BSJ=js;for(const k in BS)delete BS[k];for(const k in j)if(j[k])BS[k]=j[k];render()}catch(e){}}
 setTimeout(bsoTick,1500);setInterval(bsoTick,12000);

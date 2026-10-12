@@ -90,13 +90,13 @@ KBO = {88: "OB", 89: "HH", 90: "HT", 91: "KT", 92: "WO", 93: "LG", 94: "LT", 95:
 NAVER_H = {"Referer": "https://m.sports.naver.com/"}
 
 
-def _kbo(tid):
-    code = KBO.get(tid)
+def _kbo(tid, cat="kbo", code=None):
+    code = code or KBO.get(tid)
     if not code:
         return None
     y = time.localtime().tm_year
     for yr in (y, y - 1):
-        u = "https://api-gw.sports.naver.com/statistics/categories/kbo/seasons/%d/players?teamCode=%s&playerType=%s&pageSize=100"
+        u = "https://api-gw.sports.naver.com/statistics/categories/" + cat + "/seasons/%d/players?teamCode=%s&playerType=%s&pageSize=100"
         hs = (_j(u % (yr, code, "HITTER"), NAVER_H).get("result") or {}).get("seasonPlayerStats") or []
         pi = (_j(u % (yr, code, "PITCHER"), NAVER_H).get("result") or {}).get("seasonPlayerStats") or []
         if hs or pi:
@@ -113,8 +113,30 @@ def _kbo(tid):
           "_ab": x.get("hitterAb") or 0} for x in hs if x.get("playerName")]
     P = [{**_p(x["playerName"], x.get("backNumber"), "투수",
                [f"{x.get('pitcherWin') or 0}승 {x.get('pitcherLose') or 0}패", f"ERA {x['pitcherEra']:.2f}" if x.get("pitcherEra") is not None else ""]),
-          "_qs": x.get("pitcherQs") or 0, "_ip": x.get("pitcherGameCount") or 0} for x in pi if x.get("playerName")]
-    return _bb_groups(H, P, "퀄리티스타트 기록 투수", "_qs"), f"네이버 스포츠 · {yr} 시즌 기록"
+          "_qs": (x.get("pitcherQs") or 0) if cat == "kbo" else ((x.get("pitcherStart") or 0) if (x.get("pitcherStart") or 0) >= 5 else 0),
+          "_ip": x.get("pitcherGameCount") or 0} for x in pi if x.get("playerName")]
+    return _bb_groups(H, P, "퀄리티스타트 기록 투수" if cat == "kbo" else "시즌 선발 등판 5경기 이상", "_qs"), f"네이버 스포츠 · {yr} 시즌 기록"
+
+
+def _naver_mlb_code(ko_name):
+    def f():
+        import datetime as D
+        m = {}
+        for d in ("2026-08-01", "2026-08-08", "2026-08-15"):
+            e = (D.date.fromisoformat(d) + D.timedelta(days=6)).isoformat()
+            for x in (_j("https://api-gw.sports.naver.com/schedule/games?fields=basic&upperCategoryId=wbaseball&categoryId=mlb"
+                         f"&fromDate={d}&toDate={e}&size=500", NAVER_H).get("result") or {}).get("games") or []:
+                for k in ("home", "away"):
+                    if x.get(k + "TeamCode") and x.get(k + "TeamName"):
+                        m[x[k + "TeamName"].replace(" ", "")] = x[k + "TeamCode"]
+        return m
+    m = T._cached(("nvmlb",), 7 * 86400, lambda prev: f() or prev) or {}
+    n = (ko_name or "").replace(" ", "")
+    n = {"시카고화이트삭스": "시카고W", "시카고컵스": "시카고C"}.get(n, n)
+    if n in m:
+        return m[n]
+    c = [v for k, v in m.items() if k in n or n in k]
+    return c[0] if len(c) == 1 else None
 
 
 def _bb_groups(H, P, sp_basis, sk):
@@ -189,7 +211,11 @@ def get(t):
         elif kind == "basketball":
             r = _basketball(tid, t["roster"], t["past"])
         elif kind == "baseball":
-            r = _kbo(tid) if tid in KBO else _mlb(t.get("en") or t["name"])
+            if tid in KBO:
+                r = _kbo(tid)
+            else:
+                code = _naver_mlb_code(t["name"])
+                r = (_kbo(tid, "mlb", code) if code else None) or _mlb(t.get("en") or t["name"])
         elif kind == "hockey":
             r = _nhl(t.get("en") or t["name"])
         if not r and t["roster"]:   # 기록 근거가 없으면 포지션순 단일 명단
