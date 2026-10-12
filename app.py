@@ -48,6 +48,8 @@ import social
 app.register_blueprint(social.bp)
 import feed
 app.register_blueprint(feed.bp)
+import plus
+app.register_blueprint(plus.bp)
 try:
     members.init_db()
     admin_ext.init_db()
@@ -58,6 +60,7 @@ try:
     deposit.init_db()
     social.init_db()
     feed.init_db()
+    plus.init_db()
     with app.app_context():
         try:
             admin_ext.rebuild_today()
@@ -445,6 +448,7 @@ warmer.start(league_order)
 import chatbot
 chatbot.start(_POP_ALIAS)
 chatbot.install(app)
+plus.start()
 
 
 @app.route("/live")
@@ -474,7 +478,8 @@ def game(key):
     return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=plays.commentary(g), gl=plays.goals(g),
                            forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st, batters=bat,
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
-                           names={g["home"], g["away"]}, gnews=news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]), points=insights.points(g, det, dedupe=True), vote=_vinfo(g, v), seo=_game_seo(g, v), an=_analysis(g, v, det, forms))
+                           names={g["home"], g["away"]}, gnews=news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]), points=insights.points(g, det, dedupe=True), vote=_vinfo(g, v), seo=_game_seo(g, v), an=_analysis(g, v, det, forms),
+                           wp=plus.winprob(g, lh), summ=plus.summary(g))
 
 
 def _analysis(g, v, det, forms):
@@ -799,12 +804,17 @@ MANIFEST = {"name": "투윈스코어 TWOWIN", "short_name": "투윈스코어 TWO
                       {"src": "/static/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}
 
 SW_JS = """// 투윈스코어 서비스워커: /static/ 정적 파일만 캐시. API·페이지는 절대 캐시하지 않음(항상 네트워크).
-const C='tw-static-v10';
+const C='tw-static-v11';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);
  if(e.request.method!=='GET'||u.origin!==location.origin||!u.pathname.startsWith('/static/')||u.pathname.endsWith('.mp3'))return;
  e.respondWith(caches.open(C).then(c=>c.match(e.request).then(r=>r||fetch(e.request).then(n=>{if(n.ok)c.put(e.request,n.clone());return n}))));});
+// 즐겨찾기 팀 알림(웹 푸시, 사용자가 켠 경우만)
+self.addEventListener('push',e=>{let d={};try{d=e.data.json()}catch(x){}
+ e.waitUntil(self.registration.showNotification(d.title||'투윈스코어',{body:d.body||'',tag:d.tag||'tw',renotify:true,icon:'/static/icons/icon-192.png',badge:'/static/icons/icon-192.png',data:{url:d.url||'/'}}));});
+self.addEventListener('notificationclick',e=>{e.notification.close();const u=(e.notification.data&&e.notification.data.url)||'/';
+ e.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(cs=>{for(const c of cs){if('focus' in c){c.navigate(u);return c.focus()}}return clients.openWindow(u)}));});
 """
 
 
