@@ -74,3 +74,10 @@ body.tpon .gm7sb,body.tpon .gm7ls{display:none}
 .csh-p.lg .csh-f{display:none}.csh-p.lg .csh-n{opacity:1;margin:4px 0 2px}
 .csh-lgb{display:block;text-align:center;height:44px;line-height:44px;border-radius:12px;background:#ff8a3d;color:#fff!important;font-weight:900;font-size:15px;text-decoration:none}
 }
+@media(max-width:1023px){
+.csh-mg{position:relative;flex:none;width:44px;height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--card,#fff);font-size:18px;padding:0}
+.csh-mg small{position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#ff8a3d;color:#fff;font-size:10px;font-weight:900;line-height:16px;box-sizing:border-box}
+.csh-mg small:empty{display:none}
+.csh-mg.on{border-color:#ff8a3d;background:rgba(255,138,61,.15)}
+.csh-p.mg .csh-f input{border-color:#ff8a3d}.csh-p.mg .csh-n{color:#ff8a3d;opacity:1;font-weight:700}
+}
