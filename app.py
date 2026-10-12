@@ -640,8 +640,15 @@ def team_page(kind, tid):
            "url": f"https://twowinscore.com/team/{kind}/{tid}"}
     ld = {"@context": "https://schema.org", "@type": "SportsTeam", "name": t["name"], "sport": JL_SPORT.get(kind, ""), "url": seo["url"],
           **({"logo": t["logo"]} if t.get("logo") else {}), **({"alternateName": t["en"]} if t.get("en") else {})}
-    thin = not (t["roster"] or t["past"] or t["next"])
-    return render_template("team.html", page="team", t=t, sk=sk, seo=seo, ld=ld, thin=thin, emo=EMO.get(kind, ""))
+    import roster
+    try:
+        ro = roster.get(t)
+    except Exception:
+        ro = {"groups": [], "src": ""}
+    seo["title"] = f"{t['name']} 선수 명단·시즌 기록 ({sk}) | 투윈스코어"
+    seo["desc"] = f"{t['name']}{(' (' + t['en'] + ')') if t.get('en') else ''} {sk} {lg} 선수 명단(로스터)과 선수별 시즌 기록을 투윈스코어에서 확인하세요."
+    thin = not ro["groups"]
+    return render_template("team.html", page="team", t=t, ro=ro, sk=sk, seo=seo, ld=ld, thin=thin, emo=EMO.get(kind, ""))
 
 
 @app.route("/api/votes")
@@ -709,7 +716,7 @@ MANIFEST = {"name": "투윈스코어 TWOWIN", "short_name": "투윈스코어 TWO
                       {"src": "/static/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}
 
 SW_JS = """// 투윈스코어 서비스워커: /static/ 정적 파일만 캐시. API·페이지는 절대 캐시하지 않음(항상 네트워크).
-const C='tw-static-v4';
+const C='tw-static-v5';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);
