@@ -14,11 +14,22 @@ function team(side,t,name,live){let el=box.querySelector('.lu9t[data-s="'+side+'
   el=el||document.createElement('div');el.className='lu9t';el.dataset.s=side;el.dataset.m=String(live);
   el.innerHTML=`<h4>${esc(name)} <small>${side==='away'?'원정':'홈'}</small></h4><div class="lu9w"><table><thead><tr><th class="o">#</th><th class="n">타자</th><th>타율</th>${H}</tr></thead><tbody class="b"></tbody></table></div><div class="lu9w p"><table><thead><tr><th class="n">투수</th><th>이닝</th><th>피안타</th><th>실점</th><th>자책</th><th>볼넷</th><th>삼진</th><th>투구수</th><th>ERA</th></tr></thead><tbody class="p"></tbody></table></div>`}
  rows(el.querySelector('tbody.b'),t.bat,b=>bat(b,live));el.querySelector('.lu9w.p').hidden=!t.pit.length;rows(el.querySelector('tbody.p'),t.pit,pit);return el}
+const BC={min:'MIN',pts:'득점',reb:'리바',ast:'어시',to:'턴오버',stl:'스틸',blk:'블록',tpm:'3점'};
+const bkrow=(p,cols)=>p.sep?`<td class="o"></td><td class="n sep" colspan="${cols.length+1}">벤치</td>`:`<td class="o">${p.no!=null?esc(p.no):''}</td><td class="n">${esc(p.name)}${p.pos?`<small>${esc(p.pos)}</small>`:''}</td>`+cols.map(k=>`<td${k==='pts'&&p.pts>=10?' class="hi"':''}>${v(p[k])}</td>`).join('');
+function bk(j,b,s){const lh=box.dataset.lh==='1';const order=lh?['home','away']:['away','home'];
+ if(!b.querySelector('.lu9g'))b.innerHTML='<div class="lu9g"></div>';const g=b.querySelector('.lu9g');
+ order.forEach(side=>{const nm=side==='home'?box.dataset.home:box.dataset.away;let el=g.querySelector('.lu9t[data-s="'+side+'"]');const key=j.cols.join(',');
+  if(!el||el.dataset.m!==key){el=el||document.createElement('div');el.className='lu9t';el.dataset.s=side;el.dataset.m=key;
+   el.innerHTML=`<h4>${esc(nm)} <small>${side==='away'?'원정':'홈'}</small></h4><div class="lu9w"><table><thead><tr><th class="o">#</th><th class="n">주전</th>${j.cols.map(k=>`<th>${BC[k]}</th>`).join('')}</tr></thead><tbody class="b"></tbody></table></div>`;g.appendChild(el)}
+  const ps=j[side],st=ps.filter(p=>p.st),bn=ps.filter(p=>!p.st);const list=st.concat(bn.length&&st.length?[{id:'sep',sep:1}]:[],bn);
+  rows(el.querySelector('tbody.b'),list,p=>bkrow(p,j.cols))});
+ s.textContent=(j.state==='live'?'실시간 · ':'')+j.src;if(j.state!=='live'&&j.state!=='scheduled')clearInterval(timer)}
 let timer=0;
 async function load(){if(!document.body.contains(box)){clearInterval(timer);return}
  let j;try{j=await (await fetch('/api/lineup/'+encodeURIComponent(box.dataset.k)+'?d='+box.dataset.d)).json()}catch(e){return}
  const b=document.getElementById('lu9b'),s=document.getElementById('lu9s');
  if(!j.ok){b.innerHTML='<p class="lu9e">라인업 정보 없음</p>';s.textContent='';clearInterval(timer);return}
+ if(j.kind==='basketball'){bk(j,b,s);return}
  const pre=j.away.pre&&j.home.pre;
  if(pre&&!j.away.bat.length&&!j.home.bat.length){b.innerHTML='<p class="lu9e">라인업 발표 전</p>';s.textContent=j.src;return}
  if(!b.querySelector('.lu9g')){b.innerHTML='<div class="lu9g"></div>'}

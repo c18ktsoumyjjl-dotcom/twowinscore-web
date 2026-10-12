@@ -160,3 +160,91 @@ def get(g):
     except Exception:
         return None
     return None
+
+
+# ---------- 농구 ----------
+def _nm(s):
+    return (s or "").replace(" ", "").lower()
+
+
+def _bk_naver(g, live):
+    day = g["start"].strftime("%Y-%m-%d")
+    games = _cache(("nbk", day), 120, lambda: (_j("https://api-gw.sports.naver.com/schedule/games?fields=basic&upperCategoryId=kbasketball"
+                                                     f"&fromDate={day}&toDate={day}&size=100", NAVER_H).get("result") or {}).get("games") or [])
+    h, a = _nm(g["home"]), _nm(g["away"])
+    m, swap = None, False
+    for x in games or []:
+        nh, na = _nm(x.get("homeTeamName")), _nm(x.get("awayTeamName"))
+        if not nh or not na:
+            continue
+        if (nh in h or h in nh) and (na in a or a in na):
+            m = x; break
+        if (nh in a or a in nh) and (na in h or h in na):
+            m, swap = x, True
+    if not m:
+        return None
+    gid = m["gameId"]
+    rd = _cache(("nbr", gid), 25 if live else 300, lambda: (_j(f"https://api-gw.sports.naver.com/schedule/games/{gid}/record", NAVER_H).get("result") or {}).get("recordData"))
+    if not rd or not (rd.get("homePlayerStats") or rd.get("awayPlayerStats")):
+        return None
+    P = {"GD": "가드", "FD": "포워드", "CT": "센터", "C": "센터", "F": "포워드", "G": "가드"}
+    def side(lst):
+        out = []
+        for x in lst or []:
+            sec = x.get("playTimeSec") or 0
+            out.append({"id": x.get("playerId") or x.get("playerName"), "name": x.get("playerName"), "no": x.get("backNum"), "pos": P.get(x.get("position"), x.get("position") or ""),
+                        "st": bool(x.get("startFlag")), "min": x.get("playTimeStr") if sec else None, "_s": sec, "pts": x.get("scoreTot"), "reb": x.get("reboundTot"),
+                        "ast": x.get("as"), "to": x.get("to"), "stl": x.get("st"), "blk": x.get("bs"), "tpm": x.get("threeP")})
+        return out
+    ho, aw = side(rd.get("homePlayerStats")), side(rd.get("awayPlayerStats"))
+    if swap:
+        ho, aw = aw, ho
+    return {"src": "네이버 스포츠", "cols": ["min", "pts", "reb", "ast", "to", "stl", "blk", "tpm"], "home": ho, "away": aw}
+
+
+def _bk_api(g, live):
+    import teamodds as T
+    gid = g.get("id")
+    rs = _cache(("abk", gid), 30 if live else 600, lambda: T._get("basketball", "/games/statistics/players", {"id": gid}))
+    if not rs:
+        return None
+    hid = g.get("home_id")
+    def sec(m):
+        try:
+            a, b = str(m).split(":")[:2]; return int(a) * 60 + int(b)
+        except Exception:
+            return 0
+    ho, aw = [], []
+    for x in rs:
+        pl = x.get("player") or {}
+        s = sec(x.get("minutes"))
+        row = {"id": pl.get("id") or pl.get("name"), "name": pl.get("name"), "pos": "", "st": x.get("type") == "starters",
+               "min": x.get("minutes") if s else None, "_s": s, "pts": x.get("points"), "reb": (x.get("rebounds") or {}).get("total"),
+               "ast": x.get("assists"), "tpm": (x.get("threepoint_goals") or {}).get("total")}
+        ((ho if (x.get("team") or {}).get("id") == hid else aw)).append(row)
+    has = lambda k: any(r.get(k) is not None for r in ho + aw)
+    cols = [c for c in ("min", "pts", "reb", "ast", "tpm") if has(c)]
+    if cols == [] or not has("pts"):
+        return None
+    return {"src": "API-Sports", "cols": cols, "home": ho, "away": aw}
+
+
+def basketball(g):
+    try:
+        live = data.state(g) == "live"
+    except Exception:
+        live = False
+    r = None
+    try:
+        if g.get("league") in (91, 92):
+            r = _bk_naver(g, live)
+        r = r or _bk_api(g, live)
+    except Exception:
+        r = None
+    if not r:
+        return None
+    for k in ("home", "away"):
+        r[k].sort(key=lambda p: (not p["st"], -(p["_s"] or 0)))
+        for p in r[k]:
+            p.pop("_s", None)
+    return {"kind": "basketball", **r}

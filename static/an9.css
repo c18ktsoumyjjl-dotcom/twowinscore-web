@@ -67,3 +67,4 @@
 .lu9w tr.chg td{animation:lu9f 1.6s ease-out}@keyframes lu9f{from{background:rgba(255,138,61,.22)}to{background:transparent}}
 .lu9e{padding:16px;text-align:center;color:var(--mu);font-size:13px;margin:0}
 @media(max-width:900px){.lu9g{grid-template-columns:1fr}}
+.lu9w td.n.sep{font-size:11px;color:#ff8a3d;background:rgba(255,138,61,.08);font-weight:800;padding:4px 6px}

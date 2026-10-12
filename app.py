@@ -656,10 +656,10 @@ def api_lineup(key):
     import lineup
     d = parse_day(request.args.get("d"))
     g = data.find_game(key, d) or (data.find_game(key, d - timedelta(days=1)) if d == today() else None)
-    if not g or g["kind"] != "baseball":
+    if not g or g["kind"] not in ("baseball", "basketball"):
         return jsonify({"ok": False})
     st = data.state(g)
-    lu = lineup.get(g)
+    lu = lineup.get(g) if g["kind"] == "baseball" else lineup.basketball(g)
     r = jsonify({"ok": bool(lu), "state": st, **(lu or {})})
     r.headers["Cache-Control"] = "public, max-age=20" if st == "live" else "public, max-age=120"
     return r
@@ -730,7 +730,7 @@ MANIFEST = {"name": "투윈스코어 TWOWIN", "short_name": "투윈스코어 TWO
                       {"src": "/static/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}
 
 SW_JS = """// 투윈스코어 서비스워커: /static/ 정적 파일만 캐시. API·페이지는 절대 캐시하지 않음(항상 네트워크).
-const C='tw-static-v6';
+const C='tw-static-v7';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);
