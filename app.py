@@ -724,7 +724,7 @@ def api_bso():
     def one(k):
         try:
             g = data.find_game(k, d) or (data.find_game(k, d - timedelta(days=1)) if d == today() else None)
-            return k, (lineup.bso(g) if g else None)
+            return k, (lineup.bso_mini(g, lineup.bso(g)) if g else None)
         except Exception:
             return k, None
     with ThreadPoolExecutor(5) as ex:

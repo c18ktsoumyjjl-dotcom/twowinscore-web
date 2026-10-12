@@ -742,3 +742,26 @@ def enrich_field(g, out, raw, top, swap):
         if nx.get("player") and not out.get("between"):
             out["next"] = f"{nx.get('playerNum')}번 {nx['player']}" if nx.get("playerNum") else nx["player"]
     return out
+
+
+def bso_mini(g, b):
+    """홈 목록용: 현재 투수·타자 한 줄. 피드가 명확히 준 값만(이름·투구수·시즌 타율)."""
+    if not b:
+        return b
+    try:
+        f = field(g) or {}
+    except Exception:
+        return b
+    if f.get("between"):
+        return b
+    p, t = f.get("pcard") or {}, f.get("bcard") or {}
+    if p.get("name"):
+        b["p"] = {"n": p["name"]}
+        if isinstance(p.get("pc"), int):
+            b["p"]["pc"] = p["pc"]
+    if t.get("name"):
+        b["t"] = {"n": t["name"]}
+        m = _re.search(r"타율 (\.\d{3}|\d\.\d{3})", t.get("season") or "")
+        if m:
+            b["t"]["avg"] = m.group(1)
+    return b
