@@ -71,7 +71,7 @@ def _parse(kind, resp):
     return None
 
 
-def odds(g):
+def odds(g, lite=False):
     """{"book","H","A",("D"),"mv":{H:+1/-1},"at":"HH:MM","final":bool} 또는 None. 경기 시작 후엔 마지막 경기 전 배당 고정."""
     kind = g.get("kind")
     if kind not in BOOK_ID or g.get("other") and False:
@@ -82,7 +82,7 @@ def odds(g):
         with _lk:
             e = _c.get(key)
         cur = e[1] if e else None
-        if cur is None:
+        if cur is None and not lite:
             cur = _cached(key, 86400, lambda prev: _fetch_odds(kind, g, prev), 3600)
     else:
         cur = _cached(key, ODDS_TTL, lambda prev: _fetch_odds(kind, g, prev))

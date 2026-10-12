@@ -537,12 +537,12 @@ def api_featured():
 def api_odds():
     import teamodds
     d = parse_day(request.args.get("d"))
-    out = {}
+    out, lite = {}, request.args.get("lite") == "1"
     for k in [x for x in (request.args.get("k") or "").split(",") if x][:20]:
         k = k[:80]
         try:
             g = data.find_game(k, d) or (data.find_game(k, d - timedelta(days=1)) if d == today() else None)
-            out[k] = teamodds.odds(g) if g and not g.get("other") else None
+            out[k] = teamodds.odds(g, lite) if g and not g.get("other") else None
         except Exception:
             out[k] = None
     r = jsonify(out)
