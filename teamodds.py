@@ -10,7 +10,7 @@ HOSTS = {"football": "https://v3.football.api-sports.io", "hockey": "https://v1.
 BOOK = "Bet365"
 BOOK_ID = {"football": 8, "baseball": 2, "basketball": 4, "volleyball": 4, "hockey": 3}  # 종목별 API의 Bet365 id
 ODDS_TTL = 900      # 경기 전: 15분마다 갱신
-TEAM_TTL = 1800
+TEAM_TTL = 600
 _c, _lk = {}, threading.Lock()
 
 
@@ -230,11 +230,12 @@ def _row(kind, x, tid):
     me, ot = (hs, as_) if home else (as_, hs)
     d = datetime.fromtimestamp(ts, SEOUL)
     r = None
-    if me is not None and ot is not None:
+    if me is not None and ot is not None and (st in FIN or st in FB_FIN or st == "FT"):
         r = "W" if me > ot else ("L" if me < ot else "D")
     return {"ts": ts, "st": st, "date": d.strftime("%Y.%m.%d"), "md": d.strftime("%m/%d"), "time": d.strftime("%H:%M"),
             "ha": "홈" if home else "원정", "opp": ko(kind, op.get("id"), op.get("name") or "?")[0], "opp_id": op.get("id"),
-            "opp_logo": op.get("logo"), "league": lg.get("name") or "", "me": me, "ot": ot, "r": r, "gid": gid}
+            "opp_logo": op.get("logo"), "league": lg.get("name") or "", "me": me, "ot": ot, "r": r, "gid": gid,
+            "live": bool(st) and st not in FIN and st not in FB_FIN and st not in LIVE_SKIP and st not in ("NS", "TBD") and me is not None}
 
 
 def _team_fetch(kind, tid):
@@ -272,7 +273,9 @@ def _team_fetch(kind, tid):
             if rs:
                 rows += [_row(kind, x, tid) for x in rs]
                 used = used or s
-                if any((x.get("timestamp") or 0) > now for x in rs) or len(rows) > 40:
+                fut = any(r["ts"] > now for r in rows)
+                done = sum(1 for r in rows if r["r"])
+                if (fut and done >= 10) or len(rows) > 120:
                     break
         if kind == "basketball" and used:
             try:
@@ -283,5 +286,6 @@ def _team_fetch(kind, tid):
     seen = set()
     rows = [r for r in rows if not (r["gid"] in seen or seen.add(r["gid"]))]
     out["past"] = sorted([r for r in rows if r["r"] and (r["st"] in FIN or r["st"] in FB_FIN)], key=lambda r: -r["ts"])[:10]
-    out["next"] = sorted([r for r in rows if r["ts"] > now - 3 * 3600 and not r["r"] and r["st"] not in LIVE_SKIP], key=lambda r: r["ts"])[:10]
+    out["next"] = sorted([r for r in rows if (r["live"] or r["ts"] > now - 3 * 3600) and not r["r"] and r["st"] not in LIVE_SKIP], key=lambda r: r["ts"])[:10]
+    out["roster"] = sorted(out["roster"], key=lambda p: (["골키퍼", "수비수", "미드필더", "공격수", "가드", "포워드", "센터"].index(p["pos"]) if p["pos"] in ("골키퍼", "수비수", "미드필더", "공격수", "가드", "포워드", "센터") else 9, p["no"] if isinstance(p["no"], int) else 999))
     return out
