@@ -128,6 +128,43 @@ def _loop(order):
         time.sleep(max(5, LOOP - (time.time() - t0)))
 
 
+def _odds_loop():
+    """경기 시작 전 배당을 미리 받아 디스크 스냅샷으로 남겨요(아무도 안 열어본 경기도 종료 후 배당 표시)."""
+    import teamodds, curation
+    time.sleep(60)
+    n = 0
+    while True:
+        try:
+            now = datetime.now(data.SEOUL)
+            t = now.date()
+            gs = list(data.games_for(t)[0]) + list(data.others_for(t, refresh=False))
+            try:
+                gs += list(data.games_for(t + timedelta(days=1))[0]) + list(data.others_for(t + timedelta(days=1), refresh=False))
+            except Exception:
+                pass
+            cnt = 0
+            for g in gs:
+                if g.get("state") != "scheduled" or not g.get("id") or not g.get("start"):
+                    continue
+                mins = (g["start"] - now).total_seconds() / 60
+                if not (0 < mins < 100) or curation.hidden(g, now, g["start"].date() == t or mins < 1440):
+                    continue
+                sv = teamodds.snap_get(g["kind"], g["id"])
+                if sv and time.time() - sv.get("saved", 0) < 40 * 60:
+                    continue
+                teamodds.odds(g)
+                cnt += 1
+                if cnt >= 40:
+                    break
+                time.sleep(1.5)
+            n += 1
+            if n % 50 == 1:
+                teamodds.snap_prune()
+        except Exception as e:
+            log.warning("odds prefetch: %s", e)
+        time.sleep(300)
+
+
 _lockf = [None]
 
 
@@ -143,6 +180,7 @@ def start(order):
         return False                       # 다른 워커가 이미 돌리는 중
     _lockf[0] = f
     threading.Thread(target=_loop, args=(order,), daemon=True, name="warmer").start()
+    threading.Thread(target=_odds_loop, daemon=True, name="odds-prefetch").start()
     log.info("warmer started pid=%s", os.getpid())
     return True
 

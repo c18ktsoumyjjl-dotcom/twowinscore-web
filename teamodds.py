@@ -13,6 +13,59 @@ ODDS_TTL = 900      # 경기 전: 15분마다 갱신
 TEAM_TTL = 600
 _c, _lk = {}, threading.Lock()
 
+# 경기 전 배당 스냅샷(디스크): API-Sports 는 경기가 끝나면 배당을 지우는 경우가 많아서,
+# 마지막으로 받은 실제 경기 전 배당을 저장해 두고 시작/종료 후에 그대로 보여줘요(재시작해도 유지).
+SNAP_DIR = os.path.join(os.environ.get("DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")), "odds")
+_snap, _snap_lk = {}, threading.Lock()
+
+
+def _snap_path(kind, gid):
+    return os.path.join(SNAP_DIR, f"{kind}_{gid}.json")
+
+
+def snap_get(kind, gid):
+    k = (kind, gid)
+    with _snap_lk:
+        if k in _snap:
+            return _snap[k]
+    try:
+        with open(_snap_path(kind, gid), encoding="utf-8") as f:
+            v = json.load(f)
+    except Exception:
+        v = None
+    with _snap_lk:
+        _snap[k] = v
+    return v
+
+
+def _snap_put(kind, gid, v):
+    if not v:
+        return
+    try:
+        os.makedirs(SNAP_DIR, exist_ok=True)
+        v = dict(v, saved=time.time())
+        p = _snap_path(kind, gid)
+        with open(p + ".tmp", "w", encoding="utf-8") as f:
+            json.dump(v, f, ensure_ascii=False)
+        os.replace(p + ".tmp", p)
+        with _snap_lk:
+            _snap[(kind, gid)] = v
+            if len(_snap) > 5000:
+                _snap.clear()
+    except Exception:
+        pass
+
+
+def snap_prune(days=10):
+    try:
+        cut = time.time() - days * 86400
+        for n in os.listdir(SNAP_DIR):
+            p = os.path.join(SNAP_DIR, n)
+            if os.path.getmtime(p) < cut:
+                os.remove(p)
+    except Exception:
+        pass
+
 
 def _get(kind, path, params):
     req = urllib.request.Request(HOSTS[kind] + path + "?" + urllib.parse.urlencode(params),
@@ -148,15 +201,23 @@ def odds(g, lite=False):
     if started:
         with _lk:
             e = _c.get(key)
-        cur = e[1] if e else None
+        cur = (e[1] if e else None) or snap_get(kind, g.get("id"))
         if cur is None and not (e and time.time() < e[0]):
             # 시작 후 1회만 조회: 있으면 하루, 없으면 6시간 동안 다시 안 부름
             cur = _cached(key, 86400, lambda prev: _fetch_odds(kind, g, prev) or prev, 3600)
+            if cur:
+                _snap_put(kind, g.get("id"), cur)
             if cur is None:
                 with _lk:
                     _c[key] = (time.time() + 21600, None)
     else:
-        cur = _cached(key, ODDS_TTL, lambda prev: _fetch_odds(kind, g, prev))
+        cur = _cached(key, ODDS_TTL, lambda prev: _fetch_odds(kind, g, prev or snap_get(kind, g.get("id"))))
+        if cur:
+            sv = snap_get(kind, g.get("id"))
+            if not sv or sv.get("at") != cur.get("at") or sv.get("o") != cur.get("o"):
+                _snap_put(kind, g.get("id"), cur)
+        else:
+            cur = snap_get(kind, g.get("id"))   # 잠깐 비어도 마지막 실제 배당 유지
     if not cur:
         return None
     bk = cur.get("bk") or "bet365"

@@ -220,6 +220,49 @@ def _nhl(en):
     return [_g("선수 명단", sorted(ps, key=lambda p: p["_k"]), "포지션별 · 포인트순")], f"NHL 공식 기록 · {d.get('season','')[:4]} 시즌"
 
 
+# ---------- 배구: V리그 (네이버 스포츠 시즌 기록) ----------
+KOVO = {1171: ("kovo", "1001"), 1175: ("kovo", "1002"), 1172: ("kovo", "1004"), 1170: ("kovo", "1005"),
+        1173: ("kovo", "1006"), 4144: ("kovo", "1008"), 1176: ("kovo", "1009"),
+        1181: ("wkovo", "2001"), 1178: ("wkovo", "2002"), 3820: ("wkovo", "2003"), 1180: ("wkovo", "2004"),
+        1179: ("wkovo", "2005"), 1182: ("wkovo", "2006"), 2162: ("wkovo", "2007")}
+
+
+def _kovo(tid):
+    cat, code = KOVO[tid]
+    base = "https://api-gw.sports.naver.com/statistics/categories/" + cat + "/seasons"
+    seasons = [x for x in (_j(base, NAVER_H).get("result") or {}).get("seasons") or [] if x.get("isEnable") == "Y"]
+    seasons.sort(key=lambda x: x.get("seasonCode") or "", reverse=True)
+    for se in seasons[:2]:
+        rows = (_j(f"{base}/{se['seasonCode']}/players?pageSize=300", NAVER_H).get("result") or {}).get("seasonPlayerStats") or []
+        rows = [x for x in rows if str(x.get("teamId")) == code and x.get("playerName")]
+        if rows:
+            break
+    else:
+        return None
+    def pos(x):
+        try:
+            v = json.loads(x.get("profile") or "{}").get("position") or ""
+        except Exception:
+            v = ""
+        return v or {"OH": "아웃사이드 히터", "OP": "아포짓 스파이커", "MB": "미들 블로커", "S": "세터", "L": "리베로"}.get(x.get("position") or "", "")
+    ps = []
+    for x in rows:
+        if pos(x) == "리베로":
+            dg = x.get("digSuccess") or 0
+            rt, ra = x.get("receiveTotal") or 0, x.get("receiveAccurate") or 0
+            st = [f"디그 {dg}", f"리시브 정확 {ra * 100 / rt:.1f}%" if rt else ""]
+        else:
+            ht = x.get("hittingTotal") or 0
+            st = [f"{x.get('point') or 0}득점", f"공격 {(x.get('hittingSuccess') or 0) * 100 / ht:.1f}%" if ht else "",
+                  f"블로킹 {x.get('blockingSuccess') or 0}", f"서브득점 {x.get('servesSuccess') or 0}"]
+        ps.append({**_p(x["playerName"], x.get("backNumber"), pos(x), st), "_set": x.get("matchesSet") or 0})
+    ps.sort(key=lambda p: -p["_set"])
+    top = [p for p in ps if p["_set"] > 0][:7]
+    rest = [p for p in ps if p not in top]
+    return ([_g("주전", top, "시즌 출전 세트 상위 7명"), _g("후보", rest, "")],
+            f"네이버 스포츠 · {se.get('title')} 시즌 기록")
+
+
 def get(t):
     kind, tid = t["kind"], t["id"]
     def f(prev):
@@ -239,6 +282,8 @@ def get(t):
                 r = (_kbo(tid, "mlb", code) if code else None) or _mlb(t.get("en") or t["name"])
         elif kind == "hockey":
             r = _nhl(t.get("en") or t["name"])
+        elif kind == "volleyball" and tid in KOVO:
+            r = _kovo(tid)
         if not r and t["roster"]:   # 기록 근거가 없으면 포지션순 단일 명단
             r = [_g("선수 명단", [_p(p["name"], p["no"], p["pos"]) for p in t["roster"]], "포지션순")], "API-Sports"
         if not r:

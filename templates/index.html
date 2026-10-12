@@ -78,7 +78,7 @@ const OD={},ODQ=new Set();let ODT=0;
 function odV(g){const o=OD[g.key];if(!o)return null;const f=m=>{const v=o[m];if(v==null)return'';const mv=(o.mv||{})[m];return `<i class="${mv>0?'up':mv<0?'dn':''}">${Number(v).toFixed(2)}</i>`};if(o.L!=null&&o.R!=null)return{L:f('L'),D:o.D!=null?f('D'):'',R:f('R')};const lh=g.left_home!=null?!!g.left_home:g.kind!=='baseball';return{L:f(lh?'H':'A'),D:o.D!=null?f('D'):'',R:f(lh?'A':'H')}}
 function odRow(g){const v=odV(g);return v?`<div class="od5" title="${esc(OD[g.key].book||'')} 배당">${v.L}${v.D||`<small>${esc(OD[g.key].bs||'')}</small>`}${v.R}</div>`:''}
 function odM(g){const v=odV(g);return v?`<span class="mo L">${v.L}</span><span class="mo C">${v.D||`<small>${esc(OD[g.key].bs||'')}</small>`}</span><span class="mo R">${v.R}</span>`:''}
-function odGame(k){return DATA&&DATA.games.find(x=>x.key===k)}
+function odGame(k){return DATA&&(DATA.games.find(x=>x.key===k)||(OTH&&OTH.find(x=>x.key===k)))}
 const ODIO='IntersectionObserver' in window?new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;const k=e.target.dataset.k;const g=odGame(k);if(g&&!(k in OD))ODQ.add(k)});clearTimeout(ODT);ODT=setTimeout(odFlush,250)},{rootMargin:'200px'}):null;
 async function odFlush(){const ks=[...ODQ].filter(k=>!(k in OD));ODQ.clear();if(!ks.length)return;ks.forEach(k=>OD[k]=null);let got=false;
  for(let i=0;i<ks.length;i+=20){const b=ks.slice(i,i+20);try{const j=await (await fetch('/api/odds?lite=1&d='+D+'&k='+b.map(encodeURIComponent).join(','))).json();for(const x in j)if(j[x]){OD[x]=j[x];got=true}}catch(e){b.forEach(k=>delete OD[k])}}
