@@ -36,6 +36,12 @@ CREATE TABLE IF NOT EXISTS site_media(name TEXT PRIMARY KEY, mime TEXT NOT NULL,
 _ok = [False]
 
 
+SEO_DEFAULT = {"google": "B6_IfIlaCKF2vfROjXn9_fUhqS0zK3nO36FeYQ7M2sU"}
+def _seo_v():
+    v = dict(SEO_DEFAULT)
+    v.update({k: x for k, x in (kv_get("seo_verify") or {}).items() if x})
+    return v
+
 def init_db():
     if not M.enabled():
         return
@@ -53,7 +59,7 @@ def _ctx():
     from flask import g as _g
     _sup = (_g.get("admin") or {}).get("super")
     groups = [(gk, gi, gl, [it for it in items if it[0] not in SUPER_ONLY or _sup]) for gk, gi, gl, items in MENU_GROUPS]
-    return {"adm_menu": [m for m in MENU if m[0] not in SUPER_ONLY or _sup], "adm_groups": [g for g in groups if g[3]], "adm_me": _g.get("admin"), "site_banner": banner() if _ok[0] else None, "hero_v": hero_ver() if _ok[0] else None, "seo_verify": (kv_get("seo_verify") or None) if _ok[0] else None}
+    return {"adm_menu": [m for m in MENU if m[0] not in SUPER_ONLY or _sup], "adm_groups": [g for g in groups if g[3]], "adm_me": _g.get("admin"), "site_banner": banner() if _ok[0] else None, "hero_v": hero_ver() if _ok[0] else None, "seo_verify": _seo_v() if _ok[0] else None}
 
 
 # ---------- key/value 설정 (프로세스 캐시) ----------
