@@ -1,4 +1,4 @@
-"""배당(단일 북메이커: Bet365) + 팀 페이지 데이터. API-Sports, 서버 캐시."""
+"""배당(경기당 북메이커 1곳: Bet365 우선, 없으면 대체) + 팀 페이지 데이터. API-Sports, 서버 캐시."""
 import os, json, time, threading, urllib.request, urllib.parse
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -45,36 +45,63 @@ def _cached(key, ttl, fn, fail_ttl=300):
 
 
 # ---------- 배당 ----------
-def _parse(kind, resp):
+# 한 경기에 한 북메이커만 표시. Bet365 우선, 없으면 아래 순서로 같은 API 응답에서 대체.
+BOOK_ORDER = ["bet365", "pinnacle", "1xbet", "williamhill", "marathon", "betfair", "betvictor",
+              "unibet", "bwin", "betano", "10bet", "sbo", "dafabet", "188bet", "betway"]
+BOOK_SHORT = {"bet365": "B365", "pinnacle": "PIN", "1xbet": "1XB", "williamhill": "WH", "marathon": "MAR",
+              "betfair": "BF", "betvictor": "BV", "unibet": "UNI", "bwin": "BWIN", "betano": "BTN",
+              "10bet": "10B", "sbo": "SBO", "dafabet": "DAFA", "188bet": "188", "betway": "BWY"}
+BOOK_NAME = {"bet365": "Bet365", "pinnacle": "Pinnacle", "1xbet": "1xBet", "williamhill": "William Hill",
+             "marathon": "Marathonbet", "betfair": "Betfair", "betvictor": "BetVictor", "sbo": "SBO"}
+
+
+def _norm(n):
+    n = (n or "").lower().replace(" ", "")
+    return {"pncl": "pinnacle", "marathonbet": "marathon"}.get(n, n)
+
+
+def _prices(kind, b):
+    bets = {bt.get("name"): bt.get("values") or [] for bt in b.get("bets") or []}
+    vals = bets.get("Match Winner") if kind == "football" else bets.get("Home/Away")
+    three = False
+    if not vals and kind == "hockey":
+        vals, three = bets.get("3Way Result"), True
+    o = {}
+    for v in vals or []:
+        k = {"Home": "H", "Draw": "D", "Away": "A"}.get(v.get("value"))
+        try:
+            if k:
+                o[k] = float(v.get("odd"))
+        except (TypeError, ValueError):
+            pass
+    if kind != "football" and not three:
+        o.pop("D", None)
+    return o if "H" in o and "A" in o else None
+
+
+def _parse(kind, resp, prev_book=None):
+    cands = {}
     for x in resp:
         for b in x.get("bookmakers") or []:
-            if b.get("id") != BOOK_ID[kind]:
-                continue
-            bets = {bt.get("name"): bt.get("values") or [] for bt in b.get("bets") or []}
-            vals = bets.get("Match Winner") if kind == "football" else (bets.get("Home/Away") or None)
-            if not vals and kind == "hockey":
-                vals = bets.get("3Way Result")
-            if not vals:
-                return None
-            o = {}
-            for v in vals:
-                k = {"Home": "H", "Draw": "D", "Away": "A"}.get(v.get("value"))
-                try:
-                    if k:
-                        o[k] = float(v.get("odd"))
-                except (TypeError, ValueError):
-                    pass
-            if kind != "football" and not (kind == "hockey" and "Home/Away" not in bets):
-                o.pop("D", None)
-            if "H" in o and "A" in o:
-                return {"o": o, "upd": x.get("update")}
-    return None
+            n = _norm(b.get("name"))
+            if n and n not in cands:
+                o = _prices(kind, b)
+                if o:
+                    cands[n] = (o, b.get("name"), x.get("update"))
+    if not cands:
+        return None
+    rank = lambda n: BOOK_ORDER.index(n) if n in BOOK_ORDER else 99
+    pick = min(cands, key=rank)
+    if pick != "bet365" and prev_book in cands:   # 대체 북은 바뀌지 않게 유지(변동 화살표 일관성)
+        pick = prev_book
+    o, raw, upd = cands[pick]
+    return {"o": o, "bk": pick, "name": BOOK_NAME.get(pick, raw or pick), "upd": upd}
 
 
 def odds(g, lite=False):
-    """{"book","H","A",("D"),"mv":{H:+1/-1},"at":"HH:MM","final":bool} 또는 None. 경기 시작 후엔 마지막 경기 전 배당 고정."""
+    """{"book","bs","H","A",("D"),"mv","at","final"} 또는 None. 시작/종료 경기는 마지막 경기 전 배당(1회 조회 후 고정)."""
     kind = g.get("kind")
-    if kind not in BOOK_ID or g.get("other") and False:
+    if kind not in HOSTS or not g.get("id"):
         return None
     started = g.get("state") != "scheduled"
     key = ("odds", kind, g.get("id"))
@@ -82,24 +109,30 @@ def odds(g, lite=False):
         with _lk:
             e = _c.get(key)
         cur = e[1] if e else None
-        if cur is None and not lite:
-            cur = _cached(key, 86400, lambda prev: _fetch_odds(kind, g, prev), 3600)
+        if cur is None and not (e and time.time() < e[0]):
+            # 시작 후 1회만 조회: 있으면 하루, 없으면 6시간 동안 다시 안 부름
+            cur = _cached(key, 86400, lambda prev: _fetch_odds(kind, g, prev) or prev, 3600)
+            if cur is None:
+                with _lk:
+                    _c[key] = (time.time() + 21600, None)
     else:
         cur = _cached(key, ODDS_TTL, lambda prev: _fetch_odds(kind, g, prev))
     if not cur:
         return None
-    out = dict(cur["o"]); out["book"] = BOOK; out["mv"] = cur.get("mv") or {}; out["at"] = cur.get("at"); out["final"] = started
+    bk = cur.get("bk") or "bet365"
+    out = dict(cur["o"]); out["book"] = cur.get("name") or BOOK
+    out["bs"] = BOOK_SHORT.get(bk, (cur.get("name") or bk)[:4].upper())
+    out["mv"] = cur.get("mv") or {}; out["at"] = cur.get("at"); out["final"] = started
     return out
 
 
 def _fetch_odds(kind, g, prev):
-    p = {"bookmaker": BOOK_ID[kind]}
-    p["fixture" if kind == "football" else "game"] = g["id"]
-    r = _parse(kind, _get(kind, "/odds", p))
+    p = {"fixture" if kind == "football" else "game": g["id"]}
+    r = _parse(kind, _get(kind, "/odds", p), (prev or {}).get("bk"))
     if not r:
         return prev
-    mv = dict((prev or {}).get("mv") or {})
-    if prev:
+    mv = dict((prev or {}).get("mv") or {}) if prev and prev.get("bk", "bet365") == r["bk"] else {}
+    if prev and prev.get("bk", "bet365") == r["bk"]:
         for k, v in r["o"].items():
             pv = prev["o"].get(k)
             if pv and abs(v - pv) >= 0.005:

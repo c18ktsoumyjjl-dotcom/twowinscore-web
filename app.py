@@ -538,13 +538,17 @@ def api_odds():
     import teamodds
     d = parse_day(request.args.get("d"))
     out, lite = {}, request.args.get("lite") == "1"
-    for k in [x for x in (request.args.get("k") or "").split(",") if x][:20]:
-        k = k[:80]
+    from concurrent.futures import ThreadPoolExecutor
+
+    def one(k):
         try:
             g = data.find_game(k, d) or (data.find_game(k, d - timedelta(days=1)) if d == today() else None)
-            out[k] = teamodds.odds(g, lite) if g and not g.get("other") else None
+            return k, (teamodds.odds(g, lite) if g else None)
         except Exception:
-            out[k] = None
+            return k, None
+    ks = [x[:80] for x in (request.args.get("k") or "").split(",") if x][:20]
+    with ThreadPoolExecutor(6) as ex:   # 처음 조회만 API, 이후 캐시
+        out = dict(ex.map(one, ks))
     r = jsonify(out)
     r.headers["Cache-Control"] = "public, max-age=60"
     return r
