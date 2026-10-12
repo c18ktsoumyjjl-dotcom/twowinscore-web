@@ -468,16 +468,23 @@ def game(key):
     if not g:
         abort(404)
     v = view(g)
-    det = data.detail(g)
     lh = v["left_home"]
+    import concurrent.futures as cf
+    global _gpool
+    try:
+        _gpool
+    except NameError:
+        _gpool = cf.ThreadPoolExecutor(8)
+    fd, fs, fw, fc = _gpool.submit(data.detail, g), _gpool.submit(plus.summary, g), _gpool.submit(plus.winprob, g, lh), _gpool.submit(plays.commentary, g)   # 외부 조회를 동시에(첫 조회만 느림, 이후 캐시)
+    det = fd.result()
     forms = [(v["L"]["name"], det["form_home"] if lh else det["form_away"]), (v["R"]["name"], det["form_away"] if lh else det["form_home"])]
     st = det.get("starters")
     bat = det.get("batters")
-    return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=plays.commentary(g), gl=plays.goals(g),
+    return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=fc.result(), gl=plays.goals(g),
                            forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st, batters=bat,
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
                            names={g["home"], g["away"]}, gnews=news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]), points=insights.points(g, det, dedupe=True), vote=_vinfo(g, v), seo=_game_seo(g, v), an=_analysis(g, v, det, forms),
-                           wp=plus.winprob(g, lh), summ=plus.summary(g), top=_top(g, v, det))
+                           wp=fw.result(), summ=fs.result(), top=_top(g, v, det))
 
 
 def _top(g, v, det):
@@ -496,8 +503,9 @@ def api_top(key):
     if not g:
         return jsonify({}), 404
     v = view(g)
-    t = _top(g, v, data.detail(g)) or {}
-    return jsonify({"ev": t.get("ev"), "cur": t.get("cur"), "period": t.get("period"), "L": v["L"]["score"], "R": v["R"]["score"]})
+    import toppv
+    t = toppv.live(g, v) if g["state"] == "live" else {}
+    return jsonify({"ev": t.get("ev"), "period": t.get("period"), "L": v["L"]["score"], "R": v["R"]["score"]})
 
 
 def _analysis(g, v, det, forms):

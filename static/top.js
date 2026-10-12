@@ -1,14 +1,31 @@
-/* 상세 상단: 실제 이벤트가 새로 들어왔을 때만 짧게 연출. 데이터 없으면 조용한 화면 */
+/* 모바일 상세 상단: 뒤로가기, 배당·볼카운트(비동기), 실제 이벤트가 새로 들어올 때만 짧은 연출 */
 (function(){const S=document.querySelector('.tp');if(!S)return;document.body.classList.add('tpon');
-const bb=S.querySelector('.tpbb');if(bb){const b=bb.dataset.bases.split(',');['b1','b2','b3'].forEach((id,i)=>{const r=S.querySelector('#'+id);if(r&&b[i]&&b[i]!=='None'&&b[i]!=='False')r.classList.add('on')})}
-const wp=S.querySelector('.tpwp');if(wp){const p=JSON.parse(wp.dataset.wp),sv=wp.querySelector('svg');const pt=i=>p.map(x=>`${(x[0]*200).toFixed(1)},${(36-x[i]/100*34-1).toFixed(1)}`).join(' ');
- sv.innerHTML=`<line x1="0" y1="18" x2="200" y2="18" stroke="rgba(128,140,170,.35)" stroke-dasharray="3 3"/><polyline points="${pt(3)}" fill="none" stroke="#5a8cff" stroke-width="1.6" opacity=".8"/><polyline points="${pt(1)}" fill="none" stroke="#ff8a3d" stroke-width="2.2"/>`;
- const l=p[p.length-1];wp.querySelector('.v').textContent=`${l[1]}%${wp.dataset.draw==='1'?' · 무 '+l[2]+'%':''} · ${l[3]}%`}
-if(S.dataset.live!=='1')return;const fx=S.querySelector('.tpfx'),st=S.querySelector('.tpst');
-const seen=new Set([...S.querySelectorAll('.tptl .e')].map(e=>e.className+e.dataset.m+e.title));let first=true;
-const NM={goal:'⚽ 골!',yel:'🟨 경고',red:'🟥 퇴장',sub:'🔁 교체',pen:'⏱ 페널티'};
+const K=S.dataset.k,Q=location.search,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function goBack(e){if(e)e.preventDefault();const r=document.referrer;let same=false;try{same=r&&new URL(r).origin===location.origin}catch(x){}
+ const d=new URLSearchParams(Q).get('d'),home='/'+(d?'?d='+encodeURIComponent(d):'');let left=false;addEventListener('pagehide',()=>{left=true},{once:true});
+ if(history.length>1&&same){history.back();setTimeout(()=>{if(!left&&location.pathname.startsWith('/game/'))location.href=home},700)}else location.href=home}
+const bk=document.getElementById('tpbk');if(bk)bk.addEventListener('click',goBack);
+function tgBack(){try{const tg=window.Telegram&&Telegram.WebApp;if(tg&&tg.BackButton&&(tg.initData||tg.platform&&tg.platform!=='unknown')){tg.BackButton.show();tg.BackButton.onClick(()=>goBack())}}catch(e){}}
+const inTg=window.TelegramWebviewProxy||/tgWebApp/.test(location.hash)||/tgWebApp/.test(sessionStorage.getItem('tw_tg')||'');if(/tgWebApp/.test(location.hash))try{sessionStorage.setItem('tw_tg','tgWebApp')}catch(e){}
+if(window.Telegram&&Telegram.WebApp)tgBack();else if(inTg){const sc=document.createElement('script');sc.src='https://telegram.org/js/telegram-web-app.js';sc.onload=tgBack;document.head.appendChild(sc)}
+fetch('/api/odds?k='+encodeURIComponent(K)+'&d='+(new URLSearchParams(Q).get('d')||'')).then(r=>r.json()).then(j=>{const o=j[K];if(!o||o.L==null||o.R==null)return;const mv=o.mv||{};
+ const c=(k,v,m)=>`<span class="c"><small>${k}</small><b class="${m>0?'up':m<0?'dn':''}">${Number(v).toFixed(2)}${m>0?'▲':m<0?'▼':''}</b></span>`;
+ const lh=o.lh!==false;let h=`<span class="bk">${esc(o.bs||o.book||'')}</span>`+c(lh?'1':'원정',o.L,mv.L)+(o.D?c('X',o.D,mv.D):'')+c(lh?'2':'홈',o.R,mv.R);
+ const x=o.x||{},ex=[];if(x.hc){const l=lh?x.hc.ln:-x.hc.ln;ex.push(`핸디 ${l>0?'+':''}${l}`)}if(x.ou)ex.push(`기준 ${x.ou.ln}`);if(ex.length)h+=`<span class="ex">${ex.join(' · ')}</span>`;
+ const el=document.getElementById('tpod');el.innerHTML=h;el.hidden=false}).catch(()=>{});
+if(S.dataset.live!=='1')return;
+const bb=S.querySelector('.tpbb');
+function bso(){if(!bb||document.hidden)return;fetch('/api/bso?k='+encodeURIComponent(K)+'&d='+(new URLSearchParams(Q).get('d')||'')).then(r=>r.json()).then(j=>{const b=j[K];if(!b||b.b==null)return;
+ ['b1','b2','b3'].forEach((id,i)=>S.querySelector('#'+id).classList.toggle('on',!!(b.r||[])[i]));
+ const dots=(n,m,c)=>Array.from({length:m},(_,i)=>`<i class="${i<n?c:''}"></i>`).join('');
+ bb.querySelector('.bso').innerHTML=`B${dots(b.b,3,'B')} S${dots(b.s,2,'S')} O${dots(b.o,2,'O')}`;bb.hidden=false}).catch(()=>{})}
+if(bb){bso();setInterval(bso,15000)}
+const kind=S.dataset.kind;if(kind!=='football'&&kind!=='hockey'){return}
+const fx=S.querySelector('.tpfx'),st=S.querySelector('.tpst'),seen=new Set();let first=true;
+const NM={goal:'⚽ 골!',yel:'🟨 경고',red:'🟥 퇴장',sub:'🔁 교체',pen:'⏱ 페널티'};if(kind==='hockey')NM.goal='🏒 골!';
 function show(e){const d=document.createElement('div');d.className='t '+e.t;d.textContent=`${NM[e.t]||''} ${e.lab} ${e.who||''}`.trim();fx.innerHTML='';fx.appendChild(d);if(e.t==='goal'){st.classList.remove('flash');void st.offsetWidth;st.classList.add('flash')}}
-async function poll(){if(document.hidden)return;try{const r=await fetch('/api/top/'+encodeURIComponent(S.dataset.k)+location.search,{cache:'no-store'});const j=await r.json();const nw=(j.ev||[]).filter(e=>{const k=e.t+' '+e.s+e.m+(e.lab+' '+e.who);return !seen.has(k)&&seen.add(k)});
- if(!first&&nw.length)show(nw[nw.length-1]);first=false;const sb=S.querySelectorAll('.tpc .sc b');if(sb.length===2&&j.L!=null&&j.R!=null){sb[0].textContent=j.L;sb[1].textContent=j.R;sb[0].className=j.L>j.R?'ld':'';sb[1].className=j.R>j.L?'ld':''}const c=document.getElementById('tpclk');if(c&&j.period)c.textContent=j.period}catch(e){}}
-// 초기 마커의 키를 서버 형식과 맞춤
-seen.clear();poll();setInterval(poll,20000)})();
+async function poll(){if(document.hidden)return;try{const j=await (await fetch('/api/top/'+encodeURIComponent(K)+Q,{cache:'no-store'})).json();
+ const nw=(j.ev||[]).filter(e=>{const k=e.t+e.s+e.m+e.lab+e.who;return !seen.has(k)&&seen.add(k)});if(!first&&nw.length)show(nw[nw.length-1]);first=false;
+ const sb=S.querySelectorAll('.tpc .sc b');if(sb.length===2&&j.L!=null){sb[0].textContent=j.L;sb[1].textContent=j.R;sb[0].className=j.L>j.R?'ld':'';sb[1].className=j.R>j.L?'ld':''}
+ const c=document.getElementById('tpclk');if(c&&j.period)c.textContent=j.period}catch(e){}}
+poll();setInterval(poll,20000)})();
