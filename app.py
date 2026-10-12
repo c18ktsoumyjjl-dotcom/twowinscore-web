@@ -435,7 +435,68 @@ def game(key):
     return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=plays.commentary(g), gl=plays.goals(g),
                            forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st,
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
-                           names={g["home"], g["away"]}, gnews=news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]), points=insights.points(g, det), vote=_vinfo(g, v), seo=_game_seo(g, v))
+                           names={g["home"], g["away"]}, gnews=news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]), points=insights.points(g, det, dedupe=True), vote=_vinfo(g, v), seo=_game_seo(g, v), an=_analysis(g, v, det, forms))
+
+
+def _analysis(g, v, det, forms):
+    """경기정보 분석 섹션용 요약(실제 데이터만, 없으면 None). 기본 승패 배당은 응원 블록에만 표시."""
+    lh = v["left_home"]
+    out = {"odds": None, "snap": None, "h2h": None}
+    try:
+        import teamodds
+        o = teamodds.odds(g)
+    except Exception:
+        o = None
+    if o:
+        L, R = (o["H"], o["A"]) if lh else (o["A"], o["H"])
+        ps = [1 / L, 1 / o["D"] if o.get("D") else 0, 1 / R]
+        t = sum(ps)
+        pct = [round(p / t * 100) for p in ps]
+        x = o.get("x") or {}
+        hc = None
+        if x.get("hc"):
+            h = x["hc"]; ln = h["ln"]
+            hc = {"l": ln if lh else -ln, "lo": h["a"] if lh else h["b"], "ro": h["b"] if lh else h["a"]}
+        out["odds"] = {"book": o.get("book"), "final": o.get("final"), "pct": pct, "draw": bool(o.get("D")), "hc": hc, "ou": x.get("ou")}
+    st = det.get("standings") or {}
+    rows = {r.get("team"): r for r in (st.get("rows") or [])}
+    fm = dict(forms)
+    def side(t, raw):
+        r = rows.get(raw) or {}
+        f = fm.get(t["name"]) or []
+        d = {}
+        if r.get("rank") is not None:
+            d["rank"] = r["rank"]
+        if r.get("win") is not None and r.get("lose") is not None:
+            d["rec"] = f"{r['win']}승" + (f" {r['draw']}무" if g["kind"] == "football" and r.get("draw") is not None else "") + f" {r['lose']}패"
+        if r.get("pts") is not None and g["kind"] in ("volleyball", "football", "hockey"):
+            d["pts"] = int(r["pts"])
+        if f:
+            d["gf"] = round(sum(x["me"] for x in f) / len(f), 1)
+            d["ga"] = round(sum(x["op"] for x in f) / len(f), 1)
+        return d
+    rawL, rawR = (g["home"], g["away"]) if lh else (g["away"], g["home"])
+    a, b = side(v["L"], rawL), side(v["R"], rawR)
+    if a or b:
+        out["snap"] = {"L": a, "R": b, "slug": st.get("slug"), "venue": g.get("venue")}
+    hh = det.get("h2h") or []
+    if hh:
+        w = [0, 0, 0]
+        for x in hh:
+            try:
+                hs, as_ = int(x["hs"]), int(x["as"])
+            except (TypeError, ValueError, KeyError):
+                continue
+            hw = x.get("home") in (rawL, v["L"]["name"], v["L"].get("en"))
+            if hs == as_:
+                w[1] += 1
+            elif (hs > as_) == hw:
+                w[0] += 1
+            else:
+                w[2] += 1
+        if sum(w):
+            out["h2h"] = w
+    return out
 
 
 SPORT_KO = {"football": "축구", "baseball": "야구", "basketball": "농구", "volleyball": "배구", "hockey": "아이스하키"}

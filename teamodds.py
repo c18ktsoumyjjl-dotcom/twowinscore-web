@@ -87,15 +87,55 @@ def _parse(kind, resp, prev_book=None):
             if n and n not in cands:
                 o = _prices(kind, b)
                 if o:
-                    cands[n] = (o, b.get("name"), x.get("update"))
+                    cands[n] = (o, b.get("name"), x.get("update"), _lines(b))
     if not cands:
         return None
     rank = lambda n: BOOK_ORDER.index(n) if n in BOOK_ORDER else 99
     pick = min(cands, key=rank)
     if pick != "bet365" and prev_book in cands:   # 대체 북은 바뀌지 않게 유지(변동 화살표 일관성)
         pick = prev_book
-    o, raw, upd = cands[pick]
-    return {"o": o, "bk": pick, "name": BOOK_NAME.get(pick, raw or pick), "upd": upd}
+    o, raw, upd, ln = cands[pick]
+    return {"o": o, "bk": pick, "name": BOOK_NAME.get(pick, raw or pick), "upd": upd, "x": ln}
+
+
+HC_NAMES = ("Asian Handicap", "Handicap Result", "Run Line", "Puck Line", "Point Spread")
+OU_NAMES = ("Goals Over/Under", "Over/Under", "Over/Under (Incl. OT)")
+
+
+def _pairs(vals, a, b):
+    m = {}
+    for v in vals or []:
+        t = str(v.get("value") or "").strip().split(" ", 1)
+        if len(t) != 2:
+            continue
+        try:
+            ln, od = float(t[1]), float(v.get("odd"))
+        except (TypeError, ValueError):
+            continue
+        if t[0] == a:
+            m.setdefault(ln, {})["a"] = od
+        elif t[0] == b:
+            m.setdefault(ln, {})["b"] = od   # 원정 값도 홈 기준 줄로 표기됨
+    m = {k: p for k, p in m.items() if "a" in p and "b" in p}
+    if not m:
+        return None
+    k = min(m, key=lambda k: abs(m[k]["a"] - m[k]["b"]))   # 기준선 = 양쪽 배당이 가장 비슷한 줄
+    return {"ln": k, "a": m[k]["a"], "b": m[k]["b"]}
+
+
+def _lines(b):
+    """같은 북의 핸디캡(홈 기준)·언더오버 기준선 1개씩."""
+    bets = {bt.get("name"): bt.get("values") or [] for bt in b.get("bets") or []}
+    out = {}
+    for n in HC_NAMES:
+        p = _pairs(bets.get(n), "Home", "Away")
+        if p:
+            out["hc"] = p; break
+    for n in OU_NAMES:
+        p = _pairs(bets.get(n), "Over", "Under")
+        if p:
+            out["ou"] = p; break
+    return out
 
 
 def odds(g, lite=False):
@@ -122,6 +162,7 @@ def odds(g, lite=False):
     bk = cur.get("bk") or "bet365"
     out = dict(cur["o"]); out["book"] = cur.get("name") or BOOK
     out["bs"] = BOOK_SHORT.get(bk, (cur.get("name") or bk)[:4].upper())
+    out["x"] = cur.get("x") or {}
     out["mv"] = cur.get("mv") or {}; out["at"] = cur.get("at"); out["final"] = started
     return out
 

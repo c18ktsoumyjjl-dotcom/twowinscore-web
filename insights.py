@@ -143,8 +143,16 @@ def _wl(rows):
     return f"{w}승 {d}무 {l}패" if d else f"{w}승 {l}패"
 
 
-def points(g, det, v=None):
-    """기록 기반 2~3문장. 어느 쪽이 이긴다/추천 같은 말은 만들지 않는다."""
+def points(g, det, v=None, dedupe=False):
+    """기록 기반 2~3문장. 어느 쪽이 이긴다/추천 같은 말은 만들지 않는다.
+    dedupe=True(경기 상세): 아래 섹션(점수·순위·최근5·맞대결·선발·결장)에 이미 나오는 내용은 빼고 연승/연패 흐름만."""
+    if dedupe:
+        S = []
+        for nm, rows in ((g["home"], det.get("form_home") or []), (g["away"], det.get("form_away") or [])):
+            kk, n = _streak("".join(r["r"] for r in reversed(rows)))
+            if n >= 3 and kk in "WL":
+                S.append(f"{josa(nm, '은', '는')} 최근 {n}연{'승' if kk == 'W' else '패'} 중이에요.")
+        return S
     H, A = g["home"], g["away"]
     S = []
     k = g["kind"]

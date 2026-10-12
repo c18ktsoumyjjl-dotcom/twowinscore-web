@@ -1,0 +1,26 @@
+/* 경기정보 분석 섹션(배당 분석·팀 비교·맞대결 요약) — 네이비/오렌지 테마 변수만 사용 */
+.an9p{margin-top:4px}
+.an9bar{display:flex;height:10px;border-radius:6px;overflow:hidden;gap:2px;background:var(--line)}
+.an9bar i{display:block;min-width:4px}.an9bar .s0{background:var(--or)}.an9bar .s1{background:var(--mu);opacity:.55}.an9bar .s2{background:#3d7bff}
+.an9lg{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:13px}
+.an9lg span{display:flex;align-items:baseline;gap:5px;min-width:0}.an9lg span:nth-child(2):not(:last-child){justify-content:center}.an9lg span:last-child{justify-content:flex-end}
+.an9lg em{font-style:normal;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px}
+.an9lg b{font-weight:900;font-variant-numeric:tabular-nums}.an9lg .s0 b{color:var(--or)}.an9lg .s2 b{color:#6b9bff}
+.an9n{display:block;margin-top:6px;color:var(--mu);font-size:11px}
+.an9l{margin-top:12px;border-top:1px solid var(--line)}
+.an9r{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.an9r:last-child{border-bottom:0}
+.an9r .k{font-weight:800;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.an9r .k em{font-style:normal;color:var(--or);margin-left:4px;font-weight:700}
+.an9r .v{display:flex;justify-content:space-between;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-width:0}
+.an9r .v i{font-style:normal;color:var(--mu);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.an9r .v b{font-variant-numeric:tabular-nums;font-weight:900}
+.an9t{width:100%;border-collapse:collapse;table-layout:fixed;font-size:14px}
+.an9t th,.an9t td{padding:8px 4px;border-bottom:1px solid var(--line);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.an9t tr:last-child th,.an9t tr:last-child td{border-bottom:0}
+.an9t tr:first-child th{font-weight:800;color:var(--tx);font-size:13px}
+.an9t th{width:38%;color:var(--mu);font-weight:600;font-size:12px;text-align:center}
+.an9t .l{text-align:left}.an9t .r{text-align:right}.an9t td{font-weight:800;font-variant-numeric:tabular-nums}
+.an9t td.hi{color:var(--or)}
+.an9v{margin:8px 0 0;color:var(--mu);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.an9h{font-weight:600}.an9h .w{color:var(--or);font-weight:800}
+@media(max-width:700px){.an9r{grid-template-columns:1fr 1fr}.an9r .k{grid-column:1/-1}.an9t{font-size:13px}.an9t th{width:34%}}
