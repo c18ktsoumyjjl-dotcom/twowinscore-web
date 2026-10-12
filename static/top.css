@@ -55,3 +55,22 @@ body.tpon .gm7sb,body.tpon .gm7ls{display:none}
 }
 @media(max-width:1023px){.dmain .ins8 .vt8{display:none}.dmain .ins8:not(:has(.ap8)){display:none}.ch-lgp{padding:12px;text-align:center;font-size:13px;font-weight:700;background:var(--bg2);border-top:1px solid var(--line)}.ch-lgp a{color:#ff8a3d;margin-left:6px}.ch-form.cm input:disabled{opacity:.6}.ch-form.cm[data-cs=L] input{box-shadow:inset 3px 0 0 #d24a3c}.ch-form.cm[data-cs=R] input{box-shadow:inset 3px 0 0 #3d55b0}}
 @media(max-width:1023px){.ch-lgp.nudge{animation:lgn .5s}@keyframes lgn{30%{background:rgba(255,138,61,.25)}}}
+@media(max-width:1023px){
+#gamechat .ch-form,#gamechat .ch-nick,#gamechat .ch-lgp,#gamechat .ch-mgh{display:none!important}
+.csh{position:fixed;inset:0;z-index:3000;pointer-events:none}
+.csh-bg{position:absolute;inset:0;background:rgba(5,10,25,.45);opacity:0;transition:opacity .2s}
+.csh.on{pointer-events:auto}.csh.on .csh-bg{opacity:1}
+.csh-p{position:absolute;left:0;right:0;bottom:0;margin:0;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:var(--bg2);border-radius:18px 18px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.3);transform:translateY(110%);transition:transform .22s ease}
+.csh.on .csh-p{transform:none}
+.csh-h{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.csh-tm{font-style:normal;padding:2px 9px;border-radius:7px;color:#fff;font-size:12px;font-weight:900;background:#d24a3c}.csh-p[data-s=R] .csh-tm{background:#3d55b0}
+.csh-tt{flex:1;font-size:14px}
+.csh-x{border:0;background:none;color:inherit;font-size:16px;opacity:.55;width:32px;height:32px}
+.csh-f{display:flex;gap:8px}
+.csh-f input{flex:1;min-width:0;height:44px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--card,#fff);color:inherit;font:inherit;font-size:16px}
+.csh-p[data-s=L] .csh-f input:focus{border-color:#d24a3c;outline:0}.csh-p[data-s=R] .csh-f input:focus{border-color:#3d55b0;outline:0}
+.csh-s{height:44px;padding:0 18px;border:0;border-radius:12px;background:#ff8a3d;color:#fff;font:inherit;font-size:15px;font-weight:900}.csh-s:disabled{opacity:.6}
+.csh-n{margin:8px 2px 0;font-size:11.5px;opacity:.7}
+.csh-p.lg .csh-f{display:none}.csh-p.lg .csh-n{opacity:1;margin:4px 0 2px}
+.csh-lgb{display:block;text-align:center;height:44px;line-height:44px;border-radius:12px;background:#ff8a3d;color:#fff!important;font-weight:900;font-size:15px;text-decoration:none}
+}
