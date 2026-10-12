@@ -28,6 +28,7 @@ window.TWGM={mode:setMode,
 if(top.dataset.live==='1'&&document.getElementById('gm7ls'))setInterval(function(){if(document.hidden||!M.matches)return;
  fetch(location.pathname+location.search,{cache:'no-store'}).then(function(r){return r.text()}).then(function(h){var d=new DOMParser().parseFromString(h,'text/html'),n=d.getElementById('gm7ls'),o=document.getElementById('gm7ls');if(n&&o&&n.innerHTML!==o.innerHTML)o.innerHTML=n.innerHTML}).catch(function(){})},20000);
 /* 응원 바 */
+var U=function(){return matchMedia('(max-width:760px)').matches};
 function cheer(){var box=document.getElementById('gamechat');if(!box||!room)return;var err=box.querySelector('.ch-err');if(!err||box.querySelector('.gm7ch'))return;
  var nm=top.querySelectorAll('.gm7t b'),lg=top.querySelectorAll('.gm7t img');
  var el=document.createElement('div');el.className='gm7ch';
@@ -37,10 +38,14 @@ function cheer(){var box=document.getElementById('gamechat');if(!box||!room)retu
  var url='/api/cheer/'+encodeURIComponent(room),bL=el.querySelector('.L b'),bR=el.querySelector('.R b');
  var nt=document.createElement('div');nt.className='gm7cn';nt.hidden=true;box.insertBefore(nt,err);
  function show(j){if(j&&typeof j.L==='number'){bL.textContent=j.L.toLocaleString();bR.textContent=j.R.toLocaleString()}
+  if(U()){el.classList.remove('off');var mm=j&&(j.u?j.mine:j.mmine);el.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',!!mm&&b.dataset.s===mm)});nt.hidden=false;
+   if(j&&(j.login||j.mem===0)){nt.innerHTML=j.login?'응원은 회원만 할 수 있어요 · <a href="/login?next='+encodeURIComponent(location.pathname+location.search)+'">로그인하기</a>':'회원은 3초마다 응원할 수 있어요';return}
+   if(j&&(j.ok&&j.u||j.cd)){var w=j.cd||3;el.classList.add('cd');el.querySelectorAll('button').forEach(function(b){b.disabled=true});nt.textContent=Math.ceil(w)+'초 뒤에 다시 응원할 수 있어요';clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('cd');el.querySelectorAll('button').forEach(function(b){b.disabled=false});nt.textContent='누를 때마다 응원 +1 · 3초마다'},w*1000);return}
+   if(!el.classList.contains('cd'))nt.textContent='누를 때마다 응원 +1 · 3초마다';return}
   if(j&&typeof j.left==='number'){var off=j.left<=0;el.classList.toggle('off',off);el.querySelectorAll('button').forEach(function(b){b.disabled=off;b.classList.toggle('on',!!j.mine&&b.dataset.s===j.mine)});nt.hidden=false;nt.textContent=off?'✓ 이미 응원했어요':'경기당 한 번 응원할 수 있어요'}}
  function get(){if(document.hidden||!M.matches)return;fetch(url,{cache:'no-store'}).then(function(r){return r.json()}).then(show).catch(function(){})}
- var busy=false;el.onclick=function(e){var x=e.target.closest('button');if(!x||busy||x.disabled)return;busy=true;x.classList.remove('pop');void x.offsetWidth;x.classList.add('pop');
-  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({side:x.dataset.s})}).then(function(r){return r.json()}).then(show).catch(function(){}).then(function(){setTimeout(function(){busy=false},1000)})};
+ var busy=false;el.onclick=function(e){var x=e.target.closest('button');if(!x||busy||x.disabled)return;busy=true;x.classList.remove('pop');void x.offsetWidth;x.classList.add('pop');var u=U();
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(u?{side:x.dataset.s,u:1}:{side:x.dataset.s})}).then(function(r){return r.json()}).then(show).catch(function(){}).then(function(){setTimeout(function(){busy=false},u?300:1000)})};
  get();setInterval(get,15000)}
 function init(){meas();setMode(M.matches?'chat':'info');cheer()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else setTimeout(init,0);

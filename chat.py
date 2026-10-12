@@ -152,6 +152,8 @@ def _public(m):
         d["lv"] = m["lv"]
     if m.get("vip"):
         d["vip"] = 1
+    if m.get("cs") in ("L", "R"):
+        d["cs"] = m["cs"]
     if m.get("src") == "tg":
         d["src"] = "tg"
     if m.get("src") == "bot":
@@ -337,6 +339,10 @@ def post(room):
             return jsonify({"ok": False, "error": rl}), 429
         _seq[0] += 1
         m = {"id": _seq[0], "nick": nick, "tag": tag, "text": text, "ts": int(now), "iph": _iph(ip), "ip": ip}
+        if room.startswith("game-"):
+            cs = _cheer_side(["m:" + str(mem["id"]) + "|" + room]) if mem else None   # 회원의 가장 최근 응원 팀
+            if cs in ("L", "R"):
+                m["cs"] = cs
         mem_ok = True
         msgs.append(m)
         if not mem:
@@ -374,6 +380,9 @@ def post(room):
 
 # ---------- 응원 (경기별 두 팀 카운터, 메모리) ----------
 _cheer, _cheer_ip = {}, {}
+CHEER_CD = 3.0  # 모바일 무제한 응원: 회원만, 3초에 한 번
+_cheer_burst = {}
+_cnt_last = {}
 CHEER_MAX = 1   # 경기당 1번 (IP·회원 각각), 채팅 투표와 상세 페이지 응원이 같은 집계
 _cheer_used = {}  # "ip:<ip>|room" / "m:<id>|room" -> [count, first_ts]  (36h expiry)
 
@@ -402,11 +411,29 @@ def _cheer_left(ks, now):
 
 
 def _cheer_side(ks):
+    """가장 최근에 응원한 팀(L/R). 기록이 없으면 None."""
+    best = None
     for k in ks:
         v = _cheer_used.get(k)
-        if v and len(v) > 2:
-            return v[2]
-    return None
+        if v and len(v) > 2 and v[2] in ("L", "R"):
+            t = v[3] if len(v) > 3 else v[1]
+            if best is None or t > best[0]:
+                best = (t, v[2])
+    return best[1] if best else None
+
+
+def _cnt_save(room):
+    """무제한 응원 합계를 DB에 (방마다 2초에 한 번)."""
+    now = time.time()
+    if now - _cnt_last.get(room, 0) < 2:
+        return
+    _cnt_last[room] = now
+    c = _cheer.get(room) or [0, 0]
+    try:
+        import members
+        members.q("INSERT INTO cheer_cnt (room,l,r,ts) VALUES (?,?,?,?) ON CONFLICT (room) DO UPDATE SET l=excluded.l, r=excluded.r, ts=excluded.ts", (room, c[0], c[1], int(now)))
+    except Exception as e:
+        print("cheer cnt:", e)
 
 
 def _cheer_db_init():
@@ -420,15 +447,19 @@ def _cheer_db_init():
             _cheer_used[k] = [1, ts, side]
             if main:
                 c = _cheer.setdefault(room, [0, 0]); c[0 if side == "L" else 1] += 1
+        members.q("CREATE TABLE IF NOT EXISTS cheer_cnt (room TEXT PRIMARY KEY, l BIGINT NOT NULL, r BIGINT NOT NULL, ts BIGINT NOT NULL)")
+        members.q("DELETE FROM cheer_cnt WHERE ts<?", (cut,))
+        for room, l, r, ts in members.q("SELECT room,l,r,ts FROM cheer_cnt") or []:
+            c = _cheer.setdefault(room, [0, 0]); c[0], c[1] = max(c[0], int(l)), max(c[1], int(r))
     except Exception as e:
         print("cheer db:", e)
 
 
-def _cheer_db_save(ks, room, side, now):
+def _cheer_db_save(ks, room, side, now, upd=False):
     try:
         import members
         for i, k in enumerate(ks):
-            members.q("INSERT INTO cheer_vote (k,room,side,ts,main) VALUES (?,?,?,?,?) ON CONFLICT (k) DO NOTHING",
+            members.q("INSERT INTO cheer_vote (k,room,side,ts,main) VALUES (?,?,?,?,?) ON CONFLICT (k) DO " + ("UPDATE SET side=excluded.side, ts=excluded.ts" if upd else "NOTHING"),
                       (k, room, side, int(now), 1 if i == 0 else 0))
     except Exception as e:
         print("cheer save:", e)
@@ -444,14 +475,15 @@ def cheer_get(room):
         c = _cheer.get(room) or [0, 0]
         left = _cheer_left(ks, time.time())
         mine = _cheer_side(ks)
-    return jsonify({"L": c[0], "R": c[1], "left": left, "max": CHEER_MAX, "mine": mine})
+    return jsonify({"L": c[0], "R": c[1], "left": left, "max": CHEER_MAX, "mine": mine, "mem": 1 if _m else 0, "mmine": _cheer_side(ks[1:]) if _m else None})
 
 
 @bp.post("/api/cheer/<room>")
 def cheer_post(room):
     if not _CHEER_RE.match(room):
         abort(404)
-    side = (request.get_json(silent=True) or {}).get("side")
+    body = request.get_json(silent=True) or {}
+    side, unl = body.get("side"), body.get("u") == 1   # u=1: 모바일 상세 응원 버튼(회원만, 무제한, 3초 쿨다운)
     if side not in ("L", "R"):
         return jsonify({"ok": False}), 400
     now, ip = time.time(), _ip()
@@ -460,27 +492,44 @@ def cheer_post(room):
         if len(_cheer_used) > 200000:
             for k in [k for k, v in _cheer_used.items() if now - v[1] > 36 * 3600]:
                 del _cheer_used[k]
-        left = _cheer_left(ks, now)
-        if left <= 0:
+        if unl:
             c = _cheer.get(room) or [0, 0]
-            return jsonify({"ok": False, "limit": True, "left": 0, "max": CHEER_MAX,
-                            "msg": "이미 응원했어요", "mine": _cheer_side(ks), "L": c[0], "R": c[1]}), 429
-        if len(_cheer_ip) > 20000:
-            for k in [k for k, t in _cheer_ip.items() if now - t > 5]:
-                del _cheer_ip[k]
-        k = ip + "|" + room
-        if now - _cheer_ip.get(k, 0) < 1.0:
-            c = _cheer.get(room) or [0, 0]
-            return jsonify({"ok": False, "L": c[0], "R": c[1]}), 429
-        _cheer_ip[k] = now
+            if not mem:
+                return jsonify({"ok": False, "login": True, "L": c[0], "R": c[1], "u": 1}), 401
+            mk = "m:" + str(mem["id"])
+            wait = CHEER_CD - (now - _cheer_burst.get(mk, 0))
+            if wait > 0:
+                return jsonify({"ok": False, "cd": round(wait, 1), "L": c[0], "R": c[1], "mine": _cheer_side(ks[1:]), "u": 1}), 429
+            if len(_cheer_burst) > 50000:
+                _cheer_burst.clear()
+            _cheer_burst[mk] = now
+            ks = ks[1:]   # 모바일 무제한 응원은 회원 계정 기준
+        else:
+            if _cheer_left(ks, now) <= 0:
+                c = _cheer.get(room) or [0, 0]
+                return jsonify({"ok": False, "limit": True, "left": 0, "max": CHEER_MAX,
+                                "msg": "이미 응원했어요", "mine": _cheer_side(ks), "L": c[0], "R": c[1]}), 429
+            if len(_cheer_ip) > 20000:
+                for k in [k for k, t in _cheer_ip.items() if now - t > 5]:
+                    del _cheer_ip[k]
+            k = ip + "|" + room
+            if now - _cheer_ip.get(k, 0) < 1.0:
+                c = _cheer.get(room) or [0, 0]
+                return jsonify({"ok": False, "L": c[0], "R": c[1]}), 429
+            _cheer_ip[k] = now
         if room not in _cheer and len(_cheer) > 3000:
             _cheer.clear()
         c = _cheer.setdefault(room, [0, 0])
         c[0 if side == "L" else 1] += 1
         for k in ks:
-            _cheer_used[k] = [1, now, side]
-        res = {"ok": True, "L": c[0], "R": c[1], "left": 0, "max": CHEER_MAX, "mine": side}
-    _cheer_db_save(ks, room, side, now)
+            old = _cheer_used.get(k)
+            _cheer_used[k] = [1, old[1] if old else now, side, now]   # 채팅 팀 표시 = 가장 최근 응원 팀
+        res = {"ok": True, "L": c[0], "R": c[1], "left": 1 if unl else 0, "max": 0 if unl else CHEER_MAX, "mine": side}
+        if unl:
+            res["u"] = 1
+    _cheer_db_save(ks, room, side, now, upd=unl)
+    if unl:
+        _cnt_save(room)
     try:
         import levels
         if mem:
