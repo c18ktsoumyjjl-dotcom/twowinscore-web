@@ -114,7 +114,7 @@ def build(g, v, det):
     elif k == "hockey":
         out["ev"] = _hk_events(g, lh)
         pm = re.search(r"(\d)", str(g.get("status") or ""))
-        out["cur"] = None if g["state"] != "live" else (int(pm.group(1)) - 1) * 20 + 10 if pm else None  # 피리어드 시계가 없어 '해당 피리어드' 위치만
+        out["cur"] = (60 if g["state"] == "final" else None) if g["state"] != "live" else (int(pm.group(1)) - 1) * 20 + 10 if pm else None  # 피리어드 시계가 없어 '해당 피리어드' 위치만
         out["curp"] = int(pm.group(1)) if pm and g["state"] == "live" else None
         out["span"] = 60 if not any(e["m"] > 60 for e in out["ev"]) else 65
     elif k == "baseball":

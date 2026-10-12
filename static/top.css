@@ -85,3 +85,6 @@ body.tpon .gm7sb,body.tpon .gm7ls{display:none}
 }
 @media(max-width:1023px){.tp.k-basketball .tpst{height:178px}.tp.k-baseball.live .tpst{height:170px}}
 @media(max-width:1023px){.tpst b,.tpst .tpt b,.tpc .sc b{color:#fff}.tpc .sc b:not(.ld){color:rgba(255,255,255,.72)}.tpod .ex{flex-basis:calc(100% - 60px);order:5;white-space:normal}.tpod .nt{order:6;margin-left:auto}}
+@media(max-width:1023px){.tpgl p span{white-space:nowrap}.tpod .ex{flex:1 1 auto;flex-basis:auto;min-width:0}.tpod .ex+.nt{margin-left:0}.tpod{row-gap:4px}}
+@media(max-width:1023px){.tpod .brk{flex-basis:100%;height:0}.tpod .ex{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+@media(max-width:1023px){.tpgl p{display:flex;flex-wrap:wrap;column-gap:6px;-webkit-line-clamp:unset}.tpgl p.R{justify-content:flex-end}.tpgl p span::after{content:none!important}}
