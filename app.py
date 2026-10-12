@@ -477,7 +477,27 @@ def game(key):
                            forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st, batters=bat,
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
                            names={g["home"], g["away"]}, gnews=news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]), points=insights.points(g, det, dedupe=True), vote=_vinfo(g, v), seo=_game_seo(g, v), an=_analysis(g, v, det, forms),
-                           wp=plus.winprob(g, lh), summ=plus.summary(g))
+                           wp=plus.winprob(g, lh), summ=plus.summary(g), top=_top(g, v, det))
+
+
+def _top(g, v, det):
+    try:
+        import toppv
+        return toppv.build(g, v, det)
+    except Exception:
+        app.logger.exception("toppv")
+        return None
+
+
+@app.route("/api/top/<path:key>")
+def api_top(key):
+    d = parse_day(request.args.get("d"))
+    g = data.find_game(key, d) or (data.find_game(key, d - timedelta(days=1)) if d == today() else None)
+    if not g:
+        return jsonify({}), 404
+    v = view(g)
+    t = _top(g, v, data.detail(g)) or {}
+    return jsonify({"ev": t.get("ev"), "cur": t.get("cur"), "period": t.get("period"), "L": v["L"]["score"], "R": v["R"]["score"]})
 
 
 def _analysis(g, v, det, forms):
