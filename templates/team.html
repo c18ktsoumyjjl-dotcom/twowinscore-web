@@ -1,0 +1,31 @@
+{% extends "base.html" %}{% block title %}{{seo.title}}{% endblock %}{% block desc %}{{seo.desc}}{% endblock %}{% block canon %}{{seo.url}}{% endblock %}{% block robots %}{% if thin %}noindex,follow{% else %}index,follow,max-image-preview:large{% endif %}{% endblock %}{% block jsonld %}<script type="application/ld+json">{{ ld|tojson }}</script>{% endblock %}
+{% block head %}<style>
+.tp{max-width:860px;margin:0 auto;padding:4px 0 24px}
+.tph{display:flex;align-items:center;gap:14px;padding:16px;border-radius:16px;background:linear-gradient(135deg,#13234a,#1c3266);color:#fff;margin-bottom:14px}
+.tph img{width:64px;height:64px;object-fit:contain;flex:none;background:#fff;border-radius:14px;padding:6px}
+.tph h1{margin:0;font-size:22px;line-height:1.25;word-break:keep-all}.tph small{display:block;opacity:.75;font-size:12px;margin-top:3px}
+.tph .ts{font-size:12px;color:#ff8a3d;font-weight:700}
+.tpt{display:flex;gap:6px;margin:0 0 12px}.tpt button{flex:1;padding:10px 4px;border-radius:10px;border:1px solid rgba(127,140,170,.35);background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.tpt button.on{background:#ff8a3d;border-color:#ff8a3d;color:#fff}
+.tps{display:none}.tps.on{display:block}.tps h2{font-size:16px;margin:4px 4px 10px}
+.tpg{display:grid;grid-template-columns:4.6em 2.6em minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(127,140,170,.18);font-size:14px}
+.tpg .d{font-size:12px;opacity:.75;line-height:1.3}.tpg .d small{display:block}.tpg .ha{font-size:11px;padding:2px 0;border-radius:6px;background:rgba(127,140,170,.15);text-align:center}
+.tpg .op{display:flex;align-items:center;gap:6px;min-width:0;color:inherit;text-decoration:none}.tpg .op img{width:22px;height:22px;object-fit:contain;flex:none}
+.tpg .op span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tpg .op em{display:block;font-style:normal;font-size:11px;opacity:.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tpg .sc{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}.tpg .sc i{font-style:normal;display:inline-block;width:22px;text-align:center;border-radius:6px;margin-left:6px;font-size:12px;color:#fff}
+.rW{background:#ff8a3d}.rL{background:#4f6a9e}.rD{background:#8a93a8}
+.tpr{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.tpr div{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(127,140,170,.1);min-width:0}
+.tpr b{flex:none;width:2.2em;text-align:center;color:#ff8a3d;font-variant-numeric:tabular-nums}.tpr span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}.tpr small{display:block;font-size:11px;opacity:.65}
+.tpe{padding:18px;text-align:center;opacity:.7;font-size:14px}
+@media(max-width:600px){.tph h1{font-size:19px}.tph img{width:52px;height:52px}.tpg{grid-template-columns:3.9em 2.4em minmax(0,1fr) auto;padding:10px 6px;font-size:13px}.tpr{grid-template-columns:1fr 1fr}}
+</style>{% endblock %}
+{% block body %}<div class="tp">
+<div class="tph">{% if t.logo %}<img src="{{t.logo}}" alt="{{t.name}} 로고">{% endif %}<div><span class="ts">{{emo}} {{sk}}{% if t.country %} · {{t.country}}{% endif %}</span><h1>{{t.name}}</h1>{% if t.en %}<small>{{t.en}}</small>{% endif %}{% if t.venue %}<small>홈구장 {{t.venue}}</small>{% endif %}</div></div>
+<div class="tpt" role="tablist"><button class="on" data-t="next">예정 경기</button><button data-t="past">지난 경기</button><button data-t="roster">선수 명단</button></div>
+{% macro row(r, fin) %}<div class="tpg"><span class="d">{{r.md}}<small>{{r.time}}</small></span><span class="ha">{{r.ha}}</span><a class="op" href="/team/{{t.kind}}/{{r.opp_id}}">{% if r.opp_logo %}<img src="{{r.opp_logo}}" alt="{{r.opp}} 로고" loading="lazy">{% endif %}<span>vs {{r.opp}}<em>{{r.league}}</em></span></a>{% if fin %}<span class="sc">{{r.me}} : {{r.ot}}<i class="r{{r.r}}">{{ {'W':'승','L':'패','D':'무'}[r.r] }}</i></span>{% else %}<span class="sc"></span>{% endif %}</div>{% endmacro %}
+<section class="tps on" id="t-next"><h2>{{t.name}} 다가오는 경기 일정</h2>{% for r in t.next %}{{ row(r, False) }}{% else %}<p class="tpe">예정된 경기가 아직 없어요.</p>{% endfor %}</section>
+<section class="tps" id="t-past"><h2>{{t.name}} 최근 경기 결과</h2>{% for r in t.past %}{{ row(r, True) }}{% else %}<p class="tpe">최근 경기 결과가 없어요.</p>{% endfor %}</section>
+<section class="tps" id="t-roster"><h2>{{t.name}} 선수 명단</h2>{% if t.roster %}<div class="tpr">{% for p in t.roster %}<div><b>{{p.no if p.no is not none else '-'}}</b><span>{{p.name}}{% if p.pos or p.age %}<small>{{p.pos}}{% if p.pos and p.age %} · {% endif %}{% if p.age %}{{p.age}}세{% endif %}</small>{% endif %}</span></div>{% endfor %}</div>{% else %}<p class="tpe">{{sk}} 선수 명단은 데이터 제공처에서 아직 지원하지 않아요.</p>{% endif %}</section>
+</div>{% endblock %}
+{% block js %}<script>document.querySelectorAll('.tpt button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tpt button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.tps').forEach(s=>s.classList.toggle('on',s.id==='t-'+b.dataset.t))})</script>{% endblock %}

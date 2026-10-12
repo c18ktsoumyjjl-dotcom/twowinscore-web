@@ -250,8 +250,8 @@ def halt_info(g):
 
 def view(g):
     left_home = g["kind"] != "baseball"   # 야구: 원정 왼쪽/홈 오른쪽, 그 외: 홈 왼쪽
-    h = {"name": g["home"], "en": g.get("home_en"), "score": g.get("home_score"), "tag": "홈", "logo": g.get("home_logo") if g.get("other") else logos.url(g.get("home_logo")), "id": g.get("home_id")}
-    a = {"name": g["away"], "en": g.get("away_en"), "score": g.get("away_score"), "tag": "원정", "logo": g.get("away_logo") if g.get("other") else logos.url(g.get("away_logo")), "id": g.get("away_id")}
+    h = {"name": g["home"], "en": g.get("home_en"), "score": g.get("home_score"), "tag": "홈", "logo": g.get("home_logo") if g.get("other") else logos.url(g.get("home_logo")), "id": g.get("home_id"), "kind": g["kind"]}
+    a = {"name": g["away"], "en": g.get("away_en"), "score": g.get("away_score"), "tag": "원정", "logo": g.get("away_logo") if g.get("other") else logos.url(g.get("away_logo")), "id": g.get("away_id"), "kind": g["kind"]}
     L, R = (h, a) if left_home else (a, h)
     st = g["state"]
     show = st in ("live", "final") and L["score"] is not None and R["score"] is not None
@@ -516,7 +516,7 @@ def api_preview(key):
 
 
 def _vinfo(g, v):
-    return {"k": v["key"], "draw": g["kind"] == "football", "open": g["state"] == "scheduled" and datetime.now(data.SEOUL) < g["start"]}
+    return {"k": v["key"], "lh": v["left_home"], "draw": g["kind"] == "football", "open": g["state"] == "scheduled" and datetime.now(data.SEOUL) < g["start"]}
 
 
 @app.route("/api/featured")
@@ -531,6 +531,42 @@ def api_featured():
         x["draw"] = x["kind"] == "football"
         x["vopen"] = x["state"] == "scheduled" and time.time() < x["ts"]
     return jsonify({"date": d.isoformat(), "today": d == today(), "pending": pending, "games": out})
+
+
+@app.route("/api/odds")
+def api_odds():
+    import teamodds
+    d = parse_day(request.args.get("d"))
+    out = {}
+    for k in [x for x in (request.args.get("k") or "").split(",") if x][:20]:
+        k = k[:80]
+        try:
+            g = data.find_game(k, d) or (data.find_game(k, d - timedelta(days=1)) if d == today() else None)
+            out[k] = teamodds.odds(g) if g and not g.get("other") else None
+        except Exception:
+            out[k] = None
+    r = jsonify(out)
+    r.headers["Cache-Control"] = "public, max-age=60"
+    return r
+
+
+@app.route("/team/<kind>/<int:tid>")
+def team_page(kind, tid):
+    import teamodds
+    if kind not in SPORT_KO:
+        abort(404)
+    t = teamodds.team(kind, tid)
+    if not t:
+        abort(404)
+    sk = SPORT_KO[kind]
+    lg = (t["next"] or t["past"] or [{}])[0].get("league") or ""
+    seo = {"title": f"{t['name']} 경기 일정·결과·선수 명단 ({sk}) | 투윈스코어",
+           "desc": f"{t['name']}{(' (' + t['en'] + ')') if t.get('en') else ''} {sk} {lg} 최근 경기 결과, 다가오는 경기 일정, 선수 명단(로스터)을 투윈스코어에서 확인하세요.",
+           "url": f"https://twowinscore.com/team/{kind}/{tid}"}
+    ld = {"@context": "https://schema.org", "@type": "SportsTeam", "name": t["name"], "sport": JL_SPORT.get(kind, ""), "url": seo["url"],
+          **({"logo": t["logo"]} if t.get("logo") else {}), **({"alternateName": t["en"]} if t.get("en") else {})}
+    thin = not (t["roster"] or t["past"] or t["next"])
+    return render_template("team.html", page="team", t=t, sk=sk, seo=seo, ld=ld, thin=thin, emo=EMO.get(kind, ""))
 
 
 @app.route("/api/votes")

@@ -35,3 +35,9 @@ body:not(.mapp) .ft8m{margin:4px 0}
 body:not(.mapp) .ft8g{flex-wrap:nowrap;overflow:hidden;justify-content:center}
 body:not(.mapp) .ft8g span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 body:not(.mapp) .ft8g span+span{display:none}
+
+.vt8btn{display:flex;flex-direction:column;align-items:center;gap:2px}.vt8btn .bn{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.od8{font-style:normal;font-size:12px;font-weight:800;color:#ff8a3d;font-variant-numeric:tabular-nums}.od8.up{color:#ff5a5a}.od8.dn{color:#4f8cff}
+.vt8r.hasod{grid-template-columns:minmax(0,7em) 3.6em 1fr 3em}.vt8r .odc{text-align:center}
+.od8n{margin:6px 0 0;font-size:11px;opacity:.75}.od8n b{color:#ff8a3d}
+.t6 .tml{display:flex;flex-direction:column;align-items:center;gap:6px;color:inherit;text-decoration:none}a.gm7t{color:inherit;text-decoration:none}
