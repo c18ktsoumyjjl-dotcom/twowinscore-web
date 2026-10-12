@@ -572,3 +572,7 @@ body:not(.gm7c) .gm7ch{display:none}
 .light .oth-h,[data-theme=light] .oth-h{background:#fff;border-color:#c9cfdb;color:#1a2236}
 .oth-note{margin:8px 0 16px;padding:12px 14px;border-radius:12px;background:rgba(255,140,40,.08);border:1px dashed rgba(255,140,40,.45);color:#ffb26b;font-size:14px;font-weight:600;text-align:center;line-height:1.5}
 [data-theme=light] .oth-note{background:#fff6ec;border-color:#f3b37a;color:#b35a00}
+
+.sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.seo5{margin:28px 0 8px;padding:16px 18px;border-radius:14px;background:rgba(127,140,170,.08);font-size:13px;line-height:1.65;color:var(--mu,#8a97b4)}.seo5 h2{font-size:15px;margin:0 0 6px;color:inherit;display:block}.seo5 h2+p{margin:0 0 14px}.seo5 details{border-top:1px solid rgba(127,140,170,.18);padding:9px 0}.seo5 summary{cursor:pointer;font-weight:700;word-break:keep-all}.seo5 details p{margin:6px 0 0;word-break:keep-all}
+body.mapp .seo5{margin:20px 12px 90px;padding:14px}
