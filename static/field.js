@@ -27,7 +27,7 @@ const POS={P:[50,59],C:[50,99],'1B':[71,52],'2B':[61,38],SS:[39,38],'3B':[29,52]
 const SIL='<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="15" r="7" fill="#3a4f7f"/><path d="M6 38c1-9 7-13 14-13s13 4 14 13z" fill="#3a4f7f"/></svg>';
 function card(el,c,role){if(!c){el.hidden=true;el._k='';return}el.hidden=false;const k=JSON.stringify(c);if(el._k===k)return;el._k=k;
  const e=t=>String(t??'').replace(/[&<>"]/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[x]));
- el.innerHTML=`<div class="ph">${c.photo?`<img src="${e(c.photo)}" alt="${e(c.name)}" onerror="this.replaceWith(document.createRange().createContextualFragment(window.TWSIL))">`:SIL}</div>
+ el.innerHTML=`<div class="ph">${c.photo?`<img src="${e(c.photo)}" alt="${e(c.name)}" referrerpolicy="no-referrer" onerror="this.replaceWith(document.createRange().createContextualFragment(window.TWSIL))">`:SIL}</div>
  <small class="rl">${e(c.sub||role)}</small><b class="nm">${c.no!=null&&c.no!==''?`<em>No.${e(c.no)}</em>`:''}${e(c.name)}</b>${c.hand?`<span class="hd">${e(c.hand)}</span>`:''}
  ${c.season?`<span class="ss">${e(c.season)}</span>`:''}${c.today?`<span class="td">${e(c.today)}</span>`:''}${c.pc!=null&&c.pc!==''?`<span class="pc">투구수 <b>${e(c.pc)}</b></span>`:''}${c.next?`<span class="nx">대기 ${e(c.next)}</span>`:''}`;
  el.classList.remove('chg');void el.offsetWidth;el.classList.add('chg')}
