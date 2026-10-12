@@ -6,6 +6,7 @@
 {% macro rf(x) %}{% if x and (x.rank or x.rec or x.form) %}<div class="tprf">{% if x.rank %}<span class="rk">{{x.rank}}위</span>{% endif %}{% if x.rec %}<span>{{x.rec}}</span>{% endif %}{% if x.form %}<span class="fm">{% for f in x.form %}<i class="{{f}}">{{ {'W':'승','D':'무','L':'패'}[f] }}</i>{% endfor %}</span>{% endif %}</div>{% endif %}{% endmacro %}
 {% macro photo(on,id,n) %}{% if on and id %}<img class="ph" src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_96,q_auto:best/v1/people/{{id}}/headshot/67/current" alt="{{n}}" loading="lazy" onerror="this.remove()">{% endif %}{% endmacro %}
 {% macro top(t, g, table, cls) %}{% set k=t.kind %}<section class="tp {{cls}} {{t.state}} k-{{k}}" data-k="{{g.key}}" data-kind="{{k}}" data-live="{{1 if t.state=='live' else 0}}">
+<div class="tptk" id="tptk"{% if not t.pl %} hidden{% endif %}><button type="button" class="tkb" aria-expanded="false"><i>📢</i><span class="tkl">{{ t.pl[0] if t.pl else '' }}</span><em>▾</em></button><ol class="tkx" hidden>{% for x in t.pl %}<li>{{x}}</li>{% endfor %}</ol></div>
 <div class="tpst">{{ gfx(k) }}<div class="tpsh"></div>
 <a class="tpbk" id="tpbk" href="/" aria-label="경기 목록으로">‹</a>
 <div class="tptag">{% if t.state=='live' %}<span class="lv"><i></i>LIVE</span>{% elif t.state=='final' %}<span class="fn">종료</span>{% else %}<span class="pre">경기 전</span>{% endif %}<span class="lg">{{g.league}}</span></div>

@@ -480,17 +480,19 @@ def game(key):
     forms = [(v["L"]["name"], det["form_home"] if lh else det["form_away"]), (v["R"]["name"], det["form_away"] if lh else det["form_home"])]
     st = det.get("starters")
     bat = det.get("batters")
-    return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=fc.result(), gl=plays.goals(g),
+    return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=(com := fc.result()), gl=plays.goals(g),
                            forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st, batters=bat,
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
                            names={g["home"], g["away"]}, gnews=news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]), points=insights.points(g, det, dedupe=True), vote=_vinfo(g, v), seo=_game_seo(g, v), an=_analysis(g, v, det, forms),
-                           wp=fw.result(), summ=fs.result(), top=_top(g, v, det))
+                           wp=fw.result(), summ=fs.result(), top=_top(g, v, det, com))
 
 
-def _top(g, v, det):
+def _top(g, v, det, com=None):
     try:
         import toppv
-        return toppv.build(g, v, det)
+        t = toppv.build(g, v, det)
+        t["pl"] = [x.get("t") for x in ((com or {}).get("items") or [])[:6] if x.get("t")]
+        return t
     except Exception:
         app.logger.exception("toppv")
         return None
@@ -505,7 +507,11 @@ def api_top(key):
     v = view(g)
     import toppv
     t = toppv.live(g, v) if g["state"] == "live" else {}
-    return jsonify({"ev": t.get("ev"), "period": t.get("period"), "L": v["L"]["score"], "R": v["R"]["score"]})
+    try:
+        pl = [x.get("t") for x in ((plays.commentary(g) or {}).get("items") or [])[:6] if x.get("t")]
+    except Exception:
+        pl = []
+    return jsonify({"ev": t.get("ev"), "period": t.get("period"), "L": v["L"]["score"], "R": v["R"]["score"], "pl": pl})
 
 
 def _analysis(g, v, det, forms):
