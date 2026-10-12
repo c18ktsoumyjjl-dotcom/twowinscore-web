@@ -90,3 +90,21 @@
 .fd9src{display:block;margin-top:6px;font-size:10px;color:#7f8caa;text-align:right}
 @media(max-width:600px){.fd9{padding:10px 8px}.fd9p b{font-size:14px}.fd9k{gap:12px}.fd9k u{display:block;flex:none;padding:0;text-decoration:none;width:12px;height:12px}}
 @media(prefers-reduced-motion:reduce){.fdb.on rect,.fd9l li.nw{animation:none}}
+/* 필드 v2: 선수 카드·수비 위치 */
+.fd9g{display:flex;gap:10px;align-items:center;width:100%}.fd9g>.fd9f{flex:1 1 auto;min-width:0;width:100%}
+.fd9.fdx .fd9g>.fd9cd{flex:0 0 170px;width:170px;box-sizing:border-box}
+.fd9cd{position:relative;padding:12px 10px;border-radius:14px;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid rgba(255,138,61,.28);text-align:center;min-width:0}
+.fd9cd.chg{animation:lu9f 1.2s ease-out}
+.fd9cd .ph{width:64px;height:64px;margin:0 auto 6px;border-radius:50%;overflow:hidden;background:#1b2c55;border:2px solid #ff8a3d;box-shadow:0 0 12px rgba(255,138,61,.35)}
+.fd9cd .ph img,.fd9cd .ph svg{width:100%;height:100%;object-fit:cover;display:block}
+.fd9cd .rl{display:block;font-size:11px;color:#ff8a3d;font-weight:800}
+.fd9cd .nm{display:block;font-size:15px;margin:2px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fd9cd .nm em{font-style:normal;font-size:11px;color:#9fb0d6;margin-right:4px}
+.fd9cd .hd{display:inline-block;font-size:10px;padding:1px 6px;border-radius:6px;background:rgba(255,255,255,.08);color:#c9d3ea}
+.fd9cd .ss,.fd9cd .td,.fd9cd .pc,.fd9cd .nx{display:block;font-size:11px;margin-top:4px;line-height:1.35}
+.fd9cd .ss{color:#d6def0}.fd9cd .td{color:#ffb020;font-weight:700}.fd9cd .pc{color:#9fb0d6}.fd9cd .pc b{color:#fff}
+.fd9cd .nx{margin-top:6px;padding-top:6px;border-top:1px dashed rgba(255,255,255,.12);color:#9fb0d6}
+.fd9d{position:absolute;transform:translate(-50%,-50%);font-size:9.5px;color:#c9d3ea;background:rgba(10,20,45,.55);padding:1px 5px;border-radius:5px;white-space:nowrap;pointer-events:none}
+.fd9.fdx .fd9f{max-width:none}
+.fd9src{text-align:left!important}
+@media(max-width:760px){.fd9.fdx .fd9g{flex-wrap:wrap}.fd9.fdx .fd9g>.fd9f{flex:0 0 100%;order:-1}.fd9.fdx .fd9g>.fd9cd{flex:1 1 40%;width:auto}.fd9cd .ph{width:52px;height:52px}.fd9d{font-size:8.5px;padding:0 3px}}
+.fd9v[hidden],.fd9cd[hidden]{display:none}

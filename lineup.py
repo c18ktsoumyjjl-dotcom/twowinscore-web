@@ -360,6 +360,10 @@ def _field_kbo(g, live):
         if len(plays) >= 3:
             break
     out["plays"] = plays[:3]
+    try:
+        enrich_field(g, out, t, top, swap)
+    except Exception:
+        pass
     return out
 
 
@@ -602,4 +606,139 @@ def ov_field(g, live):
         if len(plays) >= 3:
             break
     out["plays"] = plays[:3]
+    try:
+        enrich_field(g, out, t, top, swap)
+    except Exception:
+        pass
+    return out
+
+
+# ---------- 필드 카드 보강: 네이버 시즌 기록·사진(피드가 주는 playerImageUrl만) ----------
+def _nv_stats(cat, code, extra=""):
+    if not code:
+        return {}
+    yr = time.localtime().tm_year
+    def f():
+        m = {}
+        for t in ("HITTER", "PITCHER"):
+            u = (f"https://api-gw.sports.naver.com/statistics/categories/{cat}/seasons/{yr}/players?teamCode={code}&playerType={t}&pageSize=100{extra}")
+            for x in (_j(u, NAVER_H).get("result") or {}).get("seasonPlayerStats") or []:
+                if x.get("playerId"):
+                    m.setdefault(str(x["playerId"]), {}).update(x)
+        return m
+    return _cache(("nvst", cat, code), 3600, f) or {}
+
+
+def _team_cat(g, side):
+    import roster as R
+    tid = g.get(side + "_id")
+    if g.get("league") == 5:
+        return "kbo", R.KBO.get(tid), ""
+    if g.get("league") == 2 and tid in R.NPB:
+        c, lg = R.NPB[tid]
+        return "npb", c, "&league=PL" if lg == "P" else ""
+    if g.get("league") == 1:
+        try:
+            return "mlb", R._naver_mlb_code(g[side]), ""
+        except Exception:
+            return "mlb", None, ""
+    return None, None, ""
+
+
+def _f3(v):
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return None
+    return f"{f:.3f}".lstrip("0") if f < 1 else f"{f:.3f}"
+
+
+def _card(kind, pid, st, base):
+    """base: 이름·등번호·손 등 피드 값. st: 네이버 시즌 기록(같은 playerId). 없는 값은 넣지 않음."""
+    c = dict(base)
+    if st:
+        if st.get("playerImageUrl"):
+            c["photo"] = st["playerImageUrl"]
+        if c.get("no") in (None, "") and st.get("backNumber") is not None:
+            c["no"] = st["backNumber"]
+        if kind == "p":
+            s = []
+            if st.get("pitcherEra") is not None:
+                s.append(f"ERA {float(st['pitcherEra']):.2f}")
+            if st.get("pitcherWin") is not None and st.get("pitcherLose") is not None:
+                s.append(f"{st['pitcherWin']}승 {st['pitcherLose']}패")
+            if st.get("pitcherKk") is not None:
+                s.append(f"{st['pitcherKk']}삼진")
+        else:
+            s = []
+            if st.get("hitterHra") is not None:
+                s.append(f"타율 {_f3(st['hitterHra'])}")
+            if st.get("hitterHr") is not None:
+                s.append(f"{st['hitterHr']}홈런")
+            if st.get("hitterRbi") is not None:
+                s.append(f"{st['hitterRbi']}타점")
+            if st.get("hitterOps") is not None:
+                s.append(f"OPS {_f3(st['hitterOps'])}")
+        if s:
+            c["season"] = " · ".join(s)
+    return c
+
+
+KPOS_N = {1: "P", 2: "C", 3: "1B", 4: "2B", 5: "3B", 6: "SS", 7: "LF", 8: "CF", 9: "RF"}
+
+
+def enrich_field(g, out, raw, top, swap):
+    """raw: KBO=textRelayData, 해외=('ov', textRelayData). out 에 pcard/bcard/def/next 추가."""
+    off_side = ("away" if top else "home")
+    def_side = ("home" if top else "away")
+    # 우리 쪽 away/home 기준 팀 → 네이버 시즌 기록
+    our_off = {"away": "home", "home": "away"}[off_side] if swap else off_side
+    our_def = {"away": "home", "home": "away"}[def_side] if swap else def_side
+    try:
+        so = _nv_stats(*_team_cat(g, our_off))
+        sd = _nv_stats(*_team_cat(g, our_def))
+    except Exception:
+        so, sd = {}, {}
+    if g.get("league") == 5:
+        t = raw
+        cs = t.get("currentGameState") or {}
+        off = t.get(off_side + "Lineup") or {}
+        dfn = t.get(def_side + "Lineup") or {}
+        bt = next((b for b in off.get("batter") or [] if b.get("pcode") == cs.get("batter")), None)
+        pt = next((p for p in dfn.get("pitcher") or [] if p.get("pcode") == cs.get("pitcher")), None)
+        if bt and out.get("batter"):
+            out["bcard"] = _card("b", bt["pcode"], so.get(str(bt["pcode"])), {"name": bt.get("name"), "no": bt.get("backnum"), "hand": bt.get("hitType"),
+                                                                             "sub": out["batter"].get("sub"), "today": out["batter"].get("line")})
+        if pt and out.get("pitcher"):
+            out["pcard"] = _card("p", pt["pcode"], sd.get(str(pt["pcode"])), {"name": pt.get("name"), "no": pt.get("backnum"), "hand": pt.get("hitType"),
+                                                                             "sub": "투수", "today": out["pitcher"].get("line"),
+                                                                             **({"pc": pt.get("ballCount")} if pt.get("ballCount") is not None else {})})
+        # 현재 수비: 수비팀 타자 중 교체되어 나가지 않은(cout 없음) 선수의 수비 위치 + 현재 투수
+        dl = []
+        for b in dfn.get("batter") or []:
+            if b.get("cout"):
+                continue
+            ps = KPOS_N.get(b.get("pos"))
+            if ps and ps != "P":
+                dl.append({"pos": ps, "name": b.get("name")})
+        poss = [d["pos"] for d in dl]
+        if len(set(poss)) == len(poss) and pt and not out.get("between"):   # 위치 중복·공수교대 등 모호하면 표시 안 함
+            out["def"] = dl + [{"pos": "P", "name": pt.get("name")}]
+    else:
+        t = raw
+        bi = t.get("baseInfo") or {}
+        bc = bi.get("ballCount") or {}
+        if out.get("batter") and bc.get("batterId"):
+            st = so.get(str(bc["batterId"]))
+            hand = {"L": "좌타", "R": "우타", "S": "양타"}.get(bc.get("batterHitType"))
+            out["bcard"] = _card("b", bc["batterId"], st, {"name": out["batter"]["name"], "sub": out["batter"].get("sub"), "today": out["batter"].get("line"),
+                                                           **({"hand": hand} if hand else {})})
+        dk = def_side
+        pid = bi.get(dk + "PitcherId")
+        if out.get("pitcher") and pid:
+            out["pcard"] = _card("p", pid, sd.get(str(pid)), {"name": out["pitcher"]["name"], "sub": "투수", "today": out["pitcher"].get("line"),
+                                                              **({"pc": bi.get(dk + "PitcherPitchBallCount")} if bi.get(dk + "PitcherPitchBallCount") else {})})
+        nx = bi.get("nextPlayer") or {}
+        if nx.get("player") and not out.get("between"):
+            out["next"] = f"{nx.get('playerNum')}번 {nx['player']}" if nx.get("playerNum") else nx["player"]
     return out
