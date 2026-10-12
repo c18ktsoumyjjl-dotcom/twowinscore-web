@@ -508,10 +508,12 @@ def api_top(key):
     import toppv
     t = toppv.live(g, v) if g["state"] == "live" else {}
     try:
-        pl = [x.get("t") for x in ((plays.commentary(g) or {}).get("items") or [])[:6] if x.get("t")]
+        cm = plays.commentary(g) or {}
     except Exception:
-        pl = []
-    return jsonify({"ev": t.get("ev"), "period": t.get("period"), "L": v["L"]["score"], "R": v["R"]["score"], "pl": pl})
+        cm = {}
+    its = [x for x in (cm.get("items") or []) if x.get("t")]
+    return jsonify({"ev": t.get("ev"), "period": t.get("period"), "L": v["L"]["score"], "R": v["R"]["score"], "pl": [x["t"] for x in its[:6]],
+                    "pla": [{"t": x["t"], "h": 1 if x.get("hot") else 0} for x in its[:80]], "src": cm.get("source") or ""})
 
 
 def _analysis(g, v, det, forms):

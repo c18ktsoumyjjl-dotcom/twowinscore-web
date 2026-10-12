@@ -30,7 +30,14 @@ function mount(el,room,opt){
  if(window.ResizeObserver)new ResizeObserver(()=>{if(stuck)list.scrollTop=list.scrollHeight}).observe(list);
  /* 위쪽 메시지를 지울 때 보던 위치 유지 */
  const keep=fn=>{const h=list.scrollHeight,t=list.scrollTop;fn();if(!stuck)list.scrollTop=Math.max(0,t-(h-list.scrollHeight))};
- function setMode(){const m=me();nf.style.display=m?'none':'flex';mf.style.display=m?'flex':'none';if(m)el.querySelector('.ch-me').innerHTML=`${esc(m.nick)}<small>#${esc(m.tag)}</small>`}
+ const CMQ=matchMedia('(max-width:1023px)'),CM=()=>/^game-/.test(room)&&!!el.closest('#gamechat')&&CMQ.matches;
+ function setMode(){const m=me();nf.style.display=m?'none':'flex';mf.style.display=m?'flex':'none';if(m)el.querySelector('.ch-me').innerHTML=`${esc(m.nick)}<small>#${esc(m.tag)}</small>`;applyCM()}
+ function applyCM(){const MG=(()=>{try{return mega}catch(e){return false}})();const inp=mf.querySelector('input');let lg=el.querySelector('.ch-lgp');
+  if(!CM()){if(lg)lg.hidden=true;inp.disabled=false;mf.classList.remove('cm');if(!MG)inp.placeholder='메시지 입력 (200자)';return}
+  if(!window.TW_ME){nf.style.display='none';mf.style.display='none';if(!lg){lg=document.createElement('div');lg.className='ch-lgp';lg.innerHTML=`응원 메시지는 회원만 보낼 수 있어요 <a href="/login?next=${encodeURIComponent(location.pathname+location.search)}">로그인하기</a>`;mf.after(lg)}lg.hidden=false;return}
+  if(lg)lg.hidden=true;mf.classList.add('cm');const sd=window.TWCS,nm=sd&&document.querySelectorAll('.gm7t b')[sd==='L'?0:1];
+  mf.dataset.cs=sd||'';if(MG)return;inp.disabled=!sd;inp.placeholder=sd?`${nm?nm.textContent.trim().split(/\s+/)[0]+' ':''}응원 메시지 (200자)`:'응원할 팀을 먼저 선택하세요'}
+ addEventListener('twcs',applyCM);CMQ.addEventListener('change',setMode);
  setMode();
  el.querySelector('.ch-me').onclick=()=>{if(window.TW_ME){location.href='/me';return}if(confirm('닉네임을 바꿀까요?')){localStorage.removeItem(LS);setMode()}};
  nf.onsubmit=e=>{e.preventDefault();const v=nf.querySelector('input').value.trim();
@@ -52,7 +59,7 @@ function mount(el,room,opt){
   pinEl.classList.add('on');pinEl.innerHTML=`<div class="pn">${lvImg(pin.lv)}${pin.vip?'<img src="/static/vip/vip_gem_32.webp?v=1" width="16" height="16" alt="VIP">':''}<span class="${pin.vip?'nkv':''}">${esc(pin.nick)}</span></div><div class="pt">${esc(pin.text)}</div><span class="pl">${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}</span>${pin.queue?`<div class="pq">대기 ${pin.queue}개${pin.mypos?` · 내 확성기 ${pin.mypos}번째`:''}</div>`:''}`}
  function setPin(p){pin=p||null;pinAt=Date.now();pinDraw()}
  setInterval(pinDraw,1000);
- if(mgb)mgb.onclick=()=>{mega=!mega;mf.classList.toggle('mg',mega);mgh.classList.toggle('on',mega);const i=mf.querySelector('input');i.maxLength=mega?80:200;i.placeholder=mega?`확성기 메시지 (80자) · 보유 ${window.TW_MEGA||0}개`:'메시지 입력 (200자)';i.focus()};
+ if(mgb)mgb.onclick=()=>{mega=!mega;mf.classList.toggle('mg',mega);mgh.classList.toggle('on',mega);const i=mf.querySelector('input');i.maxLength=mega?80:200;i.placeholder=mega?`확성기 메시지 (80자) · 보유 ${window.TW_MEGA||0}개`:'메시지 입력 (200자)';if(mega)i.disabled=false;else applyCM();i.focus()};
  async function sendMega(inp,t,b){if(!(window.TW_MEGA>0)){if(confirm('확성기가 없어요. 스코어샵으로 갈까요?'))location.href='/shop';return}
   if(!confirm(`확성기 1개를 써서 5분 동안 고정할까요? (보유 ${window.TW_MEGA}개)`))return;b.disabled=true;
   try{const r=await fetch(`/api/mega/${room}`,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF':window.TW_CSRF||''},body:JSON.stringify({text:t})});const j=await r.json();
@@ -65,8 +72,8 @@ function mount(el,room,opt){
   setPin(j.pin);el.querySelector('.n').textContent=j.online;if(opt.onOnline)opt.onOnline(j.online)}catch(e){}busy=false}
  mf.onsubmit=async e=>{e.preventDefault();const inp=mf.querySelector('input'),t=inp.value.trim(),m=me();if(!t||!m)return;
   const b=mf.querySelector('button:not(.ch-mega)');if(mega){sendMega(inp,t,b);return}b.disabled=true;
-  try{const r=await fetch(`/api/chat/${room}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nick:m.nick,tag:m.tag,text:t,cid:cid()})});
-   const j=await r.json();if(j.ok){if(j.promo&&window.twPromo)twPromo(j.promo);if(j.message.tag!==m.tag){m.tag=j.message.tag;try{localStorage.setItem(LS,JSON.stringify(m))}catch(_){}setMode()}inp.value='';add([j.message]);last=Math.max(last,j.message.id);toEnd()}else if(j.code==='guest_limit')guestLimit();else showErr(j.error||'보내지 못했어요.')}
+  try{const r=await fetch(`/api/chat/${room}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({nick:m.nick,tag:m.tag,text:t,cid:cid()},CM()?{m:1,cs:window.TWCS}:{}))});
+   const j=await r.json();if(j.cheer||j.cd)dispatchEvent(new CustomEvent('twcheer',{detail:j.cheer||{cd:j.cd}}));if(!j.ok&&j.code==='login'){location.href='/login?next='+encodeURIComponent(location.pathname+location.search);return}if(j.ok){if(j.promo&&window.twPromo)twPromo(j.promo);if(j.message.tag!==m.tag){m.tag=j.message.tag;try{localStorage.setItem(LS,JSON.stringify(m))}catch(_){}setMode()}inp.value='';add([j.message]);last=Math.max(last,j.message.id);toEnd()}else if(j.code==='guest_limit')guestLimit();else showErr(j.error||'보내지 못했어요.')}
   catch(e){showErr('연결이 불안정해요.')}setTimeout(()=>b.disabled=false,2000)};
  function guestLimit(){mf.style.display='none';nf.style.display='none';el.querySelector('.ch-gl').hidden=false}
  if(opt.close)el.querySelector('.ch-x').onclick=opt.close;
