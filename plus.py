@@ -208,6 +208,8 @@ def _fb_coarse(g, hs, as_):
 def winprob(g, lh):
     if g.get("kind") not in ("baseball", "basketball", "hockey", "football") or g.get("state") not in ("live", "final"):
         return None
+    if g.get("other"):          # 기타 리그 제외 (모든 종목 동일)
+        return None
     try:
         pts = _progress_points(g)
     except Exception:
@@ -215,7 +217,7 @@ def winprob(g, lh):
         return None
     if not pts or len(pts) < 2:
         return None
-    pr = _prior(g) if not g.get("other") else None
+    pr = _prior(g)
     out = []
     for i, (p, h, a, lab) in enumerate(pts):
         w, dr, l = prob(g["kind"], p, h, a, pr, final=(g["state"] == "final" and i == len(pts) - 1))
