@@ -162,7 +162,7 @@ let OMN=0;if(q)v=v.filter(g=>(g.L.name+' '+g.R.name+' '+g.league).toLowerCase().
  if(SNDQ){SNDQ=false;TWSound.play()}
  all.forEach(g=>PREV[g.key]=g.L.score+':'+g.R.score)}
 document.getElementById('sports').onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.live){F=F==='live'?'all':'live';render();return}if(b&&b.dataset.oth){F=F==='기타'?'all':'기타';render();return}if(b){SP=b.dataset.s;F='all';localStorage.setItem('tw_sport',SP);render()}};
-document.getElementById('list').addEventListener('click',e=>{if(e.target.closest('.star5,.mst,.mlf,.pv6'))return;const h=e.target.closest('.mlg[data-l]');if(h){const l=h.dataset.l;COL.has(l)?COL.delete(l):COL.add(l);render();return}const r=e.target.closest('.g5,.mr');if(r)toggleRow(r.dataset.k)});
+document.getElementById('list').addEventListener('click',e=>{if(e.target.closest('.star5,.mst,.mlf,.pv6'))return;const h=e.target.closest('.mlg[data-l]');if(h){const l=h.dataset.l;COL.has(l)?COL.delete(l):COL.add(l);render();return}const r=e.target.closest('.g5,.mr');if(r){if(matchMedia('(max-width:1023px)').matches&&r.dataset.k){location.href='/game/'+encodeURIComponent(r.dataset.k)+'?d='+D;return}toggleRow(r.dataset.k)}});
 document.getElementById('list').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('.g5,.mr'))toggleRow(e.target.dataset.k)});
 document.getElementById('chips').onclick=e=>{const b=e.target.closest('button');if(b){F=b.dataset.f;render()}};
 document.getElementById('q').oninput=e=>{Q=e.target.value;render()};
