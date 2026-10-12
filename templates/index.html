@@ -59,13 +59,13 @@ function mtm(t,s){const lg=t.logo?`<img src="${esc(t.logo)}" alt="${esc(t.name)}
 function mrow(g,sc,ch,lead,on,op){const st=g.halt?`<b class="hl">⏸ ${esc(g.halt)}</b>${g.reason?`<small class="hr">${esc(g.reason)}</small>`:''}`:g.state==='live'?`<i class="pd"></i><b>${esc(g.badge)}</b>`:g.state==='scheduled'?`<b class="tt">${esc(g.time)}</b>`:`<span>${esc(g.badge)}</span>`;
  const mid=sc?`<b class="${lead==='L'?'w':''}">${g.L.score}</b><em>:</em><b class="${lead==='R'?'w':''}">${g.R.score}</b>`:`<span class="vs">${g.state==='scheduled'?'VS':esc(g.badge)}</span>`;
  return `<div class="mr ${g.state} ${ch?'flash':''} ${op?'op':''}" role="button" tabindex="0" data-k="${esc(g.key)}"><div class="ms">${st}${g.sub&&g.state==='scheduled'?`<small>${esc(g.sub)}</small>`:''}</div>${mtm(g.L,'L')}<div class="mc">${mid}</div>${mtm(g.R,'R')}<button class="mst ${on?'on':''}" data-g="${esc(g.key)}" onclick="toggleGame(this.dataset.g,event)" aria-label="즐겨찾기">${on?'★':'☆'}</button>${odM(g)}</div><div class="pv6 ${op?'open':''}" data-k="${esc(g.key)}"><div class="pvin">${PV[g.key]||'<p class="empty">불러오는 중…</p>'}</div></div>`}
-/* 목록 배당(Bet365): 화면에 보이는 인기 리그 경기만, 20개씩 묶어서 /api/odds?lite=1 (시작된 경기는 서버 캐시만) */
+/* 목록 배당(Bet365 우선·없으면 대체 1곳): 화면에 보이는 경기만(기타 포함), 20개씩 묶어서 /api/odds?lite=1 (시작된 경기는 서버 캐시만) */
 const OD={},ODQ=new Set();let ODT=0;
 function odV(g){const o=OD[g.key];if(!o)return null;const lh=g.kind!=='baseball',f=m=>{const v=o[m];if(v==null)return'';const mv=(o.mv||{})[m];return `<i class="${mv>0?'up':mv<0?'dn':''}">${Number(v).toFixed(2)}</i>`};return {L:f(lh?'H':'A'),D:o.D!=null?f('D'):'',R:f(lh?'A':'H')}}
-function odRow(g){const v=odV(g);return v?`<div class="od5" title="Bet365 배당">${v.L}${v.D||'<small>B365</small>'}${v.R}</div>`:''}
-function odM(g){const v=odV(g);return v?`<span class="mo L">${v.L}</span><span class="mo C">${v.D||'<small>B365</small>'}</span><span class="mo R">${v.R}</span>`:''}
+function odRow(g){const v=odV(g);return v?`<div class="od5" title="${esc(OD[g.key].book||'')} 배당">${v.L}${v.D||`<small>${esc(OD[g.key].bs||'')}</small>`}${v.R}</div>`:''}
+function odM(g){const v=odV(g);return v?`<span class="mo L">${v.L}</span><span class="mo C">${v.D||`<small>${esc(OD[g.key].bs||'')}</small>`}</span><span class="mo R">${v.R}</span>`:''}
 function odGame(k){return DATA&&DATA.games.find(x=>x.key===k)}
-const ODIO='IntersectionObserver' in window?new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;const k=e.target.dataset.k;const g=odGame(k);if(g&&!g.other&&!(k in OD))ODQ.add(k)});clearTimeout(ODT);ODT=setTimeout(odFlush,250)},{rootMargin:'200px'}):null;
+const ODIO='IntersectionObserver' in window?new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;const k=e.target.dataset.k;const g=odGame(k);if(g&&!(k in OD))ODQ.add(k)});clearTimeout(ODT);ODT=setTimeout(odFlush,250)},{rootMargin:'200px'}):null;
 async function odFlush(){const ks=[...ODQ].filter(k=>!(k in OD));ODQ.clear();if(!ks.length)return;ks.forEach(k=>OD[k]=null);let got=false;
  for(let i=0;i<ks.length;i+=20){const b=ks.slice(i,i+20);try{const j=await (await fetch('/api/odds?lite=1&d='+D+'&k='+b.map(encodeURIComponent).join(','))).json();for(const x in j)if(j[x]){OD[x]=j[x];got=true}}catch(e){b.forEach(k=>delete OD[k])}}
  if(got&&OPEN==null)render();else if(got)odPatch()}
