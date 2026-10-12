@@ -577,3 +577,7 @@ body:not(.gm7c) .gm7ch{display:none}
 .seo5{margin:28px 0 8px;padding:16px 18px;border-radius:14px;background:rgba(127,140,170,.08);font-size:13px;line-height:1.65;color:var(--mu,#8a97b4)}.seo5 h2{font-size:15px;margin:0 0 6px;color:inherit;display:block}.seo5 h2+p{margin:0 0 14px}.seo5 details{border-top:1px solid rgba(127,140,170,.18);padding:9px 0}.seo5 summary{cursor:pointer;font-weight:700;word-break:keep-all}.seo5 details p{margin:6px 0 0;word-break:keep-all}
 body.mapp .seo5{margin:20px 12px 90px;padding:14px}
 [data-theme=light] .st6 a:not(.on),[data-theme=light] .back6{color:#0b1630}
+/* 메신저식 채팅: 위로 올려 보는 중 새 메시지 알림 버튼 (레이아웃 높이 0) */
+.ch-nwrap{position:relative;height:0;z-index:3}
+.ch-new{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);padding:6px 14px;border-radius:999px;border:0;background:var(--or);color:#fff;font-size:12.5px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;white-space:nowrap}
+.ch-new[hidden]{display:none}

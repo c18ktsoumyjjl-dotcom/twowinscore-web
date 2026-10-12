@@ -34,18 +34,27 @@ R.addEventListener('click',async e=>{const t=e.target.closest('.soc-tabs button'
  const j=await api('/api/social/friend',{act:a,id});if(!j.ok)alert(j.error||'');
  if(tab==='find')$('fFind').requestSubmit();else loadFr()});
 let PREAD=0,PEER=null;function msgHtml(m,head){return `<div class="dmsg ${m.me?'me':''}" data-mid="${m.id}">${!m.me&&head&&PEER?`<div class="dmhd">${lv(PEER)}<b class="${PEER.vip?'vipn':''}">${esc(PEER.nick)}</b></div>`:''}<div class="dmb">${m.me?`<i class="rd1" ${m.id<=PREAD?'hidden':''}>1</i>`:''}<p>${esc(m.text)}</p></div><small>${new Date(m.ts*1000).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}${m.me?'':` · <a href="#" data-a="report" data-id="${m.id}">신고</a>`}</small></div>`}
+let dStuck=true,dUnseen=0,dMore=false,dOld=false;const dBox=()=>$('rMsgs');
+function dEnd(){const b=dBox();b.scrollTop=b.scrollHeight;dStuck=true;dUnseen=0;const n=$('rNew');if(n)n.hidden=true}
+(function(){const b=dBox();if(!b)return;const w=document.createElement('div');w.className='ch-nwrap';w.innerHTML='<button type="button" class="ch-new" id="rNew" hidden>새 메시지 ↓</button>';b.after(w);$('rNew').onclick=dEnd;
+ b.addEventListener('scroll',()=>{if(!b.clientHeight)return;dStuck=b.scrollHeight-b.scrollTop-b.clientHeight<40;if(dStuck){dUnseen=0;$('rNew').hidden=true}if(b.scrollTop<60&&dMore&&!dOld)older()},{passive:true});
+ if(window.ResizeObserver)new ResizeObserver(()=>{if(dStuck)b.scrollTop=b.scrollHeight}).observe(b)})();
+async function older(){const b=dBox(),f=b.querySelector('.dmsg');if(!f||!peer)return;dOld=true;const p=peer;
+ try{const j=await api('/api/social/msgs?peer='+p+'&before='+f.dataset.mid);if(p!==peer||!j.ok)return;dMore=!!j.more;if(!j.items.length)return;
+  const h=b.scrollHeight,t=b.scrollTop;let html='',pv=null;j.items.forEach(m=>{if(!b.querySelector(`[data-mid="${m.id}"]`)){html+=msgHtml(m,!pv||pv.me);pv=m}});
+  b.insertAdjacentHTML('afterbegin',html);b.scrollTop=t+(b.scrollHeight-h)}catch(e){}finally{dOld=false}}
 async function pull(first){if(!peer)return;const j=await api('/api/social/msgs?peer='+peer+'&after='+last);if(!j.ok){$('rMsgs').innerHTML=`<p class="soc-e">${esc(j.error||'')}</p>`;return}
  $('rPeer').innerHTML=who(j.peer);$('rBlock').dataset.id=j.peer.id;$('rBlock').textContent=j.blocked?'차단 해제':'차단';$('rBlock').dataset.on=j.blocked?0:1;
- const box=$('rMsgs'),atEnd=box.scrollTop+box.clientHeight>=box.scrollHeight-40;if(first)box.innerHTML='';
+ const box=$('rMsgs'),n0=box.querySelectorAll('.dmsg').length;if(first){box.innerHTML='';dMore=!!j.more;dStuck=true}
  PEER=j.peer;PREAD=j.pread||0;j.items.forEach(m=>{if(!box.querySelector(`[data-mid="${m.id}"]`)){const pv=box.lastElementChild;box.insertAdjacentHTML('beforeend',msgHtml(m,!pv||!pv.classList.contains('dmsg')||pv.classList.contains('me')))}last=Math.max(last,m.id)});
  box.querySelectorAll('.dmsg.me').forEach(d=>{const i=d.querySelector('.rd1');if(i)i.hidden=+d.dataset.mid<=PREAD});
- if(first&&!j.items.length)box.innerHTML='<p class="soc-e">첫 메시지를 보내 보세요.</p>';if(first||atEnd)box.scrollTop=box.scrollHeight;
+ if(first&&!j.items.length)box.innerHTML='<p class="soc-e">첫 메시지를 보내 보세요.</p>';const nn=box.querySelectorAll('.dmsg').length-(first?0:n0);if(first||dStuck)dEnd();else if(nn>0){dUnseen+=nn;$('rNew').textContent=`새 메시지 ${dUnseen} ↓`;$('rNew').hidden=false}
  $('rForm').hidden=j.rel!=='friend'||j.blocked}
 function open(id){peer=id;window.TW_DMPEER=id;last=0;show('dm');history.replaceState(history.state,'','/friends?t=dm&peer='+id);pull(true);clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)pull(false)},4000)}
 $('rBack').onclick=()=>{peer=0;window.TW_DMPEER=0;clearInterval(timer);history.replaceState(history.state,'','/friends?t=dm');show('dm')};
 $('rBlock').onclick=async()=>{const on=$('rBlock').dataset.on==='1';if(on&&!confirm('이 회원을 차단할까요? 서로의 팔로우도 끊어져요.'))return;await api('/api/social/block',{id:+$('rBlock').dataset.id,on:on?1:0});pull(true)};
 $('rForm').onsubmit=async e=>{e.preventDefault();const v=$('rText').value.trim();if(!v)return;const j=await api('/api/social/send',{peer,text:v});const er=$('rErr');
- if(j.ok){$('rText').value='';er.hidden=true;const box=$('rMsgs');box.querySelector('.soc-e')?.remove();if(!box.querySelector(`[data-mid="${j.item.id}"]`))box.insertAdjacentHTML('beforeend',msgHtml(j.item,false));last=Math.max(last,j.item.id);box.scrollTop=box.scrollHeight}
+ if(j.ok){$('rText').value='';er.hidden=true;const box=$('rMsgs');box.querySelector('.soc-e')?.remove();if(!box.querySelector(`[data-mid="${j.item.id}"]`))box.insertAdjacentHTML('beforeend',msgHtml(j.item,false));last=Math.max(last,j.item.id);dEnd()}
  else{er.textContent=j.error||'보낼 수 없어요.';er.hidden=false}};
 $('socHide').onchange=e=>api('/api/social/privacy',{hide:e.target.checked?1:0});
 async function badges(){const j=await api('/api/social/badge');if(!j.ok)return;$('sbReq').textContent=j.req;$('sbReq').hidden=!j.req;$('sbDm').textContent=j.dm;$('sbDm').hidden=!j.dm;$('sbNt').textContent=j.noti;$('sbNt').hidden=!j.noti}

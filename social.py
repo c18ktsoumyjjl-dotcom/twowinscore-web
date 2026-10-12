@@ -424,6 +424,11 @@ def msgs():
     a, b = _pair(me, o[0])
     rel = _rel(me, o[0])
     after = request.args.get("after", 0, type=int)
+    before = request.args.get("before", 0, type=int)
+    if before > 0:   # 위로 스크롤: 이전 대화 50개 (읽음 처리 없음)
+        rows = q("SELECT id,sender,body,ts FROM dm_msg WHERE a=? AND b=? AND hidden=0 AND id<? ORDER BY id DESC LIMIT 50", (a, b, before))[::-1]
+        return jsonify({"ok": True, "older": 1, "more": len(rows) == 50,
+                        "items": [{"id": r[0], "me": 1 if r[1] == me else 0, "text": r[2], "ts": r[3]} for r in rows]})
     rows = q("SELECT id,sender,body,ts FROM dm_msg WHERE a=? AND b=? AND hidden=0 AND id>? ORDER BY id DESC LIMIT 200", (a, b, after))
     if rel != "friend" and not rows and not after:
         if not q("SELECT 1 FROM dm_msg WHERE a=? AND b=? LIMIT 1", (a, b), one=True):
@@ -439,7 +444,7 @@ def msgs():
     c = _cards([(o[0], o[1], o[3])])[0]
     c["on"] = 1 if online(o[0]) and not o[3] else 0
     pr = q("SELECT last_id FROM dm_read WHERE member_id=? AND peer=?", (o[0], me), one=True)
-    return jsonify({"ok": True, "peer": c, "rel": rel, "blocked": _blocked(me, o[0]), "pread": int(pr[0]) if pr else 0,
+    return jsonify({"ok": True, "peer": c, "rel": rel, "blocked": _blocked(me, o[0]), "pread": int(pr[0]) if pr else 0, "more": not after and len(rows) == 200,
                     "items": [{"id": r[0], "me": 1 if r[1] == me else 0, "text": r[2], "ts": r[3]} for r in rows]})
 
 
