@@ -248,3 +248,173 @@ def basketball(g):
         for p in r[k]:
             p.pop("_s", None)
     return {"kind": "basketball", **r}
+
+
+# ---------- 홈 목록 라이브 B/S/O + 주자 ----------
+def _on(v):
+    return str(v or "0").strip() not in ("", "0")
+
+
+def bso(g):
+    if g.get("kind") != "baseball" or data.state(g) != "live":
+        return None
+    if g.get("league") == 5:
+        st = S._kbo(g)
+        gid = st and st.get("_gid")
+        if not gid:
+            return None
+        cs = _cache(("bso", gid), 12, lambda: (((_j(f"https://api-gw.sports.naver.com/schedule/games/{gid}/relay", NAVER_H).get("result") or {}).get("textRelayData") or {}).get("currentGameState")))
+        if not cs or str(cs.get("out")) == "3":
+            return None
+        b, s, o = _n(cs.get("ball")), _n(cs.get("strike")), _n(cs.get("out"))
+        if b is None or s is None or o is None:
+            return None
+        return {"b": min(b, 3), "s": min(s, 2), "o": min(o, 2), "r": [_on(cs.get("base1")), _on(cs.get("base2")), _on(cs.get("base3"))]}
+    if g.get("league") == 1:
+        st = S._mlb(g)
+        pk = st and st.get("_pk")
+        if not pk:
+            return None
+        ls = _cache(("bsom", pk), 12, lambda: _j(f"https://statsapi.mlb.com/api/v1/game/{pk}/linescore"))
+        if not ls or ls.get("inningState") in ("Middle", "End") or ls.get("outs") == 3:
+            return None
+        if ls.get("balls") is None or ls.get("strikes") is None or ls.get("outs") is None:
+            return None
+        of = ls.get("offense") or {}
+        return {"b": min(ls["balls"], 3), "s": min(ls["strikes"], 2), "o": min(ls["outs"], 2), "r": [bool(of.get("first")), bool(of.get("second")), bool(of.get("third"))]}
+    return None
+
+
+# ---------- 상세 라이브 필드 (KBO 네이버 문자중계 / MLB statsapi) ----------
+def _ls_rows(inn_a, inn_h, n):
+    return [[inn_a.get(str(i), "") if isinstance(inn_a, dict) else (inn_a[i - 1] if i <= len(inn_a) else "") for i in range(1, n + 1)],
+            [inn_h.get(str(i), "") if isinstance(inn_h, dict) else (inn_h[i - 1] if i <= len(inn_h) else "") for i in range(1, n + 1)]]
+
+
+def _field_kbo(g, live):
+    st = S._kbo(g)
+    gid = st and st.get("_gid")
+    if not gid:
+        return None
+    swap = st.get("_swap")
+    t = _cache(("fld", gid), 10 if live else 600, lambda: (_j(f"https://api-gw.sports.naver.com/schedule/games/{gid}/relay", NAVER_H).get("result") or {}).get("textRelayData"))
+    if not t:
+        return None
+    cs = t.get("currentGameState") or {}
+    isc = t.get("inningScore") or {}
+    ia, ih = isc.get("away") or {}, isc.get("home") or {}
+    if swap:
+        ia, ih = ih, ia
+    n = max([9] + [int(k) for k in list(ia) + list(ih) if str(k).isdigit()])
+    ra, rh = _ls_rows(ia, ih, n)
+    A = lambda k: cs.get(("home" if swap else "away") + k)
+    H = lambda k: cs.get(("away" if swap else "home") + k)
+    out = {"src": "네이버 스포츠", "ls": {"n": n, "away": {"inn": ra, "r": A("Score"), "h": A("Hit"), "e": A("Error")},
+                                      "home": {"inn": rh, "r": H("Score"), "h": H("Hit"), "e": H("Error")}}}
+    if not live:
+        return out
+    top = str(t.get("homeOrAway")) == "0"
+    inn = t.get("inn")
+    out["cur"] = {"inn": inn, "top": (top != bool(swap))}
+    out["inn"] = f"{inn}회{'초' if top else '말'}" if inn else ""
+    off = t.get("awayLineup" if top else "homeLineup") or {}
+    dfn = t.get("homeLineup" if top else "awayLineup") or {}
+    bats = off.get("batter") or []
+    def by_order(o):
+        c = [b for b in bats if str(b.get("batOrder")) == str(o)]
+        return max(c, key=lambda b: b.get("seqno") or 0)["name"] if c else None
+    bases = [by_order(cs.get(f"base{i}")) if _on(cs.get(f"base{i}")) else None for i in (1, 2, 3)]
+    if str(cs.get("out")) == "3":
+        out["between"] = True
+        bases = [None, None, None]
+    out["bases"] = [b if b else (True if _on(cs.get(f"base{i+1}")) and not out.get("between") else None) for i, b in enumerate(bases)]
+    out["b"], out["s"], out["o"] = (min(_n(cs.get(k)) or 0, m) for k, m in (("ball", 3), ("strike", 2), ("out", 2)))
+    if out.get("between"):
+        out["b"] = out["s"] = out["o"] = 0
+    bt = next((b for b in bats if b.get("pcode") == cs.get("batter")), None)
+    pt = next((p for p in dfn.get("pitcher") or [] if p.get("pcode") == cs.get("pitcher")), None)
+    if bt and not out.get("between"):
+        out["batter"] = {"name": bt.get("name"), "sub": f"{bt.get('batOrder')}번타자", "line": f"오늘 {bt.get('ab', 0)}타수 {bt.get('hit', 0)}안타" + (f" {bt['hr']}홈런" if bt.get("hr") else "") + (f" {bt['rbi']}타점" if bt.get("rbi") else "")}
+    if pt and not out.get("between"):
+        line = []
+        if pt.get("inn") not in (None, ""):
+            line.append(f"{pt.get('inn')}이닝")
+        for k, lab in (("ballCount", "구"), ("kk", "삼진"), ("er", "자책")):
+            if pt.get(k) not in (None, ""):
+                line.append(f"{pt.get(k)}{lab}")
+        out["pitcher"] = {"name": pt.get("name"), "sub": "투수", "line": "오늘 " + " ".join(line) if line else ""}
+    plays = []
+    for r in t.get("textRelays") or []:
+        for o in reversed(r.get("textOptions") or []):
+            if o.get("type") not in (1, 7, 8) and o.get("text"):
+                plays.append(o["text"])
+        if len(plays) >= 3:
+            break
+    out["plays"] = plays[:3]
+    return out
+
+
+def _field_mlb(g, live):
+    st = S._mlb(g)
+    pk = st and st.get("_pk")
+    if not pk:
+        return None
+    ls = _cache(("fldm", pk), 10 if live else 600, lambda: _j(f"https://statsapi.mlb.com/api/v1/game/{pk}/linescore"))
+    if not ls:
+        return None
+    inns = ls.get("innings") or []
+    n = max(9, len(inns))
+    ra = [((x.get("away") or {}).get("runs", "")) for x in inns] + [""] * (n - len(inns))
+    rh = [((x.get("home") or {}).get("runs", "")) for x in inns] + [""] * (n - len(inns))
+    tm = ls.get("teams") or {}
+    out = {"src": "MLB 공식 기록", "ls": {"n": n, "away": {"inn": ra, **{k: (tm.get("away") or {}).get(v) for k, v in (("r", "runs"), ("h", "hits"), ("e", "errors"))}},
+                                      "home": {"inn": rh, **{k: (tm.get("home") or {}).get(v) for k, v in (("r", "runs"), ("h", "hits"), ("e", "errors"))}}}}
+    if not live:
+        return out
+    top = bool(ls.get("isTopInning"))
+    out["cur"] = {"inn": ls.get("currentInning"), "top": top}
+    out["inn"] = f"{ls.get('currentInning')}회{'초' if top else '말'}"
+    between = ls.get("inningState") in ("Middle", "End")
+    of, df = ls.get("offense") or {}, ls.get("defense") or {}
+    out["between"] = between
+    out["bases"] = [None if between else ((of.get(k) or {}).get("fullName") or (True if of.get(k) else None)) for k in ("first", "second", "third")]
+    out["b"], out["s"], out["o"] = (0, 0, 0) if between else (min(ls.get("balls") or 0, 3), min(ls.get("strikes") or 0, 2), min(ls.get("outs") or 0, 2))
+    if not between:
+        bx = _cache(("mb", pk), 25, lambda: _j(f"https://statsapi.mlb.com/api/v1/game/{pk}/boxscore")) or {}
+        def pl(side, pid):
+            return (((bx.get("teams") or {}).get(side) or {}).get("players") or {}).get(f"ID{pid}") or {}
+        b, p = of.get("batter") or {}, df.get("pitcher") or {}
+        if b.get("id"):
+            s = (pl("away" if top else "home", b["id"]).get("stats") or {}).get("batting") or {}
+            out["batter"] = {"name": b.get("fullName"), "sub": "타자", "line": f"오늘 {s.get('atBats', 0)}타수 {s.get('hits', 0)}안타" if s else ""}
+        if p.get("id"):
+            s = (pl("home" if top else "away", p["id"]).get("stats") or {}).get("pitching") or {}
+            out["pitcher"] = {"name": p.get("fullName"), "sub": "투수", "line": f"오늘 {s.get('inningsPitched')}이닝 {s.get('numberOfPitches', 0)}구 {s.get('strikeOuts', 0)}삼진" if s else ""}
+        pb = _cache(("fldp", pk), 15, lambda: _j(f"https://statsapi.mlb.com/api/v1.1/game/{pk}/feed/live?fields=liveData,plays,allPlays,result,description"))
+        ap = (((pb or {}).get("liveData") or {}).get("plays") or {}).get("allPlays") or []
+        out["plays"] = [x["result"]["description"] for x in reversed(ap) if (x.get("result") or {}).get("description")][:3]
+    return out
+
+
+def field(g):
+    if g.get("kind") != "baseball":
+        return None
+    try:
+        stt = data.state(g)
+    except Exception:
+        stt = ""
+    if stt not in ("live", "final"):
+        return None
+    live = stt == "live"
+    try:
+        if g.get("league") == 5:
+            r = _field_kbo(g, live)
+        elif g.get("league") == 1:
+            r = _field_mlb(g, live)
+        else:
+            r = None
+    except Exception:
+        r = None
+    if r:
+        r["live"] = live
+    return r

@@ -665,6 +665,37 @@ def api_lineup(key):
     return r
 
 
+@app.route("/api/field/<path:key>")
+def api_field(key):
+    import lineup
+    d = parse_day(request.args.get("d"))
+    g = data.find_game(key, d) or (data.find_game(key, d - timedelta(days=1)) if d == today() else None)
+    f = lineup.field(g) if g else None
+    r = jsonify({"ok": bool(f), **(f or {})})
+    r.headers["Cache-Control"] = "public, max-age=8" if f and f.get("live") else "public, max-age=300"
+    return r
+
+
+@app.route("/api/bso")
+def api_bso():
+    import lineup
+    from concurrent.futures import ThreadPoolExecutor
+    d = parse_day(request.args.get("d"))
+    ks = [x[:80] for x in (request.args.get("k") or "").split(",") if x.startswith("baseball:")][:20]
+
+    def one(k):
+        try:
+            g = data.find_game(k, d) or (data.find_game(k, d - timedelta(days=1)) if d == today() else None)
+            return k, (lineup.bso(g) if g else None)
+        except Exception:
+            return k, None
+    with ThreadPoolExecutor(5) as ex:
+        out = dict(ex.map(one, ks))
+    r = jsonify(out)
+    r.headers["Cache-Control"] = "public, max-age=10"
+    return r
+
+
 @app.route("/api/votes")
 def api_votes():
     return jsonify(insights.counts((request.args.get("k") or "").split(",")))
@@ -730,7 +761,7 @@ MANIFEST = {"name": "투윈스코어 TWOWIN", "short_name": "투윈스코어 TWO
                       {"src": "/static/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}
 
 SW_JS = """// 투윈스코어 서비스워커: /static/ 정적 파일만 캐시. API·페이지는 절대 캐시하지 않음(항상 네트워크).
-const C='tw-static-v7';
+const C='tw-static-v8';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);
