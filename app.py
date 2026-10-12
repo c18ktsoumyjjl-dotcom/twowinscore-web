@@ -651,6 +651,20 @@ def team_page(kind, tid):
     return render_template("team.html", page="team", t=t, ro=ro, sk=sk, seo=seo, ld=ld, thin=thin, emo=EMO.get(kind, ""))
 
 
+@app.route("/api/lineup/<path:key>")
+def api_lineup(key):
+    import lineup
+    d = parse_day(request.args.get("d"))
+    g = data.find_game(key, d) or (data.find_game(key, d - timedelta(days=1)) if d == today() else None)
+    if not g or g["kind"] != "baseball":
+        return jsonify({"ok": False})
+    st = data.state(g)
+    lu = lineup.get(g)
+    r = jsonify({"ok": bool(lu), "state": st, **(lu or {})})
+    r.headers["Cache-Control"] = "public, max-age=20" if st == "live" else "public, max-age=120"
+    return r
+
+
 @app.route("/api/votes")
 def api_votes():
     return jsonify(insights.counts((request.args.get("k") or "").split(",")))
@@ -716,7 +730,7 @@ MANIFEST = {"name": "투윈스코어 TWOWIN", "short_name": "투윈스코어 TWO
                       {"src": "/static/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}
 
 SW_JS = """// 투윈스코어 서비스워커: /static/ 정적 파일만 캐시. API·페이지는 절대 캐시하지 않음(항상 네트워크).
-const C='tw-static-v5';
+const C='tw-static-v6';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);

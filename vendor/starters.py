@@ -242,6 +242,8 @@ def _mlb(g):
         return None
     season = match.get("season") or str(st.year)
     out = {}
+    if not any(match["teams"][s_].get("probablePitcher") for s_ in ("home", "away")):
+        return {"home": None, "away": None, "_pk": match.get("gamePk")}
     for side in ("home", "away"):
         pp = match["teams"][side].get("probablePitcher") or {}
         if not pp.get("fullName"):
@@ -254,6 +256,7 @@ def _mlb(g):
             out[side] = {"name": pp["fullName"], "era": stat.get("era"), "w": stat.get("w"), "l": stat.get("l")}
             if stat.get("season"):
                 out[side]["season"] = stat["season"]
+    out["_pk"] = match.get("gamePk")
     return out
 
 

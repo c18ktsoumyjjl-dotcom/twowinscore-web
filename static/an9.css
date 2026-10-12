@@ -52,3 +52,18 @@
 .bb9t td.n{text-align:left;padding-left:8px;font-weight:700;white-space:nowrap;max-width:5.5em;overflow:hidden;text-overflow:ellipsis}
 .bb9n{display:block;margin-top:8px;font-size:11px;color:var(--mu)}
 @media(max-width:700px){.bb9tb{grid-template-columns:1fr}.bb9p b{font-size:15px}.bb9row{grid-template-columns:2.8em 1fr 2.8em}}
+/* 야구 라인업 박스스코어 */
+.lu9 h3 small{font-weight:400;font-size:11px;color:var(--mu);margin-left:6px}
+.lu9g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lu9t{min-width:0}.lu9t h4{margin:0 0 6px;font-size:14px}.lu9t h4 small{font-size:11px;color:#ff8a3d;font-weight:700;margin-left:4px}
+.lu9w{overflow-x:auto;border-radius:10px;border:1px solid var(--line)}.lu9w.p{margin-top:8px}
+.lu9w table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.lu9w th{background:#13234a;color:#fff;font-weight:700;padding:6px 4px;white-space:nowrap;font-size:11px}
+.lu9w td{padding:5px 4px;border-top:1px solid var(--line);text-align:center;white-space:nowrap}
+.lu9w th.n,.lu9w td.n{text-align:left;padding-left:6px}
+.lu9w td.n{font-weight:700;max-width:8.5em;overflow:hidden;text-overflow:ellipsis}.lu9w td.n small{display:block;font-weight:400;font-size:10px;color:var(--mu)}
+.lu9w td.n.lsub{padding-left:16px;font-weight:600}.lu9w .o{width:1.6em;color:#ff8a3d;font-weight:800}
+.lu9w td.hi{color:#ff8a3d;font-weight:800}
+.lu9w tr.chg td{animation:lu9f 1.6s ease-out}@keyframes lu9f{from{background:rgba(255,138,61,.22)}to{background:transparent}}
+.lu9e{padding:16px;text-align:center;color:var(--mu);font-size:13px;margin:0}
+@media(max-width:900px){.lu9g{grid-template-columns:1fr}}
