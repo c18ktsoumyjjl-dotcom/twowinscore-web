@@ -1,10 +1,10 @@
-"""추가 기능 5종: 추정 승리확률 · 핫한 경기 TOP3 · 예측 리그 · 3줄 경기 요약 · 즐겨찾기 팀 웹 푸시.
+"""추가 기능: 추정 승리확률 · 3줄 경기 요약.
 원칙: 실제 기록만 사용, 불확실하면 숨김. 배당은 표시용(사전확률)일 뿐 금전과 무관."""
-import os, re, json, time, math, base64, hmac, logging, threading
+import re, math, logging
 from datetime import datetime, timedelta
 from statistics import NormalDist
-from flask import Blueprint, request, jsonify, session, render_template, abort
-import data, curation, members as M
+from flask import Blueprint, request, jsonify
+import data
 
 log = logging.getLogger("plus")
 bp = Blueprint("plus", __name__)
@@ -147,9 +147,12 @@ def _progress_points(g):
             return None
     elif k == "football":
         import plays
-        gl = plays.goals(g)
-        if not gl or gl.get("missing"):
-            return None
+        try:
+            gl = plays.goals(g)
+        except Exception:
+            gl = None
+        if not gl or gl.get("missing") or sum(len(hf["items"]) for hf in gl["halves"] if hf["lab"] != "승부차기") != hs + as_:
+            return _fb_coarse(g, hs, as_)
         h = a = 0
         for hf in gl["halves"]:
             if hf["lab"] == "승부차기":
@@ -165,15 +168,39 @@ def _progress_points(g):
                     a += 1
                 pts.append((min(mn / 90, 0.99), h, a, f"{mn}' {x.get('who') or '득점'}"))
         if (h, a) != (hs, as_):
-            return None
+            return _fb_coarse(g, hs, as_)
         if st == "live":
-            m = re.search(r"(\d+)'", str(g.get("period") or ""))
-            if not m:
+            mn = _fb_minute(g)
+            if mn is None:
                 return None
-            pts.append((min(int(m.group(1)) / 90, 0.99), h, a, f"{m.group(1)}' 현재"))
+            pts.append((min(mn / 90, 0.99), h, a, "하프타임" if str(g.get("status")) == "HT" else f"{mn}' 현재"))
     else:
         return None
-    if st == "final":
+    if st == "final" and pts[-1][3] != "종료":
+        pts.append((1.0, hs, as_, "종료"))
+    return pts
+
+
+def _fb_minute(g):
+    m = re.search(r"(\d+)'", str(g.get("period") or ""))
+    if m:
+        return int(m.group(1))
+    return {"HT": 45}.get(str(g.get("status") or ""))
+
+
+def _fb_coarse(g, hs, as_):
+    """골 시각 기록이 없을 때: 시작 → (전반 종료 점수, 기록 있을 때만) → 현재/종료 점수. 골 시각은 만들지 않아요."""
+    pts = [(0.0, 0, 0, "시작")]
+    ht = {l[0]: (_i(l[1]), _i(l[2])) for l in g.get("lines") or []}.get("전반")
+    mn = _fb_minute(g) if g["state"] == "live" else None
+    if g["state"] == "live" and mn is None:
+        return None
+    if ht and None not in ht and ht[0] <= hs and ht[1] <= as_ and (mn is None or mn >= 45):
+        pts.append((0.5, ht[0], ht[1], "전반 종료"))
+    if g["state"] == "live":
+        if mn > 45 or not (len(pts) > 1):
+            pts.append((min(mn / 90, 0.99), hs, as_, f"{mn}' 현재"))
+    else:
         pts.append((1.0, hs, as_, "종료"))
     return pts
 
@@ -181,16 +208,14 @@ def _progress_points(g):
 def winprob(g, lh):
     if g.get("kind") not in ("baseball", "basketball", "hockey", "football") or g.get("state") not in ("live", "final"):
         return None
-    if g.get("other"):
-        return None
     try:
         pts = _progress_points(g)
     except Exception:
         log.exception("wp")
         return None
-    if not pts or len(pts) < 3:
+    if not pts or len(pts) < 2:
         return None
-    pr = _prior(g)
+    pr = _prior(g) if not g.get("other") else None
     out = []
     for i, (p, h, a, lab) in enumerate(pts):
         w, dr, l = prob(g["kind"], p, h, a, pr, final=(g["state"] == "final" and i == len(pts) - 1))
@@ -228,63 +253,6 @@ def progress(g):
         m = re.match(r"S(\d)", stc)
         return min(int(m.group(1)) / 4, 1.0) if m else None
     return None
-
-
-# =============== 3) 지금 핫한 경기 TOP 3 ===============
-SCALE = {"baseball": 4, "basketball": 12, "football": 2, "hockey": 2, "volleyball": 2}
-
-
-def _chat_heat(key):
-    try:
-        import chat
-        room = "game-" + str(key).replace(":", "-")
-        now = time.time()
-        msgs = [m for m in list(chat._rooms.get(room) or []) if now - m.get("ts", 0) < 600]
-        on = len([1 for t in (chat._online.get(room) or {}).values() if now - t < 40])
-        return len(msgs), on
-    except Exception:
-        return 0, 0
-
-
-_hotc = [0, None]
-
-
-@bp.get("/api/hot")
-def api_hot():
-    if time.time() - _hotc[0] < 20 and _hotc[1] is not None:
-        return jsonify(_hotc[1])
-    import app as A
-    d = _today()
-    games, _f = data.games_for(d)
-    if datetime.now(data.SEOUL).hour < 6:
-        prev, _ = data.games_for(d - timedelta(days=1))
-        games = [g for g in prev if g["state"] == "live"] + games
-    now = datetime.now(data.SEOUL)
-    cand = []
-    for g in games:
-        if g["state"] != "live" or curation.hidden(g, now, True):
-            continue
-        hs, as_ = _i(g.get("home_score")), _i(g.get("away_score"))
-        p = progress(g)
-        if hs is None or as_ is None or p is None:
-            continue
-        diff = abs(hs - as_)
-        close = max(0.0, 1 - diff / SCALE.get(g["kind"], 3))
-        if close <= 0:
-            continue
-        msgs, on = _chat_heat(g["key"])
-        heat = min(1.0, (msgs + on) / 15)
-        score = 0.45 * close + 0.35 * p + 0.2 * heat
-        v = A.view(g)
-        tags = ["동점" if diff == 0 else f"{diff}{'세트' if g['kind'] == 'volleyball' else ('골' if g['kind'] in ('football', 'hockey') else '점')}차"]
-        if msgs + on >= 3:
-            tags.append(f"💬 {msgs + on}")
-        cand.append((score, {"k": v["key"], "lg": v["league"], "e": v["emoji"], "L": v["L"]["name"], "R": v["R"]["name"],
-                             "ls": v["L"]["score"], "rs": v["R"]["score"], "b": v["badge"], "tags": tags}))
-    cand.sort(key=lambda x: -x[0])
-    out = {"games": [c[1] for c in cand[:3]]}
-    _hotc[:] = [time.time(), out]
-    return jsonify(out)
 
 
 # =============== 5) 3줄 경기 요약 ===============
@@ -408,305 +376,3 @@ def api_summary(key):
     r = jsonify({"ok": bool(s), "lines": s or []})
     r.headers["Cache-Control"] = "public, max-age=600"
     return r
-
-
-# =============== 4) 예측 리그 ===============
-PRED_WIN, PRED_EXACT = 5, 5
-_pok = [False]
-_plk = threading.Lock()
-
-
-def init_db():
-    if not M.enabled():
-        return
-    try:
-        M.q("""CREATE TABLE IF NOT EXISTS pred(member_id BIGINT NOT NULL, gkey TEXT NOT NULL, day TEXT NOT NULL, kind TEXT NOT NULL,
-            pick TEXT NOT NULL, ph INTEGER, pa INTEGER, ts BIGINT NOT NULL, season TEXT NOT NULL, res TEXT, pts INTEGER NOT NULL DEFAULT 0,
-            PRIMARY KEY(member_id, gkey))""", fetch=False)
-        M.q("CREATE INDEX IF NOT EXISTS pred_open ON pred(res)", fetch=False)
-        M.q("""CREATE TABLE IF NOT EXISTS push_sub(ep TEXT PRIMARY KEY, p256dh TEXT NOT NULL, auth TEXT NOT NULL, teams TEXT NOT NULL DEFAULT '',
-            ts BIGINT NOT NULL)""", fetch=False)
-        _pok[0] = True
-    except Exception:
-        log.exception("plus init")
-
-
-def _csrf_ok():
-    t = request.headers.get("X-CSRF", "")
-    return bool(t) and hmac.compare_digest(t, session.get("_csrf", ""))
-
-
-def _counts(key):
-    rows = M.q("SELECT pick, COUNT(*) FROM pred WHERE gkey=? GROUP BY pick", (key,)) or []
-    return {r[0]: int(r[1]) for r in rows}
-
-
-@bp.get("/api/pred/<path:key>")
-def api_pred_get(key):
-    if not _pok[0]:
-        return jsonify({"ok": False})
-    me = M.current()
-    mine = None
-    if me:
-        r = M.q("SELECT pick,ph,pa,res,pts FROM pred WHERE member_id=? AND gkey=?", (me["id"], key[:80]), one=True)
-        if r:
-            mine = {"pick": r[0], "ph": r[1], "pa": r[2], "res": r[3], "pts": r[4]}
-    return jsonify({"ok": True, "login": bool(me), "mine": mine, "counts": _counts(key[:80])})
-
-
-@bp.post("/api/pred")
-def api_pred_post():
-    me = M.current()
-    if not _pok[0] or not me:
-        return jsonify({"ok": False, "error": "로그인 후 참여할 수 있어요."}), 401
-    if not _csrf_ok():
-        return jsonify({"ok": False, "error": "새로고침 후 다시 시도해 주세요."}), 400
-    b = request.get_json(silent=True) or {}
-    key, pick = str(b.get("k") or "")[:80], b.get("pick")
-    d = _day() if not b.get("d") else (datetime.strptime(str(b["d"])[:10], "%Y-%m-%d").date() if re.match(r"^\d{4}-\d\d-\d\d$", str(b["d"])[:10]) else _today())
-    g = _find(key, d)
-    if not g or pick not in ("H", "D", "A") or (pick == "D" and g["kind"] != "football"):
-        return jsonify({"ok": False, "error": "잘못된 요청이에요."}), 400
-    if g["state"] != "scheduled" or datetime.now(data.SEOUL) >= g["start"]:
-        return jsonify({"ok": False, "error": "경기가 시작돼 예측이 마감됐어요."}), 400
-    ph, pa = _i(b.get("ph")), _i(b.get("pa"))
-    if ph is None or pa is None or not (0 <= ph <= 99 and 0 <= pa <= 99) or (ph > pa) != (pick == "H") or (ph == pa) != (pick == "D"):
-        ph = pa = None    # 스코어는 선택. 승패와 맞지 않으면 버림
-    with _plk:
-        M.q("DELETE FROM pred WHERE member_id=? AND gkey=? AND res IS NULL", (me["id"], key), fetch=False)
-        if M.q("SELECT 1 FROM pred WHERE member_id=? AND gkey=?", (me["id"], key), one=True):
-            return jsonify({"ok": False, "error": "이미 정산된 예측이에요."}), 400
-        M.q("INSERT INTO pred(member_id,gkey,day,kind,pick,ph,pa,ts,season) VALUES(?,?,?,?,?,?,?,?,?)",
-            (me["id"], key, g["start"].date().isoformat(), g["kind"], pick, ph, pa, int(time.time()), str(g["start"].year)), fetch=False)
-    return jsonify({"ok": True, "counts": _counts(key)})
-
-
-def settle_once():
-    if not _pok[0]:
-        return 0
-    import levels
-    rows = M.q("SELECT DISTINCT gkey, day FROM pred WHERE res IS NULL") or []
-    n = 0
-    for key, day in rows[:200]:
-        try:
-            g = data.find_game(key, datetime.strptime(day, "%Y-%m-%d").date())
-        except Exception:
-            g = None
-        if not g:
-            continue
-        if g["state"] in ("cancelled", "postponed"):
-            M.q("UPDATE pred SET res='X' WHERE gkey=? AND res IS NULL", (key,), fetch=False)
-            continue
-        if g["state"] != "final":
-            continue
-        hs, as_ = _i(g.get("home_score")), _i(g.get("away_score"))
-        if hs is None or as_ is None:
-            continue
-        out = "H" if hs > as_ else ("A" if as_ > hs else "D")
-        with _plk:
-            for mid, pick, ph, pa in M.q("SELECT member_id,pick,ph,pa FROM pred WHERE gkey=? AND res IS NULL", (key,)) or []:
-                pts = (PRED_WIN if pick == out else 0) + (PRED_EXACT if pick == out and ph == hs and pa == as_ else 0)
-                M.q("UPDATE pred SET res=?, pts=? WHERE member_id=? AND gkey=? AND res IS NULL",
-                    ("W" if pick == out else "L", pts, mid, key), fetch=False)
-                if pts:
-                    levels.add_pts(mid, pts)
-                n += 1
-    return n
-
-
-@bp.get("/predict")
-def predict_page():
-    season = str(_today().year)
-    board, mine, me = [], [], M.current()
-    if _pok[0]:
-        board = M.q("""SELECT m.nick, SUM(p.pts) s, SUM(CASE WHEN p.res='W' THEN 1 ELSE 0 END) w, COUNT(*) n
-                       FROM pred p JOIN members m ON m.id=p.member_id WHERE p.season=? AND p.res IN ('W','L')
-                       GROUP BY m.nick HAVING SUM(p.pts)>0 ORDER BY s DESC, w DESC, n ASC LIMIT 30""", (season,)) or []
-        if me:
-            mine = M.q("SELECT gkey,day,pick,ph,pa,res,pts FROM pred WHERE member_id=? ORDER BY ts DESC LIMIT 15", (me["id"],)) or []
-    my = []
-    for k, day, pick, ph, pa, res, pts in mine:
-        g = None
-        try:
-            g = data.find_game(k, datetime.strptime(day, "%Y-%m-%d").date())
-        except Exception:
-            pass
-        nm = f"{g['home']} vs {g['away']}" if g else k
-        pk = {"H": (g or {}).get("home", "홈") + " 승", "A": (g or {}).get("away", "원정") + " 승", "D": "무승부"}[pick]
-        my.append({"k": k, "d": day, "nm": nm, "pick": pk + (f" ({ph}:{pa})" if ph is not None else ""), "res": res, "pts": pts})
-    return render_template("predict.html", page="predict", board=board, my=my, season=season, win=PRED_WIN, exact=PRED_EXACT)
-
-
-# =============== 2) 즐겨찾기 팀 웹 푸시 ===============
-def _b64d(s):
-    return base64.urlsafe_b64decode(s + "=" * (-len(s) % 4))
-
-
-def _b64e(b):
-    return base64.urlsafe_b64encode(b).rstrip(b"=").decode()
-
-
-def vapid_pub():
-    return os.environ.get("VAPID_PUBLIC_KEY", "").strip()
-
-
-def push_on():
-    return bool(vapid_pub() and os.environ.get("VAPID_PRIVATE_KEY", "").strip())
-
-
-def encrypt(payload, p256dh, auth):
-    """RFC 8291 (aes128gcm) Web Push 암호화."""
-    from cryptography.hazmat.primitives.asymmetric import ec
-    from cryptography.hazmat.primitives import hashes, serialization
-    from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-    ua = _b64d(p256dh); au = _b64d(auth)
-    ua_key = ec.EllipticCurvePublicKey.from_encoded_point(ec.SECP256R1(), ua)
-    sk = ec.generate_private_key(ec.SECP256R1())
-    asp = sk.public_key().public_bytes(serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint)
-    sec = sk.exchange(ec.ECDH(), ua_key)
-    ikm = HKDF(hashes.SHA256(), 32, au, b"WebPush: info\x00" + ua + asp).derive(sec)
-    salt = os.urandom(16)
-    cek = HKDF(hashes.SHA256(), 16, salt, b"Content-Encoding: aes128gcm\x00").derive(ikm)
-    nonce = HKDF(hashes.SHA256(), 12, salt, b"Content-Encoding: nonce\x00").derive(ikm)
-    ct = AESGCM(cek).encrypt(nonce, payload + b"\x02", None)
-    return salt + (4096).to_bytes(4, "big") + bytes([len(asp)]) + asp + ct
-
-
-def _vapid_header(endpoint):
-    from cryptography.hazmat.primitives.asymmetric import ec
-    from cryptography.hazmat.primitives.asymmetric.utils import decode_dss_signature
-    from cryptography.hazmat.primitives import hashes
-    from urllib.parse import urlparse
-    u = urlparse(endpoint)
-    d = int.from_bytes(_b64d(os.environ["VAPID_PRIVATE_KEY"].strip()), "big")
-    key = ec.derive_private_key(d, ec.SECP256R1())
-    h = _b64e(json.dumps({"typ": "JWT", "alg": "ES256"}).encode())
-    c = _b64e(json.dumps({"aud": f"{u.scheme}://{u.netloc}", "exp": int(time.time()) + 12 * 3600,
-                          "sub": os.environ.get("VAPID_SUBJECT", "mailto:admin@twowinscore.com")}).encode())
-    r, s = decode_dss_signature(key.sign(f"{h}.{c}".encode(), ec.ECDSA(hashes.SHA256())))
-    return f"vapid t={h}.{c}.{_b64e(r.to_bytes(32, 'big') + s.to_bytes(32, 'big'))}, k={vapid_pub()}"
-
-
-def send(sub, msg):
-    import urllib.request, urllib.error
-    body = encrypt(json.dumps(msg, ensure_ascii=False).encode(), sub["p256dh"], sub["auth"])
-    req = urllib.request.Request(sub["ep"], data=body, method="POST", headers={
-        "Content-Encoding": "aes128gcm", "Content-Type": "application/octet-stream", "TTL": "600", "Urgency": "high",
-        "Authorization": _vapid_header(sub["ep"])})
-    try:
-        urllib.request.urlopen(req, timeout=10).read()
-        return True
-    except urllib.error.HTTPError as e:
-        if e.code in (404, 410):
-            M.q("DELETE FROM push_sub WHERE ep=?", (sub["ep"],), fetch=False)
-        else:
-            log.warning("push %s", e.code)
-    except Exception as e:
-        log.warning("push err %s", type(e).__name__)
-    return False
-
-
-_EP_OK = re.compile(r"^https://[A-Za-z0-9.-]+(:\d+)?/[\x21-\x7e]{1,900}$")
-
-
-@bp.get("/api/push/key")
-def api_push_key():
-    return jsonify({"ok": push_on() and _pok[0], "key": vapid_pub() if push_on() else ""})
-
-
-@bp.post("/api/push/sub")
-def api_push_sub():
-    if not push_on() or not _pok[0]:
-        return jsonify({"ok": False, "error": "알림 서버가 아직 준비되지 않았어요."}), 503
-    b = request.get_json(silent=True) or {}
-    s = b.get("sub") or {}
-    ep, ks = str(s.get("endpoint") or ""), s.get("keys") or {}
-    p, a = str(ks.get("p256dh") or ""), str(ks.get("auth") or "")
-    teams = [t for t in (b.get("teams") or []) if isinstance(t, str) and re.match(r"^[a-z]{4,10}:\d{1,9}$", t)][:60]
-    if not _EP_OK.match(ep) or not re.match(r"^[A-Za-z0-9_-]{80,100}$", p) or not re.match(r"^[A-Za-z0-9_-]{16,30}$", a):
-        return jsonify({"ok": False, "error": "잘못된 요청이에요."}), 400
-    with _plk:
-        M.q("DELETE FROM push_sub WHERE ep=?", (ep,), fetch=False)
-        M.q("INSERT INTO push_sub(ep,p256dh,auth,teams,ts) VALUES(?,?,?,?,?)", (ep, p, a, "," + ",".join(teams) + ",", int(time.time())), fetch=False)
-    return jsonify({"ok": True, "n": len(teams)})
-
-
-@bp.post("/api/push/unsub")
-def api_push_unsub():
-    b = request.get_json(silent=True) or {}
-    ep = str(b.get("endpoint") or "")[:1000]
-    if _pok[0] and ep:
-        M.q("DELETE FROM push_sub WHERE ep=?", (ep,), fetch=False)
-    return jsonify({"ok": True})
-
-
-_seen = {}       # key -> (hs, as, leader, late_sent)
-LATE = {"baseball": (8 / 9, 1), "basketball": (0.85, 5), "football": (80 / 90, 1), "hockey": (0.8, 1), "volleyball": (0.99, 0)}
-
-
-def _events(g, first):
-    k = str(g["key"])
-    hs, as_ = _i(g.get("home_score")), _i(g.get("away_score"))
-    if hs is None or as_ is None or g["state"] != "live":
-        return []
-    lead = "h" if hs > as_ else ("a" if as_ > hs else "")
-    prev = _seen.get(k)
-    p = progress(g)
-    late_now = p is not None and p >= LATE.get(g["kind"], (2, 0))[0] and abs(hs - as_) <= LATE.get(g["kind"], (2, 0))[1]
-    _seen[k] = (hs, as_, lead, (prev[3] if prev else False) or late_now)
-    if first or not prev:
-        return []
-    ev = []
-    sc = f"{g['away']} {as_}:{hs} {g['home']}" if g["kind"] == "baseball" else f"{g['home']} {hs}:{as_} {g['away']}"
-    if g["kind"] != "basketball" and (hs, as_) != prev[:2] and hs >= prev[0] and as_ >= prev[1]:
-        who = g["home"] if hs > prev[0] else g["away"]
-        if prev[2] and lead and lead != prev[2]:
-            ev.append(("역전!", f"{who} 역전 · {sc}"))
-        else:
-            ev.append(("득점", f"{who} 득점 · {sc}"))
-    elif g["kind"] == "basketball" and prev[2] and lead and lead != prev[2] and (p or 0) >= 0.75:
-        ev.append(("역전!", f"{g['home'] if lead == 'h' else g['away']} 역전 · {sc}"))
-    if late_now and not prev[3]:
-        ev.append(("막판 접전", f"{g.get('period') or ''} {sc}".strip()))
-    return ev
-
-
-def _push_loop():
-    first = True
-    while True:
-        try:
-            if push_on() and _pok[0]:
-                gs, _ = data.games_for(_today())
-                subs = None
-                for g in gs:
-                    for title, body in _events(g, first):
-                        if subs is None:
-                            subs = [{"ep": r[0], "p256dh": r[1], "auth": r[2], "teams": r[3]} for r in (M.q("SELECT ep,p256dh,auth,teams FROM push_sub") or [])]
-                        tk = {f",{g['kind']}:{g.get('home_id')},", f",{g['kind']}:{g.get('away_id')},"}
-                        for s in subs:
-                            if any(t in s["teams"] for t in tk):
-                                send(s, {"title": f"{title} · {g.get('site_league') or ''}".strip(" ·"), "body": body,
-                                         "url": f"/game/{g['key']}?d={g['start'].date().isoformat()}", "tag": str(g["key"])})
-                first = False
-                if len(_seen) > 3000:
-                    _seen.clear(); first = True
-        except Exception:
-            log.exception("push loop")
-        time.sleep(30)
-
-
-def _settle_loop():
-    while True:
-        time.sleep(300)
-        try:
-            settle_once()
-        except Exception:
-            log.exception("settle")
-
-
-def start():
-    if os.environ.get("WARMER", "1") == "0":
-        return
-    threading.Thread(target=_push_loop, daemon=True, name="push").start()
-    threading.Thread(target=_settle_loop, daemon=True, name="settle").start()

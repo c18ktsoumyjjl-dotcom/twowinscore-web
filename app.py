@@ -60,7 +60,6 @@ try:
     deposit.init_db()
     social.init_db()
     feed.init_db()
-    plus.init_db()
     with app.app_context():
         try:
             admin_ext.rebuild_today()
@@ -448,7 +447,6 @@ warmer.start(league_order)
 import chatbot
 chatbot.start(_POP_ALIAS)
 chatbot.install(app)
-plus.start()
 
 
 @app.route("/live")
@@ -804,17 +802,12 @@ MANIFEST = {"name": "투윈스코어 TWOWIN", "short_name": "투윈스코어 TWO
                       {"src": "/static/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}
 
 SW_JS = """// 투윈스코어 서비스워커: /static/ 정적 파일만 캐시. API·페이지는 절대 캐시하지 않음(항상 네트워크).
-const C='tw-static-v11';
+const C='tw-static-v12';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);
  if(e.request.method!=='GET'||u.origin!==location.origin||!u.pathname.startsWith('/static/')||u.pathname.endsWith('.mp3'))return;
  e.respondWith(caches.open(C).then(c=>c.match(e.request).then(r=>r||fetch(e.request).then(n=>{if(n.ok)c.put(e.request,n.clone());return n}))));});
-// 즐겨찾기 팀 알림(웹 푸시, 사용자가 켠 경우만)
-self.addEventListener('push',e=>{let d={};try{d=e.data.json()}catch(x){}
- e.waitUntil(self.registration.showNotification(d.title||'투윈스코어',{body:d.body||'',tag:d.tag||'tw',renotify:true,icon:'/static/icons/icon-192.png',badge:'/static/icons/icon-192.png',data:{url:d.url||'/'}}));});
-self.addEventListener('notificationclick',e=>{e.notification.close();const u=(e.notification.data&&e.notification.data.url)||'/';
- e.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(cs=>{for(const c of cs){if('focus' in c){c.navigate(u);return c.focus()}}return clients.openWindow(u)}));});
 """
 
 

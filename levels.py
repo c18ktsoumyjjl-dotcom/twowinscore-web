@@ -122,16 +122,3 @@ def admin_set_tier(mid, i):
     with _lk:
         r = _row(mid); old = r[0]; r[0] = TIERS[i][1]; r[1] = min(r[1], i); _save(mid, r)
         return old, r[0]
-
-
-def add_pts(mid, n):
-    """예측 리그 적중 등 일일 한도 없는 보상. 승급하면 새 등급 번호 반환."""
-    if not _ok[0] or not mid or n <= 0:
-        return None
-    try:
-        with _lk:
-            r = _row(mid); before = tier_of(r[0]); r[0] += n; _save(mid, r)
-            return tier_of(r[0]) if tier_of(r[0]) > before else None
-    except Exception:
-        log.exception("add_pts failed")
-        return None

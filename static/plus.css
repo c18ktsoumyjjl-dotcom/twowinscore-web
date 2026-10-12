@@ -1,15 +1,5 @@
-/* 추가 기능: 핫 경기 · 승리확률 · 경기 요약 · 예측 리그 · 푸시 토글 (라이트/다크 공통 변수) */
-.hot5{margin:10px 0 4px;border:1px solid var(--line);border-radius:12px;background:var(--card);padding:8px 12px}
-.hot5 .ht{margin:0 0 2px;line-height:1.4;font-size:13px;font-weight:800;color:var(--or);letter-spacing:-.2px}
-.hot5 a{display:flex;align-items:center;gap:8px;padding:6px 0;color:var(--tx);text-decoration:none;font-size:13.5px;border-top:1px solid var(--line);min-width:0}
-.hot5 a:first-of-type{border-top:0}
-.hot5 .r{flex:0 0 18px;font-weight:800;color:var(--or);text-align:center}
-.hot5 .hl{flex:0 0 auto;color:var(--mu);font-size:12px;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hot5 .m{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hot5 .m b{font-variant-numeric:tabular-nums;margin:0 4px}
-.hot5 .t{flex:0 0 auto;font-size:11.5px;color:var(--mu);white-space:nowrap}
-.hot5 .t i{font-style:normal;color:#ff4d4d;font-weight:700;margin-right:4px}
-.wp5 h3 small,.sm5 h3 small,.pr5 h3 small{font-weight:500;color:var(--mu);font-size:12px;margin-left:4px}
+/* 추가 기능: 승리확률 · 경기 요약 (라이트/다크 공통 변수) */
+.wp5 h3 small,.sm5 h3 small{font-weight:500;color:var(--mu);font-size:12px;margin-left:4px}
 .wp5n{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--mu);margin:2px 0 6px;gap:8px}
 .wp5n b{font-size:20px;color:var(--tx);font-variant-numeric:tabular-nums}
 .wp5n .l b{color:var(--or)}
@@ -25,32 +15,3 @@
 .sm5 ol{margin:4px 0 0;padding-left:20px}
 .sm5 li{font-size:14px;line-height:1.6;color:var(--tx)}
 .sm5 li::marker{color:var(--or);font-weight:700}
-.pr5 .bt{display:flex;gap:6px;margin-top:6px}
-.pr5 .bt button{flex:1;min-width:0;padding:10px 6px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--tx);font-weight:700;font-size:13.5px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pr5 .bt button.on{background:var(--or);border-color:var(--or);color:#fff}
-.pr5 .sc{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12.5px;color:var(--mu)}
-.pr5 .sc input{width:44px;padding:6px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--tx);text-align:center;font-size:14px}
-.pr5 .sc button{margin-left:auto;padding:7px 14px;border-radius:8px;border:0;background:var(--or);color:#fff;font-weight:700;cursor:pointer}
-.pr5 .msg{margin:8px 0 0;font-size:12.5px;color:var(--mu)}
-.pr5 .msg b{color:var(--tx)}
-.pr5 .bar{display:flex;height:6px;border-radius:3px;overflow:hidden;margin-top:8px;background:var(--line)}
-.pr5 .bar i{display:block;height:100%}
-.pr5 .bar i:nth-child(1){background:var(--or)}.pr5 .bar i:nth-child(2){background:var(--mu)}.pr5 .bar i:nth-child(3){background:#2f7fe0}
-.pr5 a{color:var(--or)}
-.sndm .push5{border-top:1px solid var(--line);margin-top:4px}
-.pd5{max-width:720px;margin:0 auto;padding:12px 14px 40px}
-.pd5 h1{font-size:20px;margin:6px 0 4px;color:var(--tx)}
-.pd5 .rule{font-size:13px;color:var(--mu);margin:0 0 10px;line-height:1.6}
-.pd5 table{width:100%;border-collapse:collapse;font-size:13.5px}
-.pd5 th,.pd5 td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;color:var(--tx);font-variant-numeric:tabular-nums}
-.pd5 th{color:var(--mu);font-weight:600;font-size:12px}
-.pd5 th:nth-child(2),.pd5 td:nth-child(2){text-align:left}
-.pd5 td:first-child{color:var(--or);font-weight:800;width:32px;text-align:center}
-.pd5 .my a{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);color:var(--tx);text-decoration:none;font-size:13.5px}
-.pd5 .my a span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pd5 .my em{font-style:normal;white-space:nowrap;color:var(--mu)}
-.pd5 .my em.w{color:var(--or);font-weight:700}
-.pd5 .empty{color:var(--mu);font-size:13px;padding:14px 0}
-.pr5 h3 .more{float:right;font-size:12px;font-weight:600;color:var(--or);text-decoration:none}
-.hot5 .hl{line-height:1.2;vertical-align:middle}
-@media(max-width:420px){.hot5 .hl{display:none}.hot5 a{font-size:13px}}

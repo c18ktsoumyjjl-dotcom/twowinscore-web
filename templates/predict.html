@@ -1,6 +1,0 @@
-{% extends "base.html" %}{% block title %}예측 리그 {{season}} 시즌 순위 | 투윈스코어{% endblock %}{% block desc %}투윈스코어 무료 경기 예측 리그. 경기 시작 전 승패를 예측하고 적중하면 등급 포인트를 받아요. 시즌 순위를 확인하세요.{% endblock %}{% block canon %}https://twowinscore.com/predict{% endblock %}
-{% block body %}<div class="pd5"><h1>🎯 예측 리그 · {{season}} 시즌</h1>
-<p class="rule">경기 상세 화면에서 시작 전까지 승패(축구는 무승부 포함)를 고르세요. 적중하면 <b>{{win}}점</b>, 스코어까지 맞히면 <b>+{{exact}}점</b>이 등급 포인트로 쌓여요. 완전 무료이고 돈·캐시·상품과는 관계없어요.</p>
-<section class="box"><h3>시즌 순위</h3>{% if board %}<table><tr><th>#</th><th>닉네임</th><th>포인트</th><th>적중</th></tr>{% for nick,s,w,n in board %}<tr><td>{{loop.index}}</td><td>{{nick}}</td><td>{{s}}</td><td>{{w}}/{{n}}</td></tr>{% endfor %}</table>{% else %}<p class="empty">아직 정산된 예측이 없어요. 첫 적중의 주인공이 되어 보세요.</p>{% endif %}</section>
-{% if me %}<section class="box my"><h3>내 최근 예측</h3>{% for x in my %}<a href="/game/{{x.k}}?d={{x.d}}"><span>{{x.nm}} · {{x.pick}}</span><em class="{{'w' if x.res=='W'}}">{{ {'W':'적중 +'~x.pts|string~'점','L':'빗나감','X':'무효'}.get(x.res,'정산 대기') }}</em></a>{% else %}<p class="empty">아직 예측한 경기가 없어요. <a href="/">경기 목록</a>에서 경기를 골라 보세요.</p>{% endfor %}</section>{% else %}<p class="rule"><a href="/login">로그인</a>하면 예측에 참여하고 내 기록을 볼 수 있어요.</p>{% endif %}
-</div>{% endblock %}
