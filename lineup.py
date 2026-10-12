@@ -177,16 +177,16 @@ def _bk_naver(g, live):
     games = _cache(("nbk", day), 120, lambda: (_j("https://api-gw.sports.naver.com/schedule/games?fields=basic&upperCategoryId=kbasketball"
                                                      f"&fromDate={day}&toDate={day}&size=100", NAVER_H).get("result") or {}).get("games") or [])
     h, a = _nm(g["home"]), _nm(g["away"])
-    m, swap = None, False
+    m, swap, hits = None, False, 0
     for x in games or []:
         nh, na = _nm(x.get("homeTeamName")), _nm(x.get("awayTeamName"))
         if not nh or not na:
             continue
         if (nh in h or h in nh) and (na in a or a in na):
-            m = x; break
-        if (nh in a or a in nh) and (na in h or h in na):
-            m, swap = x, True
-    if not m:
+            m, swap, hits = x, False, hits + 1
+        elif (nh in a or a in nh) and (na in h or h in na):
+            m, swap, hits = x, True, hits + 1
+    if not m or hits != 1:   # 확실히 한 경기일 때만
         return None
     gid = m["gameId"]
     rd = _cache(("nbr", gid), 25 if live else 300, lambda: (_j(f"https://api-gw.sports.naver.com/schedule/games/{gid}/record", NAVER_H).get("result") or {}).get("recordData"))
@@ -334,11 +334,9 @@ def _field_kbo(g, live):
     def by_order(o):
         c = [b for b in bats if str(b.get("batOrder")) == str(o)]
         return max(c, key=lambda b: b.get("seqno") or 0)["name"] if c else None
-    bases = [by_order(cs.get(f"base{i}")) if _on(cs.get(f"base{i}")) else None for i in (1, 2, 3)]
-    if str(cs.get("out")) == "3":
-        out["between"] = True
-        bases = [None, None, None]
-    out["bases"] = [b if b else (True if _on(cs.get(f"base{i+1}")) and not out.get("between") else None) for i, b in enumerate(bases)]
+    # 네이버 KBO는 주자 이름을 직접 주지 않음 → 이름 추정 없이 베이스 불만 켬
+    out["between"] = str(cs.get("out")) == "3"
+    out["bases"] = [None if out["between"] else (True if _on(cs.get(f"base{i}")) else None) for i in (1, 2, 3)]
     out["b"], out["s"], out["o"] = (min(_n(cs.get(k)) or 0, m) for k, m in (("ball", 3), ("strike", 2), ("out", 2)))
     if out.get("between"):
         out["b"] = out["s"] = out["o"] = 0
@@ -369,7 +367,7 @@ EV_KO = {"single": "1루타", "double": "2루타", "triple": "3루타", "home_ru
          "strikeout": "삼진", "strikeout_double_play": "삼진 병살", "field_out": "범타 아웃", "force_out": "포스 아웃", "grounded_into_double_play": "병살타",
          "double_play": "병살", "triple_play": "삼중살", "sac_fly": "희생플라이", "sac_bunt": "희생번트", "fielders_choice": "야수선택", "fielders_choice_out": "야수선택 아웃",
          "field_error": "실책 출루", "catcher_interf": "타격방해", "stolen_base_2b": "2루 도루", "stolen_base_3b": "3루 도루", "caught_stealing_2b": "2루 도루 실패",
-         "wild_pitch": "폭투", "passed_ball": "포일", "balk": "보크", "pickoff_1b": "견제 아웃", "sac_fly_double_play": "희생플라이 병살"}
+         "wild_pitch": "폭투", "passed_ball": "포일", "balk": "보크", "pickoff_1b": "1루 견제사", "sac_fly_double_play": "희생플라이 병살"}
 
 
 def _ko_play(x):
@@ -459,6 +457,8 @@ def field(g):
 import re as _re
 from datetime import timedelta as _td
 OVC = {1: "mlb", 2: "npb"}
+# 네이버 약칭 → 우리 표기(공백 제거). 확인된 것만.
+NV_ALIAS = {"시카고w": "시카고화이트삭스", "시카고c": "시카고컵스"}
 
 
 def _ov_match(g):
@@ -471,9 +471,10 @@ def _ov_match(g):
                                                        f"&upperCategoryId=wbaseball&categoryId={cat}&fromDate={d0}&toDate={d1}&size=100", NAVER_H).get("result") or {}).get("games") or [])
     h, a = _nm(g["home"]), _nm(g["away"])
     ok = lambda x, y: bool(x) and bool(y) and (x in y or y in x)
-    best = None
+    al = lambda n: NV_ALIAS.get(n, n)
+    best, hits = None, 0
     for x in games or []:
-        nh, na = _nm(x.get("homeTeamName")), _nm(x.get("awayTeamName"))
+        nh, na = al(_nm(x.get("homeTeamName"))), al(_nm(x.get("awayTeamName")))
         try:
             from datetime import datetime as _dt
             t = _dt.fromisoformat(x["gameDateTime"]).replace(tzinfo=st.tzinfo)
@@ -486,9 +487,7 @@ def _ov_match(g):
             best = (x["gameId"], False)
         elif ok(nh, a) and ok(na, h) and not best:
             best = (x["gameId"], True)
-        elif not best and dt <= 3 * 3600 and g.get("home_score") is not None and (x.get("homeTeamScore"), x.get("awayTeamScore")) == (g.get("home_score"), g.get("away_score")) \
-                and (ok(nh[:2], h) or ok(na[:2], a)):
-            best = (x["gameId"], False)   # 표기 차이(시카고W 등): 시간·점수·팀명 앞글자 일치
+
     return best
 
 

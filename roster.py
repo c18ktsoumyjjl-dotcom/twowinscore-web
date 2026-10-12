@@ -53,7 +53,7 @@ def _football(tid, base):
     key = lambda p: (FORD.index(p["pos"]) if p["pos"] in FORD else 9, -p["_ln"])
     top = set(id(p) for p in sorted(ps, key=lambda p: -p["_ln"])[:11] if p["_ln"] > 0)
     return [_g("선발", sorted([p for p in ps if id(p) in top], key=key), f"{season} 시즌 선발 출전 상위 11명"),
-            _g("후보", sorted([p for p in ps if id(p) not in top], key=key), "")], f"API-Sports · {season} 시즌 출전 선수"
+            _g("후보", sorted([p for p in ps if id(p) not in top], key=key), "그 외 출전 선수")], f"API-Sports · {season} 시즌 출전 선수"
 
 
 # ---------- 농구: 최근 경기 박스스코어 (선발/벤치 구분 제공) ----------
@@ -82,21 +82,24 @@ def _basketball(tid, base, past):
     st = [mk(p) for p in agg if last.get(p) == "starters"]
     bn = [mk(p) for p in agg if last.get(p) != "starters" and agg[p]["n"]]
     o = lambda l: sorted(l, key=lambda p: -p["_s"])
-    return [_g("선발", o(st), "최근 경기 선발 5명"), _g("후보", o(bn), "")], f"API-Sports · 최근 {len(gids)}경기 평균"
+    return [_g("선발", o(st), "최근 경기 선발 5명"), _g("후보", o(bn), "최근 경기 벤치 출전")], f"API-Sports · 최근 {len(gids)}경기 평균"
 
 
 # ---------- KBO: 네이버 스포츠 시즌 기록 ----------
+# API-Sports NPB team id → (네이버 팀코드, 리그). 퍼시픽은 league=PL 필요.
+NPB = {55: ("JL", "P"), 56: ("JN", "C"), 57: ("SF", "P"), 58: ("HS", "C"), 59: ("HI", "C"), 60: ("NH", "P"), 61: ("OX", "P"),
+       62: ("RT", "P"), 63: ("SE", "P"), 64: ("YA", "C"), 65: ("YK", "C"), 66: ("YO", "C")}
 KBO = {88: "OB", 89: "HH", 90: "HT", 91: "KT", 92: "WO", 93: "LG", 94: "LT", 95: "NC", 97: "SS", 647: "SK"}
 NAVER_H = {"Referer": "https://m.sports.naver.com/"}
 
 
-def _kbo(tid, cat="kbo", code=None):
+def _kbo(tid, cat="kbo", code=None, extra=""):
     code = code or KBO.get(tid)
     if not code:
         return None
     y = time.localtime().tm_year
     for yr in (y, y - 1):
-        u = "https://api-gw.sports.naver.com/statistics/categories/" + cat + "/seasons/%d/players?teamCode=%s&playerType=%s&pageSize=100"
+        u = "https://api-gw.sports.naver.com/statistics/categories/" + cat + "/seasons/%d/players?teamCode=%s&playerType=%s&pageSize=100" + extra
         hs = (_j(u % (yr, code, "HITTER"), NAVER_H).get("result") or {}).get("seasonPlayerStats") or []
         pi = (_j(u % (yr, code, "PITCHER"), NAVER_H).get("result") or {}).get("seasonPlayerStats") or []
         if hs or pi:
@@ -115,7 +118,17 @@ def _kbo(tid, cat="kbo", code=None):
                [f"{x.get('pitcherWin') or 0}승 {x.get('pitcherLose') or 0}패", f"ERA {x['pitcherEra']:.2f}" if x.get("pitcherEra") is not None else ""]),
           "_qs": (x.get("pitcherQs") or 0) if cat == "kbo" else ((x.get("pitcherStart") or 0) if (x.get("pitcherStart") or 0) >= 5 else 0),
           "_ip": x.get("pitcherGameCount") or 0} for x in pi if x.get("playerName")]
-    return _bb_groups(H, P, "퀄리티스타트 기록 투수" if cat == "kbo" else "시즌 선발 등판 5경기 이상", "_qs"), f"네이버 스포츠 · {yr} 시즌 기록"
+    for p, x in zip(P, [x for x in pi if x.get("playerName")]):
+        try:
+            a, _, fr = str(x.get("pitcherInning") or "0").partition(" ")
+            p["_inn"] = float(a) + (1 / 3 if fr.startswith("1") else 2 / 3 if fr.startswith("2") else 0)
+        except ValueError:
+            p["_inn"] = 0
+    if cat == "npb":
+        return _bb_groups(H, P, None, "_qs"), f"네이버 스포츠 · {yr} 시즌 기록"
+    if cat == "kbo":
+        return _bb_groups(H, P, "퀄리티스타트 1회 이상", "_qs", "퀄리티스타트 기록 없음"), f"네이버 스포츠 · {yr} 시즌 기록"
+    return _bb_groups(H, P, "시즌 선발 등판 5경기 이상", "_qs", "선발 등판 5경기 미만"), f"네이버 스포츠 · {yr} 시즌 기록"
 
 
 def _naver_mlb_code(ko_name):
@@ -139,11 +152,16 @@ def _naver_mlb_code(ko_name):
     return c[0] if len(c) == 1 else None
 
 
-def _bb_groups(H, P, sp_basis, sk):
+def _bb_groups(H, P, sp_basis, sk, rest_basis=""):
+    """근거가 있는 것만 선발로 분류. 근거 없는 나머지는 '그 외'로만 표시(불펜이라 단정하지 않음)."""
     H.sort(key=lambda p: -p["_ab"]); reg = H[:9]
+    if sp_basis is None:   # 선발 등판 근거 데이터 없음(NPB 등): 투수 한 묶음, 이닝순
+        P.sort(key=lambda p: -p.get("_inn", 0))
+        return [g for g in [_g("선발 타자", reg, "시즌 타수 상위 9명"), _g("그 외 타자", H[9:], "타수 10위 이하"),
+                            _g("투수", P, "선발/불펜 구분 정보 없음 · 이닝순")] if g["ps"]]
     sp = sorted([p for p in P if p[sk] > 0], key=lambda p: -p[sk]); rp = [p for p in P if p[sk] <= 0]
     return [g for g in [_g("선발 타자", reg, "시즌 타수 상위 9명"), _g("선발 투수", sp, sp_basis),
-                        _g("후보 타자", H[9:], ""), _g("불펜 투수", rp, "")] if g["ps"]]
+                        _g("그 외 타자", H[9:], "타수 10위 이하"), _g("그 외 투수", rp, rest_basis)] if g["ps"]]
 
 
 # ---------- MLB: 공식 statsapi ----------
@@ -177,7 +195,7 @@ def _mlb(en):
             H.append({**_p(pe.get("fullName"), r.get("jerseyNumber"), MLBPOS.get(pc, pc or ""), [f"타율 {s['avg']}" if s.get("avg") else "", f"{s['homeRuns']}홈런" if "homeRuns" in s else "", f"{s['rbi']}타점" if "rbi" in s else ""]), "_ab": s.get("atBats") or 0})
     if not (H or P):
         return None
-    return _bb_groups(H, P, "시즌 선발 등판 5경기 이상", "_gs"), f"MLB 공식 기록 · {y} 시즌"
+    return _bb_groups(H, P, "시즌 선발 등판 5경기 이상", "_gs", "선발 등판 5경기 미만"), f"MLB 공식 기록 · {y} 시즌"
 
 
 # ---------- NHL: 공식 api-web ----------
@@ -213,6 +231,9 @@ def get(t):
         elif kind == "baseball":
             if tid in KBO:
                 r = _kbo(tid)
+            elif tid in NPB:
+                code, lg = NPB[tid]
+                r = _kbo(tid, "npb", code, "&league=PL" if lg == "P" else "")
             else:
                 code = _naver_mlb_code(t["name"])
                 r = (_kbo(tid, "mlb", code) if code else None) or _mlb(t.get("en") or t["name"])
