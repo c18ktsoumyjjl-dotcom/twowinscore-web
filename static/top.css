@@ -81,3 +81,18 @@ body.tpon .gm7sb,body.tpon .gm7ls{display:none}
 .csh-mg.on{border-color:#ff8a3d;background:rgba(255,138,61,.15)}
 .csh-p.mg .csh-f input{border-color:#ff8a3d}.csh-p.mg .csh-n{color:#ff8a3d;opacity:1;font-weight:700}
 }
+
+@media(max-width:1023px){
+.tprow{display:flex;align-items:flex-start;gap:6px;margin:0 0 6px}
+.tprow .tptk{flex:1;min-width:0;margin:0}
+.tpst .tpbk{display:none}
+.tprow .tpbk{position:static;flex:none;width:auto;min-width:40px;height:40px;padding:0 0 3px;display:inline-flex;align-items:center;justify-content:center;gap:4px;border-radius:12px;background:#0b1834;color:#fff!important;font-size:30px;line-height:1;font-weight:500;text-decoration:none;box-shadow:0 2px 8px rgba(8,18,44,.25);box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[data-theme=dark] .tprow .tpbk,html:not([data-theme=light]) .tprow .tpbk{background:#ff8a3d}
+[data-theme=light] .tprow .tpbk{background:#0b1834}
+.tprow .tpbk:active{transform:scale(.95)}
+.tprow .tpbkl{display:none;font-size:13px;font-weight:800;padding-top:3px}
+.tprow .tptk[hidden]+*{}
+.tprow:not(:has(.tptk:not([hidden]))) .tpbk{padding:0 12px 3px 8px}.tprow:not(:has(.tptk:not([hidden]))) .tpbkl{display:inline}
+.tprow .tptk .tkb{height:38px}
+.tptag{left:10px}
+}
