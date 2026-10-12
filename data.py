@@ -343,18 +343,20 @@ def _detail_fetch(g):
             fh = ex.submit(safe, sports2.team_form, kind, g.get("home_id"), ts, league)
             fa = ex.submit(safe, sports2.team_form, kind, g.get("away_id"), ts, league)
             fh2 = ex.submit(safe, sports2.h2h, kind, g.get("home_id"), g.get("away_id"), ts)
-            out.update(form_home=fh.result() or [], form_away=fa.result() or [], h2h=fh2.result() or [], starters=None, injuries=[])
+            out.update(form_home=fh.result() or [], form_away=fa.result() or [], h2h=fh2.result() or [], starters=None, batters=None, injuries=[])
     else:
       with ThreadPoolExecutor(max_workers=6) as ex:
         fh = ex.submit(safe, form, g.get("home_id"))
         fa = ex.submit(safe, form, g.get("away_id"))
         fh2 = ex.submit(safe, features.head_to_head, kind, g.get("home_id"), g.get("away_id"), g["start"])
         fst = ex.submit(safe, starters.game_starters, g) if kind == "baseball" else None
+        fbat = ex.submit(safe, starters.game_batters, g) if kind == "baseball" else None
         fin = ex.submit(safe, injuries.game_unavailable, g) if (kind, league) in (("baseball", 1), ("basketball", 12)) else None
         out["form_home"], out["form_away"] = fh.result() or [], fa.result() or []
         out["h2h"] = [{"date": x["date"].strftime("%Y.%m.%d"), "home": x["home"], "away": x["away"], "hs": x["hs"], "as": x["aws"]}
                       for x in (fh2.result() or [])]
         out["starters"] = fst.result() if fst else None
+        out["batters"] = fbat.result() if fbat else None
         out["injuries"] = (fin.result() or []) if fin else []
     slug = next((s for s, v in STANDING_SLUGS.items() if v == (kind, league)), None)
     out["standings"] = None

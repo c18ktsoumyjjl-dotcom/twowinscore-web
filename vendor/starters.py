@@ -55,6 +55,59 @@ def _era(v):
     return f"{x:.2f}"
 
 
+def _f(v):
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return None
+
+
+def _rates(st):
+    """시즌/상대 기록 → 막대용 지표."""
+    if not st:
+        return None
+    g = _int(st.get("gameCount")) or 0
+    inn = _f(st.get("inn")) or 0.0
+    if g <= 0 and inn <= 0:
+        return None
+    per = inn / g if g else None
+    def pg(key):
+        n = _f(st.get(key))
+        if n is None or not g:
+            return None
+        return round(n / g, 2)
+    return {
+        "era": _era(st.get("era")),
+        "era_n": _f(st.get("era")),
+        "ip_g": round(per, 2) if per is not None else None,
+        "k_g": pg("kk"),
+        "bb_g": pg("bb"),
+        "h_g": pg("hit") if st.get("hit") is not None else None,
+        "w": _int(st.get("w")),
+        "l": _int(st.get("l")),
+        "g": g,
+        "inn": inn,
+    }
+
+
+def _pack_starter(name, season_st, opp_st):
+    if not name:
+        return None
+    out = {"name": name}
+    if season_st:
+        out["era"] = _era(season_st.get("era"))
+        out["w"] = _int(season_st.get("w"))
+        out["l"] = _int(season_st.get("l"))
+        sea = _rates(season_st)
+        if sea:
+            out["season"] = sea
+    if opp_st:
+        vs = _rates(opp_st)
+        if vs:
+            out["vs"] = vs
+    return out
+
+
 # ---------- KBO ----------
 def _naver_day(day):
     d = _json("https://api-gw.sports.naver.com/schedule/games?fields=basic,schedule,baseball"
@@ -64,15 +117,18 @@ def _naver_day(day):
     return d["result"]["games"]
 
 
-def _naver_era(game_id):
+def _naver_preview(game_id):
     d = _json(f"https://api-gw.sports.naver.com/schedule/games/{game_id}/preview", NAVER_H)
-    p = (d.get("result") or {}).get("previewData") or {}
+    return (d.get("result") or {}).get("previewData") or {}
+
+
+def _naver_era(game_id):
+    p = _naver_preview(game_id)
     out = {}
     for side in ("home", "away"):
         st = p.get(side + "Starter") or {}
-        cs = st.get("currentSeasonStats") or {}
-        out[side] = ((st.get("playerInfo") or {}).get("name"),
-                     {"era": _era(cs.get("era")), "w": _int(cs.get("w")), "l": _int(cs.get("l"))})
+        info = (st.get("playerInfo") or {}).get("name")
+        out[side] = (info, st.get("currentSeasonStats") or {}, st.get("currentSeasonStatsOnOpponents") or {})
     return out
 
 
@@ -111,11 +167,21 @@ def _kbo(g):
     if names["home"] or names["away"]:
         pv = _cached(f"kbo:pv:{match['gameId']}", lambda: _naver_era(match["gameId"])) or {}
         for nside in ("home", "away"):
-            nm, stat = pv.get(nside, (None, None))
+            row = pv.get(nside) or (None, None, None)
+            nm, season_st, opp_st = (row + (None, None, None))[:3]
             side = ({"home": "away", "away": "home"}[nside]) if swap else nside
-            if nm and nm == names[side] and stat:   # 이름이 같을 때만 기록
-                eras[side] = stat
-    return {s: ({"name": names[s], **(eras.get(s) or {})} if names[s] else None) for s in ("home", "away")}
+            if nm and nm == names[side]:
+                eras[side] = (season_st or {}, opp_st or {})
+    out = {}
+    for s in ("home", "away"):
+        if not names[s]:
+            out[s] = None
+            continue
+        season_st, opp_st = eras.get(s, ({}, {}))
+        out[s] = _pack_starter(names[s], season_st, opp_st)
+    out["_gid"] = match["gameId"]
+    out["_swap"] = swap
+    return out
 
 
 # ---------- MLB ----------
@@ -130,7 +196,20 @@ def _mlb_era(pid, season):
     for s in d.get("stats") or []:
         for sp in s.get("splits") or []:
             stt = sp.get("stat") or {}
-            return {"era": _era(stt.get("era")), "w": _int(stt.get("wins")), "l": _int(stt.get("losses"))}
+            g = _int(stt.get("gamesStarted") or stt.get("gamesPlayed") or stt.get("games"))
+            inn = _f(stt.get("inningsPitched"))
+            def pg(key, alt=None):
+                n = _f(stt.get(key) if stt.get(key) is not None else stt.get(alt))
+                if n is None or not g:
+                    return None
+                return round(n / g, 2)
+            sea = {
+                "era": _era(stt.get("era")), "era_n": _f(stt.get("era")),
+                "w": _int(stt.get("wins")), "l": _int(stt.get("losses")), "g": g, "inn": inn,
+                "ip_g": round(inn / g, 2) if inn is not None and g else None,
+                "k_g": pg("strikeOuts"), "bb_g": pg("baseOnBalls"), "h_g": pg("hits"),
+            }
+            return {"era": sea["era"], "w": sea["w"], "l": sea["l"], "season": sea}
     return None
 
 
@@ -168,8 +247,13 @@ def _mlb(g):
         if not pp.get("fullName"):
             out[side] = None
             continue
-        stat = _cached(f"mlb:st:{pp['id']}:{season}", lambda: _mlb_era(pp["id"], season)) if pp.get("id") else None
-        out[side] = {"name": pp["fullName"], **(stat or {})}
+        stat = _cached(f"mlb:st:{pp['id']}:{season}", lambda i=pp.get("id"): _mlb_era(i, season)) if pp.get("id") else None
+        if not stat:
+            out[side] = {"name": pp["fullName"]}
+        else:
+            out[side] = {"name": pp["fullName"], "era": stat.get("era"), "w": stat.get("w"), "l": stat.get("l")}
+            if stat.get("season"):
+                out[side]["season"] = stat["season"]
     return out
 
 
@@ -177,10 +261,14 @@ def game_starters(g):
     try:
         if g.get("kind") != "baseball":
             return None
+        out = None
         if g.get("league") == 5:
-            return _kbo(g)
-        if g.get("league") == 1:
-            return _mlb(g)
+            out = _kbo(g)
+        elif g.get("league") == 1:
+            out = _mlb(g)
+        if out:
+            out = {k: v for k, v in out.items() if not str(k).startswith("_")}
+        return out
     except Exception as e:
         log(f"starter {g.get('key')} {redact(e)[:140]}")
     return None
@@ -203,3 +291,57 @@ def starter_line(s):
             bits.append(f"ERA {p['era']}")
         return " ".join(bits)
     return f"선발 · {one(s.get('away'))} vs {one(s.get('home'))}"
+
+
+# ---------- KBO 타자 시즌 기록 (Daum hermes, 규정타석 이상만) ----------
+_DAUM = {"User-Agent": "Mozilla/5.0 (twowinscore)", "Referer": "https://sports.daum.net/"}
+# API-Sports KBO team id → Daum cpTeamId
+_KBO_DAUM = {88: "OB", 89: "HH", 90: "HT", 91: "KT", 92: "WO", 93: "LG", 94: "LT",
+             95: "NC", 97: "SS", 647: "SK"}
+
+
+def _daum_hitters(season):
+    d = _json(f"https://sports.daum.net/prx/hermes/api/person/rank.json?leagueCode=kbo&seasonKey={season}"
+              "&pageSize=200&page=1&sortKey=battingAverage", _DAUM)
+    by = {}
+    for x in d.get("list") or []:
+        st = x.get("stat") or {}
+        if st.get("batAvg") is None:
+            continue
+        code = (x.get("team") or {}).get("cpTeamId")
+        if not code:
+            continue
+        by.setdefault(code, []).append({
+            "name": x.get("name") or x.get("nameMain"),
+            "avg": f"{st['batAvg']:.3f}".lstrip("0") if st["batAvg"] < 1 else f"{st['batAvg']:.3f}",
+            "avg_n": st["batAvg"],
+            "h": _int(st.get("batH")),
+            "rbi": _int(st.get("batRbi")),
+            "r": _int(st.get("batR")),
+            "hr": _int(st.get("batHr")),
+            "slg": f"{st['batSlg']:.3f}".lstrip("0") if st.get("batSlg") is not None and st["batSlg"] < 1 else (f"{st['batSlg']:.3f}" if st.get("batSlg") is not None else None),
+        })
+    for code in by:
+        by[code].sort(key=lambda p: -(p["avg_n"] or 0))
+    return by
+
+
+def game_batters(g):
+    """야구 양 팀 시즌 타자 표. 데이터 없으면 None."""
+    try:
+        if g.get("kind") != "baseball" or g.get("league") != 5:
+            return None
+        hc, ac = _KBO_DAUM.get(g.get("home_id")), _KBO_DAUM.get(g.get("away_id"))
+        if not hc or not ac:
+            return None
+        season = str(g["start"].astimezone(SEOUL).year)
+        allh = _cached(f"daum:hit:{season}", lambda: _daum_hitters(season))
+        if not allh:
+            return None
+        home, away = allh.get(hc) or [], allh.get(ac) or []
+        if not home and not away:
+            return None
+        return {"home": home[:12], "away": away[:12]}
+    except Exception as e:
+        log(f"batters {g.get('key')} {redact(e)[:140]}")
+    return None

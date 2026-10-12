@@ -24,3 +24,31 @@
 .an9v{margin:8px 0 0;color:var(--mu);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .an9h{font-weight:600}.an9h .w{color:var(--or);font-weight:800}
 @media(max-width:700px){.an9r{grid-template-columns:1fr 1fr}.an9r .k{grid-column:1/-1}.an9t{font-size:13px}.an9t th{width:34%}}
+
+/* 야구 선발 비교·타자 시즌표 — 네이비/오렌지 */
+.bb9hd{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-bottom:12px}
+.bb9p{min-width:0}.bb9p.r{text-align:right}
+.bb9p b{display:block;font-size:16px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bb9p small{display:block;color:var(--mu);font-size:12px;margin-top:2px}.bb9p span{display:block;font-size:12px;margin-top:4px;color:var(--or);font-weight:700}
+.bb9vs{font-weight:900;color:var(--mu);font-size:13px}
+.bb9sec{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.bb9sec h4{margin:0 0 8px;font-size:13px;color:var(--or);font-weight:800}
+.bb9row{display:grid;grid-template-columns:3.2em 1fr 3.2em;gap:6px;align-items:center;margin:5px 0;font-size:12px;font-variant-numeric:tabular-nums}
+.bb9row .v{font-weight:800}.bb9row .v.r{text-align:right}
+.bb9row .bars{display:grid;grid-template-columns:1fr auto 1fr;gap:4px;align-items:center;min-width:0}
+.bb9row .bars em{font-style:normal;font-size:11px;color:var(--mu);text-align:center;white-space:nowrap}
+.bb9row .bars i{display:block;height:8px;border-radius:4px;background:rgba(127,140,170,.35);justify-self:end}
+.bb9row .bars i.R{justify-self:start}
+.bb9row .bars i.L{background:linear-gradient(90deg,transparent,rgba(255,138,61,.55))}
+.bb9row .bars i.R{background:linear-gradient(90deg,rgba(61,123,255,.55),transparent)}
+.bb9row .bars i.hi.L{background:linear-gradient(90deg,transparent,var(--or))}
+.bb9row .bars i.hi.R{background:linear-gradient(90deg,#3d7bff,transparent)}
+.bb9tb{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.bb9t{min-width:0;overflow:auto}
+.bb9t table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.bb9t th{background:#13234a;color:#fff;font-weight:700;padding:6px 4px;white-space:nowrap}
+.bb9t th.n{text-align:left;padding-left:8px;position:sticky;left:0}
+.bb9t td{padding:5px 4px;border-bottom:1px solid var(--line);text-align:center}
+.bb9t td.n{text-align:left;padding-left:8px;font-weight:700;white-space:nowrap;max-width:5.5em;overflow:hidden;text-overflow:ellipsis}
+.bb9n{display:block;margin-top:8px;font-size:11px;color:var(--mu)}
+@media(max-width:700px){.bb9tb{grid-template-columns:1fr}.bb9p b{font-size:15px}.bb9row{grid-template-columns:2.8em 1fr 2.8em}}

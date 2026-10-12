@@ -432,8 +432,9 @@ def game(key):
     lh = v["left_home"]
     forms = [(v["L"]["name"], det["form_home"] if lh else det["form_away"]), (v["R"]["name"], det["form_away"] if lh else det["form_home"])]
     st = det.get("starters")
+    bat = det.get("batters")
     return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=plays.commentary(g), gl=plays.goals(g),
-                           forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st,
+                           forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st, batters=bat,
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
                            names={g["home"], g["away"]}, gnews=news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]), points=insights.points(g, det, dedupe=True), vote=_vinfo(g, v), seo=_game_seo(g, v), an=_analysis(g, v, det, forms))
 
@@ -604,7 +605,16 @@ def api_odds():
     def one(k):
         try:
             g = data.find_game(k, d) or (data.find_game(k, d - timedelta(days=1)) if d == today() else None)
-            return k, (teamodds.odds(g, lite) if g else None)
+            o = teamodds.odds(g, lite) if g else None
+            if o and g:
+                # 화면 좌·우(L/R)에 맞춘 배당. 야구=원정L/홈R, 그 외=홈L/원정R. 투표 L/R과 동일.
+                lh = g["kind"] != "baseball"
+                o = dict(o)
+                o["L"], o["R"] = (o["H"], o["A"]) if lh else (o["A"], o["H"])
+                mv = o.get("mv") or {}
+                o["mv"] = {**mv, "L": mv.get("H") if lh else mv.get("A"), "R": mv.get("A") if lh else mv.get("H")}
+                o["lh"] = lh
+            return k, o
         except Exception:
             return k, None
     ks = [x[:80] for x in (request.args.get("k") or "").split(",") if x][:20]
@@ -699,7 +709,7 @@ MANIFEST = {"name": "투윈스코어 TWOWIN", "short_name": "투윈스코어 TWO
                       {"src": "/static/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}
 
 SW_JS = """// 투윈스코어 서비스워커: /static/ 정적 파일만 캐시. API·페이지는 절대 캐시하지 않음(항상 네트워크).
-const C='tw-static-v2';
+const C='tw-static-v3';
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);

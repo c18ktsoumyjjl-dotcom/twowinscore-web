@@ -4,10 +4,10 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const mine=()=>{try{return JSON.parse(localStorage.getItem('tw_votes')||'{}')}catch(e){return{}}};
 const setMine=(k,s)=>{const m=mine();m[k]=s;const ks=Object.keys(m);if(ks.length>300)delete m[ks[0]];localStorage.setItem('tw_votes',JSON.stringify(m))};
 const C={},O={};
-const oc=(el,s)=>{const o=O[el.dataset.k];if(!o)return'';const lh=el.dataset.lh!=='0';const m=s==='D'?'D':((s==='L')===lh?'H':'A');const v=o[m];if(v==null)return'';const mv=(o.mv||{})[m];return `<i class="od8 ${mv>0?'up':mv<0?'dn':''}">${Number(v).toFixed(2)}${mv>0?'▲':mv<0?'▼':''}</i>`};
+const oc=(el,s)=>{const o=O[el.dataset.k];if(!o)return'';let m=s;if(s!=='D'&&o[s]==null){const lh=el.dataset.lh!=='0';m=((s==='L')===lh)?'H':'A'}const v=o[m];if(v==null)return'';const mv=(o.mv||{})[m];return `<i class="od8 ${mv>0?'up':mv<0?'dn':''}">${Number(v).toFixed(2)}${mv>0?'▲':mv<0?'▼':''}</i>`};
 function vhtml(o){/* o:{k,L,R,draw,open} */
- return `<div class="vt8" data-k="${esc(o.k)}" data-l="${esc(o.L)}" data-r="${esc(o.R)}" data-draw="${o.draw?1:0}" data-open="${o.open?1:0}" data-lh="${o.lh===false?0:1}"></div>`}
-function paint(el){const k=el.dataset.k,c=C[k],my=mine()[k],open=el.dataset.open==='1',dr=el.dataset.draw==='1';
+ return `<div class="vt8" data-k="${esc(o.k)}" data-l="${esc(o.L)}" data-r="${esc(o.R)}" data-draw="${o.draw?1:0}" data-open="${o.open?1:0}" data-lh="${(o.lh===false||o.lh===0||o.lh==='0')?0:1}"></div>`}
+function paint(el){const k=el.dataset.k,c=C[k],my=mine()[k],open=el.dataset.open==='1',dr=el.dataset.draw==='1';if(O[k]&&O[k].lh!=null)el.dataset.lh=O[k].lh?'1':'0';
  const sides=[['L',el.dataset.l],...(dr?[['D','무승부']]:[]),['R',el.dataset.r]];
  const tot=c?c.L+c.R+(c.D||0):0;const show=(my||!open)&&c;
  let h=`<div class="vt8h"><b>📣 팬 응원</b><small>${show?`${tot.toLocaleString()}명 참여`:open?'응원하는 팀을 눌러주세요':'응원 마감'}</small></div><div class="vt8b">`;
@@ -35,7 +35,7 @@ function card(g){const sc=g.state!=='scheduled'&&g.L.score!=null;const lg=t=>t.l
  const st=g.state==='live'?`<em class="lv">● ${esc(g.badge)}</em>`:g.state==='scheduled'?`<em>${esc(g.time)}</em>`:`<em>${esc(g.badge)}</em>`;
  return `<div class="ft8c ${g.state}"><a class="ft8a" href="/game/${encodeURIComponent(g.key)}?d=${FD}"><div class="ft8t"><span>${g.emoji} ${esc(g.league)}</span>${st}</div>
  <div class="ft8m"><div class="ft8s">${lg(g.L)}<b>${esc(g.L.name)}</b></div><div class="ft8x">${sc?`${g.L.score}<i>:</i>${g.R.score}`:'<i>VS</i>'}</div><div class="ft8s">${lg(g.R)}<b>${esc(g.R.name)}</b></div></div>
- <div class="ft8g">${g.tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div></a>${vhtml({k:g.key,L:g.L.name,R:g.R.name,draw:g.draw,open:g.vopen,lh:g.kind!=='baseball'})}</div>`}
+ <div class="ft8g">${g.tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div></a>${vhtml({k:g.key,L:g.L.name,R:g.R.name,draw:g.draw,open:g.vopen,lh:g.left_home!=null?!!g.left_home:g.kind!=='baseball'})}</div>`}
 let FD='',FJ=null;
 async function feat(d,box,ok){FD=d;try{FJ=await (await fetch('/api/featured?d='+d)).json();if(FJ.pending)setTimeout(()=>feat(d,box,ok),8000)}catch(e){}draw(box,ok)}
 function draw(box,ok){if(!box)return;if(!FJ||!FJ.games.length||!ok){box.innerHTML='';box.hidden=true;return}box.hidden=false;
