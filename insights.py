@@ -50,14 +50,51 @@ _fc, _fl = {}, threading.Lock()
 _busy = set()
 
 
+_LIVE_TAG_MARK = ("진행 중", "접전 중")
+
+
+def _refresh_featured_views(cached, views):
+    """선정 목록은 캐시 유지, 스코어·상태·배지만 최신 view로 맞춤(종료 반영 지연 방지)."""
+    by_key = {v["key"]: v for v in views}
+    out, state_changed = [], False
+    for x in cached:
+        v = by_key.get(x["key"])
+        if not v:
+            state_changed = True
+            continue
+        y = dict(x)
+        prev = y.get("state")
+        for k in ("state", "badge", "L", "R", "time", "sub", "halt", "reason", "rc", "ts"):
+            if k in v:
+                y[k] = v[k]
+        if prev != y.get("state"):
+            state_changed = True
+        if y.get("state") != "live":
+            tags = [t for t in (y.get("tags") or []) if not any(m in t for m in _LIVE_TAG_MARK)]
+            y["tags"] = tags
+        out.append(y)
+    return out, state_changed
+
+
 def featured(games, views, day):
     """규칙 기반 주목 경기 3~5개. 하루 단위 5분 캐시(진행 중이면 2분). 계산(순위 조회)은 백그라운드라 요청을 막지 않는다.
-    반환 (목록, 준비 중 여부)."""
+    반환 (목록, 준비 중 여부). 캐시 hit여도 스코어·상태는 매 요청 최신 view로 덮어쓴다."""
     live = any(g["state"] == "live" for g in games)
     ck = day.isoformat()
     c = _fc.get(ck)
     if c and time.time() - c[0] < (120 if live else 300):
-        return c[1], False
+        merged, state_changed = _refresh_featured_views(c[1], views)
+        if state_changed and ck not in _busy:
+            _busy.add(ck)
+            def rerun():
+                try:
+                    _featured(games, views, day)
+                except Exception:
+                    pass
+                finally:
+                    _busy.discard(ck)
+            threading.Thread(target=rerun, daemon=True).start()
+        return merged, False
     if ck not in _busy:
         _busy.add(ck)
         def run():
@@ -68,7 +105,10 @@ def featured(games, views, day):
             finally:
                 _busy.discard(ck)
         threading.Thread(target=run, daemon=True).start()
-    return (c[1] if c else []), not c
+    if c:
+        merged, _ = _refresh_featured_views(c[1], views)
+        return merged, False
+    return [], True
 
 
 def _featured(games, views, day):
