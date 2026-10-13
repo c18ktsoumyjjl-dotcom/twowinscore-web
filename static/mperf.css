@@ -30,3 +30,5 @@ body.gm7c footer{display:none!important}
 
 /* 라이브 탭 등 행이 많을 때: 화면 밖 리그 섹션은 레이아웃·페인트를 미뤄요(크기는 기억해서 스크롤 튐 없음). PC 영향 없음 */
 @media (max-width:1023px){#list>section.msec:nth-of-type(n+3){content-visibility:auto;contain-intrinsic-size:auto 360px}}
+/* 첫 그리기 전 목록 자리를 미리 잡아 아래 안내문이 밀려 내려가는 화면 밀림(CLS)을 없애요. PC 영향 없음 */
+@media (max-width:1023px){#list:has(>p.empty:only-child){min-height:calc(var(--vvh,100vh) + 120px)}}

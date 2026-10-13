@@ -435,8 +435,8 @@ def api_games_other():
     return r
 
 
-def _other_payload(d):
-    gs = data.others_for(d)
+def _other_payload(d, refresh=True):
+    gs = data.others_for(d, refresh=refresh)
     if d == today() and datetime.now(data.SEOUL).hour < 6:
         gs = [g for g in data.others_for(d - timedelta(days=1), refresh=False) if g["state"] == "live"] + gs
     gs = gs + _nx_other(d)
@@ -480,7 +480,11 @@ def index():
     except Exception:
         pass
     o0 = None
-    if request.args.get("f") == "live" and g0:   # 라이브 탭: 기타 리그 진행 중 경기도 HTML 안에 넣어 API 왕복 없이 바로 그려요
+    lv = _LV0.get("v") if d == t and _time.time() - _LV0.get("at", 0) < 90 else None
+    if request.args.get("f") == "live" and lv:   # 미리 만들어 둔 기타 리그 진행 경기(행·로고·배당) — 기다림 없음
+        o0 = {"games": lv["games"], "od": lv["od"]}
+        lgi.update(lv["lgi"])
+    elif request.args.get("f") == "live" and g0:   # 라이브 탭: 기타 리그 진행 중 경기도 HTML 안에 넣어 API 왕복 없이 바로 그려요
         try:
             fut = _g0pool.submit(_other_payload, d)
             o0 = fut.result(timeout=float(os.environ.get("G0_TIMEOUT", "0.8")))
@@ -516,6 +520,39 @@ def _g0(d):
 
 
 _g0pool = None
+import time as _time
+import threading as _thr
+_LV0 = {}
+
+
+def _lv0_build():
+    """기타 리그 진행 중 경기를 디스크 캐시에서만 만들어 둬요(추가 API 호출 없음: 주 목록 응답에서 나온 데이터)."""
+    d = today()
+    o = _other_payload(d, refresh=False)
+    gs = [x for x in o["games"] if x.get("state") == "live"]
+    ks = {str(x.get("key")) for x in gs}
+    od = {k: v for k, v in o["od"].items() if k in ks}
+    ou = [(x.get(s) or {}).get("logo") for x in gs for s in ("L", "R")]
+    ou = [u for u in dict.fromkeys(ou) if u and u.startswith("/lg/")]
+    logos.warm(ou)
+    li = {}
+    for u in ou[:12]:
+        v = logos.inline(u)
+        if v:
+            li[u] = v
+    _LV0.update(v={"games": gs, "od": od, "lgi": li}, at=_time.time())
+
+
+def _lv0_loop():
+    while True:
+        try:
+            _lv0_build()
+        except Exception:
+            app.logger.exception("lv0")
+        _time.sleep(float(os.environ.get("LV0_EVERY", "15")))
+
+
+_thr.Thread(target=_lv0_loop, daemon=True, name="lv0").start()
 
 import warmer
 warmer.start(league_order)
