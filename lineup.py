@@ -856,5 +856,45 @@ def football(g):
             return {"kind": "football", "none": True, "why": "invalid"}
         sub = [(p.get("player") or {}) for p in x.get("substitutes") or []]
         mk = lambda p: {"id": p.get("id") or p.get("name"), "no": p.get("number"), "name": __import__("html").unescape(p.get("name") or ""), "pos": _FP.get(p.get("pos"), "")}
-        out[side] = {"form": x.get("formation") or "", "coach": ((x.get("coach") or {}).get("name") or ""), "xi": [mk(p) for p in xi], "subs": [mk(p) for p in sub]}
+        out[side] = {"_no": {p.get("number") for p in xi}, "form": x.get("formation") or "", "coach": ((x.get("coach") or {}).get("name") or ""), "xi": [mk(p) for p in xi], "subs": [mk(p) for p in sub]}
+    try:
+        ef = _espn_forms(g, out)
+    except Exception:
+        ef = None
+    for side in ("home", "away"):
+        nos = out[side].pop("_no")
+        e = (ef or {}).get(side)
+        if e and out[side]["form"] and e != out[side]["form"]:   # 두 출처 포메이션이 다르면 숨김 (라인업은 유지)
+            out[side]["form"] = ""
     return out
+
+
+ESPN_FB = {17: "afc.champions", 18: "afc.cup", 2: "uefa.champions", 3: "uefa.europa", 39: "eng.1", 140: "esp.1", 135: "ita.1", 78: "ger.1", 61: "fra.1", 292: "kor.1", 98: "jpn.1"}
+
+
+def _espn_forms(g, out):
+    """ESPN 같은 경기 포메이션 {home, away}. 시작 ±20분 + 양 팀 선발 등번호 9개 이상 일치로만 같은 경기로 봄. 못 찾으면 None."""
+    from datetime import datetime as _dt, timezone as _tz
+    lg = ESPN_FB.get(g.get("league"))
+    if not lg:
+        return None
+    st = g["start"].astimezone(_tz.utc)
+    dd = st.strftime("%Y%m%d")
+    evs = _cache(("efs", lg, dd), 600, lambda: _j(f"https://site.api.espn.com/apis/site/v2/sports/soccer/{lg}/scoreboard?dates={dd}").get("events") or [])
+    for e in evs or []:
+        try:
+            t = _dt.strptime(e["date"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=_tz.utc)
+        except Exception:
+            continue
+        if abs((t - st).total_seconds()) > 1200:
+            continue
+        sm = _cache(("efm", e["id"]), 900, lambda i=e["id"]: _j(f"https://site.api.espn.com/apis/site/v2/sports/soccer/{lg}/summary?event={i}"))
+        R = {r.get("homeAway"): r for r in (sm or {}).get("rosters") or []}
+        ok = True
+        for side in ("home", "away"):
+            nos = {int(p["jersey"]) for p in (R.get(side) or {}).get("roster") or [] if p.get("starter") and str(p.get("jersey", "")).isdigit()}
+            if len(nos & out[side]["_no"]) < 9:
+                ok = False
+        if ok:
+            return {sd: (R[sd].get("formation") or None) for sd in ("home", "away")}
+    return None
