@@ -62,3 +62,43 @@ def logo(sport, tid):
                 _mem.clear()
             _mem[k] = b
     return Response(b, mimetype="image/webp", headers={"Cache-Control": "public, max-age=2592000, immutable"})
+
+
+_wq, _wset = [], set()
+
+
+def _wloop():
+    import time
+    while True:
+        with _lk:
+            k = _wq.pop(0) if _wq else None
+            if k is None:
+                _wset.discard("_t"); return
+        sport, tid = k.split("_", 1)
+        p = os.path.join(DIR, k + ".webp")
+        if os.path.exists(p) or time.time() - _fail.get(k, 0) < 600:
+            continue
+        try:
+            b = _make(sport, int(tid)); os.makedirs(DIR, exist_ok=True)
+            tmp = p + ".tmp"; open(tmp, "wb").write(b); os.replace(tmp, p)
+        except Exception as e:
+            log.warning("warm %s: %s", k, e); _fail[k] = time.time()
+
+
+def warm(urls):
+    """첫 화면 로고를 서버에서 미리 WebP로 만들어 둬요. 안 만든 로고는 100KB 원본으로 넘어가 늦게 떠서요."""
+    add = []
+    for u in urls:
+        m = re.match(r"^/lg/([a-z-]+)/(\d+)\.webp$", u or "")
+        if m and not os.path.exists(os.path.join(DIR, f"{m.group(1)}_{m.group(2)}.webp")):
+            add.append(f"{m.group(1)}_{m.group(2)}")
+    if not add:
+        return
+    with _lk:
+        for k in add:
+            if k not in _wset:
+                _wset.add(k); _wq.append(k)
+        if "_t" in _wset:
+            return
+        _wset.add("_t")
+    threading.Thread(target=_wloop, daemon=True).start()

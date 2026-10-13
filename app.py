@@ -450,11 +450,21 @@ def api_games_other():
 def index():
     d = parse_day(request.args.get("d"))
     t = today()
+    g0 = _g0(d)
+    lg0 = []
+    try:   # 첫 화면 로고 12개를 HTML 머리에서 미리 받게(preload) 하고, 서버에 없는 건 미리 만들어 둬요
+        allg = sorted((g0 or {}).get("games", []), key=lambda x: x.get("lorder") or 0)
+        urls = [(x.get(s) or {}).get("logo") for x in allg for s in ("L", "R")]
+        urls = [u for u in urls if u and u.startswith("/lg/")]
+        logos.warm(urls)
+        lg0 = list(dict.fromkeys(urls))[:12]
+    except Exception:
+        pass
     return render_template("index.html", page="home", d=d.isoformat(), label=day_label(d),
                            yday=(t - timedelta(days=1)).isoformat(), today=t.isoformat(),
                            tmr=(t + timedelta(days=1)).isoformat(),
                            dmin=(t - timedelta(days=14)).isoformat(), dmax=(t + timedelta(days=7)).isoformat(),
-                           f=request.args.get("f", "all"), g0=_g0(d))
+                           f=request.args.get("f", "all"), g0=g0, lg0=lg0)
 
 
 def _g0(d):
