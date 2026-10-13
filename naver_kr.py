@@ -30,6 +30,7 @@ _cache, _lock = {}, threading.Lock()
 _shown = {}          # key -> (rank, snapshot) 이미 보여준 가장 진행된 상태
 STATS = {"ok": 0, "fail": 0, "last_ok": None, "last_fail": None, "applied": 0, "kept_api": 0}
 MISMATCH = deque(maxlen=50)
+_last_mm = {}
 
 
 def _nm(s):
@@ -220,8 +221,11 @@ def _merge(g, fin_set):
                 best, br, src = n, nr, "naver"
             if n and ar[0] == 0 and nr[0] == 0 and (n["home_score"], n["away_score"]) != (api["home_score"], api["away_score"]) \
                     and api["home_score"] is not None:
-                MISMATCH.append((time.time(), key, "score_diff", {"api": [api["home_score"], api["away_score"], api["status"]],
-                                                                   "naver": [n["home_score"], n["away_score"], n["status"]]}, None))
+                dd = {"api": [api["home_score"], api["away_score"], api["status"]],
+                      "naver": [n["home_score"], n["away_score"], n["status"]], "ahead": "naver" if nr > ar else "api"}
+                if _last_mm.get(key) != dd:      # 같은 불일치는 한 번만
+                    _last_mm[key] = dd
+                    MISMATCH.append((time.time(), key, "score_diff", dd, None))
     prev = _shown.get(key)
     if prev and prev[0] > br:
         best, br = prev[1], prev[0]      # 뒤로 가지 않게
