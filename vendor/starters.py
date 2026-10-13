@@ -15,7 +15,7 @@ from common import log, redact
 from injuries import MLB_TEAM, KBO_TEAM
 
 SEOUL = ZoneInfo("Asia/Seoul")
-TTL = 30 * 60
+TTL = 10 * 60   # 예고 선발 변경이 늦게 반영되지 않도록
 UA = {"User-Agent": "Mozilla/5.0 (twowinscore)"}
 NAVER_H = {**UA, "Referer": "https://m.sports.naver.com/"}
 _cache = {}

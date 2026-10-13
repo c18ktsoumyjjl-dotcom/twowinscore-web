@@ -207,6 +207,63 @@ def _bk_naver(g, live):
     return {"src": "네이버 스포츠", "cols": ["min", "pts", "reb", "ast", "to", "stl", "blk", "tpm"], "home": ho, "away": aw}
 
 
+def _bk_espn(g, live):
+    """NBA: ESPN 박스스코어(정식 선발 표시·정확한 선수 이름). 팀 영문명+시작 ±3시간으로 정확히 한 경기일 때만."""
+    import html as _h
+    from datetime import datetime as _dt, timezone as _tz, timedelta as _tdl
+    try:
+        en = json.load(open(__import__("os").path.join(__import__("os").path.dirname(__file__), "team_en.json")))
+    except Exception:
+        return None
+    he, ae = en.get(f"basketball:{g.get('home_id')}"), en.get(f"basketball:{g.get('away_id')}")
+    if not he or not ae:
+        return None
+    st = g["start"].astimezone(_tz.utc)
+    m, hits = None, 0
+    for dd in {(st - _tdl(hours=12)).strftime("%Y%m%d"), st.strftime("%Y%m%d")}:
+        evs = _cache(("esb", dd), 300, lambda dd=dd: _j(f"https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates={dd}").get("events") or [])
+        for e in evs or []:
+            cs = ((e.get("competitions") or [{}])[0]).get("competitors") or []
+            side = {c.get("homeAway"): ((c.get("team") or {}).get("displayName")) for c in cs}
+            try:
+                t = _dt.strptime(e["date"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=_tz.utc)
+            except Exception:
+                continue
+            if abs((t - st).total_seconds()) > 3 * 3600:
+                continue
+            if side.get("home") == he and side.get("away") == ae and (not m or m["id"] != e["id"]):
+                m, hits = e, hits + 1
+    if not m or hits != 1:
+        return None
+    sm = _cache(("esm", m["id"]), 25 if live else 600, lambda: _j(f"https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event={m['id']}"))
+    out = {}
+    P = {"G": "가드", "F": "포워드", "C": "센터", "PG": "가드", "SG": "가드", "SF": "포워드", "PF": "포워드"}
+    for t in ((sm or {}).get("boxscore") or {}).get("players") or []:
+        nm = (t.get("team") or {}).get("displayName")
+        sd = "home" if nm == he else "away" if nm == ae else None
+        if not sd:
+            return None
+        rows = []
+        for sec in t.get("statistics") or []:
+            keys = sec.get("keys") or []
+            for a in sec.get("athletes") or []:
+                v = dict(zip(keys, a.get("stats") or []))
+                ath = a.get("athlete") or {}
+                n = lambda k: int(v[k]) if str(v.get(k, "")).lstrip("-").isdigit() else None
+                mins = n("minutes")
+                tp = str(v.get("threePointFieldGoalsMade-threePointFieldGoalsAttempted") or "").split("-")[0]
+                rows.append({"id": ath.get("id") or ath.get("displayName"), "name": _h.unescape(ath.get("displayName") or ""), "no": ath.get("jersey"),
+                             "pos": P.get((ath.get("position") or {}).get("abbreviation"), ""), "st": bool(a.get("starter")),
+                             "min": str(mins) if mins else None, "_s": (mins or 0) * 60, "pts": n("points"), "reb": n("rebounds"), "ast": n("assists"),
+                             "to": n("turnovers"), "stl": n("steals"), "blk": n("blocks"), "tpm": int(tp) if tp.isdigit() else None})
+        out[sd] = rows
+    if "home" not in out or "away" not in out or not (out["home"] or out["away"]):
+        return None
+    if sum(p["st"] for p in out["home"]) not in (0, 5) or sum(p["st"] for p in out["away"]) not in (0, 5):
+        return None   # 선발 5명이 아니면 믿지 않음
+    return {"src": "ESPN", "cols": ["min", "pts", "reb", "ast", "to", "stl", "blk", "tpm"], "home": out["home"], "away": out["away"]}
+
+
 def _bk_api(g, live):
     import teamodds as T
     gid = g.get("id")
@@ -223,7 +280,7 @@ def _bk_api(g, live):
     for x in rs:
         pl = x.get("player") or {}
         s = sec(x.get("minutes"))
-        row = {"id": pl.get("id") or pl.get("name"), "name": pl.get("name"), "pos": "", "st": x.get("type") == "starters",
+        row = {"id": pl.get("id") or pl.get("name"), "name": __import__("html").unescape(pl.get("name") or ""), "pos": "", "st": x.get("type") == "starters",
                "min": x.get("minutes") if s else None, "_s": s, "pts": x.get("points"), "reb": (x.get("rebounds") or {}).get("total"),
                "ast": x.get("assists"), "tpm": (x.get("threepoint_goals") or {}).get("total")}
         ((ho if (x.get("team") or {}).get("id") == hid else aw)).append(row)
@@ -231,6 +288,10 @@ def _bk_api(g, live):
     cols = [c for c in ("min", "pts", "reb", "ast", "tpm") if has(c)]
     if cols == [] or not has("pts"):
         return None
+    ns = lambda L: sum(1 for r in L if r["st"])
+    if ns(ho) not in (0, 5) or ns(aw) not in (0, 5):   # 선발 표시가 이상하면 선발/벤치 구분 없이 보여줌
+        for r in ho + aw:
+            r["st"] = False
     return {"src": "API-Sports", "cols": cols, "home": ho, "away": aw}
 
 
@@ -243,10 +304,12 @@ def basketball(g):
     try:
         if g.get("league") in (91, 92):
             r = _bk_naver(g, live)
+        elif g.get("league") == 12:
+            r = _bk_espn(g, live)
         r = r or _bk_api(g, live)
     except Exception:
         r = None
-    if not r:
+    if not r or not (r.get("home") or r.get("away")):
         return None
     for k in ("home", "away"):
         r[k].sort(key=lambda p: (not p["st"], -(p["_s"] or 0)))
