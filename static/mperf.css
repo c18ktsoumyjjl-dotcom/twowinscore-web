@@ -7,6 +7,7 @@
 .st .lv .dot{animation:pw 1.2s infinite!important}
 @keyframes mpz{0%{transform:scale(1);opacity:.6}100%{transform:scale(3);opacity:0}}
 .tp .tpg .pu{animation:tpZ 1.6s ease-out infinite!important;transform-box:fill-box;transform-origin:center;r:5px}
+.tp .tph:not(.on) .pu{animation:none!important}
 @keyframes tpZ{from{transform:scale(1);opacity:.9}to{transform:scale(4.4);opacity:0}}
 }
 @media (max-width:1023px) and (prefers-reduced-motion:reduce){
