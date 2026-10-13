@@ -48,6 +48,7 @@ PC=""".tp.pcv{padding:0;margin:0 0 12px;background:none}
 .dmain:has(>.tp.pcv) #hero .t6,.dmain:has(>.tp.pcv) #hero .score5{display:none}
 .dmain:has(>.tp.pcv) #hero .m6{display:block;margin:0;padding:0}
 .dmain:has(>.tp.pcv) #hero .m6>span{margin:0}
+#list .g5{grid-template-columns:64px minmax(0,1fr) 176px minmax(0,1fr) 40px}
 .lsx{padding:10px 12px 0}.lsx .tp.pcv{margin:0}.lsx .lsl{margin:0;padding:8px 0;font-size:12px;opacity:.6}
 .lsmore{display:block;text-align:right;margin:6px 2px 0;font-size:12px;font-weight:800;color:#ff8a3d;text-decoration:none}.lsmore:hover{text-decoration:underline}"""
 open("static/pcv.css","w").write("/* 자동 생성(ops/gen_pcv.py): PC 상세 경기장 스트립 = 모바일 E안과 동일한 모양. 모바일엔 영향 없음 */\n@media (min-width:1024px){\n"+"\n".join(rules)+"\n"+PC+"\n}\n")

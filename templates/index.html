@@ -190,4 +190,4 @@ let dn=null,mv=false;c.addEventListener('pointerdown',e=>{if(e.pointerType!=='mo
 addEventListener('pointermove',e=>{if(!dn)return;const dx=e.clientX-dn.x;if(Math.abs(dx)>4){mv=true;c.classList.add('drag')}if(mv)c.scrollLeft=dn.s-dx});
 addEventListener('pointerup',()=>{dn=null;setTimeout(()=>c.classList.remove('drag'),0)});
 c.addEventListener('click',e=>{if(mv){e.stopImmediatePropagation();e.preventDefault();mv=false}},true);upd()})();
-</script><link rel="stylesheet" href="/static/pcv.css?v=2"><script src="/static/lstrip.js?v=1"></script>{% endblock %}
+</script><link rel="stylesheet" href="/static/pcv.css?v=3"><script src="/static/lstrip.js?v=1"></script>{% endblock %}
