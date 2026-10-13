@@ -229,7 +229,7 @@ def _odds_loop():
                     continue
                 sv = teamodds.snap_get(g["kind"], g["id"])
                 age = 40 * 60 if mins < 360 else 120 * 60   # 배당 있는 경기 갱신: 6시간 안 40분, 그 뒤 2시간
-                if sv and sv.get("src") != "the-odds-api" and time.time() - sv.get("saved", 0) < age:
+                if sv and sv.get("src") not in ("the-odds-api", "betsapi") and time.time() - sv.get("saved", 0) < age:
                     continue
                 # 배당 없음 재시도: 6시간 안 20분, 24시간 안 45분, 그 뒤 2시간(새로 열린 배당을 빨리 채우려고)
                 nage = 20 * 60 if mins < 360 else (45 * 60 if mins < 1440 else 120 * 60)
@@ -247,6 +247,11 @@ def _odds_loop():
                 theoddsapi.fill(gs)
             except Exception as e:
                 log.warning("theoddsapi fill: %s", type(e).__name__)
+            try:   # API-Sports 에 배당이 없는 KOVO 배구만 BetsAPI 로 보충(토큰 없으면 무동작)
+                import betsapi_vb
+                betsapi_vb.fill(gs)
+            except Exception as e:
+                log.warning("betsapi fill: %s", type(e).__name__)
             n += 1
             if n % 50 == 1:
                 teamodds.snap_prune()
