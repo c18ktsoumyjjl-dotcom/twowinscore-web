@@ -6,6 +6,11 @@
 "ko": "정규민",
 "team": 2759
 },
+"10031": {
+"how": "daum-acl:team+num+pos",
+"ko": "그레고리",
+"team": 2897
+},
 "10042": {
 "how": "num+pos",
 "ko": "엘베르",
@@ -31,6 +36,16 @@
 "ko": "놉폰 락혼폰",
 "team": 2776
 },
+"10108": {
+"how": "daum-acl:team+num+pos",
+"ko": "라니엘",
+"team": 2769
+},
+"10111": {
+"how": "daum-acl:team+num+pos",
+"ko": "벤투",
+"team": 2939
+},
 "10135": {
 "how": "en+num",
 "ko": "브루노 기마랑이스",
@@ -45,6 +60,11 @@
 "how": "num+pos",
 "ko": "마테우스 툴레르",
 "team": 289
+},
+"10172": {
+"how": "daum-acl:team+num+pos",
+"ko": "유리",
+"team": 2870
 },
 "10176": {
 "how": "num+pos",
@@ -86,6 +106,11 @@
 "ko": "주앙 페드로",
 "team": 49
 },
+"10354": {
+"how": "daum-acl:team+num+pos",
+"ko": "하칭요",
+"team": 4217
+},
 "10459": {
 "how": "num+pos",
 "ko": "다완",
@@ -101,6 +126,11 @@
 "ko": "아시에르 비야리브레",
 "team": 4665
 },
+"104894": {
+"how": "daum-acl:team+num+pos",
+"ko": "모야노",
+"team": 2780
+},
 "104903": {
 "how": "en+num",
 "ko": "에네코 하우레기",
@@ -111,10 +141,20 @@
 "ko": "파블로 마르티네스",
 "team": 535
 },
+"10499": {
+"how": "daum-acl:team+num+pos",
+"ko": "다를랑",
+"team": 2780
+},
 "105015": {
 "how": "en+num",
 "ko": "헤르만 파레뇨",
 "team": 544
+},
+"105059": {
+"how": "daum-acl:team+num+pos",
+"ko": "사바테르",
+"team": 16400
 },
 "105154": {
 "how": "en+num",
@@ -125,6 +165,16 @@
 "how": "num+pos",
 "ko": "올렉산드르 주브코프",
 "team": 575
+},
+"10575": {
+"how": "daum-acl:team+num+pos",
+"ko": "리바마르",
+"team": 3681
+},
+"106525": {
+"how": "daum-acl:team+num+pos",
+"ko": "베르기뉴",
+"team": 2445
 },
 "106725": {
 "how": "en+num",
@@ -270,6 +320,16 @@
 "how": "en+num",
 "ko": "미나미노 다쿠미",
 "team": 91
+},
+"110165": {
+"how": "daum-acl:team+num+pos",
+"ko": "주니뉴",
+"team": 4453
+},
+"110359": {
+"how": "daum-acl:team+num+pos",
+"ko": "찬신이치",
+"team": 833
 },
 "111266": {
 "how": "num+pos",
@@ -776,6 +836,11 @@
 "ko": "압두하미트 압두게니",
 "team": 830
 },
+"12780": {
+"how": "daum-acl:team+num+pos",
+"ko": "가오텐이",
+"team": 833
+},
 "127802": {
 "how": "en+num",
 "ko": "카스 오덴탈",
@@ -795,6 +860,11 @@
 "how": "en+num",
 "ko": "조쉬 마야",
 "team": 111
+},
+"12791": {
+"how": "daum-acl:team+num+pos",
+"ko": "우시",
+"team": 833
 },
 "128178": {
 "how": "num+pos",
@@ -911,6 +981,16 @@
 "ko": "일리아 그레브",
 "team": 63
 },
+"12922": {
+"how": "daum-acl:team+num+pos",
+"ko": "한지아치",
+"team": 830
+},
+"12962": {
+"how": "daum-acl:team+num+pos",
+"ko": "주천제",
+"team": 833
+},
 "129672": {
 "how": "en+num",
 "ko": "테오 베르모트",
@@ -925,6 +1005,11 @@
 "how": "en+num",
 "ko": "아민 아들리",
 "team": 35
+},
+"12969": {
+"how": "daum-acl:team+num+pos",
+"ko": "왕하이젠",
+"team": 833
 },
 "129693": {
 "how": "en+num",
@@ -945,6 +1030,11 @@
 "how": "en+num",
 "ko": "주드 벨링엄",
 "team": 541
+},
+"12972": {
+"how": "daum-acl:team+num+pos",
+"ko": "쉬하오양",
+"team": 833
 },
 "129791": {
 "how": "en+num",
@@ -995,6 +1085,11 @@
 "how": "num+pos",
 "ko": "사데그 모하라미",
 "team": 2737
+},
+"13110": {
+"how": "daum-acl:team+num+pos",
+"ko": "카오용징",
+"team": 830
 },
 "1314": {
 "how": "en+num",
@@ -1070,6 +1165,11 @@
 "how": "num+pos",
 "ko": "로렌초 피롤라",
 "team": 553
+},
+"134741": {
+"how": "daum-acl:team+num+pos",
+"ko": "클라리스마리우",
+"team": 944
 },
 "134827": {
 "how": "num+pos",
@@ -1651,6 +1751,11 @@
 "ko": "옌스 스테이지",
 "team": 162
 },
+"156": {
+"how": "daum-acl:team+num+pos",
+"ko": "말콤",
+"team": 2871
+},
 "1561": {
 "how": "en+num",
 "ko": "마르크 바르트라",
@@ -1700,6 +1805,11 @@
 "how": "num+pos",
 "ko": "왕 전아오",
 "team": 836
+},
+"156769": {
+"how": "daum-acl:team+num+pos",
+"ko": "브루노",
+"team": 2871
 },
 "1570": {
 "how": "en+num",
@@ -2831,6 +2941,11 @@
 "ko": "해리 윙크스",
 "team": 490
 },
+"182070": {
+"how": "daum-acl:team+num+pos",
+"ko": "안드레",
+"team": 3681
+},
 "1821": {
 "how": "en+num",
 "ko": "필립 코스티치",
@@ -3140,6 +3255,11 @@
 "how": "en+num",
 "ko": "라몬 테라츠",
 "team": 546
+},
+"18800": {
+"how": "daum-acl:team+num+pos",
+"ko": "나바로",
+"team": 2780
 },
 "18806": {
 "how": "en+num",
@@ -3821,6 +3941,11 @@
 "ko": "클레이톤",
 "team": 553
 },
+"195622": {
+"how": "daum-acl:team+num+pos",
+"ko": "산딥만디",
+"team": 21137
+},
 "19569": {
 "how": "en+num",
 "ko": "조 겔하트",
@@ -4106,6 +4231,11 @@
 "ko": "벤 화이트",
 "team": 42
 },
+"199723": {
+"how": "daum-acl:team+num+pos",
+"ko": "쉐칭하오",
+"team": 833
+},
 "19974": {
 "how": "num+pos",
 "ko": "아이반 토니",
@@ -4200,6 +4330,11 @@
 "how": "num+pos",
 "ko": "허자웅",
 "team": 2761
+},
+"201536": {
+"how": "daum-acl:team+num+pos",
+"ko": "옹위엔",
+"team": 4206
 },
 "202501": {
 "how": "en+num",
@@ -4721,6 +4856,11 @@
 "ko": "비탈리 미콜렌코",
 "team": 45
 },
+"216668": {
+"how": "daum-acl:team+num+pos",
+"ko": "레반도",
+"team": 16400
+},
 "216815": {
 "how": "num+pos",
 "ko": "패트릭 우드",
@@ -5181,6 +5321,11 @@
 "ko": "라파 마린",
 "team": 492
 },
+"237072": {
+"how": "daum-acl:team+num+pos",
+"ko": "레난",
+"team": 2870
+},
 "237087": {
 "how": "en+num",
 "ko": "에쿠이 페르난데스",
@@ -5255,6 +5400,11 @@
 "how": "num+pos",
 "ko": "오베르단",
 "team": 310
+},
+"237961": {
+"how": "daum-acl:team+num+pos",
+"ko": "바르보자",
+"team": 5396
 },
 "2380": {
 "how": "en+num",
@@ -5841,6 +5991,11 @@
 "ko": "카마다 다이치",
 "team": 52
 },
+"2602": {
+"how": "daum-acl:team+num+pos",
+"ko": "코바야시",
+"team": 4206
+},
 "2604": {
 "how": "num+pos",
 "ko": "시바사키 가쿠",
@@ -6186,6 +6341,11 @@
 "ko": "크리스토스 만다스",
 "team": 487
 },
+"266495": {
+"how": "daum-acl:team+num+pos",
+"ko": "왕스룽",
+"team": 833
+},
 "266657": {
 "how": "en+num",
 "ko": "사비우",
@@ -6210,6 +6370,11 @@
 "how": "num+pos",
 "ko": "라자르 로마니치",
 "team": 294
+},
+"2676": {
+"how": "daum-acl:team+num+pos",
+"ko": "네베스",
+"team": 2932
 },
 "26762": {
 "how": "num+pos",
@@ -7356,6 +7521,11 @@
 "ko": "캘럼 윌슨",
 "team": 55
 },
+"294574": {
+"how": "daum-acl:team+num+pos",
+"ko": "풍척헤이",
+"team": 4453
+},
 "294722": {
 "how": "en+num",
 "ko": "플라비우 나진후",
@@ -7961,6 +8131,11 @@
 "ko": "로렌조 몬티포",
 "team": 517
 },
+"306216": {
+"how": "daum-acl:team+num+pos",
+"ko": "마테우상",
+"team": 2870
+},
 "306380": {
 "how": "num+pos",
 "ko": "무사브 알 주와이르",
@@ -8196,6 +8371,11 @@
 "ko": "케빈 디크스",
 "team": 163
 },
+"310514": {
+"how": "daum-acl:team+num+pos",
+"ko": "바이양",
+"team": 830
+},
 "31056": {
 "how": "en+num",
 "ko": "사무엘레 리치",
@@ -8330,6 +8510,11 @@
 "how": "en+num",
 "ko": "알레산드로 부온조르노",
 "team": 492
+},
+"312311": {
+"how": "daum-acl:team+num+pos",
+"ko": "미셰우",
+"team": 4217
 },
 "312468": {
 "how": "en+num",
@@ -9170,6 +9355,11 @@
 "how": "num+pos",
 "ko": "아베 히로키",
 "team": 287
+},
+"32986": {
+"how": "daum-acl:team+num+pos",
+"ko": "김민태",
+"team": 303
 },
 "33": {
 "how": "en+num",
@@ -10230,6 +10420,11 @@
 "how": "en+num",
 "ko": "자코포 파치니",
 "team": 490
+},
+"340877": {
+"how": "daum-acl:team+num+pos",
+"ko": "진순카이",
+"team": 833
 },
 "34120": {
 "how": "num+pos+roman",
@@ -11956,6 +12151,11 @@
 "ko": "메흐디 하셈네자드",
 "team": 2737
 },
+"357128": {
+"how": "daum-acl:team+num+pos",
+"ko": "판응옥띤",
+"team": 16400
+},
 "357207": {
 "how": "num+pos+roman",
 "ko": "최예훈",
@@ -12175,6 +12375,11 @@
 "how": "en+num",
 "ko": "산티아고 카스타녜다",
 "team": 185
+},
+"363216": {
+"how": "daum-acl:team+num+pos",
+"ko": "구가",
+"team": 2875
 },
 "363322": {
 "how": "num+pos",
@@ -12695,6 +12900,11 @@
 "how": "num+pos",
 "ko": "사만 투라니안",
 "team": 2733
+},
+"380": {
+"how": "daum-acl:team+num+pos",
+"ko": "오타비우",
+"team": 2897
 },
 "380512": {
 "how": "en+num",
@@ -14016,6 +14226,11 @@
 "ko": "곤다 슈이치",
 "team": 289
 },
+"41367": {
+"how": "daum-acl:team+num+pos",
+"ko": "파울리뉴",
+"team": 2780
+},
 "41371": {
 "how": "en+num",
 "ko": "팔리 칸데",
@@ -14160,6 +14375,11 @@
 "how": "en+num",
 "ko": "주앙 마리우",
 "team": 502
+},
+"417464": {
+"how": "daum-acl:team+num+pos",
+"ko": "카르세",
+"team": 4204
 },
 "417550": {
 "how": "en+num",
@@ -14365,6 +14585,11 @@
 "how": "num+pos",
 "ko": "메흐디 타레미",
 "team": 2872
+},
+"423529": {
+"how": "daum-acl:team+num+pos",
+"ko": "우치펑",
+"team": 833
 },
 "423532": {
 "how": "num+pos",
@@ -14875,6 +15100,11 @@
 "how": "num+pos",
 "ko": "마르코스 길예르메",
 "team": 2523
+},
+"44493": {
+"how": "daum-acl:team+num+pos",
+"ko": "안셀모",
+"team": 948
 },
 "444961": {
 "how": "en+num",
@@ -16306,6 +16536,11 @@
 "ko": "세드릭 이텐",
 "team": 162
 },
+"48572": {
+"how": "daum-acl:team+num+pos",
+"ko": "네이선",
+"team": 2780
+},
 "48612": {
 "how": "en+num",
 "ko": "카스트리오트 이메리",
@@ -16996,10 +17231,30 @@
 "ko": "니콜라스 타글리아피코",
 "team": 80
 },
+"531302": {
+"how": "daum-acl:team+num+pos",
+"ko": "응우예딘박",
+"team": 16400
+},
 "531443": {
 "how": "num+pos",
 "ko": "에야드 후사",
 "team": 2933
+},
+"531539": {
+"how": "daum-acl:team+num+pos",
+"ko": "리마리오",
+"team": 3681
+},
+"531682": {
+"how": "daum-acl:team+num+pos",
+"ko": "하반프엉",
+"team": 16400
+},
+"531694": {
+"how": "daum-acl:team+num+pos",
+"ko": "부탄빈",
+"team": 16400
 },
 "532426": {
 "how": "num+pos",
@@ -17095,6 +17350,11 @@
 "how": "en+num",
 "ko": "노아 랑",
 "team": 492
+},
+"54408": {
+"how": "daum-acl:team+num+pos",
+"ko": "파울리뉴",
+"team": 4457
 },
 "544897": {
 "how": "num+pos",
@@ -17411,6 +17671,11 @@
 "ko": "안톤",
 "team": 2750
 },
+"560848": {
+"how": "daum-acl:team+num+pos",
+"ko": "한쟈원",
+"team": 833
+},
 "56274": {
 "how": "num+pos",
 "ko": "반데이라",
@@ -17430,6 +17695,11 @@
 "how": "en+num",
 "ko": "블라디미로 팔코네",
 "team": 867
+},
+"564617": {
+"how": "daum-acl:team+num+pos",
+"ko": "브레니뉴",
+"team": 5396
 },
 "56473": {
 "how": "en+num",
@@ -17506,10 +17776,20 @@
 "ko": "시아카 시디베",
 "team": 2872
 },
+"568537": {
+"how": "daum-acl:team+num+pos",
+"ko": "글레이송",
+"team": 17666
+},
 "568621": {
 "how": "num+pos",
 "ko": "호드리고",
 "team": 2872
+},
+"570039": {
+"how": "daum-acl:team+num+pos",
+"ko": "두두",
+"team": 4453
 },
 "570210": {
 "how": "en+num",
@@ -17561,6 +17841,16 @@
 "ko": "아코르 애덤스",
 "team": 517
 },
+"574657": {
+"how": "daum-acl:team+num+pos",
+"ko": "칼럼비티",
+"team": 4453
+},
+"574661": {
+"how": "daum-acl:team+num+pos",
+"ko": "클레이통",
+"team": 4453
+},
 "574733": {
 "how": "en+num",
 "ko": "빌 음송고",
@@ -17586,6 +17876,11 @@
 "ko": "살만 알 자다니",
 "team": 2929
 },
+"576608": {
+"how": "daum-acl:team+num+pos",
+"ko": "마르키뇨스",
+"team": 4457
+},
 "576948": {
 "how": "en+num",
 "ko": "도미니크 드로브니치",
@@ -17600,6 +17895,11 @@
 "how": "num+pos",
 "ko": "알렉스",
 "team": 2751
+},
+"579529": {
+"how": "daum-acl:team+num+pos",
+"ko": "리켈메",
+"team": 2870
 },
 "579593": {
 "how": "num+pos",
@@ -17746,6 +18046,11 @@
 "ko": "마리오스 발라모티스",
 "team": 575
 },
+"592937": {
+"how": "daum-acl:team+num+pos",
+"ko": "반랄페카기타",
+"team": 21137
+},
 "595817": {
 "how": "en+num",
 "ko": "압두살람 코나테",
@@ -17865,6 +18170,11 @@
 "how": "en+num",
 "ko": "카를로스 프로테소니",
 "team": 542
+},
+"608951": {
+"how": "daum-acl:team+num+pos",
+"ko": "티아고",
+"team": 2870
 },
 "610145": {
 "how": "en+num",
@@ -18205,6 +18515,11 @@
 "how": "num+pos",
 "ko": "아흐메드 알 시야히",
 "team": 2933
+},
+"636573": {
+"how": "daum-acl:team+num+pos",
+"ko": "마르컹",
+"team": 4453
 },
 "637": {
 "how": "en+num",
@@ -18601,6 +18916,11 @@
 "ko": "청 시",
 "team": 830
 },
+"644407": {
+"how": "daum-acl:team+num+pos",
+"ko": "왕쓰쩌",
+"team": 830
+},
 "644603": {
 "how": "num+pos+roman",
 "ko": "이윤환",
@@ -18761,10 +19081,35 @@
 "ko": "얀 야호나",
 "team": 2872
 },
+"64936": {
+"how": "daum-acl:team+num+pos",
+"ko": "피민롱",
+"team": 3681
+},
+"64945": {
+"how": "daum-acl:team+num+pos",
+"ko": "쩐딘쫑",
+"team": 16400
+},
+"64949": {
+"how": "daum-acl:team+num+pos",
+"ko": "도안반허우",
+"team": 16400
+},
+"64953": {
+"how": "daum-acl:team+num+pos",
+"ko": "응우옌꽝하이",
+"team": 16400
+},
 "649766": {
 "how": "num+pos",
 "ko": "사카이 유히",
 "team": 316
+},
+"65029": {
+"how": "daum-acl:team+num+pos",
+"ko": "레팜탄롱",
+"team": 16400
 },
 "6503": {
 "how": "en+num",
@@ -19031,6 +19376,21 @@
 "ko": "장하오란",
 "team": 830
 },
+"669166": {
+"how": "daum-acl:team+num+pos",
+"ko": "뤄쯔샹",
+"team": 830
+},
+"669167": {
+"how": "daum-acl:team+num+pos",
+"ko": "류줜쩌",
+"team": 830
+},
+"669168": {
+"how": "daum-acl:team+num+pos",
+"ko": "천캉위에",
+"team": 830
+},
 "669866": {
 "how": "en+num",
 "ko": "알바로 파디야",
@@ -19206,6 +19566,11 @@
 "ko": "김주헌",
 "team": 2760
 },
+"6797": {
+"how": "daum-acl:team+num+pos",
+"ko": "데이비슨",
+"team": 944
+},
 "67971": {
 "how": "en+num",
 "ko": "마크 게히",
@@ -19286,6 +19651,11 @@
 "ko": "미콜라 마트비옌코",
 "team": 550
 },
+"682856": {
+"how": "daum-acl:team+num+pos",
+"ko": "부메수스",
+"team": 17666
+},
 "682906": {
 "how": "num+pos+roman",
 "ko": "장하윤",
@@ -19360,6 +19730,11 @@
 "how": "num+pos",
 "ko": "은고이",
 "team": 2753
+},
+"70314": {
+"how": "daum-acl:team+num+pos",
+"ko": "웨슬레이",
+"team": 2897
 },
 "70500": {
 "how": "en+num",
@@ -19480,6 +19855,11 @@
 "how": "en+num",
 "ko": "아마르 데디치",
 "team": 34
+},
+"73269": {
+"how": "daum-acl:team+num+pos",
+"ko": "송의영",
+"team": 4204
 },
 "7327": {
 "how": "en+num",
@@ -19666,6 +20046,11 @@
 "ko": "니콜로 자니올로",
 "team": 494
 },
+"78975": {
+"how": "daum-acl:team+num+pos",
+"ko": "양쩌샹",
+"team": 833
+},
 "790": {
 "how": "en+num",
 "ko": "에딘 제코",
@@ -19716,6 +20101,11 @@
 "ko": "마테우스 비도토",
 "team": 306
 },
+"80492": {
+"how": "daum-acl:team+num+pos",
+"ko": "비솔리",
+"team": 2780
+},
 "80497": {
 "how": "en+num",
 "ko": "이마드 론디치",
@@ -19735,6 +20125,11 @@
 "how": "num+pos",
 "ko": "페신",
 "team": 2765
+},
+"80539": {
+"how": "daum-acl:team+num+pos",
+"ko": "자드솜",
+"team": 2875
 },
 "80752": {
 "how": "en+num",
@@ -20276,6 +20671,11 @@
 "ko": "레오 세아라",
 "team": 290
 },
+"9557": {
+"how": "daum-acl:team+num+pos",
+"ko": "마이우송",
+"team": 2936
+},
 "9566": {
 "how": "num+pos",
 "ko": "아드리에우송",
@@ -20310,6 +20710,11 @@
 "how": "num+pos",
 "ko": "델란",
 "team": 2756
+},
+"96335": {
+"how": "daum-acl:team+num+pos",
+"ko": "빅톨",
+"team": 2769
 },
 "9658": {
 "how": "num+pos",
