@@ -13,5 +13,5 @@
 <div class="tpt R"><b>{{g.R.name}}</b>{% if g.R.logo %}<img src="{{g.R.logo}}" alt="">{% endif %}</div></div>
 {% if k=='baseball' and t.state=='live' %}<div class="tpbb" hidden><svg viewBox="0 0 30 22" class="bs"><rect id="b2" x="11" y="1" width="8" height="8" transform="rotate(45 15 5)"/><rect id="b3" x="3" y="9" width="8" height="8" transform="rotate(45 7 13)"/><rect id="b1" x="19" y="9" width="8" height="8" transform="rotate(45 23 13)"/></svg><span class="bso"></span></div>{% endif %}
 <div class="tpfx" aria-live="polite"></div>{% if t.state!='scheduled' %}<div class="tpev" id="tpev"{% if not t.pl %} hidden{% endif %}>{{ t.pl[0] if t.pl }}</div>{% endif %}</div>
-<div class="tpod" id="tpod" hidden></div>
+<div class="tpod" id="tpod"{{ "" if g.odh else " hidden" }}></div>
 </section>{% endmacro %}

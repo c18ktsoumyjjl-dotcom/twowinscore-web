@@ -489,6 +489,11 @@ def game(key):
         abort(404)
     v = view(g)
     lh = v["left_home"]
+    try:
+        import teamodds
+        v["odh"] = teamodds.has_hint(g)
+    except Exception:
+        v["odh"] = False
     import concurrent.futures as cf
     global _gpool
     try:

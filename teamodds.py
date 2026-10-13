@@ -191,6 +191,19 @@ def _lines(b):
     return out
 
 
+def has_hint(g):
+    """네트워크 조회 없이 배당이 있을 가능성(메모리 캐시/스냅샷). 첫 화면 자리 확보용."""
+    try:
+        kind, gid = g.get("kind"), g.get("id")
+        if kind not in HOSTS or not gid:
+            return False
+        with _lk:
+            e = _c.get(("odds", kind, gid))
+        return bool((e and e[1]) or snap_get(kind, gid))
+    except Exception:
+        return False
+
+
 def odds(g, lite=False):
     """{"book","bs","H","A",("D"),"mv","at","final"} 또는 None. 시작/종료 경기는 마지막 경기 전 배당(1회 조회 후 고정)."""
     kind = g.get("kind")
