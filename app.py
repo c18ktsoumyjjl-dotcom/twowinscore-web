@@ -1033,3 +1033,11 @@ if __name__ == "__main__":
     import os
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8088)), threaded=True, debug=False)
 chat._cheer_db_init()
+
+
+@app.route("/healthz")
+def _healthz():
+    import os as _os
+    cd = _os.environ.get("CACHE_DIR", "")
+    return {"ok": True, "commit": _os.environ.get("RENDER_GIT_COMMIT", "")[:7],
+            "cache_on_disk": cd.startswith("/var/data") and _os.path.isdir(cd)}, 200, {"Cache-Control": "no-store"}
