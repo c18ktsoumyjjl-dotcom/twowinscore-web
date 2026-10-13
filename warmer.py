@@ -1,6 +1,6 @@
 """경기 상세 미리 받기(워머).
-오늘(KST) 경기 + 내일 새벽(06시 전) 경기의 상세 자료를 미리 캐시해서 경기 화면 첫 방문도 바로 열리게 해요.
-- 우선순위: 진행 중 / 3시간 안에 시작 → 인기 리그(LEAGUE_POP) → 시작 시간
+오늘(KST) 주 목록·기타 리그 전 경기 + 내일 새벽(06시 전) 경기의 상세·요약·승률·중계·라인업·배당을 미리 캐시해서 경기 화면 첫 방문도 바로 열리게 해요.
+- 우선순위: 진행 중 → 3시간 안에 시작 → 나머지 예정 → 끝난 경기(각각 주 목록 먼저). 종목별 하루 한도 25% 넘으면 그 종목 쉼(/status).
 - 진행 중: 상세 TTL(30분)마다 갱신 · 예정: 캐시 없거나 3시간 안이면 TTL(15분)마다 · 끝난 경기: 한 번만
 - 속도 제한: 워머 자신은 분당 최대 WARM_PER_MIN 회 API, 경기 사이 최소 GAP 초. 전체 API 호출이 분당 GLOBAL_SOFT 를 넘으면 쉼(라이브 갱신 우선).
 - gunicorn 워커가 여러 개여도 파일 잠금으로 하나만 돌아요."""
@@ -10,9 +10,9 @@ from collections import deque
 import data
 
 log = logging.getLogger("warmer")
-WARM_PER_MIN = int(os.environ.get("WARM_PER_MIN", "20"))
+WARM_PER_MIN = int(os.environ.get("WARM_PER_MIN", "40"))
 GLOBAL_SOFT = int(os.environ.get("WARM_GLOBAL_SOFT", "120"))
-GAP = 3.0
+GAP = 1.0
 LOOP = 60
 STATUS = os.path.join(data.CACHE, "warmer_status.json")
 
@@ -45,35 +45,98 @@ _done = {}      # key -> 마지막으로 데운 시각
 _stat = {"warmed": 0, "errors": 0, "last": None, "queue": 0, "day_warm": 0, "day": ""}
 
 
-def _ttl(g):
-    return 30 * 60 if g["state"] != "scheduled" else 15 * 60
+QUOTA_CAP = float(os.environ.get("WARM_QUOTA_CAP", "0.25"))   # 종목별 하루 한도의 25% 넘으면 그 종목은 미리 받기 쉼
+SOON = 3 * 3600
+
+
+def _secs_to_start(g):
+    try:
+        return (g["start"] - datetime.now(data.SEOUL)).total_seconds()
+    except Exception:
+        return 10 ** 9
+
+
+def _tier(g):
+    """0=진행 중, 1=곧 시작(3시간 안), 2=나머지 예정, 3=끝남"""
+    st = g.get("state")
+    if st == "live":
+        return 0
+    if st == "scheduled":
+        return 1 if _secs_to_start(g) < SOON else 2
+    return 3
+
+
+# 다시 데우는 간격(초). 각 함수가 자기 캐시 TTL 을 갖고 있어서, 신선하면 API 를 안 부름.
+REWARM = {0: 10 * 60, 1: 15 * 60, 2: 60 * 60, 3: None}
 
 
 def _due(g, now):
-    name = "detail_" + str(g["key"]).replace(":", "_") + ".json"
-    c = data._rd(name)
-    age = now - c["ts"] if c else None
-    soon = g["state"] == "scheduled" and g.get("start") and (g["start"] - datetime.now(data.SEOUL)).total_seconds() < 3 * 3600
-    if c is None:
+    last = _done.get(g["key"])
+    if last is None:
         return True
-    if g["state"] == "live":
-        return age > _ttl(g)
-    if g["state"] == "final":
-        return False                      # 끝난 경기는 한 번만
-    return bool(soon) and age > _ttl(g)
+    iv = REWARM[_tier(g)]
+    return iv is not None and now - last > iv
 
 
 def _games():
+    """오늘(KST) 주 목록 + 기타 리그 전부 + 내일 새벽(06시 전) 경기."""
     now = datetime.now(data.SEOUL)
     t = now.date()
-    gs, _ = data.games_for(t)
+    gs = list(data.games_for(t)[0]) + list(data.others_for(t, refresh=False))
     try:
-        g2, _ = data.games_for(t + timedelta(days=1))
-        lim = datetime.combine(t + timedelta(days=1), datetime.min.time(), tzinfo=data.SEOUL) + timedelta(hours=6)
+        t2 = t + timedelta(days=1)
+        lim = datetime.combine(t2, datetime.min.time(), tzinfo=data.SEOUL) + timedelta(hours=6)
+        g2 = list(data.games_for(t2)[0]) + list(data.others_for(t2, refresh=False))
         gs += [g for g in g2 if g.get("start") and g["start"] < lim]
     except Exception:
         pass
-    return gs
+    seen, out = set(), []
+    for g in gs:
+        if g["key"] in seen:
+            continue
+        seen.add(g["key"]); out.append(g)
+    return out
+
+
+_qstate = {}
+
+
+def _quota_ok(kind):
+    """/status(할당량 미포함, 10분 캐시)로 확인. 25% 넘으면 False. 확인 실패하면 보수적으로 라이브만 허용."""
+    try:
+        q = data.quota(kind)
+    except Exception:
+        q = None
+    if not q or not q[1]:
+        _qstate[kind] = None
+        return None
+    r = q[0] / q[1]
+    _qstate[kind] = round(r * 100, 2)
+    return r < QUOTA_CAP
+
+
+def _warm_one(g):
+    """경기 상세 페이지(/game)와 그 페이지가 부르는 API 가 쓰는 캐시를 전부 채움."""
+    import plus, plays, teamodds
+    lh = g["kind"] != "baseball"
+    data.detail(g)
+    for fn in (lambda: plus.summary(g), lambda: plus.winprob(g, lh), lambda: plays.commentary(g),
+               lambda: teamodds.odds(g), lambda: teamodds.odds(g, True), lambda: _lineup(g)):
+        try:
+            fn()
+        except Exception as e:
+            log.debug("warm part %s: %s", g["key"], e)
+
+
+def _lineup(g):
+    import lineup
+    k = g["kind"]
+    if k == "baseball":
+        return lineup.get(g)
+    if k == "basketball":
+        return lineup.basketball(g)
+    if k == "football":
+        return lineup.football(g)
 
 
 def _save():
@@ -96,13 +159,23 @@ def _loop(order):
             day = datetime.now(data.SEOUL).strftime("%Y-%m-%d")
             if _stat["day"] != day:
                 _stat.update(day=day, day_warm=0)
+                _done.clear()
             now = time.time()
-            gs = [g for g in _games() if _due(g, now)]
-            def pri(g):
-                hot = g["state"] == "live" or (g["state"] == "scheduled" and g.get("start") and (g["start"] - datetime.now(data.SEOUL)).total_seconds() < 3 * 3600)
-                return (0 if hot else 1, order(g.get("site_league"), g.get("site_order")), g.get("start") or datetime.max.replace(tzinfo=data.SEOUL))
-            gs.sort(key=pri)
-            _stat["queue"] = len(gs)
+            ok = {}
+            gs = []
+            for g in _games():
+                if not _due(g, now):
+                    continue
+                k = g["kind"]
+                if k not in ok:
+                    ok[k] = _quota_ok(k)
+                # 한도 25% 넘음: 그 종목은 쉼. 확인 실패(None): 진행 중/곧 시작만.
+                if ok[k] is False or (ok[k] is None and _tier(g) > 1):
+                    continue
+                gs.append(g)
+            gs.sort(key=lambda g: (_tier(g), 1 if g.get("other") else 0, order(g.get("site_league"), g.get("site_order")),
+                                   g.get("start") or datetime.max.replace(tzinfo=data.SEOUL)))
+            _stat["queue"] = len(gs); _stat["quota_pct"] = dict(_qstate)
             for g in gs:
                 if time.time() - t0 > LOOP * 5:
                     break
@@ -110,18 +183,17 @@ def _loop(order):
                     time.sleep(5)
                 before = _tot["all"]
                 try:
-                    with data._flight("detail:" + str(g["key"])):
-                        data._detail_fetch(g)
+                    _warm_one(g)
                     _stat["warmed"] += 1; _stat["day_warm"] += 1; _done[g["key"]] = time.time()
                 except Exception as e:
-                    _stat["errors"] += 1; log.warning("warm %s: %s", g["key"], e)
+                    _stat["errors"] += 1; _done[g["key"]] = time.time(); log.warning("warm %s: %s", g["key"], e)
                 finally:
-                    n = _tot["all"] - before          # 이 경기에 쓴 API 호출(같은 시간 다른 요청이 섞이면 조금 많게 잡힐 수 있음)
+                    n = _tot["all"] - before
                     tnow = time.time()
                     _calls_warm.extend([tnow] * n); _tot["warm"] += n
                 _stat["queue"] -= 1; _stat["last"] = datetime.now(data.SEOUL).strftime("%H:%M:%S")
                 _save()
-                time.sleep(GAP)
+                time.sleep(GAP if n else 0.2)
         except Exception as e:
             log.warning("warmer loop: %s", e)
         _save()
