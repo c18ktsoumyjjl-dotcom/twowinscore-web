@@ -546,7 +546,7 @@ def api_top(key):
         cm = {}
     its = [x for x in (cm.get("items") or []) if x.get("t")]
     return jsonify({"ev": t.get("ev"), "period": t.get("period"), "L": v["L"]["score"], "R": v["R"]["score"], "pl": [x["t"] for x in its[:6]],
-                    "pla": [{"t": x["t"], "h": 1 if x.get("hot") else 0} for x in its[:80]], "src": cm.get("source") or "",
+                    "pla": [{"t": x["t"], "h": 1 if x.get("hot") else 0} for x in its[:80]], "src": cm.get("source") or "", "cx": {"ev": [{"k": x.get("k") or x["t"], "t": x["t"], "h": 1 if x.get("hot") else 0} for x in its[:12]], "ctx": cm.get("ctx") or []},
                     "pln": str(get_template_attribute("_top.html", "pline")(v, g.get("period") or "")) if g["state"] == "live" else None, "vs": get_template_attribute("_top.html", "vsets")(v["lines"], g["state"] == "live", v["L"]["name"], v["R"]["name"]) if g["kind"] == "volleyball" else
                     (get_template_attribute("_top.html", "ptab")(v["table"], g["kind"]) if g["kind"] in ("baseball", "basketball", "hockey") and v.get("table") else None)})
 

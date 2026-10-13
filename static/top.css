@@ -210,3 +210,5 @@ body.detail6 main.wrap,body.detail6 main{width:100%!important;max-width:none!imp
 body.detail6 .dlay{display:block!important;width:auto!important;max-width:none!important;margin:0!important;grid-template-columns:none!important}
 body.detail6 .dmain{width:auto!important;max-width:none!important;min-width:0;box-sizing:border-box}
 }
+
+.tp .tpev.hot,.tptk .tkl.hot{color:#d9560f}html:not([data-theme=light]) .tp .tpev.hot,[data-theme=dark] .tp .tpev.hot,html:not([data-theme=light]) .tptk .tkl.hot,[data-theme=dark] .tptk .tkl.hot{color:#ffb27a}

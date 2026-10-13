@@ -241,6 +241,21 @@ def goals(g):
 
 
 def commentary(g):
+    """생생한 문자중계(commentary.py) 우선, 실패하면 기존 단순 문장."""
+    base = _commentary(g)
+    try:
+        import commentary as _cx
+        r = _cx.build(g, (base or {}).get("items"))
+        if r and r["items"]:
+            return {"source": (base or {}).get("source") or "실제 경기 기록", "items": r["items"], "ctx": r.get("ctx") or []}
+        if base is not None and r:
+            base["ctx"] = r.get("ctx") or []
+    except Exception:
+        pass
+    return base
+
+
+def _commentary(g):
     if g.get("state") not in ("live", "final"):
         return None
     try:
