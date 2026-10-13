@@ -8,7 +8,7 @@ function goBack(e){if(e)e.preventDefault();const r=document.referrer;let same=fa
 const bk=document.getElementById('tpbk');if(bk)bk.addEventListener('click',goBack);
 function tgBack(){try{const tg=window.Telegram&&Telegram.WebApp;if(tg&&tg.BackButton&&(tg.initData||tg.platform&&tg.platform!=='unknown')){tg.BackButton.show();tg.BackButton.onClick(()=>goBack())}}catch(e){}}
 const inTg=window.TelegramWebviewProxy||/tgWebApp/.test(location.hash)||/tgWebApp/.test(sessionStorage.getItem('tw_tg')||'');if(/tgWebApp/.test(location.hash))try{sessionStorage.setItem('tw_tg','tgWebApp')}catch(e){}
-if(window.Telegram&&Telegram.WebApp)tgBack();else if(inTg){const sc=document.createElement('script');sc.src='https://telegram.org/js/telegram-web-app.js';sc.onload=tgBack;document.head.appendChild(sc)}
+if(window.Telegram&&Telegram.WebApp)tgBack();else if(inTg){const sc=document.createElement('script');sc.src='/static/tg/telegram-web-app.js?v=59';sc.onload=tgBack;document.head.appendChild(sc)}
 fetch('/api/odds?k='+encodeURIComponent(K)+'&d='+(new URLSearchParams(Q).get('d')||'')).then(r=>r.json()).then(j=>{const o=j[K];if(!o||o.L==null||o.R==null){document.getElementById('tpod').hidden=true;return}const mv=o.mv||{};
  const c=(k,v,m)=>`<span class="c"><small>${k}</small><b class="${m>0?'up':m<0?'dn':''}">${Number(v).toFixed(2)}${m>0?'▲':m<0?'▼':''}</b></span>`;
  const lh=o.lh!==false;let h=`<span class="bk">${esc(o.bs||o.book||'')}</span>`+c(lh?'1':'원정',o.L,mv.L)+(o.D?c('X',o.D,mv.D):'')+c(lh?'2':'홈',o.R,mv.R);

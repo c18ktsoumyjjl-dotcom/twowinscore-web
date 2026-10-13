@@ -7,7 +7,7 @@ var tgHint=W.TelegramWebviewProxy||/tgWebApp/.test(location.hash)||/tgWebApp/.te
 function tg(){var t=W.Telegram&&Telegram.WebApp;return t&&(t.initData||t.platform&&t.platform!=='unknown')?t:null}
 function setupTg(){if(W.twTgSetup)return W.twTgSetup();var t=W.Telegram&&Telegram.WebApp;if(!t)return;try{t.ready&&t.ready();t.expand&&t.expand();t.disableVerticalSwipes&&t.disableVerticalSwipes()}catch(e){}}
 var TGW=D.documentElement.classList.contains('tgw');if(TGW)tgHint=true;
-if(W.Telegram&&Telegram.WebApp)setupTg();else if(tgHint){var sc=D.createElement('script');sc.src='https://telegram.org/js/telegram-web-app.js';sc.onload=setupTg;D.head.appendChild(sc)}
+if(W.Telegram&&Telegram.WebApp)setupTg();else if(tgHint){var sc=D.createElement('script');sc.src='/static/tg/telegram-web-app.js?v=59';sc.onload=setupTg;D.head.appendChild(sc)}
 ae(D,'DOMContentLoaded',function(){setupTg()});ae(D,'visibilitychange',function(){if(!D.hidden)setupTg()});
 /* iOS 보조: 문서가 맨 위(0)에 닿지 않게 1px 유지 → 아래로 끌기가 시트(앱 닫기)로 넘어가지 않음 */
 var lockOn=function(){return TGW&&M.matches&&!D.body.classList.contains('gm7c')};
