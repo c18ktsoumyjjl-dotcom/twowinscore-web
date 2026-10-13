@@ -10,8 +10,8 @@ from collections import deque
 import data
 
 log = logging.getLogger("warmer")
-WARM_PER_MIN = int(os.environ.get("WARM_PER_MIN", "40"))
-GLOBAL_SOFT = int(os.environ.get("WARM_GLOBAL_SOFT", "120"))
+WARM_PER_MIN = int(os.environ.get("WARM_PER_MIN", "120"))
+GLOBAL_SOFT = int(os.environ.get("WARM_GLOBAL_SOFT", "240"))
 GAP = 1.0
 LOOP = 60
 STATUS = os.path.join(data.CACHE, "warmer_status.json")
