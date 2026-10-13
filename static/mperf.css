@@ -1,0 +1,14 @@
+/* 모바일 성능: 매 프레임 페인트/레이아웃을 부르던 무한 애니메이션(box-shadow, SVG r)을 합성 전용(transform/opacity)으로 교체. 모양은 동일. PC 영향 없음 */
+@media (max-width:1023px){
+.pd,.dot{animation:none!important;position:relative}
+.pd::after,.dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:inherit;opacity:0;pointer-events:none;will-change:transform,opacity;animation:mpz 1.4s ease-out infinite}
+.dot::after{animation-duration:1.2s}
+.st .lv .dot::after{display:none}
+.st .lv .dot{animation:pw 1.2s infinite!important}
+@keyframes mpz{0%{transform:scale(1);opacity:.6}100%{transform:scale(3);opacity:0}}
+.tp .tpg .pu{animation:tpZ 1.6s ease-out infinite!important;transform-box:fill-box;transform-origin:center;r:5px}
+@keyframes tpZ{from{transform:scale(1);opacity:.9}to{transform:scale(4.4);opacity:0}}
+}
+@media (max-width:1023px) and (prefers-reduced-motion:reduce){
+.pd::after,.dot::after,.tp .tpg .pu,.tptag .lv i,.st .lv .dot{animation:none!important}
+}
