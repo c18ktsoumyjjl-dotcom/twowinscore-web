@@ -1,0 +1,7 @@
+/* 라이트 모드 대비 보정: 다크용 밝은 주황(#ff8a3d/#ff8a2a/#f2b84b)이 흰 배경에서 안 읽히던 글자들 */
+[data-theme=light] .ft8g span,[data-theme=light] .vt8h b,[data-theme=light] .od8,[data-theme=light] .od8n b,[data-theme=light] .od5 i,[data-theme=light] .mo i,[data-theme=light] .ap8 h4,
+[data-theme=light] .tph .ts,[data-theme=light] .trg h3 em,[data-theme=light] .trp b,[data-theme=light] .nwl .rk,[data-theme=light] .vplan .vmg b{color:#c25400}
+[data-theme=light] .od8.up{color:#d32f2f}[data-theme=light] .od8.dn{color:#1d5fd8}
+[data-theme=light] .vplan .vp b{color:#b86a00}
+[data-theme=light] .ft8t .lv{color:#d32f2f}
+[data-theme=light] .mst{color:#9aa4ba}
