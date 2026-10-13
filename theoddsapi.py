@@ -16,6 +16,8 @@ import teamodds
 
 log = logging.getLogger("theoddsapi")
 HOST = "https://api.the-odds-api.com/v4"
+# 한 리그가 시기별로 다른 키를 쓰는 경우(NBA 프리시즌). 이벤트 목록(무료)에 맞는 경기가 있는 키만 /odds 를 불러요.
+EXTRA = {"basketball_nba": ["basketball_nba_preseason"]}
 SPORT = {("baseball", "KBO"): "baseball_kbo", ("baseball", "NPB"): "baseball_npb",
          ("baseball", "MLB"): "baseball_mlb", ("basketball", "NBA"): "basketball_nba"}
 REGION = "eu"                 # 소수점 배당·유럽 북(Pinnacle 등). 지역 1개 = 1크레딧
@@ -54,6 +56,17 @@ ALIAS = {
                      "Athletics": ["Athletics", "Oakland Athletics"]},
     "basketball_nba": {"Los Angeles Clippers": ["Los Angeles Clippers", "LA Clippers"]},
 }
+
+
+try:   # API-Sports 팀 id → 영문 원본명(nameguard 와 같은 파일). 경기 dict 에는 한글명만 있어요.
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "team_en.json"), encoding="utf-8") as _f:
+        TEAM_EN = json.load(_f)
+except Exception:
+    TEAM_EN = {}
+
+
+def _en(g, side):
+    return g.get(side + "_en") or TEAM_EN.get(f'{g.get("kind")}:{g.get(side + "_id")}')
 
 
 def _key():
@@ -142,7 +155,7 @@ def _map(sport, ours, wl):
     """확정된 The Odds API 이름 또는 None."""
     if not ours or not wl:
         return None
-    cands = ALIAS.get(sport, {}).get(ours) or [ours]
+    cands = ALIAS.get(sport.replace("_preseason", ""), {}).get(ours) or [ours]
     low = {n.lower(): n for n in wl}
     hit = {low[c.lower()] for c in cands if c.lower() in low}
     return hit.pop() if len(hit) == 1 else None
@@ -217,7 +230,7 @@ def fill(games):
         now = datetime.now(timezone.utc)
         gaps = {}
         for g in games:
-            sp = SPORT.get((g.get("kind"), g.get("league")))
+            sp = SPORT.get((g.get("kind"), g.get("site_league") or g.get("league")))
             if not sp or g.get("state") != "scheduled" or not g.get("id") or not g.get("start"):
                 continue
             sv = teamodds.snap_get(g["kind"], g["id"])
@@ -227,6 +240,9 @@ def fill(games):
                 continue
             gaps.setdefault(sp, []).append(g)
         done = 0
+        for base in list(gaps):
+            for x in EXTRA.get(base, []):
+                gaps[x] = gaps[base]          # 같은 경기 목록(정규·프리시즌 일정은 겹치지 않음)
         for sp, gs in gaps.items():
             if time.time() - s.get("last", {}).get(sp, 0) < MIN_GAP or not _budget_ok(s):
                 continue
@@ -235,11 +251,11 @@ def fill(games):
                 continue
             want = []
             for g in gs:
-                h, a = _map(sp, g.get("home_en"), wl), _map(sp, g.get("away_en"), wl)
+                h, a = _map(sp, _en(g, "home"), wl), _map(sp, _en(g, "away"), wl)
                 if h and a and h != a:
                     want.append((g, h, a))
                 else:
-                    log.info("theoddsapi: 이름 확정 불가로 건너뜀 %s %s vs %s", sp, g.get("home_en"), g.get("away_en"))
+                    log.info("theoddsapi: 이름 확정 불가로 건너뜀 %s %s vs %s", sp, _en(g, "home"), _en(g, "away"))
             if not want:
                 continue
             evs, _ = _get(f"/sports/{sp}/events", {})          # 무료
