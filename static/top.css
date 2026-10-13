@@ -195,3 +195,11 @@ html:not([data-theme=light]) .tp .tpc .clk,[data-theme=dark] .tp .tpc .clk{backg
 }
 @media (max-width:1023px){.tprow:has(.tppl) .tpbkl{display:none}.tprow:has(.tppl) .tpbk{padding:0}}
 @media (max-width:1023px){.tprow:has(.tppl) .tpbkl{display:none!important}.tprow:has(.tppl) .tpbk{padding:0!important}.tp .tpev{bottom:38px}.tp .tpbb{bottom:38px}}
+/* E 스트립: 아래 기록 알약과 상태/리그 표시가 겹치지 않게 (리그명은 말줄임) */
+@media (max-width:1023px){
+.tp .tptag{bottom:8px;height:18px;align-items:center;gap:8px}
+.tp .tptag>span{display:inline-block;box-sizing:border-box;height:18px;line-height:14px!important;font-size:10px!important;white-space:nowrap;flex:none}
+.tp .tptag .lg{flex:0 1 auto;min-width:0;max-width:45%;overflow:hidden;text-overflow:ellipsis}
+.tp .tpev{bottom:32px!important;max-width:calc(100% - 20px);font-size:11px;padding:3px 10px}
+.tp .tpbb{bottom:32px!important}
+}
