@@ -70,7 +70,7 @@ except Exception:
 
 # ---------- 보안: IP별 요청 제한 ----------
 # (경로 접두어, 1분 최대). 캐시에서 나가는 폴링은 같은 와이파이·통신사 공유 IP 를 고려해 넉넉히.
-RATE = [("/admin/feed/img", 1200), ("/admin", 120), ("/api/preview/", 20), ("/api/vote", 60), ("/api/chat", 300), ("/api/games", 300), ("/api/", 120), ("/game/", 60)]
+RATE = [("/admin/feed/img", 1200), ("/admin", 120), ("/api/preview/", 20), ("/api/vote", 60), ("/api/chat", 300), ("/api/games", 300), ("/api/top/", 300), ("/api/", 120), ("/game/", 60)]
 _rl, _rl_lock = {}, threading.Lock()
 
 

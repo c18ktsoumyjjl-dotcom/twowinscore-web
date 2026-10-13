@@ -392,7 +392,7 @@ def _detail_fetch(g):
     return out
 
 
-LIVE_FAST, LIVE_SLOW = 15, 60
+LIVE_FAST, LIVE_SLOW = 5, 60   # 하루 한도 300,000회 대비 5초여도 종목당 최대 17,280회
 _quota = {}
 
 
@@ -436,7 +436,7 @@ def _alert_quota(kind, val):
 
 
 def live_ttl(kind):
-    """진행 중 경기: 기본 15초(종목당 하루 최대 5,760회). 사용량이 하루 한도의 60%를 넘거나 확인이 안 되면 60초."""
+    """진행 중 경기: 기본 5초(종목당 하루 최대 17,280회). 사용량이 하루 한도의 60%를 넘거나 확인이 안 되면 60초."""
     q = quota(kind)
     if not q or not q[1] or q[0] > 0.6 * q[1]:
         return LIVE_SLOW
