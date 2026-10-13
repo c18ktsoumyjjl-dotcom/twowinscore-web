@@ -26,7 +26,10 @@ def _syl(ch):
     if not 0 <= c < 11172:
         return None
     i, v, f = c // 588, (c % 588) // 28, c % 28
-    return sorted({a + b + z for a in _I[i] for b in _V[v] for z in _F[f]})
+    r = {a + b + z for a in _I[i] for b in _V[v] for z in _F[f]}
+    if i == 11 and v == 13:   # 우 → woo/wu 관용
+        r |= {"woo" + z for z in _F[f]} | {"wu" + z for z in _F[f]}
+    return sorted(r)
 
 
 def _norm(s):
@@ -63,3 +66,23 @@ def match(ko, en):
         if (s, rest) in c:
             return True
     return False
+
+
+def looks_korean(en):
+    t = _norm(en)
+    surs = {x for v in SUR.values() for x in v}
+    return len(t) >= 2 and any(x in surs for x in t) and all(len(x) >= 2 for x in t)
+
+
+def close(ko, en):
+    """약한 유사도(표기 변이 허용). 한국식 영문 이름인데 이 값이 낮으면 다른 사람."""
+    import difflib
+    t = _norm(en)
+    if not t:
+        return 0
+    best = 0
+    for s, g in candidates(ko):
+        for i in range(len(t)):
+            a = s + "".join(t[:i] + t[i + 1:]) if False else None
+            best = max(best, difflib.SequenceMatcher(None, s + g, t[i] + "".join(t[:i] + t[i + 1:])).ratio())
+    return best

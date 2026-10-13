@@ -604,8 +604,9 @@ def _football(g, rows):
         m, mm = _min(e)
         tid = (e.get("team") or {}).get("id")
         t = g["home"] if tid == hid else g["away"] if tid == g.get("away_id") else ko("football", tid, (e.get("team") or {}).get("name") or "")[0]
-        p = (e.get("player") or {}).get("name") or ""
-        ast = (e.get("assist") or {}).get("name") or ""
+        from pname import ko as _pk
+        p = _pk("football", (e.get("player") or {}).get("id"), (e.get("player") or {}).get("name") or "")
+        ast = _pk("football", (e.get("assist") or {}).get("id"), (e.get("assist") or {}).get("name") or "")
         typ, det = e.get("type"), e.get("detail") or ""
         key = _uk(f"fb:{g['id']}:{typ}:{det}:{m}:{p}", used)
         if typ == "Goal":

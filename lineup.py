@@ -874,7 +874,13 @@ def football(g):
         _ko_names(g, out)
     except Exception:
         pass
+    import player_ko
     for side in ("home", "away"):
+        for p in out[side]["xi"] + out[side]["subs"]:
+            if not p.get("ko"):
+                k = player_ko.lookup("football", p.get("id"))
+                if k:
+                    p["ko"] = k
         for p in out[side]["xi"]:
             p.pop("_g", None)
         nos = out[side].pop("_no")

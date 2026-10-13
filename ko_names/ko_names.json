@@ -1,0 +1,4070 @@
+{
+"_built": "2026-10-13 19:50",
+"football": {
+"0": {
+"how": "num+pos",
+"ko": "정규민",
+"team": 2759
+},
+"10176": {
+"how": "num+pos",
+"ko": "가브리엘",
+"team": 2745
+},
+"10216": {
+"how": "num+pos",
+"ko": "브루노 실바",
+"team": 2765
+},
+"109391": {
+"how": "num+pos+roman",
+"ko": "김민준",
+"team": 2765
+},
+"119025": {
+"how": "num+pos",
+"ko": "콤파뇨",
+"team": 2762
+},
+"119554": {
+"how": "num+pos",
+"ko": "보닐라",
+"team": 7098
+},
+"122021": {
+"how": "num+pos",
+"ko": "치기",
+"team": 2751
+},
+"122688": {
+"how": "num+pos",
+"ko": "아이아스",
+"team": 2761
+},
+"128178": {
+"how": "num+pos",
+"ko": "비티뉴",
+"team": 9171
+},
+"128538": {
+"how": "num+pos",
+"ko": "한가람",
+"team": 2748
+},
+"128777": {
+"how": "num+pos+roman",
+"ko": "유강현",
+"team": 2750
+},
+"129035": {
+"how": "num+pos",
+"ko": "바베츠",
+"team": 2766
+},
+"13089": {
+"how": "num+pos",
+"ko": "말컹",
+"team": 2767
+},
+"134001": {
+"how": "num+pos",
+"ko": "아일톤",
+"team": 2748
+},
+"13692": {
+"how": "num+pos",
+"ko": "가르시아",
+"team": 7061
+},
+"137834": {
+"how": "num+pos",
+"ko": "나임",
+"team": 2753
+},
+"139709": {
+"how": "num+pos",
+"ko": "무신",
+"team": 7078
+},
+"141773": {
+"how": "num+pos",
+"ko": "이바닐도",
+"team": 7060
+},
+"143639": {
+"how": "num+pos",
+"ko": "바사니",
+"team": 2745
+},
+"144875": {
+"how": "num+pos",
+"ko": "툰가라",
+"team": 7060
+},
+"146020": {
+"how": "num+pos",
+"ko": "갈레고",
+"team": 2745
+},
+"146429": {
+"how": "num+pos",
+"ko": "김운",
+"team": 2748
+},
+"146452": {
+"how": "num+pos+roman",
+"ko": "곽윤호",
+"team": 9171
+},
+"146471": {
+"how": "num+pos",
+"ko": "김민규",
+"team": 2768
+},
+"1487": {
+"how": "num+pos",
+"ko": "제랄데스",
+"team": 7061
+},
+"15419": {
+"how": "num+pos",
+"ko": "베카",
+"team": 7076
+},
+"157164": {
+"how": "num+pos",
+"ko": "미란징야",
+"team": 2760
+},
+"157814": {
+"how": "num+pos",
+"ko": "주앙 빅토르",
+"team": 2750
+},
+"159718": {
+"how": "num+pos",
+"ko": "마테우스 바비",
+"team": 2756
+},
+"161026": {
+"how": "num+pos",
+"ko": "카림",
+"team": 2746
+},
+"167010": {
+"how": "num+pos",
+"ko": "프리조",
+"team": 2756
+},
+"169262": {
+"how": "num+pos",
+"ko": "기티스",
+"team": 2762
+},
+"173": {
+"how": "num+pos",
+"ko": "루크",
+"team": 7098
+},
+"173405": {
+"how": "num+pos+roman",
+"ko": "박청효",
+"team": 2746
+},
+"177649": {
+"how": "num+pos",
+"ko": "아이데일",
+"team": 2759
+},
+"178707": {
+"how": "num+pos+roman",
+"ko": "박규현",
+"team": 2750
+},
+"179951": {
+"how": "num+pos",
+"ko": "사이토스키",
+"team": 2759
+},
+"182514": {
+"how": "num+pos",
+"ko": "로스",
+"team": 2766
+},
+"182768": {
+"how": "num+pos",
+"ko": "자르델",
+"team": 9171
+},
+"18900": {
+"how": "num+pos",
+"ko": "기성용",
+"team": 2764
+},
+"192043": {
+"how": "num+pos",
+"ko": "아부달라",
+"team": 2746
+},
+"19293": {
+"how": "num+pos",
+"ko": "토비아스",
+"team": 2761
+},
+"195346": {
+"how": "num+pos",
+"ko": "디자우마",
+"team": 7078
+},
+"195491": {
+"how": "num+pos",
+"ko": "루안",
+"team": 7078
+},
+"197251": {
+"how": "num+pos",
+"ko": "티아고",
+"team": 2762
+},
+"197524": {
+"how": "num+pos",
+"ko": "디오고",
+"team": 2750
+},
+"197688": {
+"how": "num+pos+roman",
+"ko": "민성준",
+"team": 2749
+},
+"197689": {
+"how": "num+pos+roman",
+"ko": "이용혁",
+"team": 7078
+},
+"197980": {
+"how": "num+pos+roman",
+"ko": "최희원",
+"team": 2753
+},
+"197983": {
+"how": "num+pos",
+"ko": "최준",
+"team": 2766
+},
+"197986": {
+"how": "num+pos",
+"ko": "조현택",
+"team": 2767
+},
+"199299": {
+"how": "num+pos+roman",
+"ko": "정한민",
+"team": 2764
+},
+"199303": {
+"how": "num+pos+roman",
+"ko": "명세진",
+"team": 7076
+},
+"201277": {
+"how": "num+pos+roman",
+"ko": "김주환",
+"team": 2749
+},
+"201279": {
+"how": "num+pos",
+"ko": "고영준",
+"team": 2746
+},
+"201296": {
+"how": "roman",
+"ko": "표건희",
+"team": 7076
+},
+"201297": {
+"how": "num+pos",
+"ko": "허자웅",
+"team": 2761
+},
+"202642": {
+"how": "roman",
+"ko": "강준모",
+"team": 7076
+},
+"203221": {
+"how": "num+pos+roman",
+"ko": "황재환",
+"team": 2764
+},
+"203476": {
+"how": "num+pos",
+"ko": "정호진",
+"team": 2745
+},
+"20445": {
+"how": "num+pos",
+"ko": "페리어",
+"team": 2763
+},
+"20943": {
+"how": "num+pos",
+"ko": "코리누스",
+"team": 2760
+},
+"213979": {
+"how": "roman",
+"ko": "안찬기",
+"team": 2768
+},
+"21976": {
+"how": "num+pos",
+"ko": "마이사 폴",
+"team": 7076
+},
+"22018": {
+"how": "num+pos+roman",
+"ko": "석현준",
+"team": 9171
+},
+"224633": {
+"how": "roman",
+"ko": "이상민",
+"team": 2757
+},
+"224641": {
+"how": "num+pos",
+"ko": "이진용",
+"team": 2748
+},
+"224643": {
+"how": "num+pos+roman",
+"ko": "안창민",
+"team": 7060
+},
+"224648": {
+"how": "num+pos+roman",
+"ko": "조윤성",
+"team": 7061
+},
+"224652": {
+"how": "num+pos+roman",
+"ko": "서민우",
+"team": 2746
+},
+"224654": {
+"how": "num+pos+roman",
+"ko": "이강한",
+"team": 7061
+},
+"224658": {
+"how": "roman",
+"ko": "허율",
+"team": 2768
+},
+"224668": {
+"how": "num+pos+roman",
+"ko": "강현묵",
+"team": 2765
+},
+"228827": {
+"how": "num+pos",
+"ko": "최건주",
+"team": 2748
+},
+"228834": {
+"how": "num+pos+roman",
+"ko": "하남",
+"team": 2760
+},
+"228836": {
+"how": "num+pos+roman",
+"ko": "김강산",
+"team": 2747
+},
+"228838": {
+"how": "num+pos+roman",
+"ko": "김민식",
+"team": 7078
+},
+"228842": {
+"how": "num+pos",
+"ko": "김인균",
+"team": 2768
+},
+"228844": {
+"how": "num+pos+roman",
+"ko": "김선호",
+"team": 2751
+},
+"228846": {
+"how": "num+pos+roman",
+"ko": "심민용",
+"team": 7098
+},
+"228847": {
+"how": "num+pos+roman",
+"ko": "강의빈",
+"team": 7061
+},
+"228856": {
+"how": "num+pos",
+"ko": "이건희",
+"team": 2761
+},
+"236378": {
+"how": "num+pos",
+"ko": "홍시후",
+"team": 2768
+},
+"237048": {
+"how": "num+pos+roman",
+"ko": "김용학",
+"team": 2764
+},
+"237093": {
+"how": "num+pos",
+"ko": "홍성욱",
+"team": 2745
+},
+"237141": {
+"how": "num+pos+roman",
+"ko": "오재혁",
+"team": 2768
+},
+"237217": {
+"how": "num+pos+roman",
+"ko": "신송훈",
+"team": 2753
+},
+"237219": {
+"how": "num+pos+roman",
+"ko": "손호준",
+"team": 2751
+},
+"237226": {
+"how": "num+pos+roman",
+"ko": "유승현",
+"team": 2745
+},
+"237228": {
+"how": "num+pos+roman",
+"ko": "이승환",
+"team": 7061
+},
+"237229": {
+"how": "num+pos+roman",
+"ko": "김준홍",
+"team": 2765
+},
+"237902": {
+"how": "num+pos",
+"ko": "구스타보",
+"team": 2745
+},
+"238354": {
+"how": "num+pos",
+"ko": "엘쿠라노",
+"team": 2748
+},
+"238541": {
+"how": "num+pos",
+"ko": "야고",
+"team": 2767
+},
+"243757": {
+"how": "num+pos+roman",
+"ko": "이중민",
+"team": 2751
+},
+"25276": {
+"how": "num+pos",
+"ko": "일류첸코",
+"team": 7087
+},
+"25305": {
+"how": "num+pos",
+"ko": "천성훈",
+"team": 2766
+},
+"26098": {
+"how": "num+pos",
+"ko": "최경록",
+"team": 2759
+},
+"262117": {
+"how": "num+pos+roman",
+"ko": "박재환",
+"team": 2749
+},
+"262128": {
+"how": "num+pos",
+"ko": "이강현",
+"team": 2768
+},
+"262548": {
+"how": "num+pos+roman",
+"ko": "윤민호",
+"team": 2760
+},
+"262604": {
+"how": "num+pos+roman",
+"ko": "안재준",
+"team": 2764
+},
+"262772": {
+"how": "num+pos+roman",
+"ko": "우제욱",
+"team": 7076
+},
+"263017": {
+"how": "num+pos",
+"ko": "크네제비치",
+"team": 2748
+},
+"263078": {
+"how": "num+pos+roman",
+"ko": "전성진",
+"team": 2752
+},
+"263104": {
+"how": "num+pos+roman",
+"ko": "윤민호",
+"team": 2757
+},
+"263116": {
+"how": "num+pos",
+"ko": "이주현",
+"team": 2762
+},
+"265587": {
+"how": "num+pos",
+"ko": "하츠젤",
+"team": 2758
+},
+"265710": {
+"how": "num+pos+roman",
+"ko": "이순민",
+"team": 2750
+},
+"268622": {
+"how": "num+pos",
+"ko": "변준수",
+"team": 2768
+},
+"270144": {
+"how": "num+pos",
+"ko": "강투지",
+"team": 2746
+},
+"277197": {
+"how": "num+pos",
+"ko": "조르지",
+"team": 2764
+},
+"277787": {
+"how": "num+pos",
+"ko": "블레이즈",
+"team": 2748
+},
+"279820": {
+"how": "num+pos",
+"ko": "밥신",
+"team": 2750
+},
+"280738": {
+"how": "num+pos",
+"ko": "단레이",
+"team": 2747
+},
+"284401": {
+"how": "num+pos",
+"ko": "데커스",
+"team": 2747
+},
+"2890": {
+"how": "num+pos",
+"ko": "조현우",
+"team": 2767
+},
+"2891": {
+"how": "num+pos",
+"ko": "구성윤",
+"team": 2766
+},
+"2894": {
+"how": "num+pos+roman",
+"ko": "홍철",
+"team": 2746
+},
+"2895": {
+"how": "num+pos",
+"ko": "정승현",
+"team": 2767
+},
+"2896": {
+"how": "num+pos",
+"ko": "김진수",
+"team": 2766
+},
+"2898": {
+"how": "num+pos",
+"ko": "김영권",
+"team": 2767
+},
+"2899": {
+"how": "num+pos",
+"ko": "권경원",
+"team": 2748
+},
+"2900": {
+"how": "num+pos",
+"ko": "박지수",
+"team": 2762
+},
+"2902": {
+"how": "num+pos",
+"ko": "주세종",
+"team": 2759
+},
+"2904": {
+"how": "num+pos+roman",
+"ko": "김정민",
+"team": 7087
+},
+"2907": {
+"how": "num+pos",
+"ko": "이진현",
+"team": 2767
+},
+"2912": {
+"how": "num+pos+roman",
+"ko": "김문환",
+"team": 2750
+},
+"299138": {
+"how": "num+pos",
+"ko": "크리스찬",
+"team": 2752
+},
+"301229": {
+"how": "num+pos",
+"ko": "이탈로",
+"team": 2761
+},
+"301577": {
+"how": "num+pos+roman",
+"ko": "강윤구",
+"team": 2746
+},
+"303441": {
+"how": "roman",
+"ko": "최강민",
+"team": 2747
+},
+"304883": {
+"how": "num+pos",
+"ko": "이의형",
+"team": 2745
+},
+"304907": {
+"how": "num+pos+roman",
+"ko": "장민준",
+"team": 7087
+},
+"304944": {
+"how": "num+pos",
+"ko": "박진성",
+"team": 2768
+},
+"304945": {
+"how": "roman",
+"ko": "이지훈",
+"team": 7060
+},
+"304948": {
+"how": "roman",
+"ko": "김희승",
+"team": 2752
+},
+"304950": {
+"how": "num+pos",
+"ko": "제갈재민",
+"team": 7087
+},
+"304951": {
+"how": "num+pos+roman",
+"ko": "이기혁",
+"team": 2746
+},
+"304952": {
+"how": "num+pos+roman",
+"ko": "조상준",
+"team": 2751
+},
+"304953": {
+"how": "num+pos+roman",
+"ko": "허강준",
+"team": 2761
+},
+"304954": {
+"how": "roman",
+"ko": "송준석",
+"team": 2768
+},
+"304959": {
+"how": "num+pos+roman",
+"ko": "김대우",
+"team": 2747
+},
+"304960": {
+"how": "num+pos+roman",
+"ko": "박상혁",
+"team": 2746
+},
+"304962": {
+"how": "num+pos+roman",
+"ko": "김민석",
+"team": 7078
+},
+"304963": {
+"how": "num+pos+roman",
+"ko": "박창환",
+"team": 2749
+},
+"304965": {
+"how": "num+pos+roman",
+"ko": "김봉수",
+"team": 2750
+},
+"304970": {
+"how": "num+pos",
+"ko": "노경호",
+"team": 2768
+},
+"304971": {
+"how": "num+pos+roman",
+"ko": "김준호",
+"team": 2751
+},
+"304974": {
+"how": "num+pos+roman",
+"ko": "정명제",
+"team": 2757
+},
+"305751": {
+"how": "num+pos",
+"ko": "신상은",
+"team": 2761
+},
+"306606": {
+"how": "num+pos+roman",
+"ko": "이준서",
+"team": 2750
+},
+"306608": {
+"how": "roman",
+"ko": "전병관",
+"team": 2762
+},
+"306614": {
+"how": "num+pos+roman",
+"ko": "어정원",
+"team": 2764
+},
+"306618": {
+"how": "num+pos+roman",
+"ko": "강성진",
+"team": 2765
+},
+"307126": {
+"how": "num+pos+roman",
+"ko": "김정현",
+"team": 2751
+},
+"308264": {
+"how": "num+pos",
+"ko": "장영우",
+"team": 2756
+},
+"308267": {
+"how": "roman",
+"ko": "임창석",
+"team": 7078
+},
+"308325": {
+"how": "num+pos+roman",
+"ko": "김승호",
+"team": 2764
+},
+"308599": {
+"how": "num+pos",
+"ko": "네게바",
+"team": 2761
+},
+"308724": {
+"how": "num+pos+roman",
+"ko": "노희동",
+"team": 9171
+},
+"308795": {
+"how": "num+pos",
+"ko": "마촙",
+"team": 2758
+},
+"309842": {
+"how": "num+pos+roman",
+"ko": "허승찬",
+"team": 7061
+},
+"310870": {
+"how": "num+pos",
+"ko": "가브리엘",
+"team": 9171
+},
+"311286": {
+"how": "num+pos",
+"ko": "주앙 페드로",
+"team": 2759
+},
+"313094": {
+"how": "num+pos",
+"ko": "펠리페",
+"team": 2751
+},
+"314237": {
+"how": "num+pos",
+"ko": "엄예훈",
+"team": 2749
+},
+"316975": {
+"how": "num+pos",
+"ko": "사비에르",
+"team": 2752
+},
+"32225": {
+"how": "num+pos",
+"ko": "두비츠카스",
+"team": 2765
+},
+"324820": {
+"how": "num+pos+roman",
+"ko": "유지하",
+"team": 2760
+},
+"327616": {
+"how": "num+pos",
+"ko": "김명순",
+"team": 2763
+},
+"328138": {
+"how": "num+pos+roman",
+"ko": "추상훈",
+"team": 2760
+},
+"32869": {
+"how": "num+pos",
+"ko": "유인수",
+"team": 2761
+},
+"329544": {
+"how": "roman",
+"ko": "김민우",
+"team": 2765
+},
+"331135": {
+"how": "num+pos",
+"ko": "비티뇨",
+"team": 2753
+},
+"33193": {
+"how": "num+pos",
+"ko": "고동민",
+"team": 2747
+},
+"33202": {
+"how": "num+pos+roman",
+"ko": "조진우",
+"team": 2756
+},
+"33220": {
+"how": "num+pos",
+"ko": "코키",
+"team": 2756
+},
+"33300": {
+"how": "num+pos+roman",
+"ko": "오재석",
+"team": 2750
+},
+"335129": {
+"how": "num+pos+roman",
+"ko": "조재훈",
+"team": 9171
+},
+"33724": {
+"how": "num+pos+roman",
+"ko": "최정원",
+"team": 2751
+},
+"33754": {
+"how": "num+pos+roman",
+"ko": "최규백",
+"team": 7060
+},
+"33759": {
+"how": "num+pos",
+"ko": "이상민",
+"team": 2766
+},
+"33790": {
+"how": "num+pos",
+"ko": "리영직",
+"team": 2759
+},
+"338015": {
+"how": "num+pos+roman",
+"ko": "구종욱",
+"team": 7060
+},
+"34013": {
+"how": "num+pos+roman",
+"ko": "안준수",
+"team": 2768
+},
+"34120": {
+"how": "num+pos+roman",
+"ko": "윤평국",
+"team": 2764
+},
+"34128": {
+"how": "num+pos",
+"ko": "이시영",
+"team": 2756
+},
+"34130": {
+"how": "num+pos+roman",
+"ko": "최준혁",
+"team": 7060
+},
+"34132": {
+"how": "num+pos+roman",
+"ko": "엄원상",
+"team": 2750
+},
+"34137": {
+"how": "num+pos",
+"ko": "이한도",
+"team": 2766
+},
+"34144": {
+"how": "num+pos",
+"ko": "윌리안",
+"team": 7060
+},
+"34147": {
+"how": "roman",
+"ko": "김정환",
+"team": 2756
+},
+"34148": {
+"how": "num+pos+roman",
+"ko": "김주공",
+"team": 2747
+},
+"34149": {
+"how": "num+pos",
+"ko": "이희균",
+"team": 2767
+},
+"34150": {
+"how": "num+pos",
+"ko": "김형근",
+"team": 2745
+},
+"34152": {
+"how": "num+pos+roman",
+"ko": "구상민",
+"team": 2752
+},
+"34156": {
+"how": "num+pos+roman",
+"ko": "구현준",
+"team": 2760
+},
+"34163": {
+"how": "num+pos",
+"ko": "박호영",
+"team": 2746
+},
+"34168": {
+"how": "num+pos",
+"ko": "김진규",
+"team": 2762
+},
+"34177": {
+"how": "num+pos",
+"ko": "한지호",
+"team": 2745
+},
+"34181": {
+"how": "num+pos+roman",
+"ko": "이상준",
+"team": 7060
+},
+"34186": {
+"how": "num+pos+roman",
+"ko": "김태훈",
+"team": 2751
+},
+"34188": {
+"how": "num+pos+roman",
+"ko": "최필수",
+"team": 7076
+},
+"34189": {
+"how": "num+pos+roman",
+"ko": "정민기",
+"team": 2756
+},
+"34197": {
+"how": "num+pos+roman",
+"ko": "이상용",
+"team": 7060
+},
+"34203": {
+"how": "num+pos+roman",
+"ko": "김형진",
+"team": 2747
+},
+"34208": {
+"how": "num+pos",
+"ko": "맹성웅",
+"team": 2762
+},
+"34226": {
+"how": "num+pos",
+"ko": "장준영",
+"team": 2753
+},
+"34229": {
+"how": "num+pos+roman",
+"ko": "김주엽",
+"team": 2760
+},
+"34230": {
+"how": "num+pos",
+"ko": "김영찬",
+"team": 2748
+},
+"34231": {
+"how": "num+pos+roman",
+"ko": "이학민",
+"team": 7078
+},
+"34237": {
+"how": "num+pos+roman",
+"ko": "백성동",
+"team": 7061
+},
+"34254": {
+"how": "num+pos",
+"ko": "김병오",
+"team": 7087
+},
+"34258": {
+"how": "roman",
+"ko": "모재현",
+"team": 2746
+},
+"34269": {
+"how": "num+pos",
+"ko": "김재우",
+"team": 2761
+},
+"34275": {
+"how": "num+pos+roman",
+"ko": "장현수",
+"team": 2758
+},
+"34295": {
+"how": "num+pos",
+"ko": "김진영",
+"team": 2753
+},
+"34298": {
+"how": "num+pos+roman",
+"ko": "박주원",
+"team": 7060
+},
+"34304": {
+"how": "num+pos+roman",
+"ko": "김예성",
+"team": 2764
+},
+"34307": {
+"how": "num+pos+roman",
+"ko": "이광준",
+"team": 7060
+},
+"34309": {
+"how": "num+pos",
+"ko": "이지솔",
+"team": 2756
+},
+"34310": {
+"how": "num+pos",
+"ko": "박수일",
+"team": 2766
+},
+"34329": {
+"how": "num+pos",
+"ko": "김승섭",
+"team": 2762
+},
+"34330": {
+"how": "num+pos+roman",
+"ko": "박인혁",
+"team": 2747
+},
+"34335": {
+"how": "num+pos+roman",
+"ko": "박대한",
+"team": 7060
+},
+"34348": {
+"how": "num+pos",
+"ko": "이유현",
+"team": 2746
+},
+"34353": {
+"how": "num+pos+roman",
+"ko": "한찬희",
+"team": 2756
+},
+"34355": {
+"how": "num+pos+roman",
+"ko": "정재희",
+"team": 2750
+},
+"34367": {
+"how": "num+pos+roman",
+"ko": "김경민",
+"team": 2756
+},
+"34370": {
+"how": "num+pos+roman",
+"ko": "황병근",
+"team": 2767
+},
+"34371": {
+"how": "num+pos",
+"ko": "김정훈",
+"team": 2748
+},
+"34374": {
+"how": "num+pos",
+"ko": "송범근",
+"team": 2762
+},
+"34375": {
+"how": "num+pos+roman",
+"ko": "최보경",
+"team": 2753
+},
+"34376": {
+"how": "num+pos+roman",
+"ko": "홍정호",
+"team": 2765
+},
+"34379": {
+"how": "num+pos",
+"ko": "이주용",
+"team": 2763
+},
+"34382": {
+"how": "num+pos",
+"ko": "박원재",
+"team": 2759
+},
+"34384": {
+"how": "num+pos",
+"ko": "최영준",
+"team": 9171
+},
+"34385": {
+"how": "roman",
+"ko": "한교원",
+"team": 2753
+},
+"34387": {
+"how": "num+pos+roman",
+"ko": "장윤호",
+"team": 2760
+},
+"34392": {
+"how": "num+pos",
+"ko": "문선민",
+"team": 2766
+},
+"34395": {
+"how": "num+pos+roman",
+"ko": "손준호",
+"team": 2753
+},
+"34403": {
+"how": "num+pos+roman",
+"ko": "이시헌",
+"team": 7078
+},
+"34409": {
+"how": "num+pos+roman",
+"ko": "문정인",
+"team": 2767
+},
+"34416": {
+"how": "num+pos+roman",
+"ko": "김민덕",
+"team": 2750
+},
+"34417": {
+"how": "num+pos",
+"ko": "김태환",
+"team": 2762
+},
+"34419": {
+"how": "num+pos+roman",
+"ko": "이지훈",
+"team": 2757
+},
+"34420": {
+"how": "num+pos+roman",
+"ko": "이명재",
+"team": 2750
+},
+"34421": {
+"how": "num+pos+roman",
+"ko": "임종은",
+"team": 2750
+},
+"34427": {
+"how": "num+pos+roman",
+"ko": "주민규",
+"team": 2750
+},
+"34428": {
+"how": "num+pos",
+"ko": "김보경",
+"team": 2748
+},
+"34429": {
+"how": "num+pos+roman",
+"ko": "김인성",
+"team": 2758
+},
+"34430": {
+"how": "num+pos+roman",
+"ko": "김성준",
+"team": 7078
+},
+"34431": {
+"how": "num+pos",
+"ko": "이동경",
+"team": 2767
+},
+"34433": {
+"how": "num+pos+roman",
+"ko": "이지승",
+"team": 7060
+},
+"34435": {
+"how": "num+pos",
+"ko": "박용우",
+"team": 2767
+},
+"34436": {
+"how": "num+pos+roman",
+"ko": "신진호",
+"team": 9171
+},
+"34442": {
+"how": "num+pos",
+"ko": "이상헌",
+"team": 2768
+},
+"34448": {
+"how": "num+pos+roman",
+"ko": "이준희",
+"team": 2760
+},
+"34450": {
+"how": "num+pos+roman",
+"ko": "홍정운",
+"team": 7098
+},
+"34452": {
+"how": "num+pos+roman",
+"ko": "장성원",
+"team": 2747
+},
+"34454": {
+"how": "num+pos+roman",
+"ko": "강윤구",
+"team": 2756
+},
+"34455": {
+"how": "num+pos+roman",
+"ko": "김태한",
+"team": 7078
+},
+"34459": {
+"how": "num+pos+roman",
+"ko": "박병현",
+"team": 7078
+},
+"34474": {
+"how": "num+pos",
+"ko": "박민서",
+"team": 2768
+},
+"34475": {
+"how": "num+pos+roman",
+"ko": "류재문",
+"team": 2747
+},
+"34476": {
+"how": "num+pos",
+"ko": "에드가",
+"team": 2747
+},
+"34480": {
+"how": "num+pos",
+"ko": "정승원",
+"team": 2766
+},
+"34481": {
+"how": "roman",
+"ko": "김대원",
+"team": 2746
+},
+"34482": {
+"how": "num+pos+roman",
+"ko": "김진혁",
+"team": 2752
+},
+"34484": {
+"how": "num+pos",
+"ko": "세징야",
+"team": 2747
+},
+"34487": {
+"how": "num+pos+roman",
+"ko": "백종범",
+"team": 2766
+},
+"34488": {
+"how": "num+pos+roman",
+"ko": "정진욱",
+"team": 7076
+},
+"34489": {
+"how": "num+pos+roman",
+"ko": "양한빈",
+"team": 2756
+},
+"34501": {
+"how": "num+pos+roman",
+"ko": "박동진",
+"team": 7078
+},
+"34504": {
+"how": "num+pos",
+"ko": "윤종규",
+"team": 2767
+},
+"34509": {
+"how": "num+pos",
+"ko": "오스마르",
+"team": 2749
+},
+"34510": {
+"how": "roman",
+"ko": "김한길",
+"team": 9171
+},
+"34517": {
+"how": "num+pos",
+"ko": "조영욱",
+"team": 2766
+},
+"34518": {
+"how": "num+pos",
+"ko": "정원진",
+"team": 2763
+},
+"34521": {
+"how": "num+pos+roman",
+"ko": "이승재",
+"team": 7076
+},
+"34526": {
+"how": "num+pos",
+"ko": "신재원",
+"team": 2745
+},
+"34529": {
+"how": "num+pos+roman",
+"ko": "윤보상",
+"team": 7078
+},
+"34531": {
+"how": "num+pos",
+"ko": "백동규",
+"team": 2745
+},
+"34533": {
+"how": "num+pos+roman",
+"ko": "고태원",
+"team": 7060
+},
+"34534": {
+"how": "num+pos+roman",
+"ko": "장호익",
+"team": 2752
+},
+"34536": {
+"how": "num+pos+roman",
+"ko": "김경재",
+"team": 2760
+},
+"34537": {
+"how": "num+pos",
+"ko": "김영빈",
+"team": 2762
+},
+"34539": {
+"how": "num+pos+roman",
+"ko": "이민기",
+"team": 7098
+},
+"34547": {
+"how": "num+pos",
+"ko": "강상우",
+"team": 2767
+},
+"34549": {
+"how": "num+pos+roman",
+"ko": "이찬동",
+"team": 2751
+},
+"34550": {
+"how": "num+pos",
+"ko": "이규성",
+"team": 2767
+},
+"34552": {
+"how": "num+pos+roman",
+"ko": "류승우",
+"team": 2758
+},
+"34554": {
+"how": "num+pos",
+"ko": "윤빛가람",
+"team": 2745
+},
+"34556": {
+"how": "num+pos+roman",
+"ko": "김건희",
+"team": 2746
+},
+"34558": {
+"how": "num+pos",
+"ko": "이태희",
+"team": 2748
+},
+"34563": {
+"how": "num+pos+roman",
+"ko": "조성훈",
+"team": 7061
+},
+"34564": {
+"how": "num+pos",
+"ko": "강현무",
+"team": 2766
+},
+"34566": {
+"how": "num+pos+roman",
+"ko": "류원우",
+"team": 7098
+},
+"34569": {
+"how": "num+pos",
+"ko": "완델손",
+"team": 2764
+},
+"34570": {
+"how": "num+pos",
+"ko": "최재영",
+"team": 7078
+},
+"34571": {
+"how": "num+pos+roman",
+"ko": "전민광",
+"team": 2764
+},
+"34573": {
+"how": "num+pos+roman",
+"ko": "김용환",
+"team": 2760
+},
+"34575": {
+"how": "num+pos",
+"ko": "이승모",
+"team": 2766
+},
+"34580": {
+"how": "num+pos+roman",
+"ko": "김찬",
+"team": 2752
+},
+"34586": {
+"how": "num+pos",
+"ko": "심상민",
+"team": 2767
+},
+"34590": {
+"how": "num+pos+roman",
+"ko": "하창래",
+"team": 2750
+},
+"34596": {
+"how": "num+pos",
+"ko": "이상기",
+"team": 2763
+},
+"34602": {
+"how": "num+pos",
+"ko": "김동준",
+"team": 2761
+},
+"34605": {
+"how": "num+pos",
+"ko": "이창용",
+"team": 2748
+},
+"34607": {
+"how": "num+pos",
+"ko": "임채민",
+"team": 9171
+},
+"34608": {
+"how": "num+pos",
+"ko": "문지환",
+"team": 2763
+},
+"34609": {
+"how": "num+pos",
+"ko": "연제운",
+"team": 2762
+},
+"34610": {
+"how": "num+pos",
+"ko": "안영규",
+"team": 2759
+},
+"34611": {
+"how": "num+pos+roman",
+"ko": "최병찬",
+"team": 2746
+},
+"34614": {
+"how": "num+pos",
+"ko": "주현우",
+"team": 2748
+},
+"34615": {
+"how": "num+pos+roman",
+"ko": "김동현",
+"team": 2746
+},
+"34617": {
+"how": "num+pos",
+"ko": "김정현",
+"team": 2748
+},
+"34618": {
+"how": "num+pos+roman",
+"ko": "김민혁",
+"team": 2752
+},
+"34623": {
+"how": "num+pos",
+"ko": "박태준",
+"team": 2768
+},
+"34635": {
+"how": "num+pos+roman",
+"ko": "이재원",
+"team": 2756
+},
+"34636": {
+"how": "num+pos",
+"ko": "임승겸",
+"team": 2759
+},
+"34641": {
+"how": "num+pos+roman",
+"ko": "이광연",
+"team": 2757
+},
+"34642": {
+"how": "num+pos+roman",
+"ko": "이승규",
+"team": 7060
+},
+"34645": {
+"how": "num+pos",
+"ko": "김오규",
+"team": 2749
+},
+"34646": {
+"how": "num+pos+roman",
+"ko": "이호인",
+"team": 2753
+},
+"34647": {
+"how": "num+pos",
+"ko": "이재익",
+"team": 2767
+},
+"34650": {
+"how": "num+pos+roman",
+"ko": "신광훈",
+"team": 2764
+},
+"34652": {
+"how": "num+pos",
+"ko": "윤석영",
+"team": 7061
+},
+"34653": {
+"how": "num+pos+roman",
+"ko": "조지훈",
+"team": 2758
+},
+"34655": {
+"how": "num+pos",
+"ko": "한국영",
+"team": 2747
+},
+"34658": {
+"how": "num+pos+roman",
+"ko": "김현욱",
+"team": 2750
+},
+"3466": {
+"how": "num+pos",
+"ko": "치나리",
+"team": 2761
+},
+"34661": {
+"how": "num+pos+roman",
+"ko": "이현식",
+"team": 2750
+},
+"34665": {
+"how": "num+pos",
+"ko": "박창준",
+"team": 2761
+},
+"34667": {
+"how": "num+pos+roman",
+"ko": "정지용",
+"team": 2760
+},
+"34669": {
+"how": "roman",
+"ko": "정승용",
+"team": 2757
+},
+"34671": {
+"how": "num+pos+roman",
+"ko": "김지현",
+"team": 2765
+},
+"34674": {
+"how": "num+pos",
+"ko": "김다솔",
+"team": 2748
+},
+"34676": {
+"how": "num+pos+roman",
+"ko": "박지민",
+"team": 2752
+},
+"34679": {
+"how": "num+pos+roman",
+"ko": "김민호",
+"team": 7098
+},
+"34681": {
+"how": "roman",
+"ko": "김태환",
+"team": 2761
+},
+"34685": {
+"how": "num+pos",
+"ko": "민상기",
+"team": 2759
+},
+"34686": {
+"how": "num+pos+roman",
+"ko": "박대원",
+"team": 2765
+},
+"34694": {
+"how": "num+pos",
+"ko": "김종우",
+"team": 2745
+},
+"34695": {
+"how": "num+pos+roman",
+"ko": "고승범",
+"team": 2765
+},
+"34696": {
+"how": "num+pos+roman",
+"ko": "이종성",
+"team": 7087
+},
+"34699": {
+"how": "num+pos+roman",
+"ko": "박상혁",
+"team": 2757
+},
+"34712": {
+"how": "num+pos",
+"ko": "유주안",
+"team": 2757
+},
+"34714": {
+"how": "num+pos+roman",
+"ko": "이범수",
+"team": 2751
+},
+"34716": {
+"how": "num+pos+roman",
+"ko": "손정현",
+"team": 7078
+},
+"34726": {
+"how": "num+pos+roman",
+"ko": "송주훈",
+"team": 2765
+},
+"34727": {
+"how": "num+pos+roman",
+"ko": "우주성",
+"team": 2752
+},
+"34736": {
+"how": "num+pos+roman",
+"ko": "김준범",
+"team": 2750
+},
+"34738": {
+"how": "num+pos",
+"ko": "이영재",
+"team": 2762
+},
+"34756": {
+"how": "num+pos+roman",
+"ko": "황성민",
+"team": 9171
+},
+"34757": {
+"how": "num+pos+roman",
+"ko": "이창근",
+"team": 2750
+},
+"34771": {
+"how": "num+pos+roman",
+"ko": "정우재",
+"team": 2753
+},
+"34772": {
+"how": "num+pos+roman",
+"ko": "강윤성",
+"team": 2750
+},
+"34777": {
+"how": "num+pos",
+"ko": "이창민",
+"team": 2761
+},
+"34779": {
+"how": "roman",
+"ko": "이동수",
+"team": 2752
+},
+"34781": {
+"how": "num+pos+roman",
+"ko": "서진수",
+"team": 2750
+},
+"34783": {
+"how": "num+pos+roman",
+"ko": "김현",
+"team": 2749
+},
+"34784": {
+"how": "num+pos",
+"ko": "이동률",
+"team": 2763
+},
+"34786": {
+"how": "num+pos+roman",
+"ko": "윤일록",
+"team": 2751
+},
+"34788": {
+"how": "num+pos",
+"ko": "김동헌",
+"team": 2763
+},
+"34789": {
+"how": "num+pos",
+"ko": "이태희",
+"team": 2763
+},
+"34794": {
+"how": "num+pos+roman",
+"ko": "정동윤",
+"team": 2765
+},
+"34796": {
+"how": "num+pos+roman",
+"ko": "김동민",
+"team": 7078
+},
+"34803": {
+"how": "num+pos+roman",
+"ko": "이준석",
+"team": 7098
+},
+"34805": {
+"how": "num+pos+roman",
+"ko": "임은수",
+"team": 2751
+},
+"34806": {
+"how": "num+pos+roman",
+"ko": "최범경",
+"team": 7098
+},
+"34811": {
+"how": "num+pos+roman",
+"ko": "김진야",
+"team": 2750
+},
+"34814": {
+"how": "roman",
+"ko": "이제호",
+"team": 7098
+},
+"34815": {
+"how": "roman",
+"ko": "이정빈",
+"team": 2757
+},
+"34818": {
+"how": "num+pos+roman",
+"ko": "박세직",
+"team": 2753
+},
+"34820": {
+"how": "num+pos+roman",
+"ko": "김보섭",
+"team": 9171
+},
+"34822": {
+"how": "num+pos",
+"ko": "무고사",
+"team": 2763
+},
+"355216": {
+"how": "num+pos",
+"ko": "트란지스카",
+"team": 2764
+},
+"356104": {
+"how": "num+pos+roman",
+"ko": "황재원",
+"team": 2747
+},
+"356120": {
+"how": "num+pos+roman",
+"ko": "정호연",
+"team": 2765
+},
+"356124": {
+"how": "num+pos+roman",
+"ko": "박재용",
+"team": 2749
+},
+"356197": {
+"how": "num+pos",
+"ko": "박성훈",
+"team": 2766
+},
+"356199": {
+"how": "num+pos",
+"ko": "박장한결",
+"team": 2766
+},
+"356200": {
+"how": "num+pos",
+"ko": "김신진",
+"team": 2761
+},
+"356203": {
+"how": "num+pos+roman",
+"ko": "박현빈",
+"team": 2765
+},
+"356207": {
+"how": "num+pos",
+"ko": "최현웅",
+"team": 2753
+},
+"356208": {
+"how": "num+pos+roman",
+"ko": "박창우",
+"team": 7060
+},
+"356210": {
+"how": "num+pos",
+"ko": "강영석",
+"team": 2749
+},
+"356215": {
+"how": "num+pos+roman",
+"ko": "이준호",
+"team": 7060
+},
+"356216": {
+"how": "roman",
+"ko": "박규민",
+"team": 2758
+},
+"356219": {
+"how": "num+pos+roman",
+"ko": "김주성",
+"team": 2753
+},
+"356228": {
+"how": "num+pos+roman",
+"ko": "임준섭",
+"team": 2766
+},
+"356229": {
+"how": "num+pos+roman",
+"ko": "한종무",
+"team": 2747
+},
+"356232": {
+"how": "num+pos+roman",
+"ko": "박건우",
+"team": 7061
+},
+"356233": {
+"how": "num+pos+roman",
+"ko": "이규백",
+"team": 2751
+},
+"356234": {
+"how": "num+pos+roman",
+"ko": "양시후",
+"team": 7087
+},
+"356242": {
+"how": "num+pos+roman",
+"ko": "최기윤",
+"team": 2756
+},
+"356250": {
+"how": "num+pos+roman",
+"ko": "황인택",
+"team": 2747
+},
+"356251": {
+"how": "num+pos",
+"ko": "유제호",
+"team": 2759
+},
+"356254": {
+"how": "num+pos+roman",
+"ko": "이원우",
+"team": 2747
+},
+"356255": {
+"how": "num+pos+roman",
+"ko": "박재현",
+"team": 7076
+},
+"356372": {
+"how": "num+pos+roman",
+"ko": "서재원",
+"team": 7061
+},
+"356375": {
+"how": "num+pos+roman",
+"ko": "이준재",
+"team": 2765
+},
+"356376": {
+"how": "num+pos+roman",
+"ko": "조동재",
+"team": 2752
+},
+"356378": {
+"how": "roman",
+"ko": "김진호",
+"team": 2768
+},
+"357207": {
+"how": "num+pos+roman",
+"ko": "최예훈",
+"team": 7087
+},
+"357209": {
+"how": "num+pos",
+"ko": "조위제",
+"team": 2762
+},
+"357218": {
+"how": "num+pos+roman",
+"ko": "조성빈",
+"team": 7061
+},
+"357219": {
+"how": "num+pos",
+"ko": "여승원",
+"team": 2763
+},
+"357220": {
+"how": "num+pos+roman",
+"ko": "홍석현",
+"team": 2760
+},
+"357388": {
+"how": "num+pos+roman",
+"ko": "차승현",
+"team": 7060
+},
+"357397": {
+"how": "num+pos+roman",
+"ko": "김성주",
+"team": 7060
+},
+"357400": {
+"how": "num+pos+roman",
+"ko": "노동건",
+"team": 2760
+},
+"357406": {
+"how": "num+pos+roman",
+"ko": "김승건",
+"team": 7087
+},
+"357594": {
+"how": "num+pos",
+"ko": "박수빈",
+"team": 2761
+},
+"357991": {
+"how": "num+pos+roman",
+"ko": "여재율",
+"team": 7076
+},
+"358335": {
+"how": "num+pos+roman",
+"ko": "이준규",
+"team": 7076
+},
+"358433": {
+"how": "num+pos+roman",
+"ko": "배서준",
+"team": 2749
+},
+"358439": {
+"how": "num+pos",
+"ko": "양지산",
+"team": 2760
+},
+"358440": {
+"how": "num+pos+roman",
+"ko": "송창석",
+"team": 7061
+},
+"358441": {
+"how": "num+pos",
+"ko": "김종민",
+"team": 2745
+},
+"359513": {
+"how": "num+pos+roman",
+"ko": "김대환",
+"team": 7087
+},
+"359514": {
+"how": "num+pos+roman",
+"ko": "박용희",
+"team": 2768
+},
+"363021": {
+"how": "num+pos",
+"ko": "강상윤",
+"team": 2762
+},
+"36440": {
+"how": "num+pos",
+"ko": "주닝요",
+"team": 2764
+},
+"368530": {
+"how": "num+pos",
+"ko": "서재민",
+"team": 2763
+},
+"37303": {
+"how": "num+pos",
+"ko": "아리아스",
+"team": 7098
+},
+"374159": {
+"how": "num+pos",
+"ko": "김건오",
+"team": 2758
+},
+"376270": {
+"how": "num+pos+roman",
+"ko": "이상민",
+"team": 2765
+},
+"37928": {
+"how": "num+pos",
+"ko": "대니 바커",
+"team": 2748
+},
+"38296": {
+"how": "num+pos",
+"ko": "반 흐룬스벤",
+"team": 2759
+},
+"396496": {
+"how": "num+pos",
+"ko": "루컹",
+"team": 2751
+},
+"40211": {
+"how": "num+pos",
+"ko": "유키치",
+"team": 2748
+},
+"402846": {
+"how": "num+pos+roman",
+"ko": "한태희",
+"team": 2747
+},
+"402848": {
+"how": "num+pos+roman",
+"ko": "유지운",
+"team": 2747
+},
+"403320": {
+"how": "num+pos+roman",
+"ko": "박의정",
+"team": 7087
+},
+"403332": {
+"how": "roman",
+"ko": "강현제",
+"team": 2749
+},
+"403333": {
+"how": "num+pos+roman",
+"ko": "김정현",
+"team": 2758
+},
+"403335": {
+"how": "roman",
+"ko": "윤재운",
+"team": 7078
+},
+"403336": {
+"how": "num+pos",
+"ko": "김건희",
+"team": 2763
+},
+"403337": {
+"how": "num+pos+roman",
+"ko": "임형진",
+"team": 9171
+},
+"403338": {
+"how": "num+pos+roman",
+"ko": "김세훈",
+"team": 2752
+},
+"403340": {
+"how": "num+pos",
+"ko": "최우진",
+"team": 2762
+},
+"403343": {
+"how": "num+pos",
+"ko": "박승호",
+"team": 2763
+},
+"403344": {
+"how": "num+pos+roman",
+"ko": "조민규",
+"team": 2746
+},
+"403345": {
+"how": "num+pos+roman",
+"ko": "전현병",
+"team": 7098
+},
+"403348": {
+"how": "roman",
+"ko": "이동진",
+"team": 7061
+},
+"403349": {
+"how": "num+pos+roman",
+"ko": "이승원",
+"team": 2746
+},
+"403350": {
+"how": "num+pos",
+"ko": "조영광",
+"team": 2760
+},
+"403351": {
+"how": "num+pos+roman",
+"ko": "김현덕",
+"team": 7076
+},
+"403353": {
+"how": "num+pos",
+"ko": "황도윤",
+"team": 2766
+},
+"403355": {
+"how": "roman",
+"ko": "손승범",
+"team": 7087
+},
+"403356": {
+"how": "num+pos",
+"ko": "장석환",
+"team": 2759
+},
+"403360": {
+"how": "roman",
+"ko": "서동한",
+"team": 7098
+},
+"403361": {
+"how": "num+pos+roman",
+"ko": "조성권",
+"team": 2750
+},
+"403576": {
+"how": "num+pos",
+"ko": "장시영",
+"team": 2767
+},
+"403577": {
+"how": "num+pos+roman",
+"ko": "이재욱",
+"team": 2757
+},
+"404195": {
+"how": "roman",
+"ko": "박기현",
+"team": 2747
+},
+"404196": {
+"how": "num+pos+roman",
+"ko": "조진혁",
+"team": 2751
+},
+"404360": {
+"how": "num+pos+roman",
+"ko": "박준서",
+"team": 7087
+},
+"40486": {
+"how": "num+pos",
+"ko": "클리말라",
+"team": 2766
+},
+"404911": {
+"how": "roman",
+"ko": "이동원",
+"team": 7061
+},
+"404914": {
+"how": "num+pos",
+"ko": "안재민",
+"team": 2766
+},
+"404916": {
+"how": "num+pos+roman",
+"ko": "김성동",
+"team": 2748
+},
+"404918": {
+"how": "num+pos+roman",
+"ko": "최성범",
+"team": 7078
+},
+"404919": {
+"how": "num+pos",
+"ko": "김현엽",
+"team": 2745
+},
+"404921": {
+"how": "num+pos",
+"ko": "서명관",
+"team": 2767
+},
+"404922": {
+"how": "num+pos+roman",
+"ko": "김범수",
+"team": 2760
+},
+"405118": {
+"how": "num+pos+roman",
+"ko": "박태용",
+"team": 2760
+},
+"405545": {
+"how": "num+pos",
+"ko": "이민혁",
+"team": 2763
+},
+"405547": {
+"how": "num+pos+roman",
+"ko": "이규동",
+"team": 9171
+},
+"405568": {
+"how": "num+pos+roman",
+"ko": "최치웅",
+"team": 9171
+},
+"405575": {
+"how": "roman",
+"ko": "김도현",
+"team": 2746
+},
+"405582": {
+"how": "num+pos+roman",
+"ko": "이종언",
+"team": 7061
+},
+"406348": {
+"how": "num+pos",
+"ko": "니시야 켄토",
+"team": 2764
+},
+"406458": {
+"how": "num+pos+roman",
+"ko": "이준상",
+"team": 2757
+},
+"407258": {
+"how": "num+pos+roman",
+"ko": "손휘",
+"team": 2752
+},
+"408840": {
+"how": "num+pos+roman",
+"ko": "김태준",
+"team": 7087
+},
+"408843": {
+"how": "num+pos+roman",
+"ko": "정진우",
+"team": 7061
+},
+"408846": {
+"how": "num+pos+roman",
+"ko": "이대광",
+"team": 7098
+},
+"40914": {
+"how": "num+pos",
+"ko": "트로야크",
+"team": 2767
+},
+"409202": {
+"how": "num+pos",
+"ko": "정재민",
+"team": 2768
+},
+"409426": {
+"how": "num+pos",
+"ko": "최석현",
+"team": 2767
+},
+"409503": {
+"how": "num+pos+roman",
+"ko": "문승민",
+"team": 7076
+},
+"410229": {
+"how": "num+pos",
+"ko": "이탈로",
+"team": 2762
+},
+"410570": {
+"how": "num+pos",
+"ko": "아하도프",
+"team": 2752
+},
+"411141": {
+"how": "num+pos+roman",
+"ko": "유선",
+"team": 2757
+},
+"411142": {
+"how": "roman",
+"ko": "양태양",
+"team": 2757
+},
+"411146": {
+"how": "num+pos+roman",
+"ko": "이택근",
+"team": 7098
+},
+"411320": {
+"how": "roman",
+"ko": "최규현",
+"team": 2768
+},
+"411330": {
+"how": "num+pos+roman",
+"ko": "전성진",
+"team": 7087
+},
+"41195": {
+"how": "num+pos",
+"ko": "호난",
+"team": 2760
+},
+"412095": {
+"how": "num+pos",
+"ko": "김하준",
+"team": 2762
+},
+"41273": {
+"how": "num+pos",
+"ko": "감보아",
+"team": 2762
+},
+"414158": {
+"how": "num+pos",
+"ko": "강준혁",
+"team": 2746
+},
+"41429": {
+"how": "num+pos",
+"ko": "후벵 마세도",
+"team": 7076
+},
+"41562": {
+"how": "num+pos",
+"ko": "바우텔손",
+"team": 7098
+},
+"423692": {
+"how": "num+pos+roman",
+"ko": "홍성민",
+"team": 2764
+},
+"423699": {
+"how": "num+pos+roman",
+"ko": "고종현",
+"team": 2765
+},
+"423700": {
+"how": "num+pos+roman",
+"ko": "이창우",
+"team": 2764
+},
+"423703": {
+"how": "num+pos",
+"ko": "백인우",
+"team": 2767
+},
+"423704": {
+"how": "num+pos+roman",
+"ko": "진태호",
+"team": 9171
+},
+"423705": {
+"how": "num+pos+roman",
+"ko": "김성주",
+"team": 2765
+},
+"423712": {
+"how": "num+pos+roman",
+"ko": "이재환",
+"team": 2758
+},
+"424369": {
+"how": "num+pos+roman",
+"ko": "홍재석",
+"team": 2747
+},
+"436225": {
+"how": "num+pos",
+"ko": "엔조",
+"team": 7061
+},
+"442962": {
+"how": "num+pos+roman",
+"ko": "김도윤",
+"team": 2756
+},
+"445730": {
+"how": "num+pos",
+"ko": "이예찬",
+"team": 2745
+},
+"452334": {
+"how": "num+pos+roman",
+"ko": "최동렬",
+"team": 2752
+},
+"453260": {
+"how": "num+pos",
+"ko": "김재민",
+"team": 2761
+},
+"453261": {
+"how": "num+pos",
+"ko": "조인정",
+"team": 2761
+},
+"453262": {
+"how": "num+pos+roman",
+"ko": "민지훈",
+"team": 7061
+},
+"453263": {
+"how": "num+pos",
+"ko": "허동민",
+"team": 7060
+},
+"453264": {
+"how": "num+pos+roman",
+"ko": "함선우",
+"team": 7087
+},
+"453265": {
+"how": "num+pos+roman",
+"ko": "최준영",
+"team": 7076
+},
+"453266": {
+"how": "num+pos+roman",
+"ko": "배현서",
+"team": 2751
+},
+"453302": {
+"how": "num+pos",
+"ko": "정재상",
+"team": 2767
+},
+"453304": {
+"how": "num+pos+roman",
+"ko": "손승민",
+"team": 2747
+},
+"453311": {
+"how": "num+pos",
+"ko": "최승구",
+"team": 2763
+},
+"453312": {
+"how": "num+pos+roman",
+"ko": "이규민",
+"team": 7060
+},
+"453313": {
+"how": "num+pos+roman",
+"ko": "김동진",
+"team": 2764
+},
+"453314": {
+"how": "num+pos+roman",
+"ko": "황서웅",
+"team": 2764
+},
+"453315": {
+"how": "num+pos+roman",
+"ko": "이동협",
+"team": 7060
+},
+"453317": {
+"how": "num+pos+roman",
+"ko": "박상준",
+"team": 7076
+},
+"453318": {
+"how": "num+pos+roman",
+"ko": "정승배",
+"team": 2756
+},
+"453319": {
+"how": "num+pos+roman",
+"ko": "조준현",
+"team": 2749
+},
+"453320": {
+"how": "num+pos+roman",
+"ko": "신일연",
+"team": 2753
+},
+"453966": {
+"how": "num+pos+roman",
+"ko": "김한서",
+"team": 9171
+},
+"453968": {
+"how": "num+pos",
+"ko": "문민서",
+"team": 2759
+},
+"453969": {
+"how": "num+pos+roman",
+"ko": "신민하",
+"team": 2746
+},
+"453972": {
+"how": "num+pos+roman",
+"ko": "김유성",
+"team": 2746
+},
+"454030": {
+"how": "num+pos+roman",
+"ko": "김현준",
+"team": 9171
+},
+"454031": {
+"how": "num+pos+roman",
+"ko": "임지민",
+"team": 2758
+},
+"454493": {
+"how": "num+pos",
+"ko": "말론",
+"team": 2758
+},
+"457024": {
+"how": "num+pos+roman",
+"ko": "김동민",
+"team": 9171
+},
+"457276": {
+"how": "num+pos+roman",
+"ko": "김민호",
+"team": 2753
+},
+"457278": {
+"how": "num+pos",
+"ko": "박정훈",
+"team": 2748
+},
+"457279": {
+"how": "num+pos",
+"ko": "김동현",
+"team": 2745
+},
+"457280": {
+"how": "num+pos",
+"ko": "윤재석",
+"team": 2768
+},
+"457282": {
+"how": "num+pos",
+"ko": "김영환",
+"team": 2763
+},
+"457288": {
+"how": "num+pos+roman",
+"ko": "정마호",
+"team": 2768
+},
+"457289": {
+"how": "num+pos+roman",
+"ko": "정세준",
+"team": 2753
+},
+"457295": {
+"how": "num+pos+roman",
+"ko": "김동욱",
+"team": 2752
+},
+"457299": {
+"how": "num+pos+roman",
+"ko": "류준선",
+"team": 2757
+},
+"457300": {
+"how": "num+pos",
+"ko": "조영광",
+"team": 7076
+},
+"457301": {
+"how": "num+pos+roman",
+"ko": "김결",
+"team": 2765
+},
+"457303": {
+"how": "num+pos+roman",
+"ko": "이건희",
+"team": 2765
+},
+"458251": {
+"how": "num+pos",
+"ko": "슌",
+"team": 2757
+},
+"458255": {
+"how": "num+pos+roman",
+"ko": "김민수",
+"team": 2750
+},
+"461602": {
+"how": "num+pos",
+"ko": "배진우",
+"team": 2759
+},
+"46229": {
+"how": "num+pos",
+"ko": "카이오",
+"team": 2749
+},
+"463586": {
+"how": "num+pos",
+"ko": "채현우",
+"team": 2748
+},
+"463885": {
+"how": "num+pos+roman",
+"ko": "김우빈",
+"team": 2749
+},
+"467892": {
+"how": "num+pos+roman",
+"ko": "손건호",
+"team": 2760
+},
+"46906": {
+"how": "num+pos",
+"ko": "후안 이비자",
+"team": 2763
+},
+"47090": {
+"how": "num+pos",
+"ko": "이케르",
+"team": 2763
+},
+"472153": {
+"how": "num+pos",
+"ko": "강주혁",
+"team": 2768
+},
+"472245": {
+"how": "num+pos+roman",
+"ko": "이동열",
+"team": 7098
+},
+"472257": {
+"how": "num+pos",
+"ko": "김동화",
+"team": 2759
+},
+"472259": {
+"how": "num+pos+roman",
+"ko": "류승완",
+"team": 2758
+},
+"472260": {
+"how": "num+pos+roman",
+"ko": "백지웅",
+"team": 2749
+},
+"472263": {
+"how": "num+pos+roman",
+"ko": "강민준",
+"team": 2764
+},
+"472264": {
+"how": "num+pos",
+"ko": "홍용준",
+"team": 2759
+},
+"472265": {
+"how": "num+pos+roman",
+"ko": "박재성",
+"team": 7087
+},
+"47370": {
+"how": "num+pos",
+"ko": "보르하 바스톤",
+"team": 7098
+},
+"474959": {
+"how": "num+pos+roman",
+"ko": "김지호",
+"team": 2765
+},
+"47706": {
+"how": "num+pos",
+"ko": "루빅손",
+"team": 2750
+},
+"47757": {
+"how": "num+pos",
+"ko": "플라나",
+"team": 7087
+},
+"479273": {
+"how": "num+pos",
+"ko": "김윤호",
+"team": 2759
+},
+"48124": {
+"how": "num+pos",
+"ko": "보야니치",
+"team": 2767
+},
+"501877": {
+"how": "num+pos",
+"ko": "사르자니",
+"team": 7060
+},
+"50375": {
+"how": "num+pos",
+"ko": "임창우",
+"team": 2761
+},
+"506283": {
+"how": "num+pos+roman",
+"ko": "이지호",
+"team": 2746
+},
+"506285": {
+"how": "num+pos+roman",
+"ko": "김태환",
+"team": 2746
+},
+"506287": {
+"how": "num+pos+roman",
+"ko": "정승빈",
+"team": 2746
+},
+"506292": {
+"how": "num+pos+roman",
+"ko": "백경",
+"team": 2756
+},
+"506299": {
+"how": "num+pos",
+"ko": "바또",
+"team": 2766
+},
+"506302": {
+"how": "num+pos+roman",
+"ko": "조상혁",
+"team": 2764
+},
+"506305": {
+"how": "num+pos+roman",
+"ko": "한현서",
+"team": 2765
+},
+"506306": {
+"how": "num+pos",
+"ko": "차준영",
+"team": 7076
+},
+"508421": {
+"how": "num+pos+roman",
+"ko": "류성민",
+"team": 2767
+},
+"508425": {
+"how": "num+pos+roman",
+"ko": "이재준",
+"team": 9171
+},
+"508427": {
+"how": "num+pos+roman",
+"ko": "황승준",
+"team": 2762
+},
+"509169": {
+"how": "num+pos",
+"ko": "박만호",
+"team": 2768
+},
+"509171": {
+"how": "num+pos+roman",
+"ko": "김민준",
+"team": 2747
+},
+"509173": {
+"how": "num+pos+roman",
+"ko": "이림",
+"team": 2747
+},
+"50942": {
+"how": "num+pos",
+"ko": "벤지",
+"team": 2767
+},
+"510374": {
+"how": "roman",
+"ko": "김현우",
+"team": 2749
+},
+"510579": {
+"how": "num+pos+roman",
+"ko": "김진호",
+"team": 9171
+},
+"510580": {
+"how": "roman",
+"ko": "김준하",
+"team": 2768
+},
+"510881": {
+"how": "roman",
+"ko": "임지훈",
+"team": 2765
+},
+"510884": {
+"how": "num+pos+roman",
+"ko": "이찬형",
+"team": 7078
+},
+"510885": {
+"how": "num+pos",
+"ko": "박경섭",
+"team": 2763
+},
+"511022": {
+"how": "roman",
+"ko": "박병규",
+"team": 2757
+},
+"511024": {
+"how": "num+pos",
+"ko": "양영빈",
+"team": 7061
+},
+"511616": {
+"how": "num+pos+roman",
+"ko": "장부성",
+"team": 7078
+},
+"511703": {
+"how": "num+pos",
+"ko": "이상명",
+"team": 2762
+},
+"512402": {
+"how": "num+pos+roman",
+"ko": "이상현",
+"team": 2745
+},
+"512409": {
+"how": "num+pos+roman",
+"ko": "서진석",
+"team": 2749
+},
+"512413": {
+"how": "num+pos+roman",
+"ko": "연응빈",
+"team": 2758
+},
+"512436": {
+"how": "num+pos+roman",
+"ko": "진의준",
+"team": 7060
+},
+"518075": {
+"how": "num+pos",
+"ko": "김현오",
+"team": 2751
+},
+"518076": {
+"how": "num+pos+roman",
+"ko": "홍진혁",
+"team": 2746
+},
+"522249": {
+"how": "num+pos",
+"ko": "우정연",
+"team": 7060
+},
+"527605": {
+"how": "num+pos+roman",
+"ko": "홍석준",
+"team": 2749
+},
+"53900": {
+"how": "num+pos",
+"ko": "야잔",
+"team": 2766
+},
+"545050": {
+"how": "num+pos+roman",
+"ko": "이주혁",
+"team": 2749
+},
+"546844": {
+"how": "num+pos+roman",
+"ko": "김현민",
+"team": 2752
+},
+"546883": {
+"how": "num+pos+roman",
+"ko": "백가온",
+"team": 2752
+},
+"547244": {
+"how": "roman",
+"ko": "정강민",
+"team": 2760
+},
+"547252": {
+"how": "num+pos",
+"ko": "정용희",
+"team": 7087
+},
+"547255": {
+"how": "num+pos+roman",
+"ko": "박채준",
+"team": 2758
+},
+"547260": {
+"how": "roman",
+"ko": "홍창범",
+"team": 2757
+},
+"547270": {
+"how": "num+pos",
+"ko": "박종민",
+"team": 2753
+},
+"547274": {
+"how": "num+pos",
+"ko": "강민규",
+"team": 2768
+},
+"547276": {
+"how": "num+pos+roman",
+"ko": "최원철",
+"team": 7076
+},
+"547291": {
+"how": "num+pos+roman",
+"ko": "손혁찬",
+"team": 2749
+},
+"547344": {
+"how": "num+pos+roman",
+"ko": "윤석주",
+"team": 2749
+},
+"547351": {
+"how": "num+pos",
+"ko": "이재원",
+"team": 2745
+},
+"547352": {
+"how": "num+pos",
+"ko": "손준석",
+"team": 2752
+},
+"547358": {
+"how": "num+pos",
+"ko": "설현진",
+"team": 7076
+},
+"547370": {
+"how": "num+pos",
+"ko": "변준영",
+"team": 2753
+},
+"547381": {
+"how": "num+pos+roman",
+"ko": "하재민",
+"team": 7060
+},
+"547391": {
+"how": "num+pos+roman",
+"ko": "안재민",
+"team": 2757
+},
+"547397": {
+"how": "num+pos+roman",
+"ko": "유동규",
+"team": 9171
+},
+"547401": {
+"how": "num+pos+roman",
+"ko": "김형원",
+"team": 2751
+},
+"547423": {
+"how": "num+pos",
+"ko": "전민수",
+"team": 2751
+},
+"547424": {
+"how": "num+pos",
+"ko": "김하민",
+"team": 2751
+},
+"547428": {
+"how": "num+pos",
+"ko": "강민재",
+"team": 2749
+},
+"547441": {
+"how": "num+pos+roman",
+"ko": "박우진",
+"team": 2767
+},
+"547442": {
+"how": "num+pos",
+"ko": "베니시오",
+"team": 2757
+},
+"547453": {
+"how": "num+pos+roman",
+"ko": "김정훈",
+"team": 2746
+},
+"547455": {
+"how": "num+pos",
+"ko": "정지황",
+"team": 7060
+},
+"547460": {
+"how": "num+pos+roman",
+"ko": "유민준",
+"team": 2757
+},
+"547470": {
+"how": "num+pos",
+"ko": "황석기",
+"team": 2757
+},
+"550365": {
+"how": "num+pos",
+"ko": "강희수",
+"team": 2759
+},
+"550368": {
+"how": "num+pos+roman",
+"ko": "이현용",
+"team": 2756
+},
+"550411": {
+"how": "num+pos+roman",
+"ko": "진시우",
+"team": 2764
+},
+"550439": {
+"how": "num+pos",
+"ko": "안혁주",
+"team": 2759
+},
+"55958": {
+"how": "num+pos",
+"ko": "안톤",
+"team": 2750
+},
+"56274": {
+"how": "num+pos",
+"ko": "반데이라",
+"team": 7061
+},
+"563584": {
+"how": "num+pos",
+"ko": "노보",
+"team": 9171
+},
+"57162": {
+"how": "num+pos",
+"ko": "프리드욘슨",
+"team": 2759
+},
+"575339": {
+"how": "num+pos+roman",
+"ko": "이강욱",
+"team": 7076
+},
+"579290": {
+"how": "num+pos",
+"ko": "알렉스",
+"team": 2751
+},
+"590532": {
+"how": "num+pos+roman",
+"ko": "염도현",
+"team": 2756
+},
+"590834": {
+"how": "num+pos",
+"ko": "정현우",
+"team": 2766
+},
+"590841": {
+"how": "num+pos+roman",
+"ko": "강신명",
+"team": 9171
+},
+"606709": {
+"how": "roman",
+"ko": "김지성",
+"team": 2765
+},
+"606923": {
+"how": "num+pos+roman",
+"ko": "최주호",
+"team": 2767
+},
+"62204": {
+"how": "num+pos",
+"ko": "제시",
+"team": 2746
+},
+"624017": {
+"how": "roman",
+"ko": "김민재",
+"team": 2757
+},
+"632426": {
+"how": "num+pos+roman",
+"ko": "정현욱",
+"team": 2751
+},
+"63839": {
+"how": "num+pos",
+"ko": "가브리엘",
+"team": 2749
+},
+"63997": {
+"how": "num+pos",
+"ko": "리마",
+"team": 2758
+},
+"640006": {
+"how": "num+pos+roman",
+"ko": "조민서",
+"team": 2767
+},
+"640023": {
+"how": "num+pos+roman",
+"ko": "최지남",
+"team": 2746
+},
+"640025": {
+"how": "roman",
+"ko": "이효빈",
+"team": 2746
+},
+"640076": {
+"how": "num+pos+roman",
+"ko": "김범준",
+"team": 2764
+},
+"640143": {
+"how": "num+pos",
+"ko": "손정범",
+"team": 2766
+},
+"641039": {
+"how": "num+pos+roman",
+"ko": "조현우",
+"team": 9171
+},
+"641041": {
+"how": "num+pos+roman",
+"ko": "조원우",
+"team": 2746
+},
+"641042": {
+"how": "num+pos",
+"ko": "정대영",
+"team": 2762
+},
+"641228": {
+"how": "num+pos+roman",
+"ko": "김범환",
+"team": 7087
+},
+"641296": {
+"how": "num+pos+roman",
+"ko": "이재형",
+"team": 9171
+},
+"643757": {
+"how": "num+pos+roman",
+"ko": "강동현",
+"team": 2758
+},
+"643759": {
+"how": "roman",
+"ko": "이슬찬",
+"team": 7076
+},
+"643760": {
+"how": "num+pos+roman",
+"ko": "정현우",
+"team": 2758
+},
+"643762": {
+"how": "num+pos",
+"ko": "김승현",
+"team": 2758
+},
+"643773": {
+"how": "num+pos",
+"ko": "오브라도비치",
+"team": 2758
+},
+"643774": {
+"how": "num+pos",
+"ko": "송범",
+"team": 2758
+},
+"643846": {
+"how": "num+pos",
+"ko": "윤병권",
+"team": 7076
+},
+"643847": {
+"how": "num+pos",
+"ko": "김도담",
+"team": 2758
+},
+"643848": {
+"how": "num+pos+roman",
+"ko": "이효준",
+"team": 2758
+},
+"643849": {
+"how": "roman",
+"ko": "최단",
+"team": 2758
+},
+"643851": {
+"how": "num+pos+roman",
+"ko": "모경빈",
+"team": 2765
+},
+"643983": {
+"how": "num+pos",
+"ko": "임병훈",
+"team": 7087
+},
+"643985": {
+"how": "num+pos+roman",
+"ko": "하정우",
+"team": 2756
+},
+"643986": {
+"how": "num+pos+roman",
+"ko": "어은결",
+"team": 7060
+},
+"643987": {
+"how": "num+pos+roman",
+"ko": "신준서",
+"team": 2751
+},
+"644067": {
+"how": "num+pos",
+"ko": "김재현",
+"team": 2748
+},
+"644070": {
+"how": "num+pos",
+"ko": "어담",
+"team": 2745
+},
+"644073": {
+"how": "num+pos+roman",
+"ko": "조민협",
+"team": 2760
+},
+"644076": {
+"how": "roman",
+"ko": "오하종",
+"team": 2759
+},
+"644080": {
+"how": "num+pos+roman",
+"ko": "왕민준",
+"team": 2763
+},
+"644083": {
+"how": "num+pos+roman",
+"ko": "강동휘",
+"team": 2761
+},
+"644084": {
+"how": "num+pos",
+"ko": "권기민",
+"team": 2761
+},
+"644087": {
+"how": "num+pos+roman",
+"ko": "김주형",
+"team": 2762
+},
+"644088": {
+"how": "num+pos+roman",
+"ko": "김두현",
+"team": 7061
+},
+"644109": {
+"how": "num+pos+roman",
+"ko": "김민재",
+"team": 2758
+},
+"644110": {
+"how": "num+pos+roman",
+"ko": "진호진",
+"team": 2758
+},
+"644142": {
+"how": "num+pos",
+"ko": "김지훈",
+"team": 2756
+},
+"644143": {
+"how": "num+pos+roman",
+"ko": "박경민",
+"team": 7087
+},
+"644144": {
+"how": "num+pos+roman",
+"ko": "이진섭",
+"team": 9171
+},
+"644145": {
+"how": "num+pos",
+"ko": "정태인",
+"team": 2760
+},
+"644379": {
+"how": "num+pos",
+"ko": "공배현",
+"team": 2759
+},
+"644382": {
+"how": "num+pos",
+"ko": "박상현",
+"team": 7078
+},
+"644389": {
+"how": "num+pos",
+"ko": "임찬열",
+"team": 7087
+},
+"644390": {
+"how": "num+pos+roman",
+"ko": "한준성",
+"team": 7076
+},
+"644391": {
+"how": "num+pos",
+"ko": "박형빈",
+"team": 7076
+},
+"644392": {
+"how": "num+pos",
+"ko": "성호영",
+"team": 7076
+},
+"644394": {
+"how": "num+pos+roman",
+"ko": "권용승",
+"team": 7060
+},
+"644603": {
+"how": "num+pos+roman",
+"ko": "이윤환",
+"team": 7061
+},
+"644908": {
+"how": "num+pos+roman",
+"ko": "김혜성",
+"team": 2753
+},
+"644909": {
+"how": "roman",
+"ko": "노승익",
+"team": 7098
+},
+"644911": {
+"how": "num+pos",
+"ko": "김민승",
+"team": 7098
+},
+"644912": {
+"how": "num+pos",
+"ko": "김민성",
+"team": 7098
+},
+"644913": {
+"how": "roman",
+"ko": "박성우",
+"team": 2753
+},
+"644914": {
+"how": "num+pos+roman",
+"ko": "이찬호",
+"team": 7098
+},
+"645694": {
+"how": "num+pos+roman",
+"ko": "안준규",
+"team": 2756
+},
+"645758": {
+"how": "num+pos+roman",
+"ko": "최상윤",
+"team": 7098
+},
+"645988": {
+"how": "roman",
+"ko": "박혜성",
+"team": 2752
+},
+"645993": {
+"how": "num+pos+roman",
+"ko": "변정우",
+"team": 2747
+},
+"645994": {
+"how": "num+pos+roman",
+"ko": "장승우",
+"team": 2751
+},
+"645996": {
+"how": "num+pos+roman",
+"ko": "김규민",
+"team": 2751
+},
+"645997": {
+"how": "num+pos",
+"ko": "조우영",
+"team": 2751
+},
+"645998": {
+"how": "num+pos+roman",
+"ko": "권병준",
+"team": 2757
+},
+"645999": {
+"how": "num+pos+roman",
+"ko": "홍석현",
+"team": 2757
+},
+"646001": {
+"how": "num+pos+roman",
+"ko": "윤근영",
+"team": 2765
+},
+"646002": {
+"how": "roman",
+"ko": "김민호",
+"team": 2756
+},
+"646004": {
+"how": "num+pos+roman",
+"ko": "최륜성",
+"team": 2756
+},
+"646016": {
+"how": "num+pos+roman",
+"ko": "정연원",
+"team": 2749
+},
+"646020": {
+"how": "num+pos+roman",
+"ko": "이준한",
+"team": 2758
+},
+"646023": {
+"how": "num+pos+roman",
+"ko": "도승우",
+"team": 2758
+},
+"646034": {
+"how": "num+pos+roman",
+"ko": "윤제희",
+"team": 2753
+},
+"646191": {
+"how": "num+pos+roman",
+"ko": "주나무",
+"team": 7061
+},
+"646194": {
+"how": "num+pos+roman",
+"ko": "남현우",
+"team": 7078
+},
+"646197": {
+"how": "num+pos+roman",
+"ko": "이상민",
+"team": 7078
+},
+"646201": {
+"how": "num+pos+roman",
+"ko": "염경민",
+"team": 7098
+},
+"646783": {
+"how": "num+pos",
+"ko": "고필관",
+"team": 2766
+},
+"651817": {
+"how": "num+pos+roman",
+"ko": "김유래",
+"team": 2752
+},
+"653115": {
+"how": "num+pos",
+"ko": "김용혁",
+"team": 2759
+},
+"653116": {
+"how": "num+pos",
+"ko": "박성현",
+"team": 2759
+},
+"656690": {
+"how": "num+pos",
+"ko": "윤영석",
+"team": 2760
+},
+"659979": {
+"how": "num+pos",
+"ko": "정하원",
+"team": 2766
+},
+"660457": {
+"how": "num+pos",
+"ko": "최재혁",
+"team": 2746
+},
+"660934": {
+"how": "num+pos+roman",
+"ko": "이용재",
+"team": 2746
+},
+"661090": {
+"how": "num+pos+roman",
+"ko": "권준성",
+"team": 2752
+},
+"66205": {
+"how": "num+pos",
+"ko": "바 루아 ",
+"team": 2759
+},
+"662263": {
+"how": "roman",
+"ko": "류광현",
+"team": 2760
+},
+"663343": {
+"how": "num+pos+roman",
+"ko": "여민준",
+"team": 2765
+},
+"664888": {
+"how": "num+pos+roman",
+"ko": "공태윤",
+"team": 7061
+},
+"667188": {
+"how": "num+pos",
+"ko": "홍욱현",
+"team": 7076
+},
+"667472": {
+"how": "num+pos",
+"ko": "김우진",
+"team": 2759
+},
+"667914": {
+"how": "num+pos+roman",
+"ko": "김준서",
+"team": 7078
+},
+"668889": {
+"how": "num+pos+roman",
+"ko": "박병찬",
+"team": 2750
+},
+"669129": {
+"how": "num+pos",
+"ko": "성예건",
+"team": 2745
+},
+"674548": {
+"how": "num+pos+roman",
+"ko": "전민규",
+"team": 2757
+},
+"675132": {
+"how": "num+pos",
+"ko": "이호진",
+"team": 2752
+},
+"675150": {
+"how": "num+pos+roman",
+"ko": "박현민",
+"team": 2762
+},
+"676764": {
+"how": "num+pos+roman",
+"ko": "박요한",
+"team": 7076
+},
+"676965": {
+"how": "num+pos+roman",
+"ko": "강성윤",
+"team": 2746
+},
+"677555": {
+"how": "num+pos+roman",
+"ko": "김준형",
+"team": 2758
+},
+"678273": {
+"how": "roman",
+"ko": "김동윤",
+"team": 2752
+},
+"67877": {
+"how": "num+pos+roman",
+"ko": "이래준",
+"team": 7087
+},
+"679429": {
+"how": "num+pos",
+"ko": "고은석",
+"team": 2746
+},
+"679627": {
+"how": "num+pos+roman",
+"ko": "김주헌",
+"team": 2760
+},
+"680421": {
+"how": "num+pos",
+"ko": "김민준",
+"team": 2766
+},
+"680877": {
+"how": "num+pos+roman",
+"ko": "김지혁",
+"team": 2757
+},
+"681413": {
+"how": "num+pos+roman",
+"ko": "한재빈",
+"team": 2762
+},
+"681414": {
+"how": "num+pos+roman",
+"ko": "문건호",
+"team": 2750
+},
+"681417": {
+"how": "num+pos+roman",
+"ko": "오성민",
+"team": 7060
+},
+"682906": {
+"how": "num+pos+roman",
+"ko": "장하윤",
+"team": 7098
+},
+"7027": {
+"how": "num+pos",
+"ko": "은고이",
+"team": 2753
+},
+"70554": {
+"how": "num+pos",
+"ko": "바에즈",
+"team": 7098
+},
+"7217": {
+"how": "num+pos+roman",
+"ko": "오인표",
+"team": 2749
+},
+"77047": {
+"how": "num+pos",
+"ko": "보이노비치",
+"team": 7087
+},
+"79119": {
+"how": "num+pos",
+"ko": "세레스틴",
+"team": 2761
+},
+"80381": {
+"how": "num+pos",
+"ko": "에울레르",
+"team": 2749
+},
+"80537": {
+"how": "num+pos",
+"ko": "페신",
+"team": 2765
+},
+"83431": {
+"how": "num+pos",
+"ko": "카즈",
+"team": 2745
+},
+"85075": {
+"how": "num+pos",
+"ko": "르본",
+"team": 2765
+},
+"8901": {
+"how": "num+pos",
+"ko": "이라클리",
+"team": 2760
+},
+"8996": {
+"how": "num+pos",
+"ko": "페트로프",
+"team": 7087
+},
+"91677": {
+"how": "num+pos+roman",
+"ko": "박찬용",
+"team": 2764
+},
+"91881": {
+"how": "num+pos+roman",
+"ko": "김종민",
+"team": 2753
+},
+"92473": {
+"how": "num+pos",
+"ko": "이윤오",
+"team": 2756
+},
+"9602": {
+"how": "num+pos",
+"ko": "패트릭",
+"team": 2745
+},
+"9621": {
+"how": "num+pos",
+"ko": "모따",
+"team": 2762
+},
+"9630": {
+"how": "num+pos",
+"ko": "델란",
+"team": 2756
+},
+"9658": {
+"how": "num+pos",
+"ko": "가브리엘",
+"team": 2752
+},
+"9659": {
+"how": "num+pos",
+"ko": "헤이스",
+"team": 2765
+},
+"9690": {
+"how": "num+pos",
+"ko": "파울리뇨",
+"team": 7078
+},
+"9718": {
+"how": "num+pos",
+"ko": "마테우스",
+"team": 2748
+},
+"99188": {
+"how": "num+pos",
+"ko": "김연수",
+"team": 2763
+},
+"99189": {
+"how": "num+pos+roman",
+"ko": "권기표",
+"team": 2751
+},
+"99193": {
+"how": "num+pos",
+"ko": "이명주",
+"team": 2763
+},
+"99194": {
+"how": "num+pos+roman",
+"ko": "이인재",
+"team": 7078
+},
+"99199": {
+"how": "num+pos+roman",
+"ko": "안현범",
+"team": 2752
+},
+"99201": {
+"how": "num+pos",
+"ko": "김동진",
+"team": 2748
+},
+"99205": {
+"how": "num+pos+roman",
+"ko": "황인재",
+"team": 2764
+},
+"99206": {
+"how": "num+pos+roman",
+"ko": "이창훈",
+"team": 7061
+},
+"99222": {
+"how": "num+pos+roman",
+"ko": "김경준",
+"team": 2760
+},
+"99225": {
+"how": "num+pos+roman",
+"ko": "이승빈",
+"team": 2758
+},
+"99227": {
+"how": "num+pos+roman",
+"ko": "곽성욱",
+"team": 7076
+},
+"99228": {
+"how": "num+pos+roman",
+"ko": "양형모",
+"team": 2765
+},
+"99230": {
+"how": "num+pos+roman",
+"ko": "김도혁",
+"team": 7078
+},
+"99231": {
+"how": "num+pos+roman",
+"ko": "최명희",
+"team": 7087
+},
+"99236": {
+"how": "num+pos+roman",
+"ko": "김선민",
+"team": 7061
+},
+"99237": {
+"how": "num+pos+roman",
+"ko": "최봉진",
+"team": 2760
+},
+"99244": {
+"how": "num+pos+roman",
+"ko": "장순혁",
+"team": 2760
+},
+"99246": {
+"how": "num+pos+roman",
+"ko": "이기현",
+"team": 2751
+},
+"99249": {
+"how": "num+pos+roman",
+"ko": "원기종",
+"team": 2764
+},
+"99259": {
+"how": "num+pos",
+"ko": "연제민",
+"team": 2758
+},
+"99260": {
+"how": "num+pos+roman",
+"ko": "최치원",
+"team": 2753
+},
+"99275": {
+"how": "roman",
+"ko": "김현태",
+"team": 7098
+},
+"99279": {
+"how": "num+pos+roman",
+"ko": "최한솔",
+"team": 2760
+},
+"99299": {
+"how": "num+pos",
+"ko": "김태현",
+"team": 2762
+},
+"99323": {
+"how": "num+pos+roman",
+"ko": "박대훈",
+"team": 2747
+},
+"99508": {
+"how": "num+pos+roman",
+"ko": "박경록",
+"team": 7078
+},
+"99565": {
+"how": "roman",
+"ko": "서재민",
+"team": 2756
+},
+"99568": {
+"how": "num+pos",
+"ko": "정운",
+"team": 2761
+}
+}
+}

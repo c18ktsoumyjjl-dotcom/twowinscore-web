@@ -42,7 +42,7 @@ def _football(tid, base):
             gl = sum((s.get("goals") or {}).get("total") or 0 for s in sts)
             asst = sum((s.get("goals") or {}).get("assists") or 0 for s in sts)
             pos = FPOS.get((sts[0].get("games") or {}).get("position"), "")
-            ps.append({**_p(pl.get("name"), (sts[0].get("games") or {}).get("number") or nums.get(pl.get("name")), pos,
+            ps.append({**_p(__import__("pname").ko("football", pl.get("id"), pl.get("name")), (sts[0].get("games") or {}).get("number") or nums.get(pl.get("name")), pos,
                             [f"{ap}경기", f"{gl}골", f"{asst}도움"]), "_ln": ln, "_ap": ap})
         if len(r) < 20:
             break

@@ -28,7 +28,7 @@ def _fb_events(g, lh):
             continue
         m = tm.get("elapsed") or 0
         ev.append({"t": t, "m": m, "s": "L" if (e.get("team") or {}).get("id") == lid else "R",
-                   "who": (e.get("player") or {}).get("name") or "", "lab": f"{m}'" + (f"+{tm['extra']}" if tm.get("extra") else "")})
+                   "who": __import__("pname").ko("football", (e.get("player") or {}).get("id"), (e.get("player") or {}).get("name") or ""), "lab": f"{m}'" + (f"+{tm['extra']}" if tm.get("extra") else "")})
     return ev
 
 

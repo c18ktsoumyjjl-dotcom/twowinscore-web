@@ -253,9 +253,9 @@ def goals(g, rows):
             continue
         half = _half(e)
         mn = "" if half == "승부차기" else f"{tm.get('elapsed')}'" + (f"+{tm['extra']}" if tm.get("extra") else "")
-        out.append({"half": half, "min": mn, "side": side, "who": (e.get("player") or {}).get("name") or "",
+        out.append({"half": half, "min": mn, "side": side, "who": __import__("pname").ko("football", (e.get("player") or {}).get("id"), (e.get("player") or {}).get("name") or ""),
                     "kind": "자책골" if "Own" in det else "PK" if "Penalty" in det else "",
-                    "ast": (e.get("assist") or {}).get("name") or "", "o": (tm.get("elapsed") or 0) * 100 + (tm.get("extra") or 0)})
+                    "ast": __import__("pname").ko("football", (e.get("assist") or {}).get("id"), (e.get("assist") or {}).get("name") or ""), "o": (tm.get("elapsed") or 0) * 100 + (tm.get("extra") or 0)})
     out.sort(key=lambda x: x["o"])
     return out
 
@@ -272,7 +272,7 @@ def events(g, rows=None):
         minute = f"{tm.get('elapsed')}'" + (f"+{tm['extra']}" if tm.get("extra") else "")
         from teams_ko import ko
         team = ko("football", (e.get("team") or {}).get("id"), (e.get("team") or {}).get("name") or "")[0]
-        who = (e.get("player") or {}).get("name") or ""
+        who = __import__("pname").ko("football", (e.get("player") or {}).get("id"), (e.get("player") or {}).get("name") or "")
         typ, det = e.get("type"), e.get("detail") or ""
         if typ == "Goal":
             kind = "자책골" if "Own" in det else "페널티 골" if "Penalty" in det else "골"
