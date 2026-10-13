@@ -588,3 +588,4 @@ body.mapp .seo5{margin:20px 12px 90px;padding:14px}
 .tptag .fn.rc-w{background:#ff7a1a!important;color:#fff!important}
 .tptag .fn.rc-l{background:#2a4a85!important;color:#fff!important}
 .tptag .fn.rc-d{background:#6b7590!important;color:#fff!important}
+@media (max-width:1023px){.fin.rc-w,.fin.rc-l,.fin.rc-d{font-size:10.5px;padding:0 5px}}
