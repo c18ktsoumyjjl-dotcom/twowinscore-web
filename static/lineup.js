@@ -29,7 +29,7 @@ async function load(){if(!document.body.contains(box)){clearInterval(timer);retu
  let j;try{j=await (await fetch('/api/lineup/'+encodeURIComponent(box.dataset.k)+'?d='+box.dataset.d)).json()}catch(e){return}
  const b=document.getElementById('lu9b'),s=document.getElementById('lu9s');
  if(!j.ok){b.innerHTML='<p class="lu9e">라인업 정보 없음</p>';s.textContent='';clearInterval(timer);return}
- if(j.kind==='football'){if(j.none){b.innerHTML='<p class="lu9e">공식 라인업 발표 전이에요 (보통 킥오프 약 1시간 전 발표)</p>';s.textContent='';return}
+ if(j.kind==='football'){if(j.none){b.innerHTML=j.why==='disagree'?'<p class="lu9e">출처마다 선발 명단이 달라 확인될 때까지 숨겼어요</p>':'<p class="lu9e">공식 라인업 발표 전이에요 (보통 킥오프 약 1시간 전 발표)</p>';s.textContent='';return}
   const lh=box.dataset.lh==='1',order=lh?['home','away']:['away','home'];
   const li=p=>`<tr><td class="o">${p.no!=null?esc(p.no):''}</td><td class="n">${esc(p.name)}${p.pos?`<small>${esc(p.pos)}</small>`:''}</td></tr>`;
   b.innerHTML='<div class="lu9g">'+order.map(sd=>{const t=j[sd],nm=sd==='home'?box.dataset.home:box.dataset.away;

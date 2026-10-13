@@ -861,6 +861,8 @@ def football(g):
         ef = _espn_forms(g, out)
     except Exception:
         ef = None
+    if ef and not ef.get("agree"):   # ESPN과 선발 11명이 다르면 틀릴 수 있는 라인업은 숨김
+        return {"kind": "football", "none": True, "why": "disagree"}
     for side in ("home", "away"):
         nos = out[side].pop("_no")
         e = (ef or {}).get(side)
@@ -896,5 +898,6 @@ def _espn_forms(g, out):
             if len(nos & out[side]["_no"]) < 9:
                 ok = False
         if ok:
-            return {sd: (R[sd].get("formation") or None) for sd in ("home", "away")}
+            agree = all({int(p["jersey"]) for p in R[sd].get("roster") or [] if p.get("starter") and str(p.get("jersey", "")).isdigit()} == out[sd]["_no"] for sd in ("home", "away"))
+            return {**{sd: (R[sd].get("formation") or None) for sd in ("home", "away")}, "agree": agree}
     return None
