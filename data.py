@@ -11,6 +11,7 @@ import features             # noqa: E402
 import mlb_official         # noqa: E402
 import naver_kr             # noqa: E402
 import timefix              # noqa: E402
+import livefix              # noqa: E402
 
 SEOUL = ZoneInfo("Asia/Seoul")
 CACHE = os.environ.get("CACHE_DIR", "/tmp/twowinscore-cache")
@@ -162,7 +163,7 @@ def _naver_halt(g):
 
 def _sport_day(kind, day, today):
     games, ok = _sport_day0(kind, day, today)
-    return _naver_fresh(kind, games), ok
+    return livefix.apply(kind, _naver_fresh(kind, games)), ok   # API-Sports NS 고착 시 네이버·ESPN 일치값만
 
 
 def _sport_day0(kind, day, today):
