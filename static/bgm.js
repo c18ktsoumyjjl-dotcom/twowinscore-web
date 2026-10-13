@@ -11,15 +11,15 @@ function av(){if(!a)return;const v=vol*duck;if(g){try{g.gain.setTargetAtTime(v,c
 function wa(){if(!WA||!a)return;try{if(!ctx){const C=window.AudioContext||window.webkitAudioContext;ctx=(()=>{try{return new C({latencyHint:'playback'})}catch(e){return new C()}})();g=ctx.createGain();ctx.createMediaElementSource(a).connect(g);g.connect(ctx.destination);av()}if(ctx.state!=='running')ctx.resume().catch(()=>{})}catch(e){g=null}}
 ['pointerdown','touchend','click'].forEach(v=>addEventListener(v,()=>{if(ctx&&ctx.state!=='running')ctx.resume().catch(()=>{})},{capture:true,passive:true}));
 let idx=(st.i|0)%TR.length,vol=typeof st.v==='number'?st.v:VOL,duck=1,a=null,btn=null;
-function save(){localStorage.setItem(KS,JSON.stringify({i:idx,t:a?Math.floor(a.currentTime||0):(st.t|0),v:vol}))}
+function save(){const t=a&&a.src?Math.round((a.currentTime||0)*10)/10:(+st.t||0);localStorage.setItem(KS,JSON.stringify({i:idx,t,v:vol,p:a?(!a.paused&&!a.ended?1:0):(st.p|0),at:Date.now()}))}
 function el(){if(a)return a;a=new Audio();a.crossOrigin='anonymous';a.preload='none';a.setAttribute('playsinline','');
  a.addEventListener('ended',()=>{idx=(idx+1)%TR.length;st.t=0;load(0);a.play().catch(()=>{});save();ui()});
  let ls=0;a.addEventListener('timeupdate',()=>{const n=Date.now();if(n-ls>5000){ls=n;save()}});
- addEventListener('pagehide',save);document.addEventListener('visibilitychange',save);return a}
+ let unl=false;const bye=()=>{if(!unl)save();unl=true};addEventListener('pagehide',bye);addEventListener('beforeunload',bye);addEventListener('pageshow',()=>{unl=false});a.addEventListener('pause',()=>{if(!unl)save()});a.addEventListener('play',save);document.addEventListener('visibilitychange',save);return a}
 function load(t){el();a.src=TR[idx];if(t>0){const f=()=>{try{a.currentTime=t}catch(e){}a.removeEventListener('loadedmetadata',f)};a.addEventListener('loadedmetadata',f)}}
 function setDuck(d){duck=d;av()}
 let dt;function duckFor(ms){setDuck(.25);clearTimeout(dt);dt=setTimeout(()=>setDuck(1),ms)}
-function start(){el();wa();av();if(!a.src)load(st.t|0);const p=a.play();paint();if(p)p.then(paint,()=>{});return p?p.catch(()=>{arm()}):Promise.resolve()}
+function start(){el();wa();av();if(!a.src)load(+st.t||0);const p=a.play();paint();if(p)p.then(paint,()=>{});return p?p.catch(()=>{arm()}):Promise.resolve()}
 function stop(){if(a){save();a.pause()}paint()}
 let ui=()=>{};
 function setVol(v){vol=Math.round(Math.max(0,Math.min(1,v))*100)/100;av();save();paint();ui()}
@@ -61,7 +61,7 @@ function hook(){ // 효과음 연동: 알림음 재생 시 덕킹, 입장 효과
  const S=window.TWSound;if(S&&S!==S0){S0=S;const p0=S.play;S.play=function(){if(a&&!a.paused)duckFor(2500);return p0.apply(this,arguments)};
   const I=S._a;if(I){I.addEventListener('play',()=>setDuck(.2));['ended','pause'].forEach(v=>I.addEventListener(v,()=>setDuck(1)))}}
 }
-function init(){css();mount(); if(on()){if(matchMedia('(pointer:coarse)').matches)arm();else if(document.readyState==='complete')setTimeout(start,800);else addEventListener('load',()=>setTimeout(start,800),{once:true})}}  // 첫 화면 다 그린 뒤에만 음악 받기  // 자동재생 시도, 막히면 첫 상호작용에 시작(arm)
+function init(){css();mount(); if(on()){const rs=st.p&&Date.now()-(st.at||0)<120000;/* 새로고침 직전 재생 중이었으면 같은 곡·위치에서 바로 이어 재생 시도, 막히면 첫 터치에 시작 */if(rs){start()}else if(matchMedia('(pointer:coarse)').matches)arm();else if(document.readyState==='complete')setTimeout(start,800);else addEventListener('load',()=>setTimeout(start,800),{once:true})}}  // 첫 화면 다 그린 뒤에만 음악 받기  // 자동재생 시도, 막히면 첫 상호작용에 시작(arm)
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
 window.TWBgm={mount,toggle,on,get idx(){return idx},get el(){return a},setVol,get vol(){return vol}};
 })();
