@@ -848,14 +848,14 @@ def football(g):
     by = {((x.get("team") or {}).get("id")): x for x in rs}
     if len(rs) != 2 or set(by) != {g.get("home_id"), g.get("away_id")}:
         return {"kind": "football", "none": True, "why": "mismatch"}
-    out = {"kind": "football", "src": "API-Sports · 공식 발표"}
+    out = {"kind": "football", "src": "API-Sports · 공식 발표", "logo": {"home": g.get("home_logo") or "", "away": g.get("away_logo") or ""}}
     for side in ("home", "away"):
         x = by[g.get(side + "_id")]
         xi = [(p.get("player") or {}) for p in x.get("startXI") or []]
         if len(xi) != 11 or sum(1 for p in xi if p.get("pos") == "G") != 1 or len({p.get("id") or p.get("name") for p in xi}) != 11:
             return {"kind": "football", "none": True, "why": "invalid"}
         sub = [(p.get("player") or {}) for p in x.get("substitutes") or []]
-        mk = lambda p: {"id": p.get("id") or p.get("name"), "no": p.get("number"), "name": __import__("html").unescape(p.get("name") or ""), "pos": _FP.get(p.get("pos"), "")}
+        mk = lambda p: {"id": p.get("id") or p.get("name"), "no": p.get("number"), "name": __import__("html").unescape(p.get("name") or ""), "pos": _FP.get(p.get("pos"), ""), "g": p.get("grid") or ""}
         out[side] = {"_no": {p.get("number") for p in xi}, "form": x.get("formation") or "", "coach": ((x.get("coach") or {}).get("name") or ""), "xi": [mk(p) for p in xi], "subs": [mk(p) for p in sub]}
     try:
         ef = _espn_forms(g, out)
@@ -864,6 +864,18 @@ def football(g):
     if ef and not ef.get("agree"):   # ESPN과 선발 11명이 다르면 틀릴 수 있는 라인업은 숨김
         return {"kind": "football", "none": True, "why": "disagree"}
     for side in ("home", "away"):
+        t = out[side]
+        t["pitch"] = _grid_ok(t["xi"], ((ef or {}).get("pos") or {}).get(side) or {})
+        if not t["pitch"]:
+            for p in t["xi"]:
+                p["_g"] = p.pop("g", None)
+    try:
+        _ko_names(g, out)
+    except Exception:
+        pass
+    for side in ("home", "away"):
+        for p in out[side]["xi"]:
+            p.pop("_g", None)
         nos = out[side].pop("_no")
         e = (ef or {}).get(side)
         if e and out[side]["form"] and e != out[side]["form"]:   # 두 출처 포메이션이 다르면 숨김 (라인업은 유지)
@@ -899,5 +911,123 @@ def _espn_forms(g, out):
                 ok = False
         if ok:
             agree = all({int(p["jersey"]) for p in R[sd].get("roster") or [] if p.get("starter") and str(p.get("jersey", "")).isdigit()} == out[sd]["_no"] for sd in ("home", "away"))
-            return {**{sd: (R[sd].get("formation") or None) for sd in ("home", "away")}, "agree": agree}
+            pos = {sd: {int(p["jersey"]): ((p.get("position") or {}).get("abbreviation") or "") for p in R[sd].get("roster") or [] if p.get("starter") and str(p.get("jersey", "")).isdigit()} for sd in ("home", "away")}
+            return {**{sd: (R[sd].get("formation") or None) for sd in ("home", "away")}, "agree": agree, "pos": pos}
     return None
+
+
+def _side_tag(a):
+    a = (a or "").upper()
+    if a.endswith("-L") or a in ("LB", "LM", "LW", "LWB", "LF"):
+        return "L"
+    if a.endswith("-R") or a in ("RB", "RM", "RW", "RWB", "RF"):
+        return "R"
+    return None
+
+
+def _grid_ok(xi, epos):
+    """피치 배치는 API-Sports grid(행:열, 열1=선수 기준 왼쪽)를 ESPN 좌/우 포지션으로 확인됐을 때만.
+    확인 근거가 없거나 하나라도 어긋나면 False → 표(행 정보 없음)로 표시."""
+    rows = {}
+    for p in xi:
+        try:
+            r, c = map(int, str(p.get("g") or "").split(":"))
+        except Exception:
+            return False
+        rows.setdefault(r, []).append(c)
+    if len(rows) < 3 or len({(r, c) for r in rows for c in rows[r]}) != 11:
+        return False
+    good = 0
+    for p in xi:
+        tag = _side_tag(epos.get(p.get("no")))
+        if not tag:
+            continue
+        r, c = map(int, p["g"].split(":"))
+        n = len(rows[r])
+        if n < 2:
+            continue
+        mid = (n + 1) / 2
+        if (tag == "L" and c >= mid) or (tag == "R" and c <= mid):
+            return False
+        good += 1
+    return good >= 2
+
+
+def _ko_names(g, out):
+    """한글 이름: 한국 팀 + 네이버 공식 라인업의 행 구성이 API-Sports grid와 정확히 같을 때만.
+    네이버 홈 행 = GK부터, 행 안은 오른쪽→왼쪽 / 원정 행 = 최전방부터, 행 안은 왼쪽→오른쪽 (포항·조호르 등 4경기로 확인)."""
+    import teamodds as T
+    kr = {}
+    for sd in ("home", "away"):
+        tid = g.get(sd + "_id")
+        info = _cache(("ftm", tid), 86400, lambda tid=tid: T._get("football", "/teams", {"id": tid}))
+        kr[sd] = bool(info) and ((info[0].get("team") or {}).get("country") == "South-Korea")
+    if not any(kr.values()):
+        return
+    st = g["start"]
+    day = st.strftime("%Y-%m-%d")
+    games = []
+    for up in ("kfootball", "wfootball"):   # ACL·K리그는 kfootball, 해외 리그는 wfootball
+        games += _cache(("nfs", up, day), 600, lambda up=up: (_j(f"https://api-gw.sports.naver.com/schedule/games?fields=basic&upperCategoryId={up}&fromDate={day}&toDate={day}&size=100", NAVER_H).get("result") or {}).get("games") or []) or []
+    gid = None
+    for x in games or []:
+        try:
+            from datetime import datetime as _dt
+            t = _dt.fromisoformat(x["gameDateTime"]).replace(tzinfo=st.tzinfo)
+        except Exception:
+            continue
+        if abs((t - st).total_seconds()) <= 600:
+            ln = _cache(("nfl", x["gameId"]), 300, lambda i=x["gameId"]: ((_j(f"https://api-gw.sports.naver.com/schedule/games/{i}/lineup", NAVER_H).get("result") or {}).get("lineUpData") or {}).get("lineup"))
+            if ln and _nv_match(ln, out):
+                gid = ln
+                break
+    if not gid:
+        return
+    for sd in ("home", "away"):
+        if not kr[sd]:
+            continue
+        m = _nv_map(gid[sd], out[sd]["xi"], sd)
+        if m:
+            for p in out[sd]["xi"]:
+                p["ko"] = m[p["no"]]
+
+
+def _rows_of(xi):
+    rows = {}
+    for p in xi:
+        try:
+            r, c = map(int, str(p.get("_g") or p.get("g") or "").split(":"))
+        except Exception:
+            return None
+        rows.setdefault(r, []).append((c, p))
+    return [[p for _, p in sorted(v, key=lambda x: x[0])] for _, v in sorted(rows.items())]
+
+
+def _nv_map(nside, xi, sd):
+    nrows = ((nside or {}).get("players") or {}).get("lineup") or []
+    ar = _rows_of(xi)
+    if not ar or not nrows:
+        return None
+    if sd == "home":
+        pairs = list(zip(nrows, [r[::-1] for r in ar]))
+    else:
+        pairs = list(zip(nrows, [r for r in ar[::-1]]))
+    if len(nrows) != len(ar) or any(len(a) != len(b) for a, b in pairs):
+        return None
+    m = {}
+    for nr, arow in pairs:
+        for np_, ap in zip(nr, arow):
+            nm = (np_.get("name") or "").strip()
+            if not nm:
+                return None
+            if np_.get("pos") and ap.get("pos") and np_["pos"] != ap["pos"]:
+                return None   # 포지션까지 같아야 같은 선수로 봄
+            m[ap["no"]] = nm
+    return m if len(m) == 11 else None
+
+
+def _nv_match(ln, out):
+    try:
+        return all(_nv_map(ln[sd], out[sd]["xi"], sd) is not None for sd in ("home", "away"))
+    except Exception:
+        return False

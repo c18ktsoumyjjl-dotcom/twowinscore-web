@@ -30,10 +30,15 @@ async function load(){if(!document.body.contains(box)){clearInterval(timer);retu
  const b=document.getElementById('lu9b'),s=document.getElementById('lu9s');
  if(!j.ok){b.innerHTML='<p class="lu9e">라인업 정보 없음</p>';s.textContent='';clearInterval(timer);return}
  if(j.kind==='football'){if(j.none){b.innerHTML=j.why==='disagree'?'<p class="lu9e">출처마다 선발 명단이 달라 확인될 때까지 숨겼어요</p>':'<p class="lu9e">공식 라인업 발표 전이에요 (보통 킥오프 약 1시간 전 발표)</p>';s.textContent='';return}
-  const lh=box.dataset.lh==='1',order=lh?['home','away']:['away','home'];
-  const li=p=>`<tr><td class="o">${p.no!=null?esc(p.no):''}</td><td class="n">${esc(p.name)}${p.pos?`<small>${esc(p.pos)}</small>`:''}</td></tr>`;
-  b.innerHTML='<div class="lu9g">'+order.map(sd=>{const t=j[sd],nm=sd==='home'?box.dataset.home:box.dataset.away;
-   return `<div class="lu9t"><h4>${esc(nm)} <small>${sd==='away'?'원정':'홈'}${t.form?' · '+esc(t.form):''}</small></h4><div class="lu9w"><table><thead><tr><th class="o">#</th><th class="n">선발 11</th></tr></thead><tbody>${t.xi.map(li).join('')}</tbody></table></div>${t.subs.length?`<details class="lu9sub"><summary>교체 명단 ${t.subs.length}명</summary><div class="lu9w"><table><tbody>${t.subs.map(li).join('')}</tbody></table></div></details>`:''}${t.coach?`<p class="lu9e">감독 ${esc(t.coach)}</p>`:''}</div>`}).join('')+'</div>';
+  const SIL="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' fill='%23cfd6e2'/><circle cx='20' cy='15' r='7' fill='%23f4f6fa'/><path d='M6 40c2-9 8-13 14-13s12 4 14 13z' fill='%23f4f6fa'/></svg>";
+  const nm=p=>p.ko||p.name;
+  const li=p=>`<tr><td class="o">${p.no!=null?esc(p.no):''}</td><td class="n">${esc(nm(p))}${p.pos?`<small>${esc(p.pos)}</small>`:''}</td></tr>`;
+  const chip=p=>`<div class="fp"><div class="fph"><img loading="lazy" alt="" src="https://media.api-sports.io/football/players/${encodeURIComponent(p.id)}.png" onerror="this.onerror=null;this.src='${SIL}'"><b>${p.no!=null?esc(p.no):''}</b></div><span title="${esc(nm(p))}">${esc(nm(p))}</span></div>`;
+  function pitch(t){const R={};t.xi.forEach(p=>{const [r,c]=String(p.g).split(':').map(Number);(R[r]=R[r]||[]).push([c,p])});
+   const rows=Object.keys(R).map(Number).sort((a,b)=>b-a).map(r=>R[r].sort((a,b)=>a[0]-b[0]).map(x=>x[1]));
+   return `<div class="fpitch"><svg viewBox="0 0 100 140" preserveAspectRatio="none"><g fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.2" vector-effect="non-scaling-stroke"><rect x="3" y="3" width="94" height="134"/><path d="M36 3a14 10 0 0 0 28 0"/><rect x="24" y="113" width="52" height="24"/><rect x="38" y="128" width="24" height="9"/></g></svg>${rows.map(r=>`<div class="frow">${r.map(chip).join('')}</div>`).join('')}</div>`}
+  b.innerHTML='<div class="lu9g fbg">'+['home','away'].map(sd=>{const t=j[sd],tn=sd==='home'?box.dataset.home:box.dataset.away,lg=(j.logo||{})[sd];
+   return `<div class="lu9t ft-${sd}"><h4 class="fth">${lg?`<img src="${esc(lg)}" alt="">`:''}<span>${esc(tn)}</span><em>${sd==='home'?'홈':'원정'}</em>${t.form?`<small>${esc(t.form)}</small>`:''}</h4>${t.pitch?pitch(t):`<div class="lu9w"><table><thead><tr><th class="o">#</th><th class="n">선발 11</th></tr></thead><tbody>${t.xi.map(li).join('')}</tbody></table></div>`}${t.subs.length?`<details class="lu9sub"><summary>교체 명단 ${t.subs.length}명</summary><div class="lu9w"><table><tbody>${t.subs.map(li).join('')}</tbody></table></div></details>`:''}${t.coach?`<p class="lu9e">감독 ${esc(t.coach)}</p>`:''}</div>`}).join('')+'</div>';
   s.textContent=j.src;return}
  if(j.kind==='basketball'){bk(j,b,s);return}
  const pre=j.away.pre&&j.home.pre;
