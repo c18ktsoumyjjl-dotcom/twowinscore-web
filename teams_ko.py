@@ -60,4 +60,8 @@ KO = {
 def ko(kind, tid, en):
     """(표시 이름, 영문 이름 or None)"""
     k = KO.get(("f" if kind == "football" else "h") + str(tid))
+    if k and en:
+        import nameguard
+        if not nameguard.ok(kind, tid, en):
+            k = None
     return (k, en) if k else (en, None)

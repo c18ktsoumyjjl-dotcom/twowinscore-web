@@ -45,6 +45,16 @@ for _k, _l, _s, _n in [("baseball", 32, 2026, "아시안게임 야구"), ("baseb
     if (_k, _l) not in sb.LEAGUE_BY_KEY:
         _m = sb._L(_k, _l, _s, _n)
         sb.LEAGUES.append(_m); sb.LEAGUE_BY_KEY[(_k, _l)] = _m; sb.LEAGUE_ORDER[(_k, _l)] = len(sb.LEAGUE_ORDER)
+# 팀명 보정: 2162 페퍼저축은행 → SOOP 수퍼스(구단 인수·리브랜딩, API-Sports는 아직 "Pepper Savings Bank W")
+sb.TEAM_KO["volleyball"][2162] = "SOOP"
+_RENAMED = {("volleyball", 2162): ("SOOP", ("페퍼저축은행", "Pepper Savings Bank W"))}
+# 안전장치: 매핑 확인 당시 영문명과 업스트림 이름이 다르면 업스트림 이름 표시
+import nameguard as _ng
+_ko0 = sb.ko_name
+def _ko_guard(kind, team_id, english):
+    r = _ko0(kind, team_id, english)
+    return r if _ng.ok(kind, team_id, english) else (english or r)
+sb.ko_name = _ko_guard
 import sports2
 NEW_KINDS = ("football", "hockey")
 
@@ -101,6 +111,10 @@ def _ser(g):
 def _de(d):
     d = dict(d)
     d["start"] = datetime.fromisoformat(d["start"]).astimezone(SEOUL)
+    for sd in ("home", "away"):   # 캐시에 남은 옛 팀명 보정(이름 매핑 변경 즉시 반영)
+        nm = _RENAMED.get((d.get("kind"), d.get(sd + "_id")))
+        if nm and d.get(sd) in nm[1]:
+            d[sd] = nm[0]
     return d
 
 
