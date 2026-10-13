@@ -110,6 +110,9 @@ def _ser(g):
     return d
 
 
+import html as _html
+
+
 def _de(d):
     d = dict(d)
     d["start"] = datetime.fromisoformat(d["start"]).astimezone(SEOUL)
@@ -117,6 +120,10 @@ def _de(d):
         nm = _RENAMED.get((d.get("kind"), d.get(sd + "_id")))
         if nm and d.get(sd) in nm[1]:
             d[sd] = nm[0]
+        for f in (sd, sd + "_en"):   # 업스트림 HTML 엔티티("Chieri &apos;76") 화면 노출 방지
+            v = d.get(f)
+            if isinstance(v, str) and "&" in v:
+                d[f] = _html.unescape(v)
     return d
 
 

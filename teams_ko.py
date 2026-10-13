@@ -63,7 +63,10 @@ KO = {
 
 def ko(kind, tid, en):
     """(표시 이름, 영문 이름 or None)"""
-    k = KO.get(("f" if kind == "football" else "h") + str(tid))
+    if en and "&" in en:
+        import html
+        en = html.unescape(en)   # API-Sports가 "Chieri &apos;76"처럼 엔티티째 보냄 → 화면에 &apos; 노출 방지
+    k = KO.get(("f" if kind == "football" else "h") + str(tid)) if kind in ("football", "hockey") else None   # 배구·농구 ID가 하키 키(h703 등)와 겹치지 않게
     if k and en:
         import nameguard
         if not nameguard.ok(kind, tid, en):
