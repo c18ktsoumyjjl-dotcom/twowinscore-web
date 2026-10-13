@@ -20,10 +20,13 @@ SPORT = {("baseball", "KBO"): "baseball_kbo", ("baseball", "NPB"): "baseball_npb
          ("baseball", "MLB"): "baseball_mlb", ("basketball", "NBA"): "basketball_nba"}
 REGION = "eu"                 # 소수점 배당·유럽 북(Pinnacle 등). 지역 1개 = 1크레딧
 BOOK_PREF = ["pinnacle", "betfair_ex_eu", "williamhill", "unibet_eu", "marathonbet", "onexbet", "betsson", "nordicbet"]
-MONTH_CAP = 450               # 500 중 50은 여유
-DAILY_CAP = 14                # 14 × 31 = 434
-MIN_GAP = 4 * 3600            # 같은 리그 /odds 는 4시간에 한 번
-RESERVE = 30
+_e = lambda k, d: type(d)(os.environ.get(k, d))
+# 기본값 = $30 플랜(20,000/월). 무료(500)로 돌릴 땐 Render env 로 TOA_MONTH_CAP=450 TOA_DAILY_CAP=14 TOA_MIN_GAP=14400 TOA_MARKETS=h2h
+MONTH_CAP = _e("TOA_MONTH_CAP", 19000)
+DAILY_CAP = _e("TOA_DAILY_CAP", 600)        # 4리그 × 48회 × 3마켓 = 576
+MIN_GAP = _e("TOA_MIN_GAP", 1800)           # 같은 리그 /odds 는 30분에 한 번
+MARKETS = _e("TOA_MARKETS", "h2h,spreads,totals")
+RESERVE = _e("TOA_RESERVE", 300)            # 남은 크레딧이 이 이하면 그 달은 중단
 STATE = os.path.join(os.path.dirname(teamodds.SNAP_DIR), "theoddsapi_state.json")
 _lk = threading.Lock()
 
@@ -161,6 +164,25 @@ def _match(g, evs, home, away):
     return hits[0] if len(hits) == 1 else None
 
 
+def _lines(b, home, away):
+    """같은 북의 핸디캡(홈 기준선)·언더오버 기준선 1개씩 — teamodds._lines 와 같은 모양."""
+    out = {}
+    for mk in b.get("markets") or []:
+        oc = mk.get("outcomes") or []
+        try:
+            if mk.get("key") == "spreads":
+                h = next(o for o in oc if o.get("name") == home); a = next(o for o in oc if o.get("name") == away)
+                if float(h["point"]) == -float(a["point"]):
+                    out["hc"] = {"ln": float(h["point"]), "a": float(h["price"]), "b": float(a["price"])}
+            elif mk.get("key") == "totals":
+                ov = next(o for o in oc if o.get("name") == "Over"); un = next(o for o in oc if o.get("name") == "Under")
+                if float(ov["point"]) == float(un["point"]):
+                    out["ou"] = {"ln": float(ov["point"]), "a": float(ov["price"]), "b": float(un["price"])}
+        except (StopIteration, KeyError, TypeError, ValueError):
+            continue
+    return out
+
+
 def _pick(ev, home, away):
     best = None
     for b in ev.get("bookmakers") or []:
@@ -180,7 +202,7 @@ def _pick(ev, home, away):
     if not best:
         return None
     _, b, o, upd = best
-    return {"o": o, "bk": "toa_" + b.get("key", ""), "name": b.get("title") or b.get("key"), "upd": upd, "x": {},
+    return {"o": o, "bk": "toa_" + b.get("key", ""), "name": b.get("title") or b.get("key"), "upd": upd, "x": _lines(b, home, away),
             "mv": {}, "at": datetime.now(teamodds.SEOUL).strftime("%H:%M"), "src": "the-odds-api"}
 
 
@@ -198,7 +220,8 @@ def fill(games):
             sp = SPORT.get((g.get("kind"), g.get("league")))
             if not sp or g.get("state") != "scheduled" or not g.get("id") or not g.get("start"):
                 continue
-            if teamodds.snap_get(g["kind"], g["id"]):      # API-Sports(또는 이전 채움)에 이미 있음
+            sv = teamodds.snap_get(g["kind"], g["id"])
+            if sv and sv.get("src") != "the-odds-api":     # API-Sports 배당이 있으면 손대지 않음
                 continue
             if not (0 < (g["start"].astimezone(timezone.utc) - now).total_seconds() < 36 * 3600):
                 continue
@@ -224,7 +247,7 @@ def fill(games):
             ids = sorted({ev["id"] for *_, ev in pairs if ev})
             if not ids or not _budget_ok(s):
                 continue
-            body, cost = _get(f"/sports/{sp}/odds", {"regions": REGION, "markets": "h2h", "oddsFormat": "decimal",
+            body, cost = _get(f"/sports/{sp}/odds", {"regions": REGION, "markets": MARKETS, "oddsFormat": "decimal",
                                                       "eventIds": ",".join(ids)}, s)
             _charge(s, cost)
             s.setdefault("last", {})[sp] = time.time()
@@ -234,7 +257,15 @@ def fill(games):
                 if not e or e.get("home_team") != h or e.get("away_team") != a:
                     continue
                 r = _pick(e, h, a)
-                if r and not teamodds.snap_get(g["kind"], g["id"]):
+                sv = teamodds.snap_get(g["kind"], g["id"])
+                if r and (not sv or sv.get("src") == "the-odds-api"):
+                    if sv and sv.get("bk") == r["bk"]:
+                        mv = dict(sv.get("mv") or {})
+                        for k, v in r["o"].items():
+                            pv = (sv.get("o") or {}).get(k)
+                            if pv and abs(v - pv) >= 0.005:
+                                mv[k] = 1 if v > pv else -1
+                        r["mv"] = mv
                     teamodds._snap_put(g["kind"], g["id"], r)
                     done += 1
         _save(s)

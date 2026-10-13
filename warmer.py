@@ -223,19 +223,23 @@ def _odds_loop():
             gs = sorted((g for g in gs if g.get("state") == "scheduled" and g.get("id") and g.get("start")), key=lambda g: g["start"])
             for g in gs:
                 mins = (g["start"] - now).total_seconds() / 60
+                if _quota_ok(g["kind"]) is False:   # 종목별 하루 한도 25% 넘으면 배당 미리 받기도 쉼
+                    continue
                 if not (0 < mins < 2880) or curation.hidden(g, now, g["start"].date() == t or mins < 1440):
                     continue
                 sv = teamodds.snap_get(g["kind"], g["id"])
-                age = 40 * 60 if mins < 360 else 120 * 60   # 6시간 안: 40분, 그 뒤: 2시간마다
-                if sv and time.time() - sv.get("saved", 0) < age:
+                age = 40 * 60 if mins < 360 else 120 * 60   # 배당 있는 경기 갱신: 6시간 안 40분, 그 뒤 2시간
+                if sv and sv.get("src") != "the-odds-api" and time.time() - sv.get("saved", 0) < age:
                     continue
+                # 배당 없음 재시도: 6시간 안 20분, 24시간 안 45분, 그 뒤 2시간(새로 열린 배당을 빨리 채우려고)
+                nage = 20 * 60 if mins < 360 else (45 * 60 if mins < 1440 else 120 * 60)
                 tk = (g["kind"], g["id"])
-                if time.time() - _od_tried.get(tk, 0) < age:   # 제공처에 배당 없음 → 같은 간격 동안 다시 안 물어요
+                if time.time() - _od_tried.get(tk, 0) < (age if sv else nage):
                     continue
                 _od_tried[tk] = time.time()
                 teamodds.odds(g)
                 cnt += 1
-                if cnt >= 80:
+                if cnt >= 120:
                     break
                 time.sleep(1.5)
             try:   # API-Sports 에 배당이 없는 KBO·NPB·MLB·NBA 만 The Odds API 로 보충(키 없으면 무동작)
