@@ -69,7 +69,12 @@ def _st_naver(kind, x):
         if info in ("하프타임", "전반종료"):
             return ("break", 1, None, None)
         m = re.fullmatch(r"(전반|후반)(\d+)(?:\+\d+)?'?", info)
-        return ("live", 1 if m.group(1) == "전반" else 2, None, int(m.group(2))) if m else None
+        if not m:
+            return None
+        n, mi = (1 if m.group(1) == "전반" else 2), int(m.group(2))
+        if n == 2 and mi <= 45:              # 네이버는 후반을 0분부터 셈(후반 4' = 49') → ESPN 누적 분으로 맞춤
+            mi += 45
+        return ("live", n, None, mi)
     if kind == "basketball":
         if info in ("하프타임",):
             return ("break", 2, None, None)
