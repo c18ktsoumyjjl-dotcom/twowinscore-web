@@ -28,7 +28,7 @@ def _make(sport, tid):
     return out.getvalue()
 
 
-_mk_sem = __import__("threading").BoundedSemaphore(2)
+_mk_sem = __import__("threading").BoundedSemaphore(4)
 
 
 @bp.route("/lg/<sport>/<int:tid>.webp")
@@ -46,7 +46,7 @@ def logo(sport, tid):
             import time
             if time.time() - _fail.get(k, 0) < 600:
                 return redirect(f"https://media.api-sports.io/{sport}/teams/{tid}.png")
-            if not _mk_sem.acquire(blocking=False):   # 동시에 새로 만드는 건 2개까지 — 나머지는 원본으로 바로 (서버 스레드 보호)
+            if not _mk_sem.acquire(timeout=4):   # 동시에 만드는 건 4개까지, 나머지는 잠깐 기다려요(100KB 원본으로 넘기지 않게)
                 return redirect(f"https://media.api-sports.io/{sport}/teams/{tid}.png")
             try:
                 b = _make(sport, tid)
@@ -102,3 +102,52 @@ def warm(urls):
             return
         _wset.add("_t")
     threading.Thread(target=_wloop, daemon=True).start()
+
+
+_inl = {}
+
+
+def inline(u, px=60):
+    """첫 화면용: 디스크에 있는 로고를 표시 크기×2(60px) 작은 WebP data URI로. 없으면 None."""
+    m = re.match(r"^/lg/([a-z-]+)/(\d+)\.webp$", u or "")
+    if not m:
+        return None
+    k = f"{m.group(1)}_{m.group(2)}"
+    with _lk:
+        if k in _inl:
+            return _inl[k]
+    p = os.path.join(DIR, k + ".webp")
+    if not os.path.exists(p):
+        return None
+    try:
+        import base64
+        from PIL import Image
+        im = Image.open(p).convert("RGBA"); im.thumbnail((px, px), Image.LANCZOS)
+        out = io.BytesIO(); im.save(out, "WEBP", quality=80, method=6)
+        v = "data:image/webp;base64," + base64.b64encode(out.getvalue()).decode()
+    except Exception as e:
+        log.warning("inline %s: %s", k, e); return None
+    with _lk:
+        if len(_inl) > 4000:
+            _inl.clear()
+        _inl[k] = v
+    return v
+
+
+def start_prefetch(get_urls, every=600):
+    """시작할 때와 10분마다 오늘·내일 모든 경기 로고를 미리 WebP로 디스크에 만들어 둬요(재시작해도 남음)."""
+    import time
+    def loop():
+        time.sleep(5)
+        while True:
+            try:
+                urls = [url(u) for u in get_urls()]
+                miss = [u for u in dict.fromkeys(urls) if u and u.startswith("/lg/")]
+                warm(miss)
+                for u in miss[:400]:
+                    inline(u)
+                log.info("logo prefetch: %d urls", len(miss))
+            except Exception as e:
+                log.warning("logo prefetch: %s", e)
+            time.sleep(every)
+    threading.Thread(target=loop, daemon=True, name="logo-prefetch").start()

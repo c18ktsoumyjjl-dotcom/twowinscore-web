@@ -259,8 +259,8 @@ def halt_info(g):
 
 def view(g):
     left_home = g["kind"] != "baseball"   # 야구: 원정 왼쪽/홈 오른쪽, 그 외: 홈 왼쪽
-    h = {"name": g["home"], "en": g.get("home_en"), "score": g.get("home_score"), "tag": "홈", "logo": g.get("home_logo") if g.get("other") else logos.url(g.get("home_logo")), "id": g.get("home_id"), "kind": g["kind"]}
-    a = {"name": g["away"], "en": g.get("away_en"), "score": g.get("away_score"), "tag": "원정", "logo": g.get("away_logo") if g.get("other") else logos.url(g.get("away_logo")), "id": g.get("away_id"), "kind": g["kind"]}
+    h = {"name": g["home"], "en": g.get("home_en"), "score": g.get("home_score"), "tag": "홈", "logo": logos.url(g.get("home_logo")), "id": g.get("home_id"), "kind": g["kind"]}
+    a = {"name": g["away"], "en": g.get("away_en"), "score": g.get("away_score"), "tag": "원정", "logo": logos.url(g.get("away_logo")), "id": g.get("away_id"), "kind": g["kind"]}
     L, R = (h, a) if left_home else (a, h)
     st = g["state"]
     show = st in ("live", "final") and L["score"] is not None and R["score"] is not None
@@ -451,20 +451,25 @@ def index():
     d = parse_day(request.args.get("d"))
     t = today()
     g0 = _g0(d)
-    lg0 = []
+    lg0, lgi = [], {}
     try:   # 첫 화면 로고 12개를 HTML 머리에서 미리 받게(preload) 하고, 서버에 없는 건 미리 만들어 둬요
         allg = sorted((g0 or {}).get("games", []), key=lambda x: x.get("lorder") or 0)
         urls = [(x.get(s) or {}).get("logo") for x in allg for s in ("L", "R")]
         urls = [u for u in urls if u and u.startswith("/lg/")]
         logos.warm(urls)
-        lg0 = list(dict.fromkeys(urls))[:12]
+        uq = list(dict.fromkeys(urls))
+        for u in uq[:32]:   # 첫 화면 로고는 HTML 안에 작은 data URI로 — 행과 같은 프레임에 그려져요
+            v = logos.inline(u)
+            if v:
+                lgi[u] = v
+        lg0 = [u for u in uq if u not in lgi][:8]
     except Exception:
         pass
     return render_template("index.html", page="home", d=d.isoformat(), label=day_label(d),
                            yday=(t - timedelta(days=1)).isoformat(), today=t.isoformat(),
                            tmr=(t + timedelta(days=1)).isoformat(),
                            dmin=(t - timedelta(days=14)).isoformat(), dmax=(t + timedelta(days=7)).isoformat(),
-                           f=request.args.get("f", "all"), g0=g0, lg0=lg0, od0=_od0(d, g0))
+                           f=request.args.get("f", "all"), g0=g0, lg0=lg0, lgi=lgi, od0=_od0(d, g0))
 
 
 def _g0(d):
@@ -484,6 +489,20 @@ _g0pool = None
 
 import warmer
 warmer.start(league_order)
+
+
+def _logo_urls():
+    t = today(); out = []
+    for d in (t, t + timedelta(days=1)):
+        try:
+            for g in data.games_for(d)[0]:
+                out += [g.get("home_logo"), g.get("away_logo")]
+        except Exception:
+            pass
+    return out
+
+
+logos.start_prefetch(_logo_urls)
 import chatbot
 chatbot.start(_POP_ALIAS)
 chatbot.install(app)
