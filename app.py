@@ -501,12 +501,17 @@ def results():
 
 @app.route("/game/<path:key>")
 def game(key):
+    import time as _t
+    _T = [("start", _t.perf_counter())]
+    def _m(n):
+        _T.append((n, _t.perf_counter()))
     d = parse_day(request.args.get("d"))
     g = data.find_game(key, d)
     if not g and d == today():
         g = data.find_game(key, d - timedelta(days=1))
     if not g:
         abort(404)
+    _m("find")
     v = view(g)
     lh = v["left_home"]
     try:
@@ -514,22 +519,34 @@ def game(key):
         v["odh"] = teamodds.has_hint(g)
     except Exception:
         v["odh"] = False
+    _m("view")
     import concurrent.futures as cf
     global _gpool
     try:
         _gpool
     except NameError:
         _gpool = cf.ThreadPoolExecutor(8)
-    fd, fs, fw, fc = _gpool.submit(data.detail, g), _gpool.submit(plus.summary, g), _gpool.submit(plus.winprob, g, lh), _gpool.submit(plays.commentary, g)   # 외부 조회를 동시에(첫 조회만 느림, 이후 캐시)
-    det = fd.result()
+    fd, fs, fw, fc = _gpool.submit(data.detail, g), _gpool.submit(plus.summary, g), _gpool.submit(plus.winprob, g, lh), _gpool.submit(plays.commentary, g)
+    det = fd.result(); _m("detail")
+    com = fc.result(); _m("comm")
+    wp = fw.result(); _m("wp")
+    summ = fs.result(); _m("summ")
     forms = [(v["L"]["name"], det["form_home"] if lh else det["form_away"]), (v["R"]["name"], det["form_away"] if lh else det["form_home"])]
-    st = det.get("starters")
-    bat = det.get("batters")
-    return render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=(com := fc.result()), gl=plays.goals(g),
-                           forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=st, batters=bat,
+    gl = plays.goals(g); _m("goals")
+    gnews = news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]); _m("news")
+    pts = insights.points(g, det, dedupe=True); _m("ins")
+    vi = _vinfo(g, v); seo = _game_seo(g, v); _m("vote_seo")
+    an = _analysis(g, v, det, forms); _m("an")
+    top = _top(g, v, det, com); _m("top")
+    html = render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=com, gl=gl,
+                           forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=det.get("starters"), batters=det.get("batters"),
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
-                           names={g["home"], g["away"]}, gnews=news.related(g["kind"], [v["L"]["name"], v["R"]["name"], g["home"], g["away"]]), points=insights.points(g, det, dedupe=True), vote=_vinfo(g, v), seo=_game_seo(g, v), an=_analysis(g, v, det, forms),
-                           wp=fw.result(), summ=fs.result(), top=_top(g, v, det, com))
+                           names={g["home"], g["away"]}, gnews=gnews, points=pts, vote=vi, seo=seo, an=an,
+                           wp=wp, summ=summ, top=top)
+    _m("render")
+    r = app.make_response(html)
+    r.headers["Server-Timing"] = ", ".join(f"{n};dur={(t - _T[i][1]) * 1000:.0f}" for i, (n, t) in enumerate(_T[1:]))
+    return r
 
 
 def _top(g, v, det, com=None):
