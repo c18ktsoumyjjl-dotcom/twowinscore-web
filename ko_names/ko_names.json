@@ -16011,5 +16011,5412 @@
 "ko": "안토니",
 "team": 543
 }
+},
+"mlb": {
+"445276": {
+"how": "fullname+num",
+"ko": "켄리 잰슨",
+"team": 116
+},
+"453286": {
+"how": "fullname+num",
+"ko": "맥스 슈어저",
+"team": 141
+},
+"476594": {
+"how": "fullname+num",
+"ko": "로버트 스토크",
+"team": 121
+},
+"489446": {
+"how": "fullname+num",
+"ko": "커비 예이츠",
+"team": 134
+},
+"500743": {
+"how": "fullname+num",
+"ko": "미겔 로하스",
+"team": 119
+},
+"500779": {
+"how": "fullname+num",
+"ko": "호세 퀸타나",
+"team": 115
+},
+"502054": {
+"how": "fullname+num",
+"ko": "토미 팸",
+"team": 145
+},
+"502671": {
+"how": "fullname+num",
+"ko": "폴 골드슈미트",
+"team": 147
+},
+"514888": {
+"how": "fullname+num",
+"ko": "호세 알튜베",
+"team": 117
+},
+"518585": {
+"how": "fullname+num",
+"ko": "페르난도 크루즈",
+"team": 147
+},
+"518692": {
+"how": "fullname+num",
+"ko": "프레디 프리먼",
+"team": 119
+},
+"518876": {
+"how": "fullname+num",
+"ko": "메릴 켈리",
+"team": 109
+},
+"518886": {
+"how": "fullname+num",
+"ko": "크렉 킴브럴",
+"team": 118
+},
+"519242": {
+"how": "fullname+num",
+"ko": "크리스 세일",
+"team": 144
+},
+"519317": {
+"how": "fullname+num",
+"ko": "지안카를로 스탠튼",
+"team": 147
+},
+"527048": {
+"how": "fullname+num",
+"ko": "마틴 페레즈",
+"team": 144
+},
+"542888": {
+"how": "fullname+num",
+"ko": "숀 암스트롱",
+"team": 114
+},
+"543037": {
+"how": "fullname+num",
+"ko": "게릿 콜",
+"team": 147
+},
+"543135": {
+"how": "fullname+num",
+"ko": "네이선 이발디",
+"team": 140
+},
+"543238": {
+"how": "fullname+num",
+"ko": "앤서니 고즈",
+"team": 118
+},
+"543243": {
+"how": "fullname+num",
+"ko": "소니 그레이",
+"team": 111
+},
+"543309": {
+"how": "fullname+num",
+"ko": "카일 히가시오카",
+"team": 140
+},
+"543510": {
+"how": "fullname+num",
+"ko": "제임스 맥캔",
+"team": 109
+},
+"543760": {
+"how": "fullname+num",
+"ko": "마커스 세미엔",
+"team": 121
+},
+"543807": {
+"how": "fullname+num",
+"ko": "조지 스프링어",
+"team": 141
+},
+"543877": {
+"how": "fullname+num",
+"ko": "크리스티안 바스케스",
+"team": 117
+},
+"544150": {
+"how": "fullname+num",
+"ko": "알버트 수아레즈",
+"team": 110
+},
+"545121": {
+"how": "fullname+num",
+"ko": "일데마로 바르가스",
+"team": 109
+},
+"545341": {
+"how": "fullname+num",
+"ko": "랜달 그리칙",
+"team": 145
+},
+"545361": {
+"how": "fullname+num",
+"ko": "마이크 트라웃",
+"team": 108
+},
+"547180": {
+"how": "fullname+num",
+"ko": "브라이스 하퍼",
+"team": 143
+},
+"547973": {
+"how": "fullname+num",
+"ko": "아롤디스 채프먼",
+"team": 111
+},
+"548384": {
+"how": "fullname+num",
+"ko": "브룩스 레일리",
+"team": 143
+},
+"552640": {
+"how": "fullname+num",
+"ko": "앤드류 키트리지",
+"team": 110
+},
+"553869": {
+"how": "fullname+num",
+"ko": "엘리아스 디아즈",
+"team": 140
+},
+"553993": {
+"how": "fullname+num",
+"ko": "에우제니오 수아레즈",
+"team": 113
+},
+"554430": {
+"how": "fullname+num",
+"ko": "잭 휠러",
+"team": 143
+},
+"571448": {
+"how": "fullname+num",
+"ko": "놀란 아레나도",
+"team": 109
+},
+"571510": {
+"how": "fullname+num",
+"ko": "맷 보이드",
+"team": 112
+},
+"571578": {
+"how": "fullname+num",
+"ko": "패트릭 코빈",
+"team": 141
+},
+"571657": {
+"how": "fullname+num",
+"ko": "카일 팔머",
+"team": 144
+},
+"571771": {
+"how": "fullname+num",
+"ko": "키케 에르난데스",
+"team": 119
+},
+"571912": {
+"how": "fullname+num",
+"ko": "루크 메이리",
+"team": 118
+},
+"571948": {
+"how": "fullname+num",
+"ko": "하비 밀너",
+"team": 136
+},
+"571970": {
+"how": "fullname+num",
+"ko": "맥스 먼시",
+"team": 119
+},
+"572143": {
+"how": "fullname+num",
+"ko": "버치 스미스",
+"team": 116
+},
+"572233": {
+"how": "fullname+num",
+"ko": "크리스티안 워커",
+"team": 117
+},
+"572955": {
+"how": "fullname+num",
+"ko": "피어스 존슨",
+"team": 113
+},
+"573124": {
+"how": "fullname+num",
+"ko": "테일러 로저스",
+"team": 142
+},
+"573204": {
+"how": "fullname+num",
+"ko": "케일럽 틸바",
+"team": 112
+},
+"573262": {
+"how": "fullname+num",
+"ko": "마이크 야스트렘스키",
+"team": 144
+},
+"592094": {
+"how": "fullname+num",
+"ko": "제이슨 아담",
+"team": 135
+},
+"592155": {
+"how": "fullname+num",
+"ko": "캠 부저",
+"team": 139
+},
+"592332": {
+"how": "fullname+num",
+"ko": "케빈 가우스먼",
+"team": 112
+},
+"592450": {
+"how": "fullname+num",
+"ko": "애런 저지",
+"team": 147
+},
+"592518": {
+"how": "fullname+num",
+"ko": "매니 마차도",
+"team": 135
+},
+"592626": {
+"how": "fullname+num",
+"ko": "작 피더슨",
+"team": 140
+},
+"592662": {
+"how": "fullname+num",
+"ko": "로비 레이",
+"team": 135
+},
+"592773": {
+"how": "fullname+num",
+"ko": "라인 스타넥",
+"team": 138
+},
+"592779": {
+"how": "fullname+num",
+"ko": "브록 스튜어트",
+"team": 119
+},
+"592791": {
+"how": "fullname+num",
+"ko": "제임슨 타이욘",
+"team": 141
+},
+"592866": {
+"how": "fullname+num",
+"ko": "트레버 윌리엄스",
+"team": 140
+},
+"592885": {
+"how": "fullname+num",
+"ko": "크리스티안 옐리치",
+"team": 158
+},
+"593428": {
+"how": "fullname+num",
+"ko": "잰더 보가츠",
+"team": 135
+},
+"593871": {
+"how": "fullname+num",
+"ko": "호르헤 폴랑코",
+"team": 121
+},
+"593958": {
+"how": "fullname+num",
+"ko": "에두아르도 로드리게스",
+"team": 109
+},
+"593974": {
+"how": "fullname+num",
+"ko": "완디 페랄타",
+"team": 135
+},
+"594798": {
+"how": "fullname+num",
+"ko": "제이콥 디그롬",
+"team": 140
+},
+"595014": {
+"how": "fullname+num",
+"ko": "블레이크 트레이넨",
+"team": 119
+},
+"595345": {
+"how": "fullname+num",
+"ko": "스티븐 오컬트",
+"team": 117
+},
+"595879": {
+"how": "fullname+num",
+"ko": "하비에르 바에즈",
+"team": 116
+},
+"595978": {
+"how": "fullname+num",
+"ko": "오스틴 헤지스",
+"team": 114
+},
+"596001": {
+"how": "fullname+num",
+"ko": "제이크 유니스",
+"team": 140
+},
+"596019": {
+"how": "fullname+num",
+"ko": "프란시스코 린도어",
+"team": 121
+},
+"596115": {
+"how": "fullname+num",
+"ko": "트레버 스토리",
+"team": 111
+},
+"596117": {
+"how": "fullname+num",
+"ko": "개릿 스텁스",
+"team": 143
+},
+"596133": {
+"how": "fullname+num",
+"ko": "루크 위버",
+"team": 134
+},
+"596142": {
+"how": "fullname+num",
+"ko": "게리 산체스",
+"team": 158
+},
+"601713": {
+"how": "fullname+num",
+"ko": "닉 피베타",
+"team": 135
+},
+"605135": {
+"how": "fullname+num",
+"ko": "크리스 배싯",
+"team": 110
+},
+"605137": {
+"how": "fullname+num",
+"ko": "조쉬 벨",
+"team": 142
+},
+"605141": {
+"how": "fullname+num",
+"ko": "무키 베츠",
+"team": 119
+},
+"605242": {
+"how": "fullname+num",
+"ko": "마이클 풀머",
+"team": 147
+},
+"605280": {
+"how": "fullname+num",
+"ko": "클레이 홈스",
+"team": 112
+},
+"605288": {
+"how": "fullname+num",
+"ko": "아드리안 후저",
+"team": 137
+},
+"605400": {
+"how": "fullname+num",
+"ko": "애런 놀라",
+"team": 143
+},
+"605447": {
+"how": "fullname+num",
+"ko": "조단 로마노",
+"team": 115
+},
+"605483": {
+"how": "fullname+num",
+"ko": "블레이크 스넬",
+"team": 119
+},
+"605488": {
+"how": "fullname+num",
+"ko": "제프리 스프링스",
+"team": 133
+},
+"606192": {
+"how": "fullname+num",
+"ko": "테오스카 에르난데스",
+"team": 119
+},
+"606466": {
+"how": "fullname+num",
+"ko": "케텔 마르테",
+"team": 109
+},
+"606996": {
+"how": "fullname+num",
+"ko": "카일 하트",
+"team": 135
+},
+"607043": {
+"how": "fullname+num",
+"ko": "브랜든 니모",
+"team": 140
+},
+"607067": {
+"how": "fullname+num",
+"ko": "콜린 레아",
+"team": 112
+},
+"607074": {
+"how": "fullname+num",
+"ko": "카를로스 로돈",
+"team": 147
+},
+"607192": {
+"how": "fullname+num",
+"ko": "타일러 글라스노우",
+"team": 119
+},
+"607200": {
+"how": "fullname+num",
+"ko": "에릭 페디",
+"team": 145
+},
+"607208": {
+"how": "fullname+num",
+"ko": "트레이 터너",
+"team": 143
+},
+"607259": {
+"how": "fullname+num",
+"ko": "닉 마르티네즈",
+"team": 139
+},
+"607455": {
+"how": "fullname+num",
+"ko": "앤소니 반다",
+"team": 142
+},
+"607536": {
+"how": "fullname+num",
+"ko": "카일 프리랜드",
+"team": 115
+},
+"607625": {
+"how": "fullname+num",
+"ko": "세스 루고",
+"team": 118
+},
+"608032": {
+"how": "fullname+num",
+"ko": "카를로스 에스테베스",
+"team": 118
+},
+"608070": {
+"how": "fullname+num",
+"ko": "호세 라미레즈",
+"team": 114
+},
+"608324": {
+"how": "fullname+num",
+"ko": "알렉스 브레그먼",
+"team": 112
+},
+"608331": {
+"how": "fullname+num",
+"ko": "맥스 프리드",
+"team": 147
+},
+"608337": {
+"how": "fullname+num",
+"ko": "루카스 지올리토",
+"team": 135
+},
+"608348": {
+"how": "fullname+num",
+"ko": "카슨 켈리",
+"team": 112
+},
+"608369": {
+"how": "fullname+num",
+"ko": "코리 시거",
+"team": 140
+},
+"608379": {
+"how": "fullname+num",
+"ko": "마이클 와카",
+"team": 118
+},
+"608718": {
+"how": "fullname+num",
+"ko": "브렌트 수터",
+"team": 144
+},
+"609280": {
+"how": "fullname+num",
+"ko": "미구엘 안두하",
+"team": 135
+},
+"615698": {
+"how": "fullname+num",
+"ko": "칼 콴트릴",
+"team": 140
+},
+"620443": {
+"how": "fullname+num",
+"ko": "루이스 토렌스",
+"team": 121
+},
+"621016": {
+"how": "fullname+num",
+"ko": "호세 쿠아스",
+"team": 118
+},
+"621020": {
+"how": "fullname+num",
+"ko": "댄스비 스완슨",
+"team": 112
+},
+"621043": {
+"how": "fullname+num",
+"ko": "카를로스 코레아",
+"team": 117
+},
+"621053": {
+"how": "fullname+num",
+"ko": "타일러 퍼거슨",
+"team": 112
+},
+"621074": {
+"how": "fullname+num",
+"ko": "마이클 루커",
+"team": 136
+},
+"621097": {
+"how": "fullname+num",
+"ko": "제이콥 웨그스펙",
+"team": 116
+},
+"621107": {
+"how": "fullname+num",
+"ko": "잭 에플린",
+"team": 110
+},
+"621111": {
+"how": "fullname+num",
+"ko": "워커 뷸러",
+"team": 135
+},
+"621112": {
+"how": "fullname+num",
+"ko": "폴 블랙번",
+"team": 147
+},
+"621139": {
+"how": "fullname+num",
+"ko": "브룩스 크리스케",
+"team": 133
+},
+"621237": {
+"how": "fullname+num",
+"ko": "조세 알바라도",
+"team": 143
+},
+"621242": {
+"how": "fullname+num",
+"ko": "애드윈 디아즈",
+"team": 119
+},
+"621383": {
+"how": "fullname+num",
+"ko": "태너 뱅크스",
+"team": 143
+},
+"621438": {
+"how": "fullname+num",
+"ko": "타이론 테일러",
+"team": 112
+},
+"621439": {
+"how": "fullname+num",
+"ko": "바이런 벅스턴",
+"team": 142
+},
+"621493": {
+"how": "fullname+num",
+"ko": "테일러 워드",
+"team": 136
+},
+"621550": {
+"how": "fullname+num",
+"ko": "패트릭 위즈덤",
+"team": 136
+},
+"621566": {
+"how": "fullname+num",
+"ko": "맷 올슨",
+"team": 144
+},
+"622088": {
+"how": "fullname+num",
+"ko": "티제이 안톤",
+"team": 113
+},
+"622268": {
+"how": "fullname+num",
+"ko": "도니 월턴",
+"team": 133
+},
+"622491": {
+"how": "fullname+num",
+"ko": "루이스 카스티요",
+"team": 145
+},
+"622554": {
+"how": "fullname+num",
+"ko": "세란토니 도밍게스",
+"team": 136
+},
+"622608": {
+"how": "fullname+num",
+"ko": "안토니오 센자텔라",
+"team": 158
+},
+"622663": {
+"how": "fullname+num",
+"ko": "루이스 세베리노",
+"team": 133
+},
+"622761": {
+"how": "fullname+num",
+"ko": "호르헤 마테오",
+"team": 139
+},
+"623149": {
+"how": "fullname+num",
+"ko": "폴 시월드",
+"team": 141
+},
+"623168": {
+"how": "fullname+num",
+"ko": "타일러 하이네만",
+"team": 108
+},
+"623211": {
+"how": "fullname+num",
+"ko": "후아스카 브라조반",
+"team": 145
+},
+"623352": {
+"how": "fullname+num",
+"ko": "조쉬 헤이더",
+"team": 117
+},
+"623454": {
+"how": "fullname+num",
+"ko": "드류 앤더슨",
+"team": 116
+},
+"623465": {
+"how": "fullname+num",
+"ko": "에반 필립스",
+"team": 119
+},
+"624133": {
+"how": "fullname+num",
+"ko": "레인저 수아레즈",
+"team": 111
+},
+"624413": {
+"how": "fullname+num",
+"ko": "피트 알론소",
+"team": 110
+},
+"624424": {
+"how": "fullname+num",
+"ko": "마이클 콘포토",
+"team": 112
+},
+"624428": {
+"how": "fullname+num",
+"ko": "아담 브레이저",
+"team": 108
+},
+"624431": {
+"how": "fullname+num",
+"ko": "호세 트레비노",
+"team": 113
+},
+"624641": {
+"how": "fullname+num",
+"ko": "에드문도 소사",
+"team": 143
+},
+"625643": {
+"how": "fullname+num",
+"ko": "레이날도 로페스",
+"team": 144
+},
+"628452": {
+"how": "fullname+num",
+"ko": "레이셀 이글레시아스",
+"team": 144
+},
+"630105": {
+"how": "fullname+num",
+"ko": "제이크 크로넨워스",
+"team": 135
+},
+"640448": {
+"how": "fullname+num",
+"ko": "카일 피네건",
+"team": 116
+},
+"640451": {
+"how": "fullname+num",
+"ko": "헌터 하비",
+"team": 112
+},
+"640455": {
+"how": "fullname+num",
+"ko": "션 머나야",
+"team": 121
+},
+"640902": {
+"how": "fullname+num",
+"ko": "조니 페레다",
+"team": 136
+},
+"641302": {
+"how": "fullname+num",
+"ko": "타일러 알렉산더",
+"team": 140
+},
+"641329": {
+"how": "fullname+num",
+"ko": "브라이언 베이커",
+"team": 139
+},
+"641343": {
+"how": "fullname+num",
+"ko": "제이크 바우어스",
+"team": 158
+},
+"641355": {
+"how": "fullname+num",
+"ko": "코디 벨린저",
+"team": 147
+},
+"641680": {
+"how": "fullname+num",
+"ko": "요나 하임",
+"team": 133
+},
+"641743": {
+"how": "fullname+num",
+"ko": "앤소니 케이",
+"team": 145
+},
+"641745": {
+"how": "fullname+num",
+"ko": "브래드 켈러",
+"team": 143
+},
+"641755": {
+"how": "fullname+num",
+"ko": "타일러 킨리",
+"team": 116
+},
+"641778": {
+"how": "fullname+num",
+"ko": "에릭 라우어",
+"team": 119
+},
+"641816": {
+"how": "fullname+num",
+"ko": "타일러 말리",
+"team": 144
+},
+"641835": {
+"how": "fullname+num",
+"ko": "팀 마이자",
+"team": 143
+},
+"641857": {
+"how": "fullname+num",
+"ko": "라이언 맥먼",
+"team": 147
+},
+"641941": {
+"how": "fullname+num",
+"ko": "에밀리오 파간",
+"team": 113
+},
+"642048": {
+"how": "fullname+num",
+"ko": "테일러 사우세도",
+"team": 108
+},
+"642086": {
+"how": "fullname+num",
+"ko": "도미닉 스미스",
+"team": 144
+},
+"642100": {
+"how": "fullname+num",
+"ko": "게이브 스피어",
+"team": 136
+},
+"642121": {
+"how": "fullname+num",
+"ko": "콜 술세르",
+"team": 139
+},
+"642133": {
+"how": "fullname+num",
+"ko": "로우디 텔레즈",
+"team": 144
+},
+"642201": {
+"how": "fullname+num",
+"ko": "엘리 화이트",
+"team": 111
+},
+"642207": {
+"how": "fullname+num",
+"ko": "데빈 윌리엄스",
+"team": 121
+},
+"642215": {
+"how": "fullname+num",
+"ko": "웨스턴 윌슨",
+"team": 136
+},
+"642232": {
+"how": "fullname+num",
+"ko": "라이언 야브로",
+"team": 147
+},
+"642350": {
+"how": "fullname+num",
+"ko": "호세 시리",
+"team": 108
+},
+"642376": {
+"how": "fullname+num",
+"ko": "제프리 얀",
+"team": 121
+},
+"642397": {
+"how": "fullname+num",
+"ko": "그레고리 소토",
+"team": 134
+},
+"642528": {
+"how": "fullname+num",
+"ko": "조나단 로아이시가",
+"team": 109
+},
+"642547": {
+"how": "fullname+num",
+"ko": "프레디 페랄타",
+"team": 139
+},
+"642585": {
+"how": "fullname+num",
+"ko": "펠릭스 바티스타",
+"team": 110
+},
+"642701": {
+"how": "fullname+num",
+"ko": "데니스 산타나",
+"team": 109
+},
+"642708": {
+"how": "fullname+num",
+"ko": "아메드 로사리오",
+"team": 147
+},
+"642715": {
+"how": "fullname+num",
+"ko": "윌리 아다메스",
+"team": 137
+},
+"643217": {
+"how": "fullname+num",
+"ko": "앤드류 베닌텐디",
+"team": 145
+},
+"643289": {
+"how": "fullname+num",
+"ko": "두본 마우리시오",
+"team": 144
+},
+"643376": {
+"how": "fullname+num",
+"ko": "대니 잰슨",
+"team": 140
+},
+"643377": {
+"how": "fullname+num",
+"ko": "그리핀 잭스",
+"team": 139
+},
+"643396": {
+"how": "fullname+num",
+"ko": "아이재아 카이너-팔레파",
+"team": 111
+},
+"643410": {
+"how": "fullname+num",
+"ko": "마크 레이터 주니어",
+"team": 133
+},
+"643446": {
+"how": "fullname+num",
+"ko": "제프 맥닐",
+"team": 133
+},
+"643511": {
+"how": "fullname+num",
+"ko": "타일러 로저스",
+"team": 141
+},
+"645261": {
+"how": "fullname+num",
+"ko": "샌디 알칸타라",
+"team": 146
+},
+"645277": {
+"how": "fullname+num",
+"ko": "아지 알비스",
+"team": 144
+},
+"645302": {
+"how": "fullname+num",
+"ko": "빅토르 로블레스",
+"team": 136
+},
+"645305": {
+"how": "fullname+num",
+"ko": "알리 산체스",
+"team": 147
+},
+"646240": {
+"how": "fullname+num",
+"ko": "라파엘 데버스",
+"team": 137
+},
+"646241": {
+"how": "fullname+num",
+"ko": "엔마누엘 데 헤수스",
+"team": 116
+},
+"647304": {
+"how": "fullname+num",
+"ko": "조시 네일러",
+"team": 136
+},
+"647336": {
+"how": "fullname+num",
+"ko": "마이크 소로카",
+"team": 109
+},
+"649966": {
+"how": "fullname+num",
+"ko": "루이스 우리아스",
+"team": 141
+},
+"650333": {
+"how": "fullname+num",
+"ko": "루이스 아라에즈",
+"team": 143
+},
+"650402": {
+"how": "fullname+num",
+"ko": "글레이버 토레스",
+"team": 116
+},
+"650489": {
+"how": "fullname+num",
+"ko": "윌리 카스트로",
+"team": 115
+},
+"650490": {
+"how": "fullname+num",
+"ko": "얀디 디아즈",
+"team": 139
+},
+"650556": {
+"how": "fullname+num",
+"ko": "브라이언 어브레유",
+"team": 117
+},
+"650559": {
+"how": "fullname+num",
+"ko": "브라이언 데 라 크루즈",
+"team": 143
+},
+"650633": {
+"how": "fullname+num",
+"ko": "마이클 킹",
+"team": 135
+},
+"650644": {
+"how": "fullname+num",
+"ko": "아론 시베일",
+"team": 112
+},
+"650859": {
+"how": "fullname+num",
+"ko": "루이스 렌히포",
+"team": 135
+},
+"650960": {
+"how": "fullname+num",
+"ko": "다니엘 두아르테",
+"team": 121
+},
+"650968": {
+"how": "fullname+num",
+"ko": "요헬 포조",
+"team": 110
+},
+"655316": {
+"how": "fullname+num",
+"ko": "앤드루 모나스테리오",
+"team": 111
+},
+"655889": {
+"how": "fullname+num",
+"ko": "마누엘 로드리게스",
+"team": 139
+},
+"656222": {
+"how": "fullname+num",
+"ko": "제일런 빅스",
+"team": 140
+},
+"656234": {
+"how": "fullname+num",
+"ko": "제이크 버드",
+"team": 120
+},
+"656240": {
+"how": "fullname+num",
+"ko": "스캇 블루엣",
+"team": 133
+},
+"656271": {
+"how": "fullname+num",
+"ko": "브록 버크",
+"team": 113
+},
+"656288": {
+"how": "fullname+num",
+"ko": "그리핀 캐닝",
+"team": 135
+},
+"656302": {
+"how": "fullname+num",
+"ko": "딜런 시즈",
+"team": 141
+},
+"656305": {
+"how": "fullname+num",
+"ko": "맷 채프먼",
+"team": 137
+},
+"656427": {
+"how": "fullname+num",
+"ko": "잭 플래허티",
+"team": 116
+},
+"656464": {
+"how": "fullname+num",
+"ko": "케빈 긴켈",
+"team": 109
+},
+"656484": {
+"how": "fullname+num",
+"ko": "트리스탄 그래이",
+"team": 142
+},
+"656492": {
+"how": "fullname+num",
+"ko": "포스터 그리핀",
+"team": 114
+},
+"656529": {
+"how": "fullname+num",
+"ko": "샘 헨지스",
+"team": 137
+},
+"656537": {
+"how": "fullname+num",
+"ko": "데릭 힐",
+"team": 143
+},
+"656546": {
+"how": "fullname+num",
+"ko": "제프 호프먼",
+"team": 142
+},
+"656550": {
+"how": "fullname+num",
+"ko": "그랜드 홈스",
+"team": 144
+},
+"656555": {
+"how": "fullname+num",
+"ko": "리스 호스킨스",
+"team": 114
+},
+"656557": {
+"how": "fullname+num",
+"ko": "태너 하우크",
+"team": 111
+},
+"656605": {
+"how": "fullname+num",
+"ko": "미치 켈러",
+"team": 134
+},
+"656638": {
+"how": "fullname+num",
+"ko": "알렉스 랭",
+"team": 118
+},
+"656641": {
+"how": "fullname+num",
+"ko": "제이크 라츠",
+"team": 140
+},
+"656716": {
+"how": "fullname+num",
+"ko": "잭 맥킨스트리",
+"team": 116
+},
+"656730": {
+"how": "fullname+num",
+"ko": "트레버 메길",
+"team": 158
+},
+"656756": {
+"how": "fullname+num",
+"ko": "조던 몽고메리",
+"team": 140
+},
+"656775": {
+"how": "fullname+num",
+"ko": "세드릭 멀린스",
+"team": 139
+},
+"656848": {
+"how": "fullname+num",
+"ko": "마이클 피터슨",
+"team": 146
+},
+"656849": {
+"how": "fullname+num",
+"ko": "데이빗 피터슨",
+"team": 112
+},
+"656876": {
+"how": "fullname+num",
+"ko": "드류 라스무센",
+"team": 139
+},
+"656941": {
+"how": "fullname+num",
+"ko": "카일 슈와버",
+"team": 143
+},
+"656945": {
+"how": "fullname+num",
+"ko": "태너 스캇",
+"team": 119
+},
+"656976": {
+"how": "fullname+num",
+"ko": "파빈 스미스",
+"team": 109
+},
+"656986": {
+"how": "fullname+num",
+"ko": "베넷 수자",
+"team": 117
+},
+"657041": {
+"how": "fullname+num",
+"ko": "레인 토마스",
+"team": 144
+},
+"657044": {
+"how": "fullname+num",
+"ko": "라이언 톰슨",
+"team": 109
+},
+"657097": {
+"how": "fullname+num",
+"ko": "제이콥 웹",
+"team": 112
+},
+"657136": {
+"how": "fullname+num",
+"ko": "코너 웡",
+"team": 111
+},
+"657277": {
+"how": "fullname+num",
+"ko": "로건 웹",
+"team": 137
+},
+"657376": {
+"how": "fullname+num",
+"ko": "클라크 슈미트",
+"team": 147
+},
+"657424": {
+"how": "fullname+num",
+"ko": "맷 게이지",
+"team": 137
+},
+"657514": {
+"how": "fullname+num",
+"ko": "브레넌 버나디노",
+"team": 115
+},
+"657612": {
+"how": "fullname+num",
+"ko": "팀 힐",
+"team": 147
+},
+"657649": {
+"how": "fullname+num",
+"ko": "자레드 케이닉",
+"team": 158
+},
+"657656": {
+"how": "fullname+num",
+"ko": "라몬 로리아노",
+"team": 135
+},
+"657746": {
+"how": "fullname+num",
+"ko": "조 라이언",
+"team": 142
+},
+"657756": {
+"how": "fullname+num",
+"ko": "코너 시볼드",
+"team": 118
+},
+"657757": {
+"how": "fullname+num",
+"ko": "가빈 쉬츠",
+"team": 135
+},
+"660162": {
+"how": "fullname+num",
+"ko": "요얀 몬카다",
+"team": 108
+},
+"660604": {
+"how": "fullname+num",
+"ko": "알란 랭겔",
+"team": 143
+},
+"660670": {
+"how": "fullname+num",
+"ko": "로날드 아쿠나",
+"team": 144
+},
+"660688": {
+"how": "fullname+num",
+"ko": "케이버트 루이즈",
+"team": 120
+},
+"660710": {
+"how": "fullname+num",
+"ko": "로돌포 두란",
+"team": 135
+},
+"660787": {
+"how": "fullname+num",
+"ko": "예리 데 로스 산토스",
+"team": 147
+},
+"660825": {
+"how": "fullname+num",
+"ko": "에두아르드 바자르도",
+"team": 136
+},
+"660844": {
+"how": "fullname+num",
+"ko": "레오나르도 리바스",
+"team": 136
+},
+"660853": {
+"how": "fullname+num",
+"ko": "엔엘 디 로스 산토스",
+"team": 117
+},
+"661388": {
+"how": "fullname+num",
+"ko": "윌리엄 콘트레라스",
+"team": 158
+},
+"661395": {
+"how": "fullname+num",
+"ko": "조안 듀란",
+"team": 143
+},
+"661531": {
+"how": "fullname+num",
+"ko": "브라이언 서번",
+"team": 133
+},
+"661563": {
+"how": "fullname+num",
+"ko": "루이스 힐",
+"team": 147
+},
+"662139": {
+"how": "fullname+num",
+"ko": "달튼 바쇼",
+"team": 117
+},
+"662253": {
+"how": "fullname+num",
+"ko": "안드레스 무뇨스",
+"team": 136
+},
+"663158": {
+"how": "fullname+num",
+"ko": "로베르토 수아레즈",
+"team": 144
+},
+"663330": {
+"how": "fullname+num",
+"ko": "자마이 존스",
+"team": 111
+},
+"663362": {
+"how": "fullname+num",
+"ko": "맷 월드론",
+"team": 120
+},
+"663372": {
+"how": "fullname+num",
+"ko": "라이언 펠트너",
+"team": 115
+},
+"663423": {
+"how": "fullname+num",
+"ko": "트렌트 손튼",
+"team": 112
+},
+"663436": {
+"how": "fullname+num",
+"ko": "데이비스 마틴",
+"team": 145
+},
+"663457": {
+"how": "fullname+num",
+"ko": "라스 눗바",
+"team": 109
+},
+"663460": {
+"how": "fullname+num",
+"ko": "크리스 부빅",
+"team": 119
+},
+"663485": {
+"how": "fullname+num",
+"ko": "콜 샌즈",
+"team": 142
+},
+"663494": {
+"how": "fullname+num",
+"ko": "브라이언 토레스",
+"team": 138
+},
+"663538": {
+"how": "fullname+num",
+"ko": "니코 호너",
+"team": 112
+},
+"663542": {
+"how": "fullname+num",
+"ko": "브라이언 허드슨",
+"team": 145
+},
+"663554": {
+"how": "fullname+num",
+"ko": "케이시 마이즈",
+"team": 135
+},
+"663556": {
+"how": "fullname+num",
+"ko": "셰인 맥클라나한",
+"team": 139
+},
+"663558": {
+"how": "fullname+num",
+"ko": "조반니 모란",
+"team": 111
+},
+"663567": {
+"how": "fullname+num",
+"ko": "피터 램버트",
+"team": 117
+},
+"663568": {
+"how": "fullname+num",
+"ko": "스티븐 콜렉",
+"team": 118
+},
+"663574": {
+"how": "fullname+num",
+"ko": "토니 산틸란",
+"team": 113
+},
+"663584": {
+"how": "fullname+num",
+"ko": "헤이든 센저",
+"team": 121
+},
+"663586": {
+"how": "fullname+num",
+"ko": "오스틴 라일리",
+"team": 144
+},
+"663604": {
+"how": "fullname+num",
+"ko": "브랜든 로크리지",
+"team": 158
+},
+"663611": {
+"how": "fullname+num",
+"ko": "닉 매드리갈",
+"team": 139
+},
+"663616": {
+"how": "fullname+num",
+"ko": "트레버 라나크",
+"team": 142
+},
+"663623": {
+"how": "fullname+num",
+"ko": "제이크 어빈",
+"team": 120
+},
+"663624": {
+"how": "fullname+num",
+"ko": "라이언 마운트캐슬",
+"team": 110
+},
+"663656": {
+"how": "fullname+num",
+"ko": "카일 터커",
+"team": 119
+},
+"663687": {
+"how": "fullname+num",
+"ko": "호건 해리스",
+"team": 133
+},
+"663697": {
+"how": "fullname+num",
+"ko": "조나단 인디아",
+"team": 118
+},
+"663698": {
+"how": "fullname+num",
+"ko": "조이 바트",
+"team": 145
+},
+"663728": {
+"how": "fullname+num",
+"ko": "칼 랄리",
+"team": 136
+},
+"663743": {
+"how": "fullname+num",
+"ko": "닉 포르테",
+"team": 139
+},
+"663757": {
+"how": "fullname+num",
+"ko": "트렌트 그리샴",
+"team": 147
+},
+"663767": {
+"how": "fullname+num",
+"ko": "체이스 슈가트",
+"team": 143
+},
+"663776": {
+"how": "fullname+num",
+"ko": "패트릭 산도발",
+"team": 111
+},
+"663795": {
+"how": "fullname+num",
+"ko": "저스틴 헤이겐맨",
+"team": 121
+},
+"663837": {
+"how": "fullname+num",
+"ko": "맷 비어링",
+"team": 116
+},
+"663853": {
+"how": "fullname+num",
+"ko": "로미 곤살레스",
+"team": 111
+},
+"663855": {
+"how": "fullname+num",
+"ko": "조단 힉스",
+"team": 145
+},
+"663878": {
+"how": "fullname+num",
+"ko": "네이트 피어슨",
+"team": 118
+},
+"663886": {
+"how": "fullname+num",
+"ko": "타일러 스티븐슨",
+"team": 113
+},
+"663893": {
+"how": "fullname+num",
+"ko": "브렌든 리틀",
+"team": 141
+},
+"663903": {
+"how": "fullname+num",
+"ko": "브래디 싱어",
+"team": 113
+},
+"663941": {
+"how": "fullname+num",
+"ko": "크리스탄 벡",
+"team": 137
+},
+"663947": {
+"how": "fullname+num",
+"ko": "타일러 홀튼",
+"team": 116
+},
+"663968": {
+"how": "fullname+num",
+"ko": "제이크 맨검",
+"team": 134
+},
+"663969": {
+"how": "fullname+num",
+"ko": "타일러 필립스",
+"team": 146
+},
+"663992": {
+"how": "fullname+num",
+"ko": "리처드 러브레이디",
+"team": 120
+},
+"664023": {
+"how": "fullname+num",
+"ko": "이안 햅",
+"team": 112
+},
+"664034": {
+"how": "fullname+num",
+"ko": "타이 프랑스",
+"team": 135
+},
+"664040": {
+"how": "fullname+num",
+"ko": "브랜든 로우",
+"team": 134
+},
+"664056": {
+"how": "fullname+num",
+"ko": "해리슨 베이더",
+"team": 137
+},
+"664062": {
+"how": "fullname+num",
+"ko": "토니 곤솔린",
+"team": 118
+},
+"664074": {
+"how": "fullname+num",
+"ko": "코디 폰세",
+"team": 141
+},
+"664076": {
+"how": "fullname+num",
+"ko": "개릿 클레빈저",
+"team": 139
+},
+"664126": {
+"how": "fullname+num",
+"ko": "피터 페어뱅크스",
+"team": 146
+},
+"664129": {
+"how": "fullname+num",
+"ko": "제프 하트리엡",
+"team": 133
+},
+"664199": {
+"how": "fullname+num",
+"ko": "테일러 클라크",
+"team": 109
+},
+"664208": {
+"how": "fullname+num",
+"ko": "필 메이튼",
+"team": 112
+},
+"664285": {
+"how": "fullname+num",
+"ko": "프람버 발데스",
+"team": 116
+},
+"664299": {
+"how": "fullname+num",
+"ko": "크리스티안 하비에르",
+"team": 117
+},
+"664702": {
+"how": "fullname+num",
+"ko": "마일스 스트로",
+"team": 141
+},
+"664728": {
+"how": "fullname+num",
+"ko": "카일 이스벨",
+"team": 118
+},
+"664761": {
+"how": "fullname+num",
+"ko": "알렉 봄",
+"team": 143
+},
+"664770": {
+"how": "fullname+num",
+"ko": "나단 룩스",
+"team": 141
+},
+"664774": {
+"how": "fullname+num",
+"ko": "라몬테 웨이드",
+"team": 117
+},
+"664849": {
+"how": "fullname+team",
+"ko": "대니 영",
+"team": 144
+},
+"664954": {
+"how": "fullname+num",
+"ko": "브렛 설리반",
+"team": 115
+},
+"664983": {
+"how": "fullname+num",
+"ko": "제이크 맥카시",
+"team": 115
+},
+"664991": {
+"how": "fullname+num",
+"ko": "그랜트 볼프람",
+"team": 110
+},
+"665019": {
+"how": "fullname+num",
+"ko": "코디 클레멘스",
+"team": 142
+},
+"665052": {
+"how": "fullname+num",
+"ko": "그리핀 코나인",
+"team": 146
+},
+"665152": {
+"how": "fullname+num",
+"ko": "딘 크레머",
+"team": 142
+},
+"665161": {
+"how": "fullname+num",
+"ko": "제레미 페냐",
+"team": 117
+},
+"665487": {
+"how": "fullname+num",
+"ko": "페르난도 타티스 주니어",
+"team": 135
+},
+"665489": {
+"how": "fullname+num",
+"ko": "블라디미르 게레로 주니어",
+"team": 141
+},
+"665506": {
+"how": "fullname+num",
+"ko": "크리스티안 파체",
+"team": 121
+},
+"665561": {
+"how": "fullname+num",
+"ko": "라파엘 마르첸",
+"team": 143
+},
+"665622": {
+"how": "fullname+num",
+"ko": "루이스 메디나",
+"team": 133
+},
+"665645": {
+"how": "fullname+num",
+"ko": "커빈 카스트로",
+"team": 147
+},
+"665660": {
+"how": "fullname+num",
+"ko": "엘비스 알바라도",
+"team": 133
+},
+"665665": {
+"how": "fullname+num",
+"ko": "레이버 산마르틴",
+"team": 137
+},
+"665742": {
+"how": "fullname+num",
+"ko": "후안 소토",
+"team": 121
+},
+"665750": {
+"how": "fullname+num",
+"ko": "레오디 타베라스",
+"team": 110
+},
+"665804": {
+"how": "fullname+num",
+"ko": "미구엘 아마야",
+"team": 112
+},
+"665828": {
+"how": "fullname+num",
+"ko": "오스왈도 카브레라",
+"team": 113
+},
+"665833": {
+"how": "fullname+num",
+"ko": "오네일 크루즈",
+"team": 134
+},
+"665861": {
+"how": "fullname+num",
+"ko": "세바스티안 리베로",
+"team": 108
+},
+"665862": {
+"how": "fullname+num",
+"ko": "재즈 치좀",
+"team": 147
+},
+"665871": {
+"how": "fullname+num",
+"ko": "하비에르 아사드",
+"team": 112
+},
+"665877": {
+"how": "fullname+num",
+"ko": "호세 페르민",
+"team": 138
+},
+"665923": {
+"how": "fullname+num",
+"ko": "에스테우리 루이스",
+"team": 146
+},
+"665926": {
+"how": "fullname+num",
+"ko": "안드레스 히메네즈",
+"team": 141
+},
+"665953": {
+"how": "fullname+num",
+"ko": "안드레스 차파로",
+"team": 120
+},
+"665966": {
+"how": "fullname+num",
+"ko": "카를로스 나바에스",
+"team": 110
+},
+"666018": {
+"how": "fullname+num",
+"ko": "조나단 아란다",
+"team": 139
+},
+"666023": {
+"how": "fullname+num",
+"ko": "프레디 페르민",
+"team": 135
+},
+"666126": {
+"how": "fullname+num",
+"ko": "카를로스 코르테스",
+"team": 133
+},
+"666129": {
+"how": "fullname+num",
+"ko": "브랙스턴 개럿",
+"team": 112
+},
+"666139": {
+"how": "fullname+num",
+"ko": "조쉬 로우",
+"team": 108
+},
+"666142": {
+"how": "fullname+num",
+"ko": "콜 라간스",
+"team": 118
+},
+"666152": {
+"how": "fullname+num",
+"ko": "데이비드 헤밀튼",
+"team": 158
+},
+"666157": {
+"how": "fullname+num",
+"ko": "닉 로돌로",
+"team": 113
+},
+"666160": {
+"how": "fullname+num",
+"ko": "미키 모니악",
+"team": 115
+},
+"666171": {
+"how": "fullname+num",
+"ko": "라이언 제퍼잔",
+"team": 112
+},
+"666176": {
+"how": "fullname+num",
+"ko": "조 아델",
+"team": 114
+},
+"666182": {
+"how": "fullname+num",
+"ko": "보 비셋",
+"team": 121
+},
+"666211": {
+"how": "fullname+num",
+"ko": "테일러 트람멜",
+"team": 117
+},
+"666277": {
+"how": "fullname+num",
+"ko": "호르헤 소리아노",
+"team": 138
+},
+"666310": {
+"how": "fullname+num",
+"ko": "보 네일러",
+"team": 158
+},
+"666374": {
+"how": "fullname+num",
+"ko": "맷 브레쉬",
+"team": 136
+},
+"666624": {
+"how": "fullname+num",
+"ko": "크리스토퍼 모렐",
+"team": 121
+},
+"666661": {
+"how": "fullname+num",
+"ko": "후안 모리요",
+"team": 109
+},
+"666711": {
+"how": "fullname+num",
+"ko": "요엘 페게로",
+"team": 137
+},
+"666745": {
+"how": "fullname+num",
+"ko": "자니 브리토",
+"team": 135
+},
+"666808": {
+"how": "fullname+num",
+"ko": "카밀로 도발",
+"team": 137
+},
+"666969": {
+"how": "fullname+num",
+"ko": "아돌리스 가르시아",
+"team": 143
+},
+"666974": {
+"how": "fullname+num",
+"ko": "예니에르 카노",
+"team": 110
+},
+"667297": {
+"how": "fullname+num",
+"ko": "토미 랜스",
+"team": 142
+},
+"667452": {
+"how": "fullname+num",
+"ko": "코리 절크스",
+"team": 116
+},
+"667472": {
+"how": "fullname+num",
+"ko": "데인 마이어스",
+"team": 113
+},
+"667670": {
+"how": "fullname+num",
+"ko": "브렌드 루커",
+"team": 133
+},
+"667755": {
+"how": "fullname+num",
+"ko": "호세 소리아노",
+"team": 141
+},
+"668227": {
+"how": "fullname+num",
+"ko": "랜디 아로자레나",
+"team": 136
+},
+"668390": {
+"how": "fullname+num",
+"ko": "콜 윈",
+"team": 140
+},
+"668674": {
+"how": "fullname+num",
+"ko": "루카스 에르세그",
+"team": 118
+},
+"668678": {
+"how": "fullname+num",
+"ko": "잭 갈렌",
+"team": 109
+},
+"668715": {
+"how": "fullname+num",
+"ko": "스펜서 스티어",
+"team": 113
+},
+"668716": {
+"how": "fullname+num",
+"ko": "노아 머독",
+"team": 134
+},
+"668723": {
+"how": "fullname+num",
+"ko": "라이언 빌라드",
+"team": 139
+},
+"668800": {
+"how": "fullname+num",
+"ko": "앤드류 키즈너",
+"team": 137
+},
+"668804": {
+"how": "fullname+num",
+"ko": "브라이언 레이놀즈",
+"team": 134
+},
+"668831": {
+"how": "fullname+num",
+"ko": "개럿 스탈링스",
+"team": 158
+},
+"668834": {
+"how": "fullname+num",
+"ko": "이스턴 맥기",
+"team": 118
+},
+"668873": {
+"how": "fullname+num",
+"ko": "케일럽 킬리언",
+"team": 143
+},
+"668881": {
+"how": "fullname+num",
+"ko": "헌터 그린",
+"team": 113
+},
+"668885": {
+"how": "fullname+num",
+"ko": "오스틴 마틴",
+"team": 142
+},
+"668901": {
+"how": "fullname+num",
+"ko": "마크 비엔토스",
+"team": 121
+},
+"668904": {
+"how": "fullname+num",
+"ko": "로이스 루이스",
+"team": 142
+},
+"668909": {
+"how": "fullname+num",
+"ko": "개빈 윌리엄스",
+"team": 114
+},
+"668930": {
+"how": "fullname+num",
+"ko": "브라이스 투랑",
+"team": 158
+},
+"668933": {
+"how": "fullname+num",
+"ko": "그레이엄 애쉬크래프트",
+"team": 113
+},
+"668939": {
+"how": "fullname+num",
+"ko": "애들리 러치맨",
+"team": 111
+},
+"668941": {
+"how": "fullname+num",
+"ko": "조조 로메로",
+"team": 158
+},
+"668942": {
+"how": "fullname+num",
+"ko": "조슈아 로하스",
+"team": 118
+},
+"668952": {
+"how": "fullname+num",
+"ko": "라이언 크라이들러",
+"team": 142
+},
+"668964": {
+"how": "fullname+num",
+"ko": "토비아스 마이어스",
+"team": 121
+},
+"668970": {
+"how": "fullname+num",
+"ko": "개빈 할로웰",
+"team": 112
+},
+"668984": {
+"how": "fullname+num",
+"ko": "케이시 레구미나",
+"team": 139
+},
+"669003": {
+"how": "fullname+num",
+"ko": "개럿 미첼",
+"team": 158
+},
+"669016": {
+"how": "fullname+num",
+"ko": "브랜든 마쉬",
+"team": 143
+},
+"669020": {
+"how": "fullname+num",
+"ko": "라리언 로리슨",
+"team": 112
+},
+"669022": {
+"how": "fullname+num",
+"ko": "맥켄지 고어",
+"team": 140
+},
+"669060": {
+"how": "fullname+num",
+"ko": "브라이스 윌슨",
+"team": 158
+},
+"669062": {
+"how": "fullname+num",
+"ko": "에릭 밀러",
+"team": 111
+},
+"669065": {
+"how": "fullname+num",
+"ko": "카일 스타워스",
+"team": 146
+},
+"669093": {
+"how": "fullname+num",
+"ko": "제레미아 에스트라다",
+"team": 135
+},
+"669127": {
+"how": "fullname+num",
+"ko": "시어 랭겔리어스",
+"team": 133
+},
+"669134": {
+"how": "fullname+num",
+"ko": "루이스 캄푸사노",
+"team": 135
+},
+"669165": {
+"how": "fullname+num",
+"ko": "카일 허트",
+"team": 119
+},
+"669194": {
+"how": "fullname+num",
+"ko": "라인 넬슨",
+"team": 109
+},
+"669199": {
+"how": "fullname+num",
+"ko": "레이크 바처",
+"team": 134
+},
+"669203": {
+"how": "fullname+num",
+"ko": "코빈 번스",
+"team": 109
+},
+"669208": {
+"how": "fullname+num",
+"ko": "라이언 블리스",
+"team": 136
+},
+"669211": {
+"how": "fullname+num",
+"ko": "키건 에이킨",
+"team": 110
+},
+"669221": {
+"how": "fullname+num",
+"ko": "션 머피",
+"team": 144
+},
+"669224": {
+"how": "fullname+num",
+"ko": "오스틴 웰스",
+"team": 147
+},
+"669236": {
+"how": "fullname+num",
+"ko": "예레미아 잭슨",
+"team": 110
+},
+"669242": {
+"how": "fullname+num",
+"ko": "토미 에드먼",
+"team": 119
+},
+"669257": {
+"how": "fullname+num",
+"ko": "윌 스미스",
+"team": 119
+},
+"669270": {
+"how": "fullname+num",
+"ko": "조엘 쿠넬",
+"team": 137
+},
+"669276": {
+"how": "fullname+num",
+"ko": "딜런 리",
+"team": 144
+},
+"669298": {
+"how": "fullname+num",
+"ko": "티제이 쇼크",
+"team": 115
+},
+"669302": {
+"how": "fullname+num",
+"ko": "로건 길버트",
+"team": 136
+},
+"669326": {
+"how": "fullname+num",
+"ko": "브라이스 테오도시오",
+"team": 108
+},
+"669330": {
+"how": "fullname+num",
+"ko": "타일러 웰스",
+"team": 139
+},
+"669357": {
+"how": "fullname+num",
+"ko": "놀란 고먼",
+"team": 138
+},
+"669358": {
+"how": "fullname+num",
+"ko": "셰인 바즈",
+"team": 110
+},
+"669364": {
+"how": "fullname+num",
+"ko": "사비에르 에드워즈",
+"team": 146
+},
+"669373": {
+"how": "fullname+num",
+"ko": "타릭 스쿠발",
+"team": 119
+},
+"669384": {
+"how": "fullname+num",
+"ko": "라이넬 델가도",
+"team": 117
+},
+"669387": {
+"how": "fullname+num",
+"ko": "카르멘 모진스키",
+"team": 134
+},
+"669392": {
+"how": "fullname+num",
+"ko": "사마드 테일러",
+"team": 135
+},
+"669394": {
+"how": "fullname+num",
+"ko": "제이크 버거",
+"team": 140
+},
+"669397": {
+"how": "fullname+num",
+"ko": "닉 앨런",
+"team": 117
+},
+"669398": {
+"how": "fullname+num",
+"ko": "게이지 워크맨",
+"team": 135
+},
+"669438": {
+"how": "fullname+num",
+"ko": "메이슨 잉그러트",
+"team": 139
+},
+"669456": {
+"how": "fullname+num",
+"ko": "셰인 비버",
+"team": 141
+},
+"669461": {
+"how": "fullname+num",
+"ko": "매튜 리베라토레",
+"team": 138
+},
+"669467": {
+"how": "fullname+num",
+"ko": "안드레 팔란테",
+"team": 138
+},
+"669477": {
+"how": "fullname+num",
+"ko": "케이스 슈미트",
+"team": 137
+},
+"669620": {
+"how": "fullname+num",
+"ko": "브래디 바소",
+"team": 133
+},
+"669684": {
+"how": "fullname+num",
+"ko": "크리스 머피",
+"team": 145
+},
+"669701": {
+"how": "fullname+num",
+"ko": "조쉬 스미스",
+"team": 141
+},
+"669704": {
+"how": "fullname+num",
+"ko": "카데 스트로우드",
+"team": 109
+},
+"669707": {
+"how": "fullname+num",
+"ko": "자레드 트리올로",
+"team": 134
+},
+"669711": {
+"how": "fullname+num",
+"ko": "그렉 위저트",
+"team": 111
+},
+"669713": {
+"how": "fullname+num",
+"ko": "헤이든 웨스네스키",
+"team": 117
+},
+"669717": {
+"how": "fullname+num",
+"ko": "윌 윌슨",
+"team": 136
+},
+"669720": {
+"how": "fullname+num",
+"ko": "오스틴 헤이즈",
+"team": 135
+},
+"669724": {
+"how": "fullname+num",
+"ko": "브레난 하니피",
+"team": 116
+},
+"669743": {
+"how": "fullname+num",
+"ko": "알렉스 콜",
+"team": 119
+},
+"669854": {
+"how": "fullname+num",
+"ko": "로넬 블랑코",
+"team": 117
+},
+"669923": {
+"how": "fullname+num",
+"ko": "조지 커비",
+"team": 136
+},
+"669947": {
+"how": "fullname+num",
+"ko": "제시 숄텐스",
+"team": 139
+},
+"670032": {
+"how": "fullname+num",
+"ko": "니콜라스 로페즈",
+"team": 140
+},
+"670036": {
+"how": "fullname+num",
+"ko": "맷 페스타",
+"team": 114
+},
+"670042": {
+"how": "fullname+num",
+"ko": "루크 레일리",
+"team": 136
+},
+"670059": {
+"how": "fullname+num",
+"ko": "콜린 홀더만",
+"team": 114
+},
+"670062": {
+"how": "fullname+num",
+"ko": "줄리언 가르시아",
+"team": 113
+},
+"670103": {
+"how": "fullname+num",
+"ko": "레이먼드 부르고스",
+"team": 111
+},
+"670167": {
+"how": "fullname+num",
+"ko": "존 슈라이버",
+"team": 147
+},
+"670183": {
+"how": "fullname+num",
+"ko": "개럿 액턴",
+"team": 142
+},
+"670231": {
+"how": "fullname+num",
+"ko": "존 레이브",
+"team": 118
+},
+"670242": {
+"how": "fullname+num",
+"ko": "맷 월너",
+"team": 142
+},
+"670245": {
+"how": "fullname+num",
+"ko": "라이언 왓슨",
+"team": 108
+},
+"670280": {
+"how": "fullname+num",
+"ko": "데이비드 베드너",
+"team": 147
+},
+"670329": {
+"how": "fullname+num",
+"ko": "리코 가르시아",
+"team": 110
+},
+"670541": {
+"how": "fullname+num",
+"ko": "요르단 알바레스",
+"team": 117
+},
+"670623": {
+"how": "fullname+num",
+"ko": "아이작 파레데스",
+"team": 117
+},
+"670764": {
+"how": "fullname+num",
+"ko": "테일러 월스",
+"team": 139
+},
+"670912": {
+"how": "fullname+num",
+"ko": "요한 오비에도",
+"team": 111
+},
+"670950": {
+"how": "fullname+num",
+"ko": "트레버 리차드",
+"team": 145
+},
+"670970": {
+"how": "fullname+num",
+"ko": "아드리안 모레혼",
+"team": 135
+},
+"670990": {
+"how": "fullname+num",
+"ko": "요한 라미레즈",
+"team": 134
+},
+"671056": {
+"how": "fullname+num",
+"ko": "이반 에레라",
+"team": 138
+},
+"671096": {
+"how": "fullname+num",
+"ko": "앤드류 애보트",
+"team": 113
+},
+"671106": {
+"how": "fullname+num",
+"ko": "로건 앨런",
+"team": 114
+},
+"671111": {
+"how": "fullname+num",
+"ko": "새미 페랄타",
+"team": 108
+},
+"671162": {
+"how": "fullname+num",
+"ko": "코너 토마스",
+"team": 118
+},
+"671212": {
+"how": "fullname+num",
+"ko": "조 보일",
+"team": 139
+},
+"671218": {
+"how": "fullname+num",
+"ko": "엘리엇 라모스",
+"team": 147
+},
+"671345": {
+"how": "fullname+num",
+"ko": "제이슨 폴리",
+"team": 137
+},
+"671382": {
+"how": "fullname+num",
+"ko": "카메론 포스터",
+"team": 110
+},
+"671732": {
+"how": "fullname+num",
+"ko": "로렌스 버틀러",
+"team": 133
+},
+"671737": {
+"how": "fullname+num",
+"ko": "타지 브래들리",
+"team": 142
+},
+"671739": {
+"how": "fullname+num",
+"ko": "마이클 해리스",
+"team": 144
+},
+"671922": {
+"how": "fullname+num",
+"ko": "케이드 스미스",
+"team": 114
+},
+"671936": {
+"how": "fullname+num",
+"ko": "애덤 마코",
+"team": 140
+},
+"671976": {
+"how": "fullname+num",
+"ko": "트리스탄 피터스",
+"team": 145
+},
+"672012": {
+"how": "fullname+num",
+"ko": "타일러 블랙",
+"team": 158
+},
+"672016": {
+"how": "fullname+num",
+"ko": "덴젤 클락",
+"team": 133
+},
+"672275": {
+"how": "fullname+num",
+"ko": "패트릭 베일리",
+"team": 114
+},
+"672282": {
+"how": "fullname+num",
+"ko": "리드 디트머스",
+"team": 108
+},
+"672335": {
+"how": "fullname+num",
+"ko": "시오넬 페레즈",
+"team": 121
+},
+"672356": {
+"how": "fullname+num",
+"ko": "가브리엘 아리아스",
+"team": 112
+},
+"672386": {
+"how": "fullname+num",
+"ko": "알레한드로 커크",
+"team": 141
+},
+"672442": {
+"how": "fullname+num",
+"ko": "요바니 크루즈",
+"team": 120
+},
+"672456": {
+"how": "fullname+num",
+"ko": "카이더 몬테로",
+"team": 116
+},
+"672515": {
+"how": "fullname+num",
+"ko": "가브리엘 모레노",
+"team": 109
+},
+"672569": {
+"how": "fullname+num",
+"ko": "구스타보 캄페로",
+"team": 108
+},
+"672580": {
+"how": "fullname+num",
+"ko": "마이켈 가르시아",
+"team": 118
+},
+"672582": {
+"how": "fullname+num",
+"ko": "앙헬 제르파",
+"team": 158
+},
+"672629": {
+"how": "fullname+num",
+"ko": "헤라르도 카리요",
+"team": 109
+},
+"672640": {
+"how": "fullname+num",
+"ko": "오토 로페즈",
+"team": 146
+},
+"672695": {
+"how": "fullname+num",
+"ko": "제랄도 페도모",
+"team": 109
+},
+"672724": {
+"how": "fullname+num",
+"ko": "오스왈드 페라자",
+"team": 108
+},
+"672761": {
+"how": "fullname+num",
+"ko": "웬시얼 페레즈",
+"team": 116
+},
+"672782": {
+"how": "fullname+num",
+"ko": "요엔드라이스 고메즈",
+"team": 142
+},
+"672841": {
+"how": "fullname+num",
+"ko": "카를로스 바르가스",
+"team": 136
+},
+"673237": {
+"how": "fullname+num",
+"ko": "야이너 디아즈",
+"team": 117
+},
+"673357": {
+"how": "fullname+num",
+"ko": "루이스 로버트",
+"team": 110
+},
+"673380": {
+"how": "fullname+num",
+"ko": "데니엘 누네스",
+"team": 121
+},
+"673929": {
+"how": "fullname+num",
+"ko": "조던 레저",
+"team": 145
+},
+"673962": {
+"how": "fullname+num",
+"ko": "조시 영",
+"team": 140
+},
+"674003": {
+"how": "fullname+num",
+"ko": "코디 브래드퍼드",
+"team": 140
+},
+"674841": {
+"how": "fullname+num",
+"ko": "앤드류 알바레즈",
+"team": 120
+},
+"675512": {
+"how": "fullname+num",
+"ko": "트로이 멜턴",
+"team": 116
+},
+"675660": {
+"how": "fullname+num",
+"ko": "셰인 드로한",
+"team": 158
+},
+"675848": {
+"how": "fullname+num",
+"ko": "후안 메히아",
+"team": 115
+},
+"675911": {
+"how": "fullname+num",
+"ko": "스펜서 스트라이더",
+"team": 144
+},
+"675961": {
+"how": "fullname+num",
+"ko": "알리카 윌리엄스",
+"team": 133
+},
+"676083": {
+"how": "fullname+num",
+"ko": "잰슨 정크",
+"team": 146
+},
+"676105": {
+"how": "fullname+num",
+"ko": "제프 크리스웰",
+"team": 115
+},
+"676106": {
+"how": "fullname+num",
+"ko": "에머슨 핸콘",
+"team": 136
+},
+"676130": {
+"how": "fullname+num",
+"ko": "호세 부토",
+"team": 137
+},
+"676254": {
+"how": "fullname+num",
+"ko": "라이언 워커",
+"team": 137
+},
+"676263": {
+"how": "fullname+num",
+"ko": "잭 드레이어",
+"team": 119
+},
+"676272": {
+"how": "fullname+num",
+"ko": "바비 밀러",
+"team": 119
+},
+"676282": {
+"how": "fullname+num",
+"ko": "조이 칸틸로",
+"team": 114
+},
+"676356": {
+"how": "fullname+num",
+"ko": "조니 데루카",
+"team": 139
+},
+"676369": {
+"how": "fullname+num",
+"ko": "넬슨 벨라스케스",
+"team": 117
+},
+"676391": {
+"how": "fullname+num",
+"ko": "어니 클레멘트",
+"team": 141
+},
+"676395": {
+"how": "fullname+num",
+"ko": "로버트 가르시아",
+"team": 140
+},
+"676428": {
+"how": "fullname+num",
+"ko": "브랜트 허터",
+"team": 116
+},
+"676439": {
+"how": "fullname+num",
+"ko": "페두시아 헌터",
+"team": 119
+},
+"676440": {
+"how": "fullname+num",
+"ko": "태너 바이비",
+"team": 114
+},
+"676467": {
+"how": "fullname+num",
+"ko": "콜튼 고든",
+"team": 158
+},
+"676475": {
+"how": "fullname+num",
+"ko": "알렉 벌레슨",
+"team": 138
+},
+"676477": {
+"how": "fullname+num",
+"ko": "개럿 위틀록",
+"team": 111
+},
+"676480": {
+"how": "fullname+num",
+"ko": "호세 바레로",
+"team": 110
+},
+"676508": {
+"how": "fullname+num",
+"ko": "벤 카스파리우스",
+"team": 119
+},
+"676510": {
+"how": "fullname+num",
+"ko": "놀란 호프만",
+"team": 118
+},
+"676534": {
+"how": "fullname+num",
+"ko": "캘빈 포셰",
+"team": 146
+},
+"676551": {
+"how": "fullname+num",
+"ko": "브루어 히클렌",
+"team": 144
+},
+"676572": {
+"how": "fullname+num",
+"ko": "에릭 와가먼",
+"team": 121
+},
+"676604": {
+"how": "fullname+num",
+"ko": "타일러 주버",
+"team": 146
+},
+"676609": {
+"how": "fullname+num",
+"ko": "호세 카바예로",
+"team": 147
+},
+"676661": {
+"how": "fullname+num",
+"ko": "맥스 라자르",
+"team": 143
+},
+"676684": {
+"how": "fullname+num",
+"ko": "윌 베스트",
+"team": 116
+},
+"676694": {
+"how": "fullname+num",
+"ko": "제이크 마이어스",
+"team": 117
+},
+"676724": {
+"how": "fullname+num",
+"ko": "자레드 영",
+"team": 121
+},
+"676742": {
+"how": "fullname+num",
+"ko": "캠 샌더스",
+"team": 110
+},
+"676755": {
+"how": "fullname+num",
+"ko": "이삭 맷슨",
+"team": 134
+},
+"676775": {
+"how": "fullname+num",
+"ko": "키튼 윈",
+"team": 137
+},
+"676879": {
+"how": "fullname+num",
+"ko": "아론 애쉬비",
+"team": 158
+},
+"676914": {
+"how": "fullname+num",
+"ko": "데이비스 슈나이더",
+"team": 141
+},
+"676917": {
+"how": "fullname+num",
+"ko": "케이드 카발리",
+"team": 120
+},
+"676962": {
+"how": "fullname+num",
+"ko": "벤 브라운",
+"team": 112
+},
+"676974": {
+"how": "fullname+num",
+"ko": "맥스 메이어",
+"team": 146
+},
+"676979": {
+"how": "fullname+num",
+"ko": "가렛 크로셰",
+"team": 111
+},
+"677008": {
+"how": "fullname+num",
+"ko": "헤스턴 커스태드",
+"team": 110
+},
+"677020": {
+"how": "fullname+num",
+"ko": "조쉬 워커",
+"team": 110
+},
+"677053": {
+"how": "fullname+num",
+"ko": "앤드류 나르디",
+"team": 146
+},
+"677060": {
+"how": "fullname+num",
+"ko": "채드 스티븐스",
+"team": 115
+},
+"677161": {
+"how": "fullname+num",
+"ko": "잭 켈리",
+"team": 111
+},
+"677347": {
+"how": "fullname+num",
+"ko": "키렌 패리스",
+"team": 108
+},
+"677588": {
+"how": "fullname+num",
+"ko": "호세 테나",
+"team": 120
+},
+"677592": {
+"how": "fullname+num",
+"ko": "에베르손 페레이라",
+"team": 138
+},
+"677594": {
+"how": "fullname+num",
+"ko": "훌리오 로드리게스",
+"team": 136
+},
+"677595": {
+"how": "fullname+num",
+"ko": "로니 마우리시오",
+"team": 121
+},
+"677649": {
+"how": "fullname+num",
+"ko": "에즈키엘 듀란",
+"team": 140
+},
+"677800": {
+"how": "fullname+num",
+"ko": "윌리어 어브레유",
+"team": 111
+},
+"677865": {
+"how": "fullname+num",
+"ko": "저스틴 브루흘",
+"team": 138
+},
+"677942": {
+"how": "fullname+num",
+"ko": "블레이즈 알렉산더",
+"team": 110
+},
+"677943": {
+"how": "fullname+num",
+"ko": "윌 밴필드",
+"team": 113
+},
+"677944": {
+"how": "fullname+num",
+"ko": "슬레이드 체코니",
+"team": 114
+},
+"677951": {
+"how": "fullname+num",
+"ko": "바비 위트 주니어",
+"team": 118
+},
+"677952": {
+"how": "fullname+num",
+"ko": "브랙스톤 애쉬크레프트",
+"team": 134
+},
+"677955": {
+"how": "fullname+num",
+"ko": "제이든 힐",
+"team": 115
+},
+"677956": {
+"how": "fullname+num",
+"ko": "레이스 하인즈",
+"team": 110
+},
+"677958": {
+"how": "fullname+num",
+"ko": "쿠마 로커",
+"team": 140
+},
+"677960": {
+"how": "fullname+num",
+"ko": "라이언 웨더스",
+"team": 147
+},
+"677961": {
+"how": "fullname+num",
+"ko": "콜 윌콕스",
+"team": 136
+},
+"677976": {
+"how": "fullname+num",
+"ko": "랜디 도브낙",
+"team": 118
+},
+"678009": {
+"how": "fullname+num",
+"ko": "파커 미도우즈",
+"team": 116
+},
+"678011": {
+"how": "fullname+num",
+"ko": "앤서니 시글러",
+"team": 111
+},
+"678020": {
+"how": "fullname+num",
+"ko": "세스 할보르센",
+"team": 119
+},
+"678022": {
+"how": "fullname+num",
+"ko": "잭 퍼킨스",
+"team": 133
+},
+"678061": {
+"how": "fullname+num",
+"ko": "레이 커",
+"team": 144
+},
+"678218": {
+"how": "fullname+num",
+"ko": "브랜든 발렌수엘라",
+"team": 141
+},
+"678246": {
+"how": "fullname+num",
+"ko": "미구엘 바가스",
+"team": 145
+},
+"678391": {
+"how": "fullname+num",
+"ko": "요빗 비바스",
+"team": 120
+},
+"678394": {
+"how": "fullname+num",
+"ko": "브라이언 벨로",
+"team": 111
+},
+"678489": {
+"how": "fullname+num",
+"ko": "호르헤 바로사",
+"team": 117
+},
+"678545": {
+"how": "fullname+num",
+"ko": "오슬레비스 바사베",
+"team": 137
+},
+"678577": {
+"how": "fullname+num",
+"ko": "주니어 페레스",
+"team": 145
+},
+"678662": {
+"how": "fullname+num",
+"ko": "에즈키엘 토바",
+"team": 115
+},
+"678868": {
+"how": "fullname+num",
+"ko": "에디 인",
+"team": 120
+},
+"678882": {
+"how": "fullname+num",
+"ko": "세단 라파엘라",
+"team": 111
+},
+"679358": {
+"how": "fullname+num",
+"ko": "에릭 오스",
+"team": 142
+},
+"679529": {
+"how": "fullname+num",
+"ko": "스펜서 토켈슨",
+"team": 116
+},
+"679775": {
+"how": "fullname+num",
+"ko": "카일 백허스",
+"team": 143
+},
+"679822": {
+"how": "fullname+num",
+"ko": "저스틴 포스큐",
+"team": 140
+},
+"679845": {
+"how": "fullname+num",
+"ko": "닉 로프틴",
+"team": 118
+},
+"679883": {
+"how": "fullname+num",
+"ko": "루인더 아빌라",
+"team": 118
+},
+"679885": {
+"how": "fullname+num",
+"ko": "저스틴 마르티네즈",
+"team": 109
+},
+"679922": {
+"how": "fullname+num",
+"ko": "카를로스 듀란",
+"team": 118
+},
+"680474": {
+"how": "fullname+num",
+"ko": "막스 슈만",
+"team": 147
+},
+"680570": {
+"how": "fullname+num",
+"ko": "그래이슨 로드리게스",
+"team": 108
+},
+"680574": {
+"how": "fullname+num",
+"ko": "맷 맥클레인",
+"team": 113
+},
+"680577": {
+"how": "fullname+num",
+"ko": "다스완 커시 주니어",
+"team": 144
+},
+"680604": {
+"how": "fullname+num",
+"ko": "블라스 카스타노",
+"team": 115
+},
+"680664": {
+"how": "fullname+num",
+"ko": "에두아르도 발렌시아",
+"team": 116
+},
+"680686": {
+"how": "fullname+num",
+"ko": "조시아 그레이",
+"team": 120
+},
+"680694": {
+"how": "fullname+num",
+"ko": "카일 브래디쉬",
+"team": 110
+},
+"680700": {
+"how": "fullname+num",
+"ko": "리치 팔라시오스",
+"team": 139
+},
+"680718": {
+"how": "fullname+num",
+"ko": "애디슨 바저",
+"team": 141
+},
+"680728": {
+"how": "fullname+num",
+"ko": "아드리안 델 카스티요",
+"team": 109
+},
+"680730": {
+"how": "fullname+num",
+"ko": "미첼 파커",
+"team": 120
+},
+"680732": {
+"how": "fullname+num",
+"ko": "션 버크",
+"team": 145
+},
+"680736": {
+"how": "fullname+num",
+"ko": "저스틴 로블레스키",
+"team": 119
+},
+"680737": {
+"how": "fullname+num",
+"ko": "마이클 헬먼",
+"team": 140
+},
+"680742": {
+"how": "fullname+num",
+"ko": "조나단 볼란",
+"team": 143
+},
+"680744": {
+"how": "fullname+num",
+"ko": "타이 매든",
+"team": 116
+},
+"680755": {
+"how": "fullname+num",
+"ko": "브래이든 피셔",
+"team": 141
+},
+"680757": {
+"how": "fullname+num",
+"ko": "스티븐 콴",
+"team": 114
+},
+"680767": {
+"how": "fullname+num",
+"ko": "빅터 보드닉",
+"team": 146
+},
+"680776": {
+"how": "fullname+num",
+"ko": "재런 듀란",
+"team": 111
+},
+"680779": {
+"how": "fullname+num",
+"ko": "헨리 데이비스",
+"team": 134
+},
+"680869": {
+"how": "fullname+num",
+"ko": "잭 겔로프",
+"team": 133
+},
+"680916": {
+"how": "fullname+num",
+"ko": "프랑코 알레만",
+"team": 114
+},
+"680977": {
+"how": "fullname+num",
+"ko": "브렌단 도노반",
+"team": 136
+},
+"681006": {
+"how": "fullname+num",
+"ko": "조쉬 심슨",
+"team": 136
+},
+"681035": {
+"how": "fullname+num",
+"ko": "크리스티안 스콧",
+"team": 121
+},
+"681047": {
+"how": "fullname+num",
+"ko": "크리스찬 프랭클린",
+"team": 110
+},
+"681082": {
+"how": "fullname+num",
+"ko": "브라이슨 스탓",
+"team": 143
+},
+"681151": {
+"how": "fullname+num",
+"ko": "제이든 머레이",
+"team": 112
+},
+"681190": {
+"how": "fullname+num",
+"ko": "랜디 바스케즈",
+"team": 135
+},
+"681217": {
+"how": "fullname+num",
+"ko": "체이스 실세스",
+"team": 140
+},
+"681252": {
+"how": "fullname+num",
+"ko": "잭 앤더슨",
+"team": 142
+},
+"681293": {
+"how": "fullname+num",
+"ko": "스펜서 아리게티",
+"team": 141
+},
+"681297": {
+"how": "fullname+num",
+"ko": "콜튼 카우저",
+"team": 110
+},
+"681343": {
+"how": "fullname+num",
+"ko": "셰인 스미스",
+"team": 145
+},
+"681393": {
+"how": "fullname+num",
+"ko": "코너 노르비",
+"team": 115
+},
+"681402": {
+"how": "fullname+num",
+"ko": "거스 바랜드",
+"team": 120
+},
+"681481": {
+"how": "fullname+num",
+"ko": "케리 카펜터",
+"team": 116
+},
+"681508": {
+"how": "fullname+num",
+"ko": "미키 가스퍼",
+"team": 111
+},
+"681517": {
+"how": "fullname+num",
+"ko": "카일 레이히",
+"team": 138
+},
+"681624": {
+"how": "fullname+num",
+"ko": "앤디 파헤스",
+"team": 119
+},
+"681676": {
+"how": "fullname+num",
+"ko": "라이언 페르난데스",
+"team": 138
+},
+"681715": {
+"how": "fullname+num",
+"ko": "에리베르토 에르난데스",
+"team": 146
+},
+"681799": {
+"how": "fullname+num",
+"ko": "에단 로버츠",
+"team": 112
+},
+"681807": {
+"how": "fullname+num",
+"ko": "데이비드 프라이",
+"team": 114
+},
+"681810": {
+"how": "fullname+num",
+"ko": "오스틴 워렌",
+"team": 121
+},
+"681867": {
+"how": "fullname+num",
+"ko": "쿠퍼 크리스웰",
+"team": 136
+},
+"681870": {
+"how": "fullname+num",
+"ko": "에릭 사브로스키",
+"team": 114
+},
+"681892": {
+"how": "fullname+num",
+"ko": "코디 펀더벅",
+"team": 142
+},
+"681895": {
+"how": "fullname+num",
+"ko": "에반 시스크",
+"team": 134
+},
+"681909": {
+"how": "fullname+num",
+"ko": "저스틴 딘",
+"team": 112
+},
+"681911": {
+"how": "fullname+num",
+"ko": "알렉스 베시아",
+"team": 119
+},
+"681916": {
+"how": "fullname+num",
+"ko": "딜런 스미스",
+"team": 137
+},
+"681987": {
+"how": "fullname+num",
+"ko": "네이트 이튼",
+"team": 111
+},
+"682052": {
+"how": "fullname+num",
+"ko": "제이콥 로페즈",
+"team": 133
+},
+"682120": {
+"how": "fullname+num",
+"ko": "팀 헤린",
+"team": 114
+},
+"682177": {
+"how": "fullname+num",
+"ko": "다니엘 슈니먼",
+"team": 114
+},
+"682227": {
+"how": "fullname+num",
+"ko": "브랜든 윌리엄슨",
+"team": 113
+},
+"682243": {
+"how": "fullname+num",
+"ko": "브라이스 밀러",
+"team": 136
+},
+"682254": {
+"how": "fullname+num",
+"ko": "메이슨 몽고메리",
+"team": 134
+},
+"682274": {
+"how": "fullname+num",
+"ko": "야라밀 히랄도",
+"team": 110
+},
+"682515": {
+"how": "fullname+num",
+"ko": "로건 포터",
+"team": 108
+},
+"682608": {
+"how": "fullname+num",
+"ko": "페이튼 그레이",
+"team": 140
+},
+"682622": {
+"how": "fullname+num",
+"ko": "노엘비 마르테",
+"team": 113
+},
+"682626": {
+"how": "fullname+num",
+"ko": "프란시스코 알바레즈",
+"team": 121
+},
+"682634": {
+"how": "fullname+num",
+"ko": "케빈 알칸타라",
+"team": 112
+},
+"682657": {
+"how": "fullname+num",
+"ko": "앙헬 마르티네스",
+"team": 114
+},
+"682663": {
+"how": "fullname+num",
+"ko": "아구스틴 라미레즈",
+"team": 146
+},
+"682668": {
+"how": "fullname+num",
+"ko": "루이스앙헬 아쿠냐",
+"team": 145
+},
+"682674": {
+"how": "fullname+num",
+"ko": "빅터 베리코토",
+"team": 137
+},
+"682729": {
+"how": "fullname+num",
+"ko": "조나탄 클라세",
+"team": 141
+},
+"682769": {
+"how": "fullname+num",
+"ko": "아이버슨 카스텔라노",
+"team": 115
+},
+"682818": {
+"how": "fullname+num",
+"ko": "요헨드릭 피난고",
+"team": 141
+},
+"682825": {
+"how": "fullname+num",
+"ko": "루이스 메이",
+"team": 113
+},
+"682829": {
+"how": "fullname+num",
+"ko": "엘리 데 라 크루즈",
+"team": 113
+},
+"682842": {
+"how": "fullname+num",
+"ko": "에이브너 유리베",
+"team": 158
+},
+"682848": {
+"how": "fullname+num",
+"ko": "엔디 로드리게스",
+"team": 134
+},
+"682877": {
+"how": "fullname+num",
+"ko": "후안 브리토",
+"team": 113
+},
+"682927": {
+"how": "fullname+num",
+"ko": "로니 사이몬",
+"team": 134
+},
+"682982": {
+"how": "fullname+num",
+"ko": "다니엘 에스피노",
+"team": 114
+},
+"682985": {
+"how": "fullname+num",
+"ko": "라일리 그린",
+"team": 116
+},
+"682987": {
+"how": "fullname+num",
+"ko": "스펜서 존스",
+"team": 147
+},
+"682988": {
+"how": "fullname+num",
+"ko": "타일러 로클리어",
+"team": 109
+},
+"682989": {
+"how": "fullname+num",
+"ko": "빅터 메데로스",
+"team": 144
+},
+"682995": {
+"how": "fullname+num",
+"ko": "헌터 바르코",
+"team": 134
+},
+"682997": {
+"how": "fullname+num",
+"ko": "타일러 캘리한",
+"team": 134
+},
+"682998": {
+"how": "fullname+num",
+"ko": "코빈 캐롤",
+"team": 109
+},
+"683000": {
+"how": "fullname+num",
+"ko": "라일리 코넬리오",
+"team": 120
+},
+"683002": {
+"how": "fullname+num",
+"ko": "거너 헨더슨",
+"team": 110
+},
+"683003": {
+"how": "fullname+num",
+"ko": "제러드 존스",
+"team": 134
+},
+"683004": {
+"how": "fullname+num",
+"ko": "잭 라이터",
+"team": 140
+},
+"683011": {
+"how": "fullname+num",
+"ko": "앤서니 볼피",
+"team": 147
+},
+"683021": {
+"how": "fullname+num",
+"ko": "마이클 스테파닉",
+"team": 133
+},
+"683083": {
+"how": "fullname+num",
+"ko": "나심 누네스",
+"team": 120
+},
+"683146": {
+"how": "fullname+num",
+"ko": "브렛 베이티",
+"team": 121
+},
+"683155": {
+"how": "fullname+num",
+"ko": "조이 에스테스",
+"team": 133
+},
+"683175": {
+"how": "fullname+num",
+"ko": "코너 필립스",
+"team": 113
+},
+"683227": {
+"how": "fullname+num",
+"ko": "코디 프리먼",
+"team": 140
+},
+"683232": {
+"how": "fullname+num",
+"ko": "닉 미어스",
+"team": 118
+},
+"683352": {
+"how": "fullname+num",
+"ko": "미치 브랫",
+"team": 109
+},
+"683357": {
+"how": "fullname+num",
+"ko": "오웬 케이시",
+"team": 146
+},
+"683409": {
+"how": "fullname+num",
+"ko": "앙헬 치빌리",
+"team": 147
+},
+"683618": {
+"how": "fullname+num",
+"ko": "에드가르도 엔리케스",
+"team": 119
+},
+"683627": {
+"how": "fullname+num",
+"ko": "안소니 몰리나",
+"team": 137
+},
+"683679": {
+"how": "fullname+num",
+"ko": "헤수스 로드리게스",
+"team": 137
+},
+"683734": {
+"how": "fullname+num",
+"ko": "앤드류 본",
+"team": 158
+},
+"683737": {
+"how": "fullname+num",
+"ko": "마이클 부시",
+"team": 112
+},
+"683742": {
+"how": "fullname+num",
+"ko": "호세 프랑코",
+"team": 113
+},
+"683748": {
+"how": "fullname+num",
+"ko": "빅토르 메사 주니어",
+"team": 139
+},
+"683766": {
+"how": "fullname+num",
+"ko": "크리스티안 코스",
+"team": 137
+},
+"683769": {
+"how": "fullname+num",
+"ko": "헌터 개디스",
+"team": 114
+},
+"683953": {
+"how": "fullname+num",
+"ko": "트래비스 바자나",
+"team": 114
+},
+"684442": {
+"how": "fullname+num",
+"ko": "콜 드레이크",
+"team": 109
+},
+"684974": {
+"how": "fullname+num",
+"ko": "크레이그 요호",
+"team": 114
+},
+"685112": {
+"how": "fullname+num",
+"ko": "잭 맥캠블레이",
+"team": 113
+},
+"685126": {
+"how": "fullname+num",
+"ko": "브랜든 아이서트",
+"team": 134
+},
+"685133": {
+"how": "fullname+num",
+"ko": "웨이드 멕클러",
+"team": 108
+},
+"685299": {
+"how": "fullname+num",
+"ko": "태너 고든",
+"team": 115
+},
+"685464": {
+"how": "fullname+num",
+"ko": "케이드 윈퀘스트",
+"team": 138
+},
+"686217": {
+"how": "fullname+num",
+"ko": "살 프렐릭",
+"team": 158
+},
+"686218": {
+"how": "fullname+num",
+"ko": "에밋 시한",
+"team": 119
+},
+"686228": {
+"how": "fullname+num",
+"ko": "주앙 버고스",
+"team": 109
+},
+"686452": {
+"how": "fullname+num",
+"ko": "드류 밀라스",
+"team": 120
+},
+"686469": {
+"how": "fullname+num",
+"ko": "비니 파스콴티노",
+"team": 118
+},
+"686475": {
+"how": "fullname+num",
+"ko": "타일러 톨버트",
+"team": 118
+},
+"686527": {
+"how": "fullname+num",
+"ko": "도미닉 칸조네",
+"team": 136
+},
+"686555": {
+"how": "fullname+num",
+"ko": "이삭 콜린스",
+"team": 118
+},
+"686560": {
+"how": "fullname+num",
+"ko": "개빈 콜리어",
+"team": 140
+},
+"686563": {
+"how": "fullname+num",
+"ko": "조나단 캐넌",
+"team": 145
+},
+"686580": {
+"how": "fullname+num",
+"ko": "저스틴 슬레이튼",
+"team": 111
+},
+"686610": {
+"how": "fullname+num",
+"ko": "켄 월디척",
+"team": 120
+},
+"686611": {
+"how": "fullname+num",
+"ko": "딜런 크루스",
+"team": 120
+},
+"686613": {
+"how": "fullname+num",
+"ko": "헌터 브라운",
+"team": 117
+},
+"686668": {
+"how": "fullname+num",
+"ko": "브렌튼 도일",
+"team": 145
+},
+"686681": {
+"how": "fullname+num",
+"ko": "마이클 매시",
+"team": 118
+},
+"686730": {
+"how": "fullname+num",
+"ko": "카슨 스파이어스",
+"team": 113
+},
+"686751": {
+"how": "fullname+num",
+"ko": "세스 존슨",
+"team": 133
+},
+"686765": {
+"how": "fullname+num",
+"ko": "닉 소가드",
+"team": 111
+},
+"686780": {
+"how": "fullname+num",
+"ko": "페드로 파헤스",
+"team": 138
+},
+"686790": {
+"how": "fullname+num",
+"ko": "트레버 맥도널드",
+"team": 137
+},
+"686796": {
+"how": "fullname+num",
+"ko": "블레이크 왈스턴",
+"team": 109
+},
+"686797": {
+"how": "fullname+num",
+"ko": "브룩스 리",
+"team": 142
+},
+"686799": {
+"how": "fullname+num",
+"ko": "잭 코채노위츠",
+"team": 108
+},
+"686930": {
+"how": "fullname+num",
+"ko": "메이슨 바넷",
+"team": 133
+},
+"686934": {
+"how": "fullname+num",
+"ko": "알렉스 맥팔레인",
+"team": 143
+},
+"686948": {
+"how": "fullname+num",
+"ko": "드레이크 볼드윈",
+"team": 144
+},
+"686993": {
+"how": "fullname+num",
+"ko": "저스틴 스터너",
+"team": 133
+},
+"687064": {
+"how": "fullname+num",
+"ko": "브랜든 영",
+"team": 110
+},
+"687075": {
+"how": "fullname+num",
+"ko": "브랜든 스프롯",
+"team": 158
+},
+"687093": {
+"how": "fullname+num",
+"ko": "본 그리섬",
+"team": 108
+},
+"687134": {
+"how": "fullname+num",
+"ko": "브래들리 블라록",
+"team": 146
+},
+"687209": {
+"how": "fullname+num",
+"ko": "잭 맥스웰",
+"team": 113
+},
+"687221": {
+"how": "fullname+num",
+"ko": "돌튼 러싱",
+"team": 119
+},
+"687223": {
+"how": "fullname+num",
+"ko": "카슨 팜퀴스트",
+"team": 120
+},
+"687231": {
+"how": "fullname+num",
+"ko": "대렐 에르나이즈",
+"team": 133
+},
+"687263": {
+"how": "fullname+num",
+"ko": "잭 네토",
+"team": 108
+},
+"687273": {
+"how": "fullname+num",
+"ko": "퀸 매튜스",
+"team": 138
+},
+"687282": {
+"how": "fullname+num",
+"ko": "가브리엘 린코네스 주니어",
+"team": 143
+},
+"687287": {
+"how": "fullname+num",
+"ko": "몬테버디",
+"team": 146
+},
+"687309": {
+"how": "fullname+num",
+"ko": "쿠퍼 저피",
+"team": 138
+},
+"687312": {
+"how": "fullname+num",
+"ko": "가브리엘 휴스",
+"team": 115
+},
+"687330": {
+"how": "fullname+num",
+"ko": "케빈 켈리",
+"team": 139
+},
+"687377": {
+"how": "fullname+num",
+"ko": "올란도 리발타",
+"team": 120
+},
+"687394": {
+"how": "fullname+num",
+"ko": "잭 브래니건",
+"team": 134
+},
+"687396": {
+"how": "fullname+num",
+"ko": "블렌트 헤드릭",
+"team": 147
+},
+"687401": {
+"how": "fullname+num",
+"ko": "조셉 오티즈",
+"team": 158
+},
+"687462": {
+"how": "fullname+num",
+"ko": "스펜서 호위츠",
+"team": 134
+},
+"687473": {
+"how": "fullname+num",
+"ko": "라이언 거스토",
+"team": 146
+},
+"687529": {
+"how": "fullname+num",
+"ko": "그랜트 맥크레이",
+"team": 137
+},
+"687531": {
+"how": "fullname+num",
+"ko": "윌리엄 캠프너",
+"team": 146
+},
+"687551": {
+"how": "fullname+num",
+"ko": "드류 길버스",
+"team": 137
+},
+"687562": {
+"how": "fullname+num",
+"ko": "제이크 베넷",
+"team": 111
+},
+"687570": {
+"how": "fullname+num",
+"ko": "코너 프리엘립",
+"team": 142
+},
+"687597": {
+"how": "fullname+num",
+"ko": "조던 벡",
+"team": 115
+},
+"687606": {
+"how": "fullname+num",
+"ko": "팩스톤 슐츠",
+"team": 120
+},
+"687637": {
+"how": "fullname+num",
+"ko": "딜런 비버스",
+"team": 110
+},
+"687749": {
+"how": "fullname+num",
+"ko": "제이스 보웬",
+"team": 135
+},
+"687765": {
+"how": "fullname+num",
+"ko": "미치 스펜스",
+"team": 118
+},
+"687849": {
+"how": "fullname+num",
+"ko": "잭 켄트",
+"team": 120
+},
+"687859": {
+"how": "fullname+num",
+"ko": "트로이 존스턴",
+"team": 115
+},
+"687911": {
+"how": "fullname+num",
+"ko": "브라이언 킹",
+"team": 117
+},
+"687931": {
+"how": "fullname+num",
+"ko": "카슨 위즌헌트",
+"team": 137
+},
+"687941": {
+"how": "fullname+num",
+"ko": "알렉 감보아",
+"team": 111
+},
+"687952": {
+"how": "fullname+num",
+"ko": "크리스티안 엔카나시온-스트랜드",
+"team": 110
+},
+"687957": {
+"how": "fullname+num",
+"ko": "더스틴 해리스",
+"team": 135
+},
+"687985": {
+"how": "fullname+num",
+"ko": "조쉬 화이트",
+"team": 146
+},
+"688107": {
+"how": "fullname+num",
+"ko": "로버트 개서",
+"team": 158
+},
+"688158": {
+"how": "fullname+num",
+"ko": "데이비드 모건",
+"team": 135
+},
+"688297": {
+"how": "fullname+num",
+"ko": "크리스 로이크로프트",
+"team": 133
+},
+"688363": {
+"how": "fullname+num",
+"ko": "그레이엄 폴리",
+"team": 146
+},
+"688642": {
+"how": "fullname+num",
+"ko": "자크 아그노스",
+"team": 115
+},
+"689017": {
+"how": "fullname+num",
+"ko": "랜던 낵",
+"team": 119
+},
+"689147": {
+"how": "fullname+num",
+"ko": "오리온 커커링",
+"team": 143
+},
+"689225": {
+"how": "fullname+num",
+"ko": "보 브리스키",
+"team": 116
+},
+"689254": {
+"how": "fullname+num",
+"ko": "메이슨 플루허티",
+"team": 141
+},
+"689266": {
+"how": "fullname+num",
+"ko": "딜런 도드",
+"team": 144
+},
+"689296": {
+"how": "fullname+num",
+"ko": "안소니 누네즈",
+"team": 110
+},
+"689414": {
+"how": "fullname+num",
+"ko": "리암 힉스",
+"team": 139
+},
+"689441": {
+"how": "fullname+num",
+"ko": "콜먼 크로우",
+"team": 158
+},
+"689546": {
+"how": "fullname+num",
+"ko": "닉 다빌라",
+"team": 136
+},
+"689818": {
+"how": "fullname+num",
+"ko": "데이빗 샌들린",
+"team": 145
+},
+"689981": {
+"how": "fullname+num",
+"ko": "리버 라이언",
+"team": 116
+},
+"690022": {
+"how": "fullname+num",
+"ko": "라이언 리터",
+"team": 115
+},
+"690291": {
+"how": "fullname+num",
+"ko": "제이스 영",
+"team": 116
+},
+"690829": {
+"how": "fullname+num",
+"ko": "벤 조이스",
+"team": 108
+},
+"690924": {
+"how": "fullname+num",
+"ko": "브랙스턴 풀포드",
+"team": 115
+},
+"690925": {
+"how": "fullname+num",
+"ko": "클레이튼 비터",
+"team": 120
+},
+"690928": {
+"how": "fullname+num",
+"ko": "헌터 도빈스",
+"team": 138
+},
+"690953": {
+"how": "fullname+num",
+"ko": "믹 아벨",
+"team": 142
+},
+"690976": {
+"how": "fullname+num",
+"ko": "알렉스 프리랜드",
+"team": 119
+},
+"690978": {
+"how": "fullname+num",
+"ko": "닥스 풀턴",
+"team": 146
+},
+"690984": {
+"how": "fullname+num",
+"ko": "페티 할핀",
+"team": 114
+},
+"690986": {
+"how": "fullname+num",
+"ko": "카일 해리슨",
+"team": 158
+},
+"690993": {
+"how": "fullname+num",
+"ko": "콜트 키스",
+"team": 116
+},
+"690997": {
+"how": "fullname+num",
+"ko": "놀란 맥클린",
+"team": 121
+},
+"691008": {
+"how": "fullname+num",
+"ko": "맥스 라직",
+"team": 138
+},
+"691011": {
+"how": "fullname+num",
+"ko": "드류 로모",
+"team": 145
+},
+"691016": {
+"how": "fullname+num",
+"ko": "타일러 소더스트롬",
+"team": 133
+},
+"691019": {
+"how": "fullname+num",
+"ko": "카일 틸",
+"team": 145
+},
+"691023": {
+"how": "fullname+num",
+"ko": "조던 워커",
+"team": 138
+},
+"691026": {
+"how": "fullname+num",
+"ko": "메이신 윈",
+"team": 138
+},
+"691176": {
+"how": "fullname+num",
+"ko": "제이슨 도밍게스",
+"team": 147
+},
+"691181": {
+"how": "fullname+num",
+"ko": "엠마누엘 로드리게스",
+"team": 142
+},
+"691182": {
+"how": "fullname+num",
+"ko": "아다엘 아마도르",
+"team": 115
+},
+"691277": {
+"how": "fullname+num",
+"ko": "데이비슨 데 로스 산토스",
+"team": 146
+},
+"691373": {
+"how": "fullname+num",
+"ko": "조스틴슨 가르시아",
+"team": 134
+},
+"691384": {
+"how": "fullname+num",
+"ko": "루이스 페랄레스",
+"team": 120
+},
+"691406": {
+"how": "fullname+num",
+"ko": "주니어 카미네로",
+"team": 139
+},
+"691458": {
+"how": "fullname+num",
+"ko": "블레이즈 조던",
+"team": 138
+},
+"691548": {
+"how": "fullname+num",
+"ko": "롤디 무뇨즈",
+"team": 144
+},
+"691587": {
+"how": "fullname+num",
+"ko": "유리 페레즈",
+"team": 146
+},
+"691594": {
+"how": "fullname+num",
+"ko": "하비에르 사노하",
+"team": 146
+},
+"691620": {
+"how": "fullname+num",
+"ko": "제퍼슨 퀴에로",
+"team": 158
+},
+"691718": {
+"how": "fullname+num",
+"ko": "피트 크로우-암스트롱",
+"team": 112
+},
+"691720": {
+"how": "fullname+num",
+"ko": "카일 카로스",
+"team": 115
+},
+"691723": {
+"how": "fullname+num",
+"ko": "코비 메이요",
+"team": 110
+},
+"691725": {
+"how": "fullname+num",
+"ko": "앤드류 페인터",
+"team": 143
+},
+"691728": {
+"how": "fullname+num",
+"ko": "잭 빈",
+"team": 115
+},
+"691740": {
+"how": "fullname+num",
+"ko": "다니엘 수삭",
+"team": 137
+},
+"691777": {
+"how": "fullname+num",
+"ko": "맥스 먼시",
+"team": 133
+},
+"691781": {
+"how": "fullname+num",
+"ko": "브래디 하우스",
+"team": 120
+},
+"691783": {
+"how": "fullname+num",
+"ko": "조던 롤러",
+"team": 109
+},
+"691785": {
+"how": "fullname+num",
+"ko": "마르셀로 메이어",
+"team": 137
+},
+"691788": {
+"how": "fullname+num",
+"ko": "조 맥",
+"team": 146
+},
+"691799": {
+"how": "fullname+num",
+"ko": "그랜트 테일러",
+"team": 145
+},
+"691858": {
+"how": "fullname+num",
+"ko": "자레드 세르나",
+"team": 146
+},
+"691945": {
+"how": "fullname+num",
+"ko": "카터 바움러",
+"team": 140
+},
+"691946": {
+"how": "fullname+num",
+"ko": "조지 클라센",
+"team": 108
+},
+"691951": {
+"how": "fullname+num",
+"ko": "사무엘 알더게리",
+"team": 108
+},
+"692030": {
+"how": "fullname+num",
+"ko": "호세 코르니엘",
+"team": 140
+},
+"692064": {
+"how": "fullname+num",
+"ko": "호세 로드리게스",
+"team": 141
+},
+"692437": {
+"how": "fullname+num",
+"ko": "윈스턴 산토스",
+"team": 140
+},
+"693304": {
+"how": "fullname+num",
+"ko": "닉 곤잘레스",
+"team": 134
+},
+"693307": {
+"how": "fullname+num",
+"ko": "딜런 딩글러",
+"team": 116
+},
+"693308": {
+"how": "fullname+num",
+"ko": "닉 프라소",
+"team": 115
+},
+"693313": {
+"how": "fullname+num",
+"ko": "카슨 시모어",
+"team": 137
+},
+"693409": {
+"how": "fullname+num",
+"ko": "세사르 프리에토",
+"team": 138
+},
+"693433": {
+"how": "fullname+num",
+"ko": "브라이언 우",
+"team": 136
+},
+"693645": {
+"how": "fullname+num",
+"ko": "캠 슐리틀러",
+"team": 147
+},
+"693686": {
+"how": "fullname+num",
+"ko": "스펜서 마일스",
+"team": 141
+},
+"693713": {
+"how": "fullname+num",
+"ko": "에밀리아노 테오도",
+"team": 140
+},
+"693821": {
+"how": "fullname+num",
+"ko": "브라이스 엘더",
+"team": 144
+},
+"693855": {
+"how": "fullname+num",
+"ko": "이안 시모어",
+"team": 139
+},
+"694025": {
+"how": "fullname+num",
+"ko": "펠릭스 레예스",
+"team": 143
+},
+"694037": {
+"how": "fullname+num",
+"ko": "다니엘 팔렌시아",
+"team": 112
+},
+"694192": {
+"how": "fullname+num",
+"ko": "잭슨 추리오",
+"team": 158
+},
+"694203": {
+"how": "fullname+num",
+"ko": "덴저 구스만",
+"team": 108
+},
+"694208": {
+"how": "fullname+num",
+"ko": "모이세스 발레스테로스",
+"team": 108
+},
+"694212": {
+"how": "fullname+num",
+"ko": "사무엘 바살로",
+"team": 110
+},
+"694224": {
+"how": "fullname+num",
+"ko": "가브리엘 곤잘레스",
+"team": 142
+},
+"694249": {
+"how": "fullname+num",
+"ko": "콜 캐리그",
+"team": 115
+},
+"694297": {
+"how": "fullname+num",
+"ko": "브랜든 팟",
+"team": 109
+},
+"694335": {
+"how": "fullname+num",
+"ko": "맷 스밴슨",
+"team": 138
+},
+"694346": {
+"how": "fullname+num",
+"ko": "트레이 깁슨",
+"team": 110
+},
+"694350": {
+"how": "fullname+num",
+"ko": "잭 브릭시",
+"team": 146
+},
+"694357": {
+"how": "fullname+num",
+"ko": "리키 티드먼",
+"team": 141
+},
+"694361": {
+"how": "fullname+num",
+"ko": "윌 클라인",
+"team": 119
+},
+"694362": {
+"how": "fullname+num",
+"ko": "블레이크 던",
+"team": 113
+},
+"694374": {
+"how": "fullname+num",
+"ko": "팀 타와",
+"team": 109
+},
+"694376": {
+"how": "fullname+num",
+"ko": "셰이 위트컴",
+"team": 137
+},
+"694377": {
+"how": "fullname+num",
+"ko": "닉 요크",
+"team": 134
+},
+"694378": {
+"how": "fullname+num",
+"ko": "제이콥 곤잘레스",
+"team": 134
+},
+"694384": {
+"how": "fullname+num",
+"ko": "놀란 샤뉴엘",
+"team": 108
+},
+"694388": {
+"how": "fullname+num",
+"ko": "조이 로퍼피도",
+"team": 117
+},
+"694397": {
+"how": "fullname+num",
+"ko": "마르코 라야",
+"team": 142
+},
+"694410": {
+"how": "fullname+num",
+"ko": "루제임스 그루버",
+"team": 109
+},
+"694462": {
+"how": "fullname+num",
+"ko": "월드렙",
+"team": 144
+},
+"694477": {
+"how": "fullname+num",
+"ko": "채드 패트릭",
+"team": 158
+},
+"694497": {
+"how": "fullname+num",
+"ko": "에반 카터",
+"team": 140
+},
+"694514": {
+"how": "fullname+num",
+"ko": "스털린 톰슨",
+"team": 115
+},
+"694646": {
+"how": "fullname+num",
+"ko": "체이스 맥더멋",
+"team": 121
+},
+"694671": {
+"how": "fullname+num",
+"ko": "와이어트 랭포드",
+"team": 140
+},
+"694673": {
+"how": "fullname+num",
+"ko": "아비멜렉 오티즈",
+"team": 120
+},
+"694680": {
+"how": "fullname+num",
+"ko": "트레버 마틴",
+"team": 108
+},
+"694728": {
+"how": "fullname+num",
+"ko": "브라이스 매튜스",
+"team": 117
+},
+"694738": {
+"how": "fullname+num",
+"ko": "랜던 룹",
+"team": 137
+},
+"694795": {
+"how": "fullname+num",
+"ko": "조쉬 에크네스",
+"team": 146
+},
+"694819": {
+"how": "fullname+num",
+"ko": "제이콥 미저라우스키",
+"team": 158
+},
+"694876": {
+"how": "fullname+num",
+"ko": "쿠퍼 잉글",
+"team": 114
+},
+"694918": {
+"how": "fullname+num",
+"ko": "블레이드 티드웰",
+"team": 137
+},
+"694973": {
+"how": "fullname+num",
+"ko": "폴 스킨스",
+"team": 134
+},
+"695001": {
+"how": "fullname+num",
+"ko": "알림버 산타",
+"team": 117
+},
+"695020": {
+"how": "fullname+num",
+"ko": "태너 머레이",
+"team": 145
+},
+"695034": {
+"how": "fullname+num",
+"ko": "케이드 모리스",
+"team": 133
+},
+"695049": {
+"how": "fullname+num",
+"ko": "브렛 캐리",
+"team": 108
+},
+"695076": {
+"how": "fullname+num",
+"ko": "레트 로더",
+"team": 113
+},
+"695238": {
+"how": "fullname+num",
+"ko": "윌 와그너",
+"team": 135
+},
+"695239": {
+"how": "fullname+num",
+"ko": "로비 알스트롬",
+"team": 140
+},
+"695243": {
+"how": "fullname+num",
+"ko": "메이슨 밀러",
+"team": 135
+},
+"695257": {
+"how": "fullname+num",
+"ko": "빌리 쿡",
+"team": 134
+},
+"695336": {
+"how": "fullname+num",
+"ko": "토마스 수제이시",
+"team": 138
+},
+"695380": {
+"how": "fullname+num",
+"ko": "알렉스 호페",
+"team": 110
+},
+"695391": {
+"how": "fullname+num",
+"ko": "브렛 해리스",
+"team": 137
+},
+"695418": {
+"how": "fullname+num",
+"ko": "브래드 로드",
+"team": 120
+},
+"695445": {
+"how": "fullname+num",
+"ko": "체이스 리",
+"team": 141
+},
+"695490": {
+"how": "fullname+num",
+"ko": "에드윈 아로요",
+"team": 113
+},
+"695491": {
+"how": "fullname+num",
+"ko": "조슈아 바에즈",
+"team": 138
+},
+"695505": {
+"how": "fullname+num",
+"ko": "체이스 번스",
+"team": 113
+},
+"695506": {
+"how": "fullname+num",
+"ko": "잭 캐글리아논",
+"team": 118
+},
+"695534": {
+"how": "fullname+num",
+"ko": "체이스 페티",
+"team": 113
+},
+"695549": {
+"how": "fullname+num",
+"ko": "잭슨 조브",
+"team": 116
+},
+"695578": {
+"how": "fullname+num",
+"ko": "제임스 우드",
+"team": 120
+},
+"695600": {
+"how": "fullname+num",
+"ko": "카터 젠슨",
+"team": 118
+},
+"695611": {
+"how": "fullname+num",
+"ko": "게이지 점프",
+"team": 133
+},
+"695657": {
+"how": "fullname+num",
+"ko": "콜슨 몽고메리",
+"team": 145
+},
+"695670": {
+"how": "fullname+num",
+"ko": "해리 포드",
+"team": 120
+},
+"695681": {
+"how": "fullname+num",
+"ko": "크리스티안 무어",
+"team": 108
+},
+"695684": {
+"how": "fullname+num",
+"ko": "엘머 로드리게스",
+"team": 147
+},
+"695731": {
+"how": "fullname+num",
+"ko": "브래든 몽고메리",
+"team": 145
+},
+"695734": {
+"how": "fullname+num",
+"ko": "데일런 라일",
+"team": 120
+},
+"696030": {
+"how": "fullname+num",
+"ko": "알레한드로 오수나",
+"team": 140
+},
+"696062": {
+"how": "fullname+num",
+"ko": "윌버 도텔",
+"team": 134
+},
+"696070": {
+"how": "fullname+num",
+"ko": "켄드리 로하스",
+"team": 142
+},
+"696100": {
+"how": "fullname+num",
+"ko": "헌터 굿맨",
+"team": 115
+},
+"696131": {
+"how": "fullname+num",
+"ko": "메이슨 블랙",
+"team": 118
+},
+"696135": {
+"how": "fullname+num",
+"ko": "칼릴 왓슨",
+"team": 114
+},
+"696136": {
+"how": "fullname+num",
+"ko": "조던 윅스",
+"team": 112
+},
+"696146": {
+"how": "fullname+num",
+"ko": "하겐 스미스",
+"team": 145
+},
+"696147": {
+"how": "fullname+num",
+"ko": "샘 바크먼",
+"team": 108
+},
+"696149": {
+"how": "fullname+num",
+"ko": "버바 챈들러",
+"team": 134
+},
+"696270": {
+"how": "fullname+num",
+"ko": "라이언 존슨",
+"team": 108
+},
+"696285": {
+"how": "fullname+num",
+"ko": "제이콥 영",
+"team": 120
+},
+"696519": {
+"how": "fullname+num",
+"ko": "새미 나테라 주니어",
+"team": 108
+},
+"696522": {
+"how": "fullname+num",
+"ko": "헤이든 잉거",
+"team": 133
+},
+"697812": {
+"how": "fullname+num",
+"ko": "조 락",
+"team": 133
+},
+"699008": {
+"how": "fullname+num",
+"ko": "앤드윈 켈리",
+"team": 134
+},
+"699013": {
+"how": "fullname+num",
+"ko": "에스멀린 발데스",
+"team": 134
+},
+"699024": {
+"how": "fullname+num",
+"ko": "레오나르도 버날",
+"team": 138
+},
+"699044": {
+"how": "fullname+num",
+"ko": "미겔 울로라",
+"team": 117
+},
+"699134": {
+"how": "fullname+num",
+"ko": "브래드글리 로드리게스",
+"team": 135
+},
+"699151": {
+"how": "fullname+num",
+"ko": "제딕손 파에즈",
+"team": 111
+},
+"699393": {
+"how": "fullname+num",
+"ko": "페드로 라미레즈",
+"team": 112
+},
+"699625": {
+"how": "fullname+num",
+"ko": "지미 크룩스",
+"team": 138
+},
+"699823": {
+"how": "fullname+num",
+"ko": "타일러 데이비스",
+"team": 145
+},
+"699912": {
+"how": "fullname+num",
+"ko": "호세 페르난데스",
+"team": 109
+},
+"700187": {
+"how": "fullname+num",
+"ko": "트로이 테일러",
+"team": 136
+},
+"700241": {
+"how": "fullname+num",
+"ko": "마이클 맥그리비",
+"team": 138
+},
+"700249": {
+"how": "fullname+num",
+"ko": "케이드 포비치",
+"team": 110
+},
+"700250": {
+"how": "fullname+num",
+"ko": "벤 라이스",
+"team": 147
+},
+"700270": {
+"how": "fullname+num",
+"ko": "일버 디아즈",
+"team": 116
+},
+"700327": {
+"how": "fullname+num",
+"ko": "웰린턴 에레라",
+"team": 115
+},
+"700337": {
+"how": "fullname+num",
+"ko": "에드가 퀴에로",
+"team": 145
+},
+"700669": {
+"how": "fullname+num",
+"ko": "고든 그레이스포",
+"team": 138
+},
+"700712": {
+"how": "fullname+num",
+"ko": "월버트 우레나",
+"team": 108
+},
+"700842": {
+"how": "fullname+num",
+"ko": "에두아르도 리베라",
+"team": 111
+},
+"700932": {
+"how": "fullname+num",
+"ko": "카일 만자르도",
+"team": 114
+},
+"701121": {
+"how": "fullname+num",
+"ko": "로건 밴와이",
+"team": 117
+},
+"701162": {
+"how": "fullname+num",
+"ko": "벤 말게리",
+"team": 116
+},
+"701305": {
+"how": "fullname+num",
+"ko": "잭 데젠조",
+"team": 117
+},
+"701350": {
+"how": "fullname+num",
+"ko": "로만 안소니",
+"team": 111
+},
+"701358": {
+"how": "fullname+num",
+"ko": "캠 스미스",
+"team": 117
+},
+"701398": {
+"how": "fullname+num",
+"ko": "살 스튜어트",
+"team": 113
+},
+"701474": {
+"how": "fullname+num",
+"ko": "던컨 다비트",
+"team": 137
+},
+"701519": {
+"how": "fullname+num",
+"ko": "트래비스 아담스",
+"team": 142
+},
+"701538": {
+"how": "fullname+num",
+"ko": "잭슨 메릴",
+"team": 135
+},
+"701542": {
+"how": "fullname+num",
+"ko": "윌 워렌",
+"team": 147
+},
+"701649": {
+"how": "fullname+num",
+"ko": "제임스 트리안토스",
+"team": 112
+},
+"701656": {
+"how": "fullname+num",
+"ko": "로건 핸더슨",
+"team": 158
+},
+"701675": {
+"how": "fullname+num",
+"ko": "나단 처치",
+"team": 138
+},
+"701678": {
+"how": "fullname+num",
+"ko": "하오유 리",
+"team": 116
+},
+"701719": {
+"how": "fullname+num",
+"ko": "타일러 사마니에고",
+"team": 111
+},
+"701762": {
+"how": "fullname+num",
+"ko": "닉 커츠",
+"team": 133
+},
+"701780": {
+"how": "fullname+num",
+"ko": "태너 맥두걸",
+"team": 145
+},
+"701785": {
+"how": "fullname+num",
+"ko": "케일런 컬페퍼",
+"team": 142
+},
+"701807": {
+"how": "fullname+num",
+"ko": "카슨 벤지",
+"team": 121
+},
+"702021": {
+"how": "fullname+num",
+"ko": "윌 디온",
+"team": 120
+},
+"702047": {
+"how": "fullname+num",
+"ko": "알렉스 쿡",
+"team": 139
+},
+"702070": {
+"how": "fullname+num",
+"ko": "노아 카메론",
+"team": 118
+},
+"702153": {
+"how": "fullname+num",
+"ko": "브라이언 피츠패트릭",
+"team": 158
+},
+"702176": {
+"how": "fullname+num",
+"ko": "앨런 로든",
+"team": 142
+},
+"702193": {
+"how": "fullname+num",
+"ko": "앤드류 모리스",
+"team": 142
+},
+"702222": {
+"how": "fullname+num",
+"ko": "저스틴 크로포드",
+"team": 143
+},
+"702281": {
+"how": "fullname+num",
+"ko": "로비 스넬링",
+"team": 146
+},
+"702284": {
+"how": "fullname+num",
+"ko": "콜 영",
+"team": 136
+},
+"702303": {
+"how": "fullname+num",
+"ko": "라일리 마틴",
+"team": 112
+},
+"702332": {
+"how": "fullname+num",
+"ko": "케일럽 더빈",
+"team": 111
+},
+"702352": {
+"how": "fullname+num",
+"ko": "스펜서 비벤스",
+"team": 118
+},
+"702474": {
+"how": "fullname+num",
+"ko": "마이크 파레데스",
+"team": 142
+},
+"702616": {
+"how": "fullname+num",
+"ko": "잭슨 홀리데이",
+"team": 110
+},
+"702752": {
+"how": "fullname+num",
+"ko": "조나단 핀타로",
+"team": 121
+},
+"703197": {
+"how": "fullname+num",
+"ko": "미카엘 아로요",
+"team": 136
+},
+"703492": {
+"how": "fullname+num",
+"ko": "닉 모라비토",
+"team": 121
+},
+"703607": {
+"how": "fullname+num",
+"ko": "헨리 볼테",
+"team": 133
+},
+"800048": {
+"how": "fullname+num",
+"ko": "파커 메식",
+"team": 114
+},
+"800050": {
+"how": "fullname+num",
+"ko": "체이스 드라우터",
+"team": 114
+},
+"800311": {
+"how": "fullname+num",
+"ko": "디디에르 푸엔테스",
+"team": 144
+},
+"800325": {
+"how": "fullname+num",
+"ko": "루이스 라라",
+"team": 158
+},
+"801139": {
+"how": "fullname+num",
+"ko": "페이튼 톨리",
+"team": 111
+},
+"801403": {
+"how": "fullname+num",
+"ko": "체이스 돌랜더",
+"team": 115
+},
+"801434": {
+"how": "fullname+num",
+"ko": "폴 저베이스",
+"team": 119
+},
+"802408": {
+"how": "fullname+num",
+"ko": "브라이센 마우츠",
+"team": 138
+},
+"802415": {
+"how": "fullname+num",
+"ko": "챈들러 심슨",
+"team": 139
+},
+"803011": {
+"how": "fullname+num",
+"ko": "샘 안토나치",
+"team": 145
+},
+"804606": {
+"how": "fullname+num",
+"ko": "코너 그리핀",
+"team": 134
+},
+"804926": {
+"how": "fullname+num",
+"ko": "오스틴 피터슨",
+"team": 114
+},
+"805249": {
+"how": "fullname+num",
+"ko": "오토 켐프",
+"team": 143
+},
+"805299": {
+"how": "fullname+num",
+"ko": "브랜딘 가르시아",
+"team": 109
+},
+"805300": {
+"how": "fullname+num",
+"ko": "제이콥 마르시",
+"team": 146
+},
+"805326": {
+"how": "fullname+num",
+"ko": "타일러 슈바이처",
+"team": 145
+},
+"805347": {
+"how": "fullname+num",
+"ko": "짐 자비스",
+"team": 144
+},
+"805367": {
+"how": "fullname+num",
+"ko": "체이스 메이드로스",
+"team": 145
+},
+"805427": {
+"how": "fullname+num",
+"ko": "드류 소머스",
+"team": 116
+},
+"805672": {
+"how": "fullname+num",
+"ko": "콜린 프라이스",
+"team": 117
+},
+"805673": {
+"how": "fullname+num",
+"ko": "제비 매튜스",
+"team": 142
+},
+"805779": {
+"how": "fullname+num",
+"ko": "제이콥 윌슨",
+"team": 133
+},
+"805808": {
+"how": "fullname+num",
+"ko": "케빈 맥고니글",
+"team": 116
+},
+"805811": {
+"how": "fullname+num",
+"ko": "브라이스 엘드리지",
+"team": 137
+},
+"805904": {
+"how": "fullname+num",
+"ko": "잭 콜",
+"team": 117
+},
+"806068": {
+"how": "fullname+num",
+"ko": "콜트 에머슨",
+"team": 136
+},
+"806146": {
+"how": "fullname+num",
+"ko": "조지 롬바드 주니어",
+"team": 147
+},
+"806188": {
+"how": "fullname+num",
+"ko": "케이드 깁슨",
+"team": 146
+},
+"806198": {
+"how": "fullname+num",
+"ko": "쿠퍼 프랫",
+"team": 158
+},
+"806956": {
+"how": "fullname+num",
+"ko": "에단 살라스",
+"team": 135
+},
+"806960": {
+"how": "fullname+num",
+"ko": "루이스 모랄레스",
+"team": 133
+},
+"807712": {
+"how": "fullname+num",
+"ko": "루크 키샬",
+"team": 142
+},
+"807713": {
+"how": "fullname+num",
+"ko": "맷 쇼",
+"team": 112
+},
+"807727": {
+"how": "fullname+num",
+"ko": "찰스 맥아두",
+"team": 141
+},
+"807739": {
+"how": "fullname+num",
+"ko": "케이드 앤더슨",
+"team": 136
+},
+"807743": {
+"how": "fullname+num",
+"ko": "숀 설리번",
+"team": 115
+},
+"810938": {
+"how": "fullname+num",
+"ko": "벤 윌리엄슨",
+"team": 139
+},
+"813349": {
+"how": "fullname+num",
+"ko": "코넬리 얼리",
+"team": 120
+},
+"813841": {
+"how": "fullname+num",
+"ko": "조나 콕스",
+"team": 137
+},
+"815083": {
+"how": "fullname+num",
+"ko": "미치 패리스",
+"team": 108
+},
+"820862": {
+"how": "fullname+num",
+"ko": "호세 페르민",
+"team": 108
+}
 }
 }
