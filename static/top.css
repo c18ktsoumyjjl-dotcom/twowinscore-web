@@ -184,7 +184,7 @@ html:not([data-theme=light]) .tp .tpt b,[data-theme=dark] .tp .tpt b,html:not([d
 html:not([data-theme=light]) .tp .tpc .sc b,[data-theme=dark] .tp .tpc .sc b{color:rgba(255,255,255,.6)}
 html:not([data-theme=light]) .tp .tpc .clk,[data-theme=dark] .tp .tpc .clk{background:rgba(0,0,0,.3);color:#ffb27a}
 }
-@media (max-width:1023px){.tp.k-football .tpev{display:none}}
+/* 축구도 경기장 알약에 문자중계 표시(티커는 목록용) */
 /* 상단 한 줄 실시간(진행 피리어드 · 홈 점수) + 경기정보 맨 위 점수표 */
 .tpinfo{display:none}
 @media (max-width:1023px){
