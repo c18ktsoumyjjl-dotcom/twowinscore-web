@@ -119,3 +119,22 @@ html:not([data-theme=light]) .tpvt b,[data-theme=dark] .tpvt b{color:#fff}
 html:not([data-theme=light]) .tpvs .on,[data-theme=dark] .tpvs .on{color:#ff9a4d;background:rgba(255,122,26,.14)}
 }
 @media (min-width:1024px){.tpvs{display:none}}
+@media (max-width:1023px){
+.tprow .tpvs{flex:1;min-width:0;margin:0}
+.tprow:has(.tpvs:not([hidden])) .tpbk{padding:0 0 3px;min-width:40px}
+.tprow:has(.tpvs:not([hidden])) .tpbkl{display:none}
+}
+@media (max-width:1023px){
+.tpvs{padding:4px 6px}
+.tpvs th.nm{width:24%;font-size:12px}
+.tpvs .sm{width:11%}
+.tpvs .tt{width:13%;border-left:1px solid #e3e8f1;font-size:10px;color:#7a869c}
+.tpvs td.tt b{display:block;font-size:14px;font-weight:800;color:#1c2b4a}
+html:not([data-theme=light]) .tpvs .tt{border-color:#26324a;color:#8f9bb3}
+html:not([data-theme=light]) .tpvs td.tt b{color:#fff}
+}
+@media (max-width:1023px){
+.tpvs{padding-top:7px}
+.tpvs thead th.on{position:relative}
+.tpvs th.on em{position:absolute;left:50%;top:-11px;transform:translateX(-50%);margin:0;font-size:8.5px;line-height:1.3;padding:0 4px;white-space:nowrap}
+}
