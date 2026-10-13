@@ -344,6 +344,12 @@ def period_table(g):
     return {"cols": cols, "tlab": tl, "ext": [], "rows": rows, "cur": cur}
 
 
+@app.route("/api/naver_kr")
+def api_naver_kr():
+    """국내 농구·배구 네이버 합치기 상태(15분 점검용): 성공/실패 수, 최근 불일치."""
+    return jsonify(data.naver_kr.status())
+
+
 @app.route("/api/games")
 def api_games():
     return jsonify(_games_payload(parse_day(request.args.get("d"))))

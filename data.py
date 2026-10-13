@@ -9,6 +9,7 @@ _common.LOG_PATH = os.path.join(os.environ.get("TMPDIR", "/tmp"), "twowinscore-w
 import score_bot as sb      # noqa: E402  (읽기 전용 사용)
 import features             # noqa: E402
 import mlb_official         # noqa: E402
+import naver_kr             # noqa: E402
 
 SEOUL = ZoneInfo("Asia/Seoul")
 CACHE = os.environ.get("CACHE_DIR", "/tmp/twowinscore-cache")
@@ -126,6 +127,9 @@ def _naver_fresh(kind, games):
                 sb.naver_live.apply(g)
             if g.get("league") in sb.naver_live.CAT:
                 _naver_halt(g)
+    elif kind in ("basketball", "volleyball"):
+        for g in games:
+            naver_kr.merge(g)   # KBL·V리그·KOVO컵: 네이버와 합침(실패하면 API-Sports 그대로)
     return games
 
 
