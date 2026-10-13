@@ -874,7 +874,6 @@ def football(g):
         _ko_names(g, out)
     except Exception:
         pass
-    _ko_freeze(g, st, out)
     for side in ("home", "away"):
         for p in out[side]["xi"]:
             p.pop("_g", None)
@@ -980,18 +979,35 @@ def _ko_names(g, out):
             continue
         if abs((t - st).total_seconds()) <= 600:
             ln = _cache(("nfl", x["gameId"]), 300, lambda i=x["gameId"]: ((_j(f"https://api-gw.sports.naver.com/schedule/games/{i}/lineup", NAVER_H).get("result") or {}).get("lineUpData") or {}).get("lineup"))
-            if ln and _nv_match(ln, out):
+            if ln and _nv_hits(ln, out, kr) >= 3:
                 gid = ln
                 break
     if not gid:
         return
+    _ko_apply(gid, out, kr)
+
+
+def _nv_names(nside):
+    pl = (nside or {}).get("players") or {}
+    return [(p.get("name") or "").strip() for r in (pl.get("lineup") or []) for p in r]
+
+
+def _ko_apply(ln, out, kr):
+    """선수마다 이름 자체로 확인(한글 이름의 로마자 표기 후보 = API-Sports 영문 이름)되고, 서로 1:1일 때만 한글 이름. 자리 순서로는 절대 붙이지 않음."""
+    import ko_roman
+    n = 0
     for sd in ("home", "away"):
-        if not kr[sd]:
+        if not kr.get(sd):
             continue
-        m = _nv_map(gid[sd], out[sd]["xi"], sd)
-        if m:
-            for p in out[sd]["xi"]:
-                p["ko"] = m[p["no"]]
+        names = {x for x in _nv_names(ln.get(sd)) if x}
+        ps = out[sd]["xi"] + out[sd].get("subs", [])
+        hit = {id(p): [k for k in names if ko_roman.match(k, p.get("name"))] for p in ps}
+        for p in ps:
+            h = hit[id(p)]
+            if len(h) == 1 and sum(1 for q in ps if h[0] in hit[id(q)]) == 1:
+                p["ko"] = h[0]
+                n += 1
+    return n
 
 
 def _rows_of(xi):
@@ -1026,6 +1042,14 @@ def _nv_map(nside, xi, sd):
                 return None   # 포지션까지 같아야 같은 선수로 봄
             m[ap["no"]] = nm
     return m if len(m) == 11 else None
+
+
+def _nv_hits(ln, out, kr):
+    import copy
+    try:
+        return _ko_apply(ln, copy.deepcopy(out), kr)
+    except Exception:
+        return 0
 
 
 def _nv_match(ln, out):
