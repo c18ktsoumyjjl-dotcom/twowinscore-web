@@ -160,10 +160,13 @@ def _sport_day0(kind, day, today):
     if c:
         games = c.get("games") or []
         live = any(_islive(kind, g["status"]) for g in games)
+        live_other = not live and any(_islive(kind, g.get("status")) for g in c.get("other") or [])
         if not c.get("ok"):
             ttl = TTL_FAIL
         elif live:
             ttl = live_ttl(kind)
+        elif live_other:   # 기타 리그만 진행 중: 같은 응답이라 10분 캐시면 점수·시간이 멈춰 보임 → 15초(한도 근접 시 60초)
+            ttl = max(live_ttl(kind), 15)
         elif day > today:
             ttl = 1800
         elif day < today - timedelta(days=1) or (day < today and all(g["status"] not in ("NS", "TBD") for g in games)):
