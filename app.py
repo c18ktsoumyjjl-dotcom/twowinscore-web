@@ -743,6 +743,15 @@ def api_odds():
     return r
 
 
+@app.route("/lineup/<path:key>")
+def lineup_page(key):
+    d = parse_day(request.args.get("d"))
+    g = data.find_game(key, d) or (data.find_game(key, d - timedelta(days=1)) if d == today() else None)
+    if not g or g["kind"] != "football":
+        abort(404)
+    return render_template("lineup.html", page="lineup", g=g, d=d.isoformat(), st=data.state(g))
+
+
 @app.route("/team/<kind>/<int:tid>")
 def team_page(kind, tid):
     import teamodds
