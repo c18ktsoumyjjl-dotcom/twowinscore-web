@@ -22,7 +22,8 @@ placePlays();MQ.addEventListener('change',placePlays);
 function setPla(j){if(!MQ.matches||!Array.isArray(j.pla))return;let sp=document.getElementById('sec-plays');if(!j.pla.length){if(sp)sp.hidden=true;return}
  if(!sp){sp=document.createElement('section');sp.className='box';sp.id='sec-plays';(document.getElementById('lu9')||document.querySelector('.tmbar6')||document.getElementById('hero')).after(sp)}
  sp.hidden=false;sp.innerHTML=`<h3>문자중계 <small>${esc(j.src||'')}</small></h3>`+j.pla.map(x=>`<p class="pl6 ${x.h?'hot':''}">${esc(x.t)}</p>`).join('');placePlays()}
-function setVs(j){const o=document.getElementById('tpvs');if(o&&typeof j.vs==='string'&&j.vs)o.outerHTML=j.vs}
+function setPln(j){const e=document.querySelector('#tppl span');if(e&&typeof j.pln==='string'&&j.pln&&e.textContent!==j.pln){e.textContent=j.pln;e.classList.remove('nw');void e.offsetWidth;e.classList.add('nw')}}
+function setVs(j){setPln(j);const o=document.getElementById('tpvs');if(o&&typeof j.vs==='string'&&j.vs)o.outerHTML=j.vs}
 function setEv(pl){const e=document.getElementById('tpev');if(!e||!Array.isArray(pl))return;if(!pl.length){e.hidden=true;return}if(e.textContent!==pl[0]){e.textContent=pl[0];e.classList.remove('nw');void e.offsetWidth;e.classList.add('nw')}e.hidden=false}
 function setHot(ev){if(!Array.isArray(ev)||!ev.length)return;const x=ev[ev.length-1];if(x.t!=='goal'&&x.t!=='pen')return;S.querySelectorAll('.tph').forEach(h=>h.classList.toggle('on',h.classList.contains(x.t==='goal'?(x.s==='L'?'R':'L'):x.s)))}
 function setPl(pl){setEv(pl);if(!tk||!Array.isArray(pl))return;if(!pl.length){tk.hidden=true;return}const l=tk.querySelector('.tkl');if(l.textContent!==pl[0]){l.textContent=pl[0];l.classList.remove('nw');void l.offsetWidth;l.classList.add('nw')}tk.querySelector('.tkx').innerHTML=pl.map(t=>`<li>${esc(t)}</li>`).join('');tk.hidden=false}

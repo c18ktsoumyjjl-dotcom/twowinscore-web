@@ -185,3 +185,13 @@ html:not([data-theme=light]) .tp .tpc .sc b,[data-theme=dark] .tp .tpc .sc b{col
 html:not([data-theme=light]) .tp .tpc .clk,[data-theme=dark] .tp .tpc .clk{background:rgba(0,0,0,.3);color:#ffb27a}
 }
 @media (max-width:1023px){.tp.k-football .tpev{display:none}}
+/* 상단 한 줄 실시간(진행 피리어드 · 홈 점수) + 경기정보 맨 위 점수표 */
+.tpinfo{display:none}
+@media (max-width:1023px){
+.tprow .tppl{flex:1;min-width:0;display:flex;align-items:center;gap:7px;height:30px;padding:0 11px;border-radius:10px;background:var(--card,#fff);border:1px solid var(--line);font-size:12.5px;font-weight:800;white-space:nowrap;overflow:hidden}
+.tprow .tppl i{width:7px;height:7px;flex:none;border-radius:50%;background:#ff4d3d;animation:tpb 1.2s infinite}
+.tprow .tppl span{overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}.tprow .tppl span.nw{animation:tknw .6s ease}
+.tpinfo{display:block;margin:0 0 10px}.tpinfo .tpvs{margin:0}
+}
+@media (max-width:1023px){.tprow:has(.tppl) .tpbkl{display:none}.tprow:has(.tppl) .tpbk{padding:0}}
+@media (max-width:1023px){.tprow:has(.tppl) .tpbkl{display:none!important}.tprow:has(.tppl) .tpbk{padding:0!important}.tp .tpev{bottom:38px}.tp .tpbb{bottom:38px}}
