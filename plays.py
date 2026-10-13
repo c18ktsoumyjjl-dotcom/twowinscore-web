@@ -248,6 +248,8 @@ def commentary(g):
         r = _cx.build(g, (base or {}).get("items"))
         if r and r["items"]:
             return {"source": (base or {}).get("source") or "실제 경기 기록", "items": r["items"], "ctx": r.get("ctx") or []}
+        if r and base is None:
+            return {"source": "실제 경기 기록", "items": [], "ctx": r.get("ctx") or []}
         if base is not None and r:
             base["ctx"] = r.get("ctx") or []
     except Exception:
