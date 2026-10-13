@@ -203,3 +203,10 @@ html:not([data-theme=light]) .tp .tpc .clk,[data-theme=dark] .tp .tpc .clk{backg
 .tp .tpev{bottom:32px!important;max-width:calc(100% - 20px);font-size:11px;padding:3px 10px}
 .tp .tpbb{bottom:32px!important}
 }
+/* 모바일 상세: 채팅·경기정보 탭이 같은 폭(화면 전체)을 쓰도록 고정. 텔레그램 웹앱에서 경기정보만 좁아지던 문제 */
+@media (max-width:1023px){
+html,body{width:100%;max-width:100%;overflow-x:clip}
+body.detail6 main.wrap,body.detail6 main{width:100%!important;max-width:none!important;margin-left:0!important;margin-right:0!important;box-sizing:border-box}
+body.detail6 .dlay{display:block!important;width:auto!important;max-width:none!important;margin:0!important;grid-template-columns:none!important}
+body.detail6 .dmain{width:auto!important;max-width:none!important;min-width:0;box-sizing:border-box}
+}
