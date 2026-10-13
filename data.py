@@ -55,7 +55,8 @@ for _k, _l, _s, _n in [("baseball", 32, 2026, "아시안게임 야구"), ("baseb
         sb.LEAGUES.append(_m); sb.LEAGUE_BY_KEY[(_k, _l)] = _m; sb.LEAGUE_ORDER[(_k, _l)] = len(sb.LEAGUE_ORDER)
 # 팀명 보정: 2162 페퍼저축은행 → SOOP 수퍼스(구단 인수·리브랜딩, API-Sports는 아직 "Pepper Savings Bank W")
 sb.TEAM_KO["volleyball"][2162] = "SOOP"
-_RENAMED = {("volleyball", 2162): ("SOOP", ("페퍼저축은행", "Pepper Savings Bank W"))}
+_RENAMED = {("volleyball", 2162): ("SOOP", ("페퍼저축은행", "Pepper Savings Bank W")),
+           ("basketball", 7340): ("사우스고비 브롱코스", ("Xac Broncos", "South Gobi Broncos"))}
 # 안전장치: 매핑 확인 당시 영문명과 업스트림 이름이 다르면 업스트림 이름 표시
 import nameguard as _ng
 _ko0 = sb.ko_name
