@@ -31,7 +31,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('.vt8btn');
  document.querySelectorAll('.vt8[data-k="'+CSS.escape(k)+'"]').forEach(paint)},true);
 function phtml(pts){if(!pts||!pts.length)return'';return `<div class="ap8"><h4>🤖 AI 경기 포인트</h4>${pts.map(p=>`<p>${esc(p)}</p>`).join('')}<small>기록 기반 자동 요약이며 경기 결과 예측이 아닙니다</small></div>`}
 /* 주목 경기 */
-function card(g){const sc=g.state!=='scheduled'&&g.L.score!=null;const lg=t=>t.logo?`<img src="${esc(t.logo)}" alt="" loading="lazy">`:'<i class="nologo"></i>';
+function card(g){const sc=g.state!=='scheduled'&&g.L.score!=null;const lg=t=>t.logo?`<img src="${esc(t.logo)}" alt="" decoding="async">`:'<i class="nologo"></i>';
  const st=g.state==='live'?`<em class="lv">● ${esc(g.badge)}</em>`:g.state==='scheduled'?`<em>${esc(g.time)}</em>`:`<em>${esc(g.badge)}</em>`;
  return `<div class="ft8c ${g.state}"><a class="ft8a" href="/game/${encodeURIComponent(g.key)}?d=${FD}"><div class="ft8t"><span>${g.emoji} ${esc(g.league)}</span>${st}</div>
  <div class="ft8m"><div class="ft8s">${lg(g.L)}<b>${esc(g.L.name)}</b></div><div class="ft8x">${sc?`${g.L.score}<i>:</i>${g.R.score}`:'<i>VS</i>'}</div><div class="ft8s">${lg(g.R)}<b>${esc(g.R.name)}</b></div></div>
