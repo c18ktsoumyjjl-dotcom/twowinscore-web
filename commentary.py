@@ -831,7 +831,7 @@ def build(g, base_items=None):
         w = g["home"] if H > A else g["away"] if A > H else None
         items.append({"k": key, "t": _fmt(_pick(key, "end" if w else "end_d", st), w=w, sc=_sc(g, H, A)), "hot": True})
     if not items and base_items:
-        return None
+        return {"items": [], "ctx": _ctx(g, hs) if live else []}
     items = list(reversed(items))
     return {"items": [{"t": x["t"], "hot": bool(x.get("hot")), "k": x["k"]} for x in items if x.get("t")], "ctx": _ctx(g, hs) if live else []}
 
