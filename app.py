@@ -430,7 +430,12 @@ def _other_n(d):
 @app.route("/api/games/other")
 def api_games_other():
     """기타 리그 — 펼칠 때만 불러요."""
-    d = parse_day(request.args.get("d"))
+    r = jsonify(_other_payload(parse_day(request.args.get("d"))))
+    r.headers["Cache-Control"] = "no-store"
+    return r
+
+
+def _other_payload(d):
     gs = data.others_for(d)
     if d == today() and datetime.now(data.SEOUL).hour < 6:
         gs = [g for g in data.others_for(d - timedelta(days=1), refresh=False) if g["state"] == "live"] + gs
@@ -452,9 +457,7 @@ def api_games_other():
                 od[str(g["key"])] = None
     except Exception:
         pass
-    r = jsonify({"games": out, "od": od})
-    r.headers["Cache-Control"] = "no-store"
-    return r
+    return {"games": out, "od": od}
 
 
 @app.route("/")
@@ -476,7 +479,23 @@ def index():
         lg0 = [u for u in uq if u not in lgi][:8]
     except Exception:
         pass
-    return render_template("index.html", page="home", d=d.isoformat(), label=day_label(d),
+    o0 = None
+    if request.args.get("f") == "live" and g0:   # 라이브 탭: 기타 리그 진행 중 경기도 HTML 안에 넣어 API 왕복 없이 바로 그려요
+        try:
+            fut = _g0pool.submit(_other_payload, d)
+            o0 = fut.result(timeout=float(os.environ.get("G0_TIMEOUT", "0.8")))
+            o0["games"] = [x for x in o0["games"] if x.get("state") == "live"]
+            o0["od"] = {k: v for k, v in o0["od"].items() if any(str(x.get("key")) == k for x in o0["games"])}
+            ou = [(x.get(s) or {}).get("logo") for x in o0["games"] for s in ("L", "R")]
+            ou = [u for u in dict.fromkeys(ou) if u and u.startswith("/lg/") and u not in lgi]
+            logos.warm(ou)
+            for u in ou[:24]:
+                v = logos.inline(u)
+                if v:
+                    lgi[u] = v
+        except Exception:
+            o0 = None
+    return render_template("index.html", page="home", o0=o0, d=d.isoformat(), label=day_label(d),
                            yday=(t - timedelta(days=1)).isoformat(), today=t.isoformat(),
                            tmr=(t + timedelta(days=1)).isoformat(),
                            dmin=(t - timedelta(days=14)).isoformat(), dmax=(t + timedelta(days=7)).isoformat(),

@@ -27,3 +27,6 @@ body.gm7c footer{display:none!important}
 
 /* 소리 켜기 힌트: 하단 탭바 위로 */
 @media (max-width:1023px){body.mapp .sndhint{bottom:calc(58px + env(safe-area-inset-bottom) + 12px)!important;z-index:51}}
+
+/* 라이브 탭 등 행이 많을 때: 화면 밖 리그 섹션은 레이아웃·페인트를 미뤄요(크기는 기억해서 스크롤 튐 없음). PC 영향 없음 */
+@media (max-width:1023px){#list>section.msec:nth-of-type(n+3){content-visibility:auto;contain-intrinsic-size:auto 360px}}
