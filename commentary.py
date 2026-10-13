@@ -1000,8 +1000,8 @@ def _ctx(g, hs):
         lab, x, y = lines[-1]
         out.append(f"🏀 {_qname(k, lab)} 점수 {g['home']} {x} : {y} {g['away']}")
         out.append(f"🏀 두 팀 합계 {H + A}점 · {sc}")
-        q = str(lab)
-        if (q in ("4",) or not q.isdigit()) and abs(H - A) <= 6:
+        q = re.sub(r"\D", "", str(lab))
+        if (q == "4" or re.search(r"OT|연장", f"{lab} {per}", re.I)) and abs(H - A) <= 6:
             out.append(_fmt(T["clutch"][int(time.time() // 30) % len(T["clutch"])], p=p, sc=sc, n=abs(H - A)))
     elif k == "hockey":
         out.append(f"🏒 {p} · {sc}")
