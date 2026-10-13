@@ -26662,34 +26662,154 @@
 },
 "nba": {
 "1966": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "르브론 제임스",
 "no": "23",
 "team": "20"
 },
+"2490149": {
+"how": "daum:team+num+dob",
+"ko": "C.J. 맥컬럼",
+"no": "3",
+"team": "1"
+},
+"2528210": {
+"how": "daum:team+num+dob",
+"ko": "팀 하더웨이 주니어",
+"no": "10",
+"team": "14"
+},
+"2528426": {
+"how": "daum:team+num+dob",
+"ko": "조단 클락슨",
+"no": "00",
+"team": "18"
+},
+"2530530": {
+"how": "daum:team+num+dob",
+"ko": "T.J. 맥코넬",
+"no": "9",
+"team": "11"
+},
 "2531367": {
-"how": "enwiki-exact+langlink",
-"ko": "드와이트 파월",
+"how": "daum:team+num+dob",
+"ko": "드와이트 포웰",
 "no": "7",
 "team": "6"
 },
+"2578185": {
+"how": "daum:team+num+dob",
+"ko": "도리안 핀리 스미스",
+"no": "8",
+"team": "1"
+},
+"2578239": {
+"how": "daum:team+num+dob",
+"ko": "팻 코너튼",
+"no": "21",
+"team": "30"
+},
+"2580365": {
+"how": "daum:team+num+dob",
+"ko": "래리 낸스 주니어",
+"no": "22",
+"team": "11"
+},
+"2581018": {
+"how": "daum:team+num+dob",
+"ko": "켄타비우스 콜드웰 포프",
+"no": "1",
+"team": "20"
+},
+"2581184": {
+"how": "daum:team+num+dob",
+"ko": "앤서니 길",
+"no": "16",
+"team": "27"
+},
+"2583632": {
+"how": "daum:team+num+dob",
+"ko": "로이스 오닐",
+"no": "00",
+"team": "30"
+},
 "2583639": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "엘프리드 페이튼",
 "no": "3",
 "team": "23"
 },
 "2595516": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "노먼 파웰",
 "no": "24",
 "team": "4"
 },
+"2596112": {
+"how": "daum:team+num+dob",
+"ko": "자본트 그린",
+"no": "31",
+"team": "8"
+},
+"2990962": {
+"how": "daum:team+num+dob",
+"ko": "타우린 프린스",
+"no": "12",
+"team": "8"
+},
+"2990969": {
+"how": "daum:team+num+dob",
+"ko": "조지 니앵",
+"no": "32",
+"team": "9"
+},
+"2990984": {
+"how": "daum:team+num+dob",
+"ko": "버디 힐드",
+"no": "7",
+"team": "4"
+},
+"2990992": {
+"how": "daum:team+num+dob",
+"ko": "마커스 스마트",
+"no": "36",
+"team": "10"
+},
+"2991043": {
+"how": "daum:team+num+dob",
+"ko": "카리스 레버트",
+"no": "12",
+"team": "15"
+},
 "2991070": {
-"how": "enwiki-exact+langlink",
-"ko": "제러미 그랜트",
+"how": "daum:team+num+dob",
+"ko": "제라미 그랜트",
 "no": "3",
 "team": "29"
+},
+"2991139": {
+"how": "daum:team+num+dob",
+"ko": "크리스 던",
+"no": "8",
+"team": "12"
+},
+"2991230": {
+"how": "daum:team+num+dob",
+"ko": "프레드 밴블릿",
+"no": "5",
+"team": "10"
+},
+"2991235": {
+"how": "daum:team+num+dob",
+"ko": "스티븐 아담스",
+"no": "12",
+"team": "10"
+},
+"2991350": {
+"how": "daum:team+num+dob",
+"ko": "알렉스 카루소",
+"no": "9",
+"team": "25"
 },
 "2993874": {
 "how": "enwiki-exact+langlink",
@@ -26697,185 +26817,485 @@
 "no": "12",
 "team": "28"
 },
+"2995706": {
+"how": "daum:team+num+dob",
+"ko": "마리오 헤조냐",
+"no": "33",
+"team": "5"
+},
 "3032976": {
-"how": "enwiki-exact+langlink",
-"ko": "뤼디 고베르",
+"how": "daum:team+num+dob",
+"ko": "루디 고베어",
 "no": "27",
 "team": "16"
 },
 "3032977": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "야니스 아데토쿤보",
 "no": "7",
 "team": "14"
 },
+"3032979": {
+"how": "daum:team+num+dob",
+"ko": "데니스 슈뢰더",
+"no": "17",
+"team": "30"
+},
+"3037789": {
+"how": "daum:team+num+dob",
+"ko": "보그단 보그다노비치",
+"no": "31",
+"team": "10"
+},
 "3059318": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "조엘 엠비드",
 "no": "21",
 "team": "20"
 },
 "3059319": {
-"how": "enwiki-exact+langlink",
-"ko": "앤드루 위긴스",
+"how": "daum:team+num+dob",
+"ko": "앤드류 위긴스",
 "no": "22",
 "team": "14"
 },
+"3062679": {
+"how": "daum:team+num+dob",
+"ko": "조쉬 하트",
+"no": "3",
+"team": "18"
+},
 "3064290": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "애런 고든",
 "no": "32",
 "team": "7"
 },
 "3064440": {
-"how": "enwiki-exact+langlink",
-"ko": "잭 러빈",
+"how": "daum:team+num+dob",
+"ko": "잭 라빈",
 "no": "8",
 "team": "23"
 },
+"3064482": {
+"how": "daum:team+num+dob",
+"ko": "바비 포르티스",
+"no": "95",
+"team": "14"
+},
+"3064514": {
+"how": "daum:team+num+dob",
+"ko": "줄리어스 랜들",
+"no": "30",
+"team": "17"
+},
+"3064560": {
+"how": "daum:team+num+dob",
+"ko": "루크 코넷",
+"no": "7",
+"team": "24"
+},
 "3078576": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "데릭 화이트",
 "no": "9",
 "team": "2"
 },
+"3102529": {
+"how": "daum:team+num+dob",
+"ko": "클린트 카펠라",
+"no": "30",
+"team": "10"
+},
+"3102530": {
+"how": "daum:team+num+dob",
+"ko": "유서프 너키치",
+"no": "30",
+"team": "26"
+},
+"3102531": {
+"how": "daum:team+num+dob",
+"ko": "크리스탑스 포르징기스",
+"no": "7",
+"team": "9"
+},
+"3112335": {
+"how": "daum:team+num+dob",
+"ko": "니콜라 요키치",
+"no": "15",
+"team": "7"
+},
+"3133602": {
+"how": "daum:team+num+dob",
+"ko": "스비아토슬라프 미카일루크",
+"no": "10",
+"team": "26"
+},
+"3133603": {
+"how": "daum:team+num+dob",
+"ko": "켈리 우브레 주니어",
+"no": "10",
+"team": "11"
+},
+"3133626": {
+"how": "daum:team+num+dob",
+"ko": "켄리치 윌리엄스",
+"no": "34",
+"team": "25"
+},
+"3133628": {
+"how": "daum:team+num+dob",
+"ko": "마일스 터너",
+"no": "3",
+"team": "15"
+},
+"3133635": {
+"how": "daum:team+num+dob",
+"ko": "제본 카터",
+"no": "2",
+"team": "19"
+},
+"3134903": {
+"how": "daum:team+num+dob",
+"ko": "게리 페이튼 2세",
+"no": "0",
+"team": "9"
+},
+"3134907": {
+"how": "daum:team+num+dob",
+"ko": "카일 쿠즈마",
+"no": "18",
+"team": "15"
+},
+"3134908": {
+"how": "daum:team+num+dob",
+"ko": "야콥 퍼들",
+"no": "19",
+"team": "28"
+},
+"3134916": {
+"how": "daum:team+num+dob",
+"ko": "조던 맥로린",
+"no": "0",
+"team": "24"
+},
 "3135045": {
-"how": "enwiki-exact+langlink",
-"ko": "그레이슨 앨런",
+"how": "daum:team+num+dob",
+"ko": "그레이슨 알렌",
 "no": "8",
 "team": "30"
 },
+"3135046": {
+"how": "daum:team+num+dob",
+"ko": "타이어스 존스",
+"no": "5",
+"team": "7"
+},
 "3136193": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "데빈 부커",
 "no": "15",
 "team": "21"
 },
 "3136195": {
-"how": "enwiki-exact+langlink",
-"ko": "칼앤서니 타운스",
+"how": "daum:team+num+dob",
+"ko": "칼-앤서니 타운스",
 "no": "32",
 "team": "18"
 },
+"3136196": {
+"how": "daum:team+num+dob",
+"ko": "트레이 라일스",
+"no": "41",
+"team": "16"
+},
+"3136777": {
+"how": "daum:team+num+dob",
+"ko": "제션 테이트",
+"no": "8",
+"team": "10"
+},
+"3138160": {
+"how": "daum:team+num+dob",
+"ko": "칼렙 마틴",
+"no": "16",
+"team": "6"
+},
+"3138196": {
+"how": "daum:team+num+dob",
+"ko": "캠 존슨",
+"no": "23",
+"team": "7"
+},
+"3146557": {
+"how": "daum:team+num+dob",
+"ko": "조크 란데일",
+"no": "31",
+"team": "1"
+},
 "3147657": {
-"how": "enwiki-exact+langlink",
-"ko": "미캘 브리지스",
+"how": "daum:team+num+dob",
+"ko": "미칼 브릿지스",
 "no": "25",
 "team": "18"
 },
+"3149673": {
+"how": "daum:team+num+dob",
+"ko": "파스칼 시아캄",
+"no": "43",
+"team": "11"
+},
 "3150844": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "모리츠 바그너",
 "no": "13",
 "team": "17"
 },
 "3155526": {
-"how": "enwiki-exact+langlink",
-"ko": "딜런 브룩스",
+"how": "daum:team+num+dob",
+"ko": "딜론 브룩스",
 "no": "3",
 "team": "21"
 },
+"3155535": {
+"how": "daum:team+num+dob",
+"ko": "케본 루니",
+"no": "55",
+"team": "13"
+},
+"3155937": {
+"how": "daum:team+num+dob",
+"ko": "존 엘모어",
+"no": "33",
+"team": "24"
+},
 "3155942": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "도만타스 사보니스",
 "no": "11",
 "team": "23"
 },
 "3157465": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "던컨 로빈슨",
 "no": "55",
 "team": "8"
 },
+"3195": {
+"how": "daum:team+num+dob",
+"ko": "마이크 콘리",
+"no": "45",
+"team": "2"
+},
 "3202": {
-"how": "enwiki-exact+langlink",
-"ko": "케빈 듀랜트",
+"how": "daum:team+num+dob",
+"ko": "케빈 듀란트",
 "no": "7",
 "team": "10"
 },
+"3213": {
+"how": "daum:team+num+dob",
+"ko": "알 호포드",
+"no": "20",
+"team": "9"
+},
 "3442": {
-"how": "enwiki-exact+langlink",
-"ko": "디앤드리 조던",
+"how": "daum:team+num+dob",
+"ko": "디안드레 조던",
 "no": "6",
 "team": "3"
 },
 "3448": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "브룩 로페즈",
 "no": "11",
 "team": "12"
 },
+"3899664": {
+"how": "daum:team+num+dob",
+"ko": "시모네 폰테키오",
+"no": "0",
+"team": "14"
+},
+"3904625": {
+"how": "daum:team+num+dob",
+"ko": "타코 폴",
+"no": "99",
+"team": "20"
+},
+"3907387": {
+"how": "daum:team+num+dob",
+"ko": "벤 시몬스",
+"no": "25",
+"team": "23"
+},
 "3907497": {
-"how": "enwiki-exact+langlink",
-"ko": "드존테 머레이",
+"how": "daum:team+num+dob",
+"ko": "디존테 머레이",
 "no": "5",
 "team": "3"
 },
+"3907498": {
+"how": "daum:team+num+dob",
+"ko": "마티스 타이불",
+"no": "26",
+"team": "13"
+},
+"3907823": {
+"how": "daum:team+num+dob",
+"ko": "테런스 만",
+"no": "14",
+"team": "17"
+},
+"3908809": {
+"how": "daum:team+num+dob",
+"ko": "도노반 미첼",
+"no": "45",
+"team": "5"
+},
 "3908845": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "존 콜린스",
 "no": "20",
 "team": "8"
 },
 "3912848": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "딘 웨이드",
 "no": "45",
 "team": "20"
 },
+"3913174": {
+"how": "daum:team+num+dob",
+"ko": "루크 케너드",
+"no": "8",
+"team": "21"
+},
 "3913176": {
-"how": "enwiki-exact+langlink",
-"ko": "브랜던 잉그램",
+"how": "daum:team+num+dob",
+"ko": "브랜든 잉그램",
 "no": "7",
 "team": "12"
 },
+"3914044": {
+"how": "daum:team+num+dob",
+"ko": "랜드리 샤멧",
+"no": "44",
+"team": "18"
+},
+"3917376": {
+"how": "daum:team+num+dob",
+"ko": "제일런 브라운",
+"no": "7",
+"team": "20"
+},
 "3934672": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "제일런 브런슨",
 "no": "11",
 "team": "18"
 },
 "3934673": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "단테 디빈첸조",
 "no": "0",
 "team": "16"
 },
+"3934719": {
+"how": "daum:team+num+dob",
+"ko": "OG 아누노비",
+"no": "8",
+"team": "18"
+},
+"3934723": {
+"how": "daum:team+num+dob",
+"ko": "토마스 브라이언트",
+"no": "3",
+"team": "5"
+},
 "3936099": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "데릭 존스 주니어",
 "no": "5",
 "team": "12"
 },
+"3936299": {
+"how": "daum:team+num+dob",
+"ko": "자말 머레이",
+"no": "27",
+"team": "7"
+},
+"3945274": {
+"how": "daum:team+num+dob",
+"ko": "루카 돈치치",
+"no": "77",
+"team": "13"
+},
 "3975": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "스테픈 커리",
 "no": "30",
 "team": "9"
 },
 "3978": {
-"how": "enwiki-exact+langlink",
-"ko": "더마 더로전",
+"how": "daum:team+num+dob",
+"ko": "더마 드로잔",
 "no": "10",
 "team": "7"
 },
 "3992": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "제임스 하든",
 "no": "1",
 "team": "5"
 },
 "3995": {
-"how": "enwiki-exact+langlink",
-"ko": "즈루 홀리데이",
+"how": "daum:team+num+dob",
+"ko": "즈루 할러데이",
 "no": "5",
 "team": "22"
 },
+"3999": {
+"how": "daum:team+num+dob",
+"ko": "제임스 존슨",
+"no": "16",
+"team": "11"
+},
+"4017837": {
+"how": "daum:team+num+dob",
+"ko": "이비차 주바츠",
+"no": "40",
+"team": "11"
+},
 "4065648": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "제이슨 테이텀",
 "no": "0",
 "team": "2"
+},
+"4065654": {
+"how": "daum:team+num+dob",
+"ko": "조나단 아이작",
+"no": "1",
+"team": "19"
+},
+"4065663": {
+"how": "daum:team+num+dob",
+"ko": "조쉬 오코기",
+"no": "21",
+"team": "26"
+},
+"4065670": {
+"how": "daum:team+num+dob",
+"ko": "브루스 브라운 주니어",
+"no": "1",
+"team": "18"
+},
+"4065673": {
+"how": "daum:team+num+dob",
+"ko": "토니 브래들리",
+"no": "18",
+"team": "18"
 },
 "4065697": {
 "how": "enwiki-exact+langlink",
@@ -26883,338 +27303,2846 @@
 "no": null,
 "team": "14"
 },
+"4065731": {
+"how": "daum:team+num+dob",
+"ko": "제이 허프",
+"no": "32",
+"team": "11"
+},
 "4065732": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "디안드레 헌터",
 "no": "15",
 "team": "23"
 },
+"4065733": {
+"how": "daum:team+num+dob",
+"ko": "타이 제롬",
+"no": "2",
+"team": "29"
+},
+"4065778": {
+"how": "daum:team+num+dob",
+"ko": "맥스 스트러스",
+"no": "31",
+"team": "12"
+},
+"4065804": {
+"how": "daum:team+num+dob",
+"ko": "샘 하우저",
+"no": "30",
+"team": "2"
+},
+"4065813": {
+"how": "daum:team+num+dob",
+"ko": "알파 디알로",
+"no": "11",
+"team": "7"
+},
+"4066211": {
+"how": "daum:team+num+dob",
+"ko": "로버트 윌리엄스",
+"no": "35",
+"team": "22"
+},
+"4066218": {
+"how": "daum:team+num+dob",
+"ko": "그랜트 윌리엄스",
+"no": "2",
+"team": "30"
+},
 "4066259": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "디애런 팍스",
 "no": "4",
 "team": "24"
 },
 "4066261": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "뱀 아데바요",
 "no": "13",
 "team": "14"
 },
+"4066262": {
+"how": "daum:team+num+dob",
+"ko": "말릭 몽크",
+"no": "0",
+"team": "23"
+},
+"4066268": {
+"how": "daum:team+num+dob",
+"ko": "두프 리스",
+"no": "26",
+"team": "21"
+},
 "4066320": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "데스몬드 베인",
 "no": "3",
 "team": "19"
 },
+"4066328": {
+"how": "daum:team+num+dob",
+"ko": "자렛 알렌",
+"no": "31",
+"team": "5"
+},
 "4066336": {
-"how": "enwiki-exact+langlink",
-"ko": "라우리 마르카넨",
+"how": "daum:team+num+dob",
+"ko": "라우리 마카넨",
 "no": "23",
 "team": "26"
 },
+"4066354": {
+"how": "daum:team+num+dob",
+"ko": "페이튼 프리차드",
+"no": "11",
+"team": "2"
+},
+"4066372": {
+"how": "daum:team+num+dob",
+"ko": "케빈 허더",
+"no": "27",
+"team": "8"
+},
 "4066383": {
-"how": "enwiki-exact+langlink",
-"ko": "마일스 브리지스",
+"how": "daum:team+num+dob",
+"ko": "마일스 브릿지스",
 "no": "22",
 "team": "21"
 },
+"4066399": {
+"how": "daum:team+num+dob",
+"ko": "마이카 포터",
+"no": "9",
+"team": "22"
+},
 "4066436": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "디앤서니 멜튼",
 "no": "8",
 "team": "9"
 },
+"4066457": {
+"how": "daum:team+num+dob",
+"ko": "오스틴 리브스",
+"no": "15",
+"team": "13"
+},
 "4066648": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "하치무라 루이",
 "no": "28",
 "team": "12"
 },
+"4066650": {
+"how": "daum:team+num+dob",
+"ko": "잭 콜린스",
+"no": "12",
+"team": "4"
+},
+"4066757": {
+"how": "daum:team+num+dob",
+"ko": "샘 메릴",
+"no": "5",
+"team": "5"
+},
+"4066993": {
+"how": "daum:team+num+dob",
+"ko": "드루 스미스",
+"no": "12",
+"team": "14"
+},
+"4222252": {
+"how": "daum:team+num+dob",
+"ko": "아이제아 하르텐슈타인",
+"no": "55",
+"team": "25"
+},
 "4251": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "폴 조지",
 "no": "13",
 "team": "2"
 },
+"4277811": {
+"how": "daum:team+num+dob",
+"ko": "콜린 섹스턴",
+"no": "10",
+"team": "13"
+},
+"4277813": {
+"how": "daum:team+num+dob",
+"ko": "허브 존스",
+"no": "2",
+"team": "3"
+},
 "4277843": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "게리 트렌트 주니어",
 "no": "5",
 "team": "15"
 },
+"4277847": {
+"how": "daum:team+num+dob",
+"ko": "웬델 카터 주니어",
+"no": "34",
+"team": "19"
+},
+"4277848": {
+"how": "daum:team+num+dob",
+"ko": "마빈 베글리 3세",
+"no": "3",
+"team": "7"
+},
+"4277869": {
+"how": "daum:team+num+dob",
+"ko": "호세 알바라도",
+"no": "5",
+"team": "18"
+},
+"4277880": {
+"how": "daum:team+num+dob",
+"ko": "말릭 윌리엄스",
+"no": "35",
+"team": "24"
+},
+"4277905": {
+"how": "daum:team+num+dob",
+"ko": "트레이 영",
+"no": "3",
+"team": "27"
+},
+"4277919": {
+"how": "daum:team+num+dob",
+"ko": "모 밤바",
+"no": "44",
+"team": "26"
+},
+"4277922": {
+"how": "daum:team+num+dob",
+"ko": "제리코 심스",
+"no": "00",
+"team": "15"
+},
+"4277923": {
+"how": "daum:team+num+dob",
+"ko": "자이어 스미스",
+"no": "40",
+"team": "25"
+},
+"4277951": {
+"how": "daum:team+num+dob",
+"ko": "루카 가자",
+"no": "52",
+"team": "2"
+},
+"4277956": {
+"how": "daum:team+num+dob",
+"ko": "조던 풀",
+"no": "3",
+"team": "3"
+},
 "4277961": {
-"how": "enwiki-exact+langlink",
-"ko": "재런 잭슨 주니어",
+"how": "daum:team+num+dob",
+"ko": "자렌 잭슨 주니어",
 "no": "20",
 "team": "26"
 },
 "4278039": {
-"how": "enwiki-exact+langlink",
-"ko": "니킬 알렉산더워커",
+"how": "daum:team+num+dob",
+"ko": "니케일 알렉산더-워커",
 "no": "7",
 "team": "1"
 },
 "4278049": {
-"how": "enwiki-exact+langlink",
-"ko": "대니얼 개퍼드",
+"how": "daum:team+num+dob",
+"ko": "다니엘 개포드",
 "no": "21",
 "team": "6"
 },
+"4278053": {
+"how": "daum:team+num+dob",
+"ko": "데이비온 미첼",
+"no": "2",
+"team": "14"
+},
 "4278067": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "닉 클랙스턴",
 "no": "9",
 "team": "4"
 },
 "4278073": {
-"how": "enwiki-exact+langlink",
-"ko": "셰이 길저스알렉산더",
+"how": "daum:team+num+dob",
+"ko": "셰이 길저스-알렉산더",
 "no": "2",
 "team": "25"
 },
+"4278075": {
+"how": "daum:team+num+dob",
+"ko": "케빈 녹스",
+"no": "24",
+"team": "19"
+},
+"4278076": {
+"how": "daum:team+num+dob",
+"ko": "닉 리차즈",
+"no": "8",
+"team": "14"
+},
+"4278077": {
+"how": "daum:team+num+dob",
+"ko": "제러드 밴더빌트",
+"no": "2",
+"team": "13"
+},
+"4278078": {
+"how": "daum:team+num+dob",
+"ko": "P.J. 워싱턴",
+"no": "25",
+"team": "6"
+},
+"4278104": {
+"how": "daum:team+num+dob",
+"ko": "마이클 포터 주니어",
+"no": "17",
+"team": "17"
+},
+"4278355": {
+"how": "daum:team+num+dob",
+"ko": "오비 토핀",
+"no": "1",
+"team": "11"
+},
+"4278395": {
+"how": "daum:team+num+dob",
+"ko": "테일러 펑크",
+"no": "33",
+"team": "26"
+},
+"4278402": {
+"how": "daum:team+num+dob",
+"ko": "조던 굿윈",
+"no": "23",
+"team": "21"
+},
+"4278562": {
+"how": "daum:team+num+dob",
+"ko": "폴 리드",
+"no": "7",
+"team": "8"
+},
+"4278572": {
+"how": "daum:team+num+dob",
+"ko": "자말 케인",
+"no": "8",
+"team": "19"
+},
+"4278580": {
+"how": "daum:team+num+dob",
+"ko": "산드로 마무켈라시빌리",
+"no": "54",
+"team": "13"
+},
+"4278585": {
+"how": "daum:team+num+dob",
+"ko": "콜린 길레스피",
+"no": "12",
+"team": "21"
+},
 "4278594": {
-"how": "enwiki-exact+langlink",
-"ko": "나지 마셜",
+"how": "daum:team+num+dob",
+"ko": "나지 마샬",
 "no": "3",
 "team": "6"
 },
+"4278729": {
+"how": "daum:team+num+dob",
+"ko": "자켈 조이너",
+"no": "20",
+"team": "30"
+},
+"4279143": {
+"how": "daum:team+num+dob",
+"ko": "타이릭 키",
+"no": "11",
+"team": "28"
+},
+"4279318": {
+"how": "daum:team+num+dob",
+"ko": "데퀀 플로우든",
+"no": "29",
+"team": "23"
+},
 "4279888": {
-"how": "enwiki-exact+langlink",
-"ko": "자 머랜트",
+"how": "daum:team+num+dob",
+"ko": "자 모란트",
 "no": "1",
 "team": "22"
 },
+"4280151": {
+"how": "daum:team+num+dob",
+"ko": "코리 키스퍼트",
+"no": "24",
+"team": "1"
+},
+"4280245": {
+"how": "daum:team+num+dob",
+"ko": "자머리 보이아",
+"no": "17",
+"team": "21"
+},
+"4291678": {
+"how": "daum:team+num+dob",
+"ko": "헤이우드 하이스미스",
+"no": "19",
+"team": "21"
+},
+"4348700": {
+"how": "daum:team+num+dob",
+"ko": "고가 비타제",
+"no": "35",
+"team": "19"
+},
+"4351851": {
+"how": "daum:team+num+dob",
+"ko": "앤퍼니 사이먼스",
+"no": "5",
+"team": "20"
+},
+"4351852": {
+"how": "daum:team+num+dob",
+"ko": "미첼 로빈슨",
+"no": "4",
+"team": "2"
+},
+"4395623": {
+"how": "daum:team+num+dob",
+"ko": "트레이 제미슨",
+"no": "50",
+"team": "28"
+},
+"4395625": {
+"how": "daum:team+num+dob",
+"ko": "RJ 배럿",
+"no": "9",
+"team": "28"
+},
+"4395626": {
+"how": "daum:team+num+dob",
+"ko": "트레 존스",
+"no": "30",
+"team": "4"
+},
 "4395628": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "자이언 윌리엄슨",
 "no": "1",
 "team": "3"
 },
+"4395630": {
+"how": "daum:team+num+dob",
+"ko": "데빈 바셀",
+"no": "24",
+"team": "24"
+},
+"4395650": {
+"how": "daum:team+num+dob",
+"ko": "리키 블랙",
+"no": "19",
+"team": "23"
+},
+"4395651": {
+"how": "daum:team+num+dob",
+"ko": "코비 화이트",
+"no": "3",
+"team": "30"
+},
+"4395667": {
+"how": "daum:team+num+dob",
+"ko": "데인 굿윈",
+"no": "20",
+"team": "7"
+},
+"4395702": {
+"how": "daum:team+num+dob",
+"ko": "아이재아 조",
+"no": "17",
+"team": "8"
+},
+"4395712": {
+"how": "daum:team+num+dob",
+"ko": "앤드류 넴바드",
+"no": "2",
+"team": "11"
+},
 "4395723": {
-"how": "enwiki-exact+langlink",
-"ko": "켈든 존슨",
+"how": "daum:team+num+dob",
+"ko": "켈던 존슨",
 "no": "3",
 "team": "24"
 },
+"4395724": {
+"how": "daum:team+num+dob",
+"ko": "임마누엘 퀴클리",
+"no": "5",
+"team": "28"
+},
+"4395725": {
+"how": "daum:team+num+dob",
+"ko": "타일러 히로",
+"no": "11",
+"team": "15"
+},
+"4396818": {
+"how": "daum:team+num+dob",
+"ko": "조던 밀러",
+"no": "22",
+"team": "12"
+},
 "4396907": {
-"how": "enwiki-exact+langlink",
-"ko": "다리우스 갈랜드",
+"how": "daum:team+num+dob",
+"ko": "다리우스 갈란드",
 "no": "10",
 "team": "12"
 },
+"4396909": {
+"how": "daum:team+num+dob",
+"ko": "아론 네스미스",
+"no": "23",
+"team": "11"
+},
+"4396963": {
+"how": "daum:team+num+dob",
+"ko": "블레이크 힌슨",
+"no": "25",
+"team": "26"
+},
 "4396971": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "나즈 리드",
 "no": "0",
 "team": "30"
 },
 "4396993": {
-"how": "enwiki-exact+langlink",
-"ko": "타이리스 핼리버턴",
+"how": "daum:team+num+dob",
+"ko": "타이리스 할리버튼",
 "no": "0",
 "team": "11"
 },
+"4397002": {
+"how": "daum:team+num+dob",
+"ko": "아요 도순무",
+"no": "13",
+"team": "16"
+},
+"4397014": {
+"how": "daum:team+num+dob",
+"ko": "쿠엔틴 그라임스",
+"no": "5",
+"team": "13"
+},
+"4397018": {
+"how": "daum:team+num+dob",
+"ko": "오차이 아바지",
+"no": "30",
+"team": "18"
+},
 "4397020": {
-"how": "enwiki-exact+langlink",
-"ko": "루겐츠 도트",
+"how": "daum:team+num+dob",
+"ko": "루겐즈 도트",
 "no": "0",
 "team": "1"
 },
+"4397040": {
+"how": "daum:team+num+dob",
+"ko": "브랜든 윌리엄스",
+"no": "12",
+"team": "9"
+},
+"4397077": {
+"how": "daum:team+num+dob",
+"ko": "잭슨 헤이즈",
+"no": "11",
+"team": "26"
+},
+"4397114": {
+"how": "daum:team+num+dob",
+"ko": "코맥 라이언",
+"no": "30",
+"team": "15"
+},
+"4397134": {
+"how": "daum:team+num+dob",
+"ko": "콜 스와이더",
+"no": "41",
+"team": "13"
+},
+"4397136": {
+"how": "daum:team+num+dob",
+"ko": "사디크 베이",
+"no": "41",
+"team": "3"
+},
 "4397140": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "케빈 포터 주니어",
 "no": "7",
 "team": "15"
 },
+"4397183": {
+"how": "daum:team+num+dob",
+"ko": "애런 위긴스",
+"no": "2",
+"team": "1"
+},
+"4397189": {
+"how": "daum:team+num+dob",
+"ko": "제일런 스미스",
+"no": "25",
+"team": "4"
+},
+"4397204": {
+"how": "daum:team+num+dob",
+"ko": "콜린 캐슬턴",
+"no": "14",
+"team": "19"
+},
+"4397233": {
+"how": "daum:team+num+dob",
+"ko": "피트 낸스",
+"no": "35",
+"team": "15"
+},
 "4397251": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "론 하퍼 주니어",
 "no": "8",
 "team": "2"
 },
+"4397424": {
+"how": "daum:team+num+dob",
+"ko": "니미아스 퀘이타",
+"no": "88",
+"team": "2"
+},
+"4397449": {
+"how": "daum:team+num+dob",
+"ko": "EJ 하클리스",
+"no": "94",
+"team": "8"
+},
+"4397475": {
+"how": "daum:team+num+dob",
+"ko": "AJ 그린",
+"no": "20",
+"team": "15"
+},
+"4397654": {
+"how": "daum:team+num+dob",
+"ko": "아담 플래글러",
+"no": "20",
+"team": "23"
+},
+"4397688": {
+"how": "daum:team+num+dob",
+"ko": "트레이 머피 3세",
+"no": "25",
+"team": "3"
+},
 "4397689": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "드류 피터슨",
 "no": "21",
 "team": "4"
 },
+"4397784": {
+"how": "daum:team+num+dob",
+"ko": "마라치 스미스",
+"no": "18",
+"team": "28"
+},
+"4397882": {
+"how": "daum:team+num+dob",
+"ko": "톨루 스미스",
+"no": "35",
+"team": "8"
+},
+"4397886": {
+"how": "daum:team+num+dob",
+"ko": "찰스 배시",
+"no": "28",
+"team": "9"
+},
+"4398207": {
+"how": "daum:team+num+dob",
+"ko": "제일런 슬로슨",
+"no": "18",
+"team": "11"
+},
+"4398356": {
+"how": "daum:team+num+dob",
+"ko": "게이브 맥글로탄",
+"no": "41",
+"team": "2"
+},
+"4398390": {
+"how": "daum:team+num+dob",
+"ko": "제일런 피켓",
+"no": "21",
+"team": "12"
+},
+"4411057": {
+"how": "daum:team+num+dob",
+"ko": "케빈 맥컬러 주니어",
+"no": "9",
+"team": "18"
+},
+"4431671": {
+"how": "daum:team+num+dob",
+"ko": "제이든 맥다니엘스",
+"no": "3",
+"team": "16"
+},
+"4431675": {
+"how": "daum:team+num+dob",
+"ko": "트렌든 왓포드",
+"no": "9",
+"team": "3"
+},
+"4431678": {
+"how": "daum:team+num+dob",
+"ko": "타이리스 맥시",
+"no": "0",
+"team": "20"
+},
+"4431679": {
+"how": "daum:team+num+dob",
+"ko": "프레셔스 아치우와",
+"no": "9",
+"team": "23"
+},
+"4431680": {
+"how": "daum:team+num+dob",
+"ko": "온예카 오콩우",
+"no": "17",
+"team": "1"
+},
+"4431684": {
+"how": "daum:team+num+dob",
+"ko": "트레이스 잭슨-데이비스",
+"no": "32",
+"team": "28"
+},
+"4431687": {
+"how": "daum:team+num+dob",
+"ko": "패트릭 윌리엄스",
+"no": "44",
+"team": "4"
+},
+"4431690": {
+"how": "daum:team+num+dob",
+"ko": "제케 은나지",
+"no": "22",
+"team": "7"
+},
+"4431695": {
+"how": "daum:team+num+dob",
+"ko": "드류 티미",
+"no": "17",
+"team": "16"
+},
+"4431714": {
+"how": "daum:team+num+dob",
+"ko": "제일런 윌슨",
+"no": "22",
+"team": "1"
+},
+"4431734": {
+"how": "daum:team+num+dob",
+"ko": "트리스탄 에나루나",
+"no": "21",
+"team": "5"
+},
+"4431736": {
+"how": "daum:team+num+dob",
+"ko": "투마니 카마라",
+"no": "33",
+"team": "22"
+},
+"4431752": {
+"how": "daum:team+num+dob",
+"ko": "코비 브라운",
+"no": "24",
+"team": "11"
+},
+"4431767": {
+"how": "daum:team+num+dob",
+"ko": "크리스티안 브라운",
+"no": "0",
+"team": "7"
+},
+"4431772": {
+"how": "daum:team+num+dob",
+"ko": "마이런 가드너",
+"no": "15",
+"team": "14"
+},
+"4431775": {
+"how": "daum:team+num+dob",
+"ko": "세스 런디",
+"no": "5",
+"team": "6"
+},
+"4431785": {
+"how": "daum:team+num+dob",
+"ko": "스코티 피펜 주니어",
+"no": "1",
+"team": "29"
+},
+"4431786": {
+"how": "daum:team+num+dob",
+"ko": "케샤드 존슨",
+"no": "16",
+"team": "14"
+},
+"4431823": {
+"how": "daum:team+num+dob",
+"ko": "마일스 맥브라이드",
+"no": "2",
+"team": "18"
+},
+"4431893": {
+"how": "daum:team+num+dob",
+"ko": "제이미슨 배틀",
+"no": "77",
+"team": "28"
+},
+"4431941": {
+"how": "daum:team+num+dob",
+"ko": "레이제이 데니스",
+"no": "10",
+"team": "1"
+},
+"4432107": {
+"how": "daum:team+num+dob",
+"ko": "마커스 새서",
+"no": "8",
+"team": "6"
+},
+"4432158": {
+"how": "daum:team+num+dob",
+"ko": "에반 모블리",
+"no": "4",
+"team": "5"
+},
+"4432162": {
+"how": "daum:team+num+dob",
+"ko": "브랜든 보스턴 주니어",
+"no": "13",
+"team": "4"
+},
+"4432165": {
+"how": "daum:team+num+dob",
+"ko": "제일런 석스",
+"no": "4",
+"team": "19"
+},
+"4432166": {
+"how": "daum:team+num+dob",
+"ko": "케이드 커닝햄",
+"no": "2",
+"team": "8"
+},
+"4432170": {
+"how": "daum:team+num+dob",
+"ko": "아이제아 잭슨",
+"no": "23",
+"team": "12"
+},
+"4432171": {
+"how": "daum:team+num+dob",
+"ko": "모제스 무디",
+"no": "4",
+"team": "9"
+},
+"4432181": {
+"how": "daum:team+num+dob",
+"ko": "줄리언 스트로더",
+"no": "1",
+"team": "7"
+},
+"4432185": {
+"how": "daum:team+num+dob",
+"ko": "미카 피비",
+"no": "7",
+"team": "29"
+},
+"4432187": {
+"how": "daum:team+num+dob",
+"ko": "리스 비크먼",
+"no": "26",
+"team": "27"
+},
+"4432194": {
+"how": "daum:team+num+dob",
+"ko": "데이론 샤프",
+"no": "20",
+"team": "17"
+},
+"4432247": {
+"how": "daum:team+num+dob",
+"ko": "제일런 클라크",
+"no": "7",
+"team": "16"
+},
+"4432446": {
+"how": "daum:team+num+dob",
+"ko": "자바리 워커",
+"no": "33",
+"team": "20"
+},
+"4432573": {
+"how": "daum:team+num+dob",
+"ko": "파올로 반케로",
+"no": "5",
+"team": "19"
+},
 "4432582": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "맥스 크리스티",
 "no": "0",
 "team": "6"
 },
+"4432639": {
+"how": "daum:team+num+dob",
+"ko": "자바리 스미스 주니어",
+"no": "10",
+"team": "10"
+},
+"4432645": {
+"how": "daum:team+num+dob",
+"ko": "트레버 킬스",
+"no": "13",
+"team": "27"
+},
+"4432646": {
+"how": "daum:team+num+dob",
+"ko": "케네디 챈들러",
+"no": "2",
+"team": "21"
+},
+"4432737": {
+"how": "daum:team+num+dob",
+"ko": "제이든 브래들리",
+"no": "8",
+"team": "28"
+},
+"4432808": {
+"how": "daum:team+num+dob",
+"ko": "제임스 와이즈먼",
+"no": "35",
+"team": "18"
+},
+"4432810": {
+"how": "daum:team+num+dob",
+"ko": "아이재아 스튜어트",
+"no": "28",
+"team": "29"
+},
+"4432811": {
+"how": "daum:team+num+dob",
+"ko": "조쉬 그린",
+"no": "5",
+"team": "26"
+},
 "4432816": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "라멜로 볼",
 "no": "1",
 "team": "16"
 },
+"4432819": {
+"how": "daum:team+num+dob",
+"ko": "트레 만",
+"no": "1",
+"team": "27"
+},
+"4432822": {
+"how": "daum:team+num+dob",
+"ko": "아이작 오코로",
+"no": "35",
+"team": "4"
+},
+"4432823": {
+"how": "daum:team+num+dob",
+"ko": "제일린 윌리엄스",
+"no": "6",
+"team": "25"
+},
+"4432827": {
+"how": "daum:team+num+dob",
+"ko": "오스카 치브웨",
+"no": "9",
+"team": "10"
+},
 "4432847": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "테런스 섀넌 주니어",
 "no": "4",
 "team": "16"
 },
+"4432848": {
+"how": "daum:team+num+dob",
+"ko": "하이메 하케즈 주니어",
+"no": "24",
+"team": "15"
+},
+"4432872": {
+"how": "daum:team+num+dob",
+"ko": "엠마누엘 밀러",
+"no": "8",
+"team": "7"
+},
+"4432907": {
+"how": "daum:team+num+dob",
+"ko": "저스틴 샴페니",
+"no": "9",
+"team": "27"
+},
+"4432976": {
+"how": "daum:team+num+dob",
+"ko": "콜먼 호킨스",
+"no": "43",
+"team": "7"
+},
+"4433076": {
+"how": "daum:team+num+dob",
+"ko": "벤 셰퍼드",
+"no": "26",
+"team": "11"
+},
+"4433083": {
+"how": "daum:team+num+dob",
+"ko": "캠 스펜서",
+"no": "24",
+"team": "29"
+},
+"4433134": {
+"how": "daum:team+num+dob",
+"ko": "스코티 반스",
+"no": "4",
+"team": "28"
+},
+"4433136": {
+"how": "daum:team+num+dob",
+"ko": "워커 케슬러",
+"no": "14",
+"team": "13"
+},
+"4433137": {
+"how": "daum:team+num+dob",
+"ko": "자이어 윌리엄스",
+"no": "11",
+"team": "13"
+},
+"4433138": {
+"how": "daum:team+num+dob",
+"ko": "니마리 버넷",
+"no": "25",
+"team": "28"
+},
+"4433144": {
+"how": "daum:team+num+dob",
+"ko": "케일럽 러브",
+"no": "8",
+"team": "20"
+},
+"4433149": {
+"how": "daum:team+num+dob",
+"ko": "L.J. 크라이어",
+"no": "18",
+"team": "9"
+},
+"4433159": {
+"how": "daum:team+num+dob",
+"ko": "데일런 테리",
+"no": "21",
+"team": "9"
+},
+"4433174": {
+"how": "daum:team+num+dob",
+"ko": "딜런 카드웰",
+"no": "32",
+"team": "23"
+},
+"4433176": {
+"how": "daum:team+num+dob",
+"ko": "RJ 데이비스",
+"no": "14",
+"team": "24"
+},
+"4433188": {
+"how": "daum:team+num+dob",
+"ko": "데빈 카터",
+"no": "99",
+"team": "2"
+},
+"4433192": {
+"how": "daum:team+num+dob",
+"ko": "타리 이슨",
+"no": "17",
+"team": "10"
+},
+"4433225": {
+"how": "daum:team+num+dob",
+"ko": "타일러 콜렉",
+"no": "13",
+"team": "18"
+},
 "4433247": {
-"how": "enwiki-exact+langlink",
-"ko": "조나탕 쿠밍가",
+"how": "daum:team+num+dob",
+"ko": "조나단 쿠밍가",
 "no": "24",
 "team": "16"
 },
+"4433249": {
+"how": "daum:team+num+dob",
+"ko": "무사 디아바테",
+"no": "14",
+"team": "30"
+},
+"4433255": {
+"how": "daum:team+num+dob",
+"ko": "쳇 홈그렌",
+"no": "7",
+"team": "25"
+},
+"4433268": {
+"how": "daum:team+num+dob",
+"ko": "트레이 알렉산더",
+"no": "15",
+"team": "26"
+},
+"4433287": {
+"how": "daum:team+num+dob",
+"ko": "브랜든 밀러",
+"no": "24",
+"team": "30"
+},
+"4433599": {
+"how": "daum:team+num+dob",
+"ko": "아서 칼루마",
+"no": "47",
+"team": "13"
+},
+"4433607": {
+"how": "daum:team+num+dob",
+"ko": "다론 홈즈 2세",
+"no": "14",
+"team": "7"
+},
+"4433618": {
+"how": "daum:team+num+dob",
+"ko": "해리슨 잉그램",
+"no": "00",
+"team": "26"
+},
+"4433621": {
+"how": "daum:team+num+dob",
+"ko": "제일런 두렌",
+"no": "0",
+"team": "8"
+},
+"4433622": {
+"how": "daum:team+num+dob",
+"ko": "크리스 리빙스턴",
+"no": "24",
+"team": "27"
+},
+"4433627": {
+"how": "daum:team+num+dob",
+"ko": "키욘테 조지",
+"no": "3",
+"team": "26"
+},
+"4433629": {
+"how": "daum:team+num+dob",
+"ko": "라이언 넴바드",
+"no": "9",
+"team": "7"
+},
 "4437244": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "제일런 그린",
 "no": "4",
 "team": "21"
 },
+"4565201": {
+"how": "daum:team+num+dob",
+"ko": "말라카이 브래넘",
+"no": "12",
+"team": "19"
+},
+"4565698": {
+"how": "daum:team+num+dob",
+"ko": "브라이스 홉킨스",
+"no": "13",
+"team": "7"
+},
 "4566434": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "프란츠 바그너",
 "no": "22",
 "team": "19"
 },
+"4576060": {
+"how": "daum:team+num+dob",
+"ko": "라이언 칼크브레너",
+"no": "11",
+"team": "30"
+},
+"4576085": {
+"how": "daum:team+num+dob",
+"ko": "JD 데이비슨",
+"no": "20",
+"team": "19"
+},
+"4576086": {
+"how": "daum:team+num+dob",
+"ko": "브라이스 맥고웬스",
+"no": "11",
+"team": "3"
+},
+"4576087": {
+"how": "daum:team+num+dob",
+"ko": "페이튼 왓슨",
+"no": "8",
+"team": "5"
+},
+"4578893": {
+"how": "daum:team+num+dob",
+"ko": "비트 크레이치",
+"no": "27",
+"team": "22"
+},
+"4591259": {
+"how": "daum:team+num+dob",
+"ko": "코비 브리",
+"no": "14",
+"team": "21"
+},
 "4591725": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "라이언 롤린스",
 "no": "13",
 "team": "15"
 },
+"4592216": {
+"how": "daum:team+num+dob",
+"ko": "아론데스 윌리엄스",
+"no": "31",
+"team": "27"
+},
+"4592427": {
+"how": "daum:team+num+dob",
+"ko": "스펜서 존스",
+"no": "21",
+"team": "7"
+},
+"4592435": {
+"how": "daum:team+num+dob",
+"ko": "브랜든 칼슨",
+"no": "10",
+"team": "22"
+},
+"4592444": {
+"how": "daum:team+num+dob",
+"ko": "자미어 넬슨 주니어",
+"no": "14",
+"team": "20"
+},
+"4592479": {
+"how": "daum:team+num+dob",
+"ko": "줄리안 샴페니",
+"no": "30",
+"team": "24"
+},
+"4592492": {
+"how": "daum:team+num+dob",
+"ko": "본즈 하일랜드",
+"no": "8",
+"team": "16"
+},
+"4592686": {
+"how": "daum:team+num+dob",
+"ko": "안토니오 리브스",
+"no": "12",
+"team": "16"
+},
+"4592691": {
+"how": "daum:team+num+dob",
+"ko": "제이크 라라비아",
+"no": "12",
+"team": "13"
+},
+"4592699": {
+"how": "daum:team+num+dob",
+"ko": "엔리케 프리먼",
+"no": "25",
+"team": "16"
+},
+"4592714": {
+"how": "daum:team+num+dob",
+"ko": "팻 스펜서",
+"no": "61",
+"team": "21"
+},
+"4592829": {
+"how": "daum:team+num+dob",
+"ko": "쿠엔튼 잭슨",
+"no": "29",
+"team": "11"
+},
+"4592857": {
+"how": "daum:team+num+dob",
+"ko": "이사야 크로포드",
+"no": "27",
+"team": "10"
+},
+"4592965": {
+"how": "daum:team+num+dob",
+"ko": "트리스텐 뉴턴",
+"no": "00",
+"team": "23"
+},
+"4592979": {
+"how": "daum:team+num+dob",
+"ko": "자이언 풀린",
+"no": "15",
+"team": "16"
+},
+"4593016": {
+"how": "daum:team+num+dob",
+"ko": "퀸튼 포스트",
+"no": "41",
+"team": "29"
+},
+"4593034": {
+"how": "daum:team+num+dob",
+"ko": "알렉스 모랄레스",
+"no": "30",
+"team": "19"
+},
+"4593043": {
+"how": "daum:team+num+dob",
+"ko": "존 톤지",
+"no": "2",
+"team": "22"
+},
+"4593049": {
+"how": "daum:team+num+dob",
+"ko": "올랜도 로빈슨",
+"no": "00",
+"team": "4"
+},
+"4593125": {
+"how": "daum:team+num+dob",
+"ko": "산티 알다마",
+"no": "34",
+"team": "6"
+},
+"4593803": {
+"how": "daum:team+num+dob",
+"ko": "제일런 윌리엄스",
+"no": "8",
+"team": "25"
+},
+"4593815": {
+"how": "daum:team+num+dob",
+"ko": "라숀 에이지",
+"no": "19",
+"team": "5"
+},
 "4593841": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "베일러 샤이어만",
 "no": "55",
 "team": "2"
 },
 "4594268": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "앤서니 에드워즈",
 "no": "5",
 "team": "16"
 },
+"4594326": {
+"how": "daum:team+num+dob",
+"ko": "크리스 머레이",
+"no": "17",
+"team": "29"
+},
+"4594327": {
+"how": "daum:team+num+dob",
+"ko": "키건 머레이",
+"no": "13",
+"team": "23"
+},
+"4595400": {
+"how": "daum:team+num+dob",
+"ko": "올리비에-막상스 프로스퍼",
+"no": "18",
+"team": "29"
+},
+"4601023": {
+"how": "daum:team+num+dob",
+"ko": "오소 이고다로",
+"no": "11",
+"team": "21"
+},
+"4601025": {
+"how": "daum:team+num+dob",
+"ko": "펠레 라르손",
+"no": "9",
+"team": "14"
+},
+"4602025": {
+"how": "daum:team+num+dob",
+"ko": "시온 제임스",
+"no": "4",
+"team": "30"
+},
+"4606840": {
+"how": "daum:team+num+dob",
+"ko": "자미르 왓킨스",
+"no": "5",
+"team": "27"
+},
+"4610139": {
+"how": "daum:team+num+dob",
+"ko": "제레미 소핸",
+"no": "4",
+"team": "22"
+},
+"4683021": {
+"how": "daum:team+num+dob",
+"ko": "데니 아브디야",
+"no": "8",
+"team": "22"
+},
+"4683634": {
+"how": "daum:team+num+dob",
+"ko": "베네딕트 매서린",
+"no": "24",
+"team": "3"
+},
+"4683678": {
+"how": "daum:team+num+dob",
+"ko": "스쿳 헨더슨",
+"no": "00",
+"team": "22"
+},
+"4683688": {
+"how": "daum:team+num+dob",
+"ko": "데릭 라이블리 2세",
+"no": "2",
+"team": "6"
+},
+"4683689": {
+"how": "daum:team+num+dob",
+"ko": "조던 월시",
+"no": "27",
+"team": "2"
+},
+"4683692": {
+"how": "daum:team+num+dob",
+"ko": "케이슨 월러스",
+"no": "22",
+"team": "25"
+},
+"4683730": {
+"how": "daum:team+num+dob",
+"ko": "제이든 에이킨스",
+"no": "14",
+"team": "18"
+},
+"4683736": {
+"how": "daum:team+num+dob",
+"ko": "코비 버프킨",
+"no": "4",
+"team": "3"
+},
+"4683742": {
+"how": "daum:team+num+dob",
+"ko": "줄리안 리즈",
+"no": "13",
+"team": "3"
+},
+"4683747": {
+"how": "daum:team+num+dob",
+"ko": "제일런 타이슨",
+"no": "20",
+"team": "5"
+},
+"4683750": {
+"how": "daum:team+num+dob",
+"ko": "조던 호킨스",
+"no": "15",
+"team": "4"
+},
+"4683766": {
+"how": "daum:team+num+dob",
+"ko": "이사야 콜리어",
+"no": "8",
+"team": "26"
+},
+"4683771": {
+"how": "daum:team+num+dob",
+"ko": "로널드 홀랜드 2세",
+"no": "5",
+"team": "8"
+},
 "4683774": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "브로니 제임스",
 "no": "9",
 "team": "13"
 },
+"4683778": {
+"how": "daum:team+num+dob",
+"ko": "자레드 맥케인",
+"no": "3",
+"team": "25"
+},
+"4683857": {
+"how": "daum:team+num+dob",
+"ko": "코비 존슨",
+"no": "12",
+"team": "1"
+},
+"4683860": {
+"how": "daum:team+num+dob",
+"ko": "콰디르 코플랜드",
+"no": "25",
+"team": "10"
+},
+"4683933": {
+"how": "daum:team+num+dob",
+"ko": "타마 베이츠",
+"no": "0",
+"team": "26"
+},
+"4683934": {
+"how": "daum:team+num+dob",
+"ko": "자마이 마샤크",
+"no": "21",
+"team": "29"
+},
+"4683935": {
+"how": "daum:team+num+dob",
+"ko": "블레이크 웨슬리",
+"no": "20",
+"team": "12"
+},
+"4684208": {
+"how": "daum:team+num+dob",
+"ko": "브룩스 반하이저",
+"no": "23",
+"team": "25"
+},
+"4684269": {
+"how": "daum:team+num+dob",
+"ko": "카일런 보즈웰",
+"no": "18",
+"team": "30"
+},
 "4684272": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "자코비 월터",
 "no": "14",
 "team": "28"
 },
+"4684682": {
+"how": "daum:team+num+dob",
+"ko": "조나스 아이두",
+"no": "13",
+"team": "26"
+},
+"4684740": {
+"how": "daum:team+num+dob",
+"ko": "아멘 톰슨",
+"no": "1",
+"team": "10"
+},
+"4684742": {
+"how": "daum:team+num+dob",
+"ko": "오사 톰슨",
+"no": "9",
+"team": "8"
+},
+"4684793": {
+"how": "daum:team+num+dob",
+"ko": "카일 필리포스키",
+"no": "2",
+"team": "26"
+},
+"4684806": {
+"how": "daum:team+num+dob",
+"ko": "테일러 헨드릭스",
+"no": "22",
+"team": "29"
+},
+"4687718": {
+"how": "daum:team+num+dob",
+"ko": "조시 미놋",
+"no": "00",
+"team": "17"
+},
+"4693954": {
+"how": "daum:team+num+dob",
+"ko": "이안 셰펠린",
+"no": "20",
+"team": "14"
+},
+"4697268": {
+"how": "daum:team+num+dob",
+"ko": "캠 존스",
+"no": "19",
+"team": "15"
+},
+"4698719": {
+"how": "daum:team+num+dob",
+"ko": "트레본 브라질",
+"no": "7",
+"team": "7"
+},
+"4700818": {
+"how": "daum:team+num+dob",
+"ko": "블라디슬라프 골딘",
+"no": "50",
+"team": "14"
+},
+"4700852": {
+"how": "daum:team+num+dob",
+"ko": "채즈 래니어",
+"no": "8",
+"team": "8"
+},
+"4701208": {
+"how": "daum:team+num+dob",
+"ko": "무사 시세",
+"no": "30",
+"team": "6"
+},
+"4701225": {
+"how": "daum:team+num+dob",
+"ko": "PJ 홀",
+"no": "16",
+"team": "30"
+},
+"4701230": {
+"how": "daum:team+num+dob",
+"ko": "제일런 존슨",
+"no": "1",
+"team": "1"
+},
+"4701232": {
+"how": "daum:team+num+dob",
+"ko": "마크 윌리엄스",
+"no": "25",
+"team": "21"
+},
+"4701233": {
+"how": "daum:team+num+dob",
+"ko": "크레이그 포터 주니어",
+"no": "9",
+"team": "5"
+},
+"4702049": {
+"how": "daum:team+num+dob",
+"ko": "듀크 마일스",
+"no": "31",
+"team": "20"
+},
+"4702134": {
+"how": "daum:team+num+dob",
+"ko": "노르차드 오미에르",
+"no": "23",
+"team": "16"
+},
+"4702159": {
+"how": "daum:team+num+dob",
+"ko": "딜런 존스",
+"no": "35",
+"team": "20"
+},
+"4702177": {
+"how": "daum:team+num+dob",
+"ko": "키언 엘리스",
+"no": "1",
+"team": "17"
+},
+"4702352": {
+"how": "daum:team+num+dob",
+"ko": "코비 샌더스",
+"no": "4",
+"team": "12"
+},
+"4702382": {
+"how": "daum:team+num+dob",
+"ko": "트리스탄 다 실바",
+"no": "23",
+"team": "19"
+},
+"4702384": {
+"how": "daum:team+num+dob",
+"ko": "니크 클리포드",
+"no": "10",
+"team": "23"
+},
+"4702602": {
+"how": "daum:team+num+dob",
+"ko": "CJ 헌틀리",
+"no": "21",
+"team": "21"
+},
+"4702656": {
+"how": "daum:team+num+dob",
+"ko": "알리자 마틴",
+"no": "55",
+"team": "28"
+},
+"4702670": {
+"how": "daum:team+num+dob",
+"ko": "그랜트 넬슨",
+"no": "16",
+"team": "17"
+},
+"4702745": {
+"how": "daum:team+num+dob",
+"ko": "아마리 윌리엄스",
+"no": "77",
+"team": "2"
+},
+"4702785": {
+"how": "daum:team+num+dob",
+"ko": "자밀 텔포트",
+"no": "19",
+"team": "12"
+},
+"4702972": {
+"how": "daum:team+num+dob",
+"ko": "크리스 마논",
+"no": "30",
+"team": "13"
+},
+"4703115": {
+"how": "daum:team+num+dob",
+"ko": "자론 피에르 주니어",
+"no": "10",
+"team": "3"
+},
+"4703421": {
+"how": "daum:team+num+dob",
+"ko": "테일론 피터",
+"no": "8",
+"team": "24"
+},
+"4703889": {
+"how": "daum:team+num+dob",
+"ko": "제이슨 켄트",
+"no": "29",
+"team": "22"
+},
+"4706557": {
+"how": "daum:team+num+dob",
+"ko": "크리스 영블러드",
+"no": "11",
+"team": "22"
+},
+"4709131": {
+"how": "daum:team+num+dob",
+"ko": "션 페둘라",
+"no": "0",
+"team": "10"
+},
+"4709138": {
+"how": "daum:team+num+dob",
+"ko": "브랜딘 포지엠스키",
+"no": "2",
+"team": "9"
+},
+"4711272": {
+"how": "daum:team+num+dob",
+"ko": "리드 셰퍼드",
+"no": "15",
+"team": "10"
+},
+"4711294": {
+"how": "daum:team+num+dob",
+"ko": "마타스 부젤리스",
+"no": "14",
+"team": "4"
+},
+"4711297": {
+"how": "daum:team+num+dob",
+"ko": "저스틴 에드워즈",
+"no": "11",
+"team": "20"
+},
+"4712845": {
+"how": "daum:team+num+dob",
+"ko": "아이작 맥닐리",
+"no": "15",
+"team": "1"
+},
 "4712849": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "앤서니 블랙",
 "no": "0",
 "team": "19"
 },
+"4712862": {
+"how": "daum:team+num+dob",
+"ko": "말릭 디아",
+"no": "8",
+"team": "3"
+},
+"4712863": {
+"how": "daum:team+num+dob",
+"ko": "무하메드 게예",
+"no": "18",
+"team": "1"
+},
 "4712896": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "노아 클라우니",
 "no": "21",
 "team": "17"
 },
+"4713010": {
+"how": "daum:team+num+dob",
+"ko": "데이비드 존스",
+"no": "25",
+"team": "24"
+},
+"4781746": {
+"how": "daum:team+num+dob",
+"ko": "제이본 스몰",
+"no": "10",
+"team": "29"
+},
+"4837238": {
+"how": "daum:team+num+dob",
+"ko": "터커 드브리스",
+"no": "26",
+"team": "2"
+},
+"4837356": {
+"how": "daum:team+num+dob",
+"ko": "트레 도널드슨",
+"no": "24",
+"team": "14"
+},
+"4838721": {
+"how": "daum:team+num+dob",
+"ko": "타일러 니켈",
+"no": "55",
+"team": "18"
+},
+"4845363": {
+"how": "daum:team+num+dob",
+"ko": "캠 크리스티",
+"no": "24",
+"team": "12"
+},
+"4845367": {
+"how": "daum:team+num+dob",
+"ko": "스테판 캐슬",
+"no": "5",
+"team": "24"
+},
+"4845374": {
+"how": "daum:team+num+dob",
+"ko": "밥 캐링턴",
+"no": "7",
+"team": "27"
+},
+"4848625": {
+"how": "daum:team+num+dob",
+"ko": "데일린 스웨인",
+"no": "5",
+"team": "4"
+},
+"4868423": {
+"how": "daum:team+num+dob",
+"ko": "제이든 하디",
+"no": "7",
+"team": "13"
+},
+"4869342": {
+"how": "daum:team+num+dob",
+"ko": "다이슨 다니엘스",
+"no": "5",
+"team": "1"
+},
+"4869780": {
+"how": "daum:team+num+dob",
+"ko": "데릭 퀸",
+"no": "22",
+"team": "3"
+},
+"4870562": {
+"how": "daum:team+num+dob",
+"ko": "도미닉 발로우",
+"no": "25",
+"team": "20"
+},
+"4870564": {
+"how": "daum:team+num+dob",
+"ko": "조슈아 제퍼슨",
+"no": "9",
+"team": "17"
+},
+"4871141": {
+"how": "daum:team+num+dob",
+"ko": "아리엘 후크포르티",
+"no": "55",
+"team": "20"
+},
+"4871144": {
+"how": "daum:team+num+dob",
+"ko": "알페렌 센군",
+"no": "28",
+"team": "10"
+},
+"4871145": {
+"how": "daum:team+num+dob",
+"ko": "조쉬 기디",
+"no": "3",
+"team": "4"
+},
+"4873090": {
+"how": "daum:team+num+dob",
+"ko": "라바론 필론 주니어",
+"no": "00",
+"team": "20"
+},
+"4873138": {
+"how": "daum:team+num+dob",
+"ko": "에이스 베일리",
+"no": "19",
+"team": "26"
+},
+"4873153": {
+"how": "daum:team+num+dob",
+"ko": "모레즈 존슨",
+"no": "14",
+"team": "6"
+},
+"4873201": {
+"how": "daum:team+num+dob",
+"ko": "에이사 뉴웰",
+"no": "14",
+"team": "1"
+},
+"4888725": {
+"how": "daum:team+num+dob",
+"ko": "라이언 던",
+"no": "0",
+"team": "21"
+},
 "4895758": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "코디 윌리엄스",
 "no": "9",
 "team": "16"
 },
+"4896372": {
+"how": "daum:team+num+dob",
+"ko": "월터 클레이턴 주니어",
+"no": "4",
+"team": "29"
+},
+"4897262": {
+"how": "daum:team+num+dob",
+"ko": "윌 리차드",
+"no": "3",
+"team": "9"
+},
+"4897449": {
+"how": "daum:team+num+dob",
+"ko": "말레비 레온스",
+"no": "33",
+"team": "9"
+},
+"4897471": {
+"how": "daum:team+num+dob",
+"ko": "세인트 토마스",
+"no": "19",
+"team": "20"
+},
+"4897504": {
+"how": "daum:team+num+dob",
+"ko": "와이엇 프릭스",
+"no": "23",
+"team": "30"
+},
 "4897943": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "달튼 크넥트",
 "no": "4",
 "team": "13"
 },
+"4898010": {
+"how": "daum:team+num+dob",
+"ko": "제일린 셀러스",
+"no": "22",
+"team": "4"
+},
+"4898237": {
+"how": "daum:team+num+dob",
+"ko": "베즈 므벵",
+"no": "19",
+"team": "14"
+},
+"4898238": {
+"how": "daum:team+num+dob",
+"ko": "존 풀라키다스",
+"no": "1",
+"team": "6"
+},
+"4898371": {
+"how": "daum:team+num+dob",
+"ko": "막심 레이나드",
+"no": "42",
+"team": "23"
+},
+"4900671": {
+"how": "daum:team+num+dob",
+"ko": "에이제이 미첼",
+"no": "25",
+"team": "25"
+},
+"4903027": {
+"how": "daum:team+num+dob",
+"ko": "세드릭 카워드",
+"no": "23",
+"team": "29"
+},
+"4914336": {
+"how": "daum:team+num+dob",
+"ko": "셰이든 샤프",
+"no": "17",
+"team": "22"
+},
+"4917149": {
+"how": "daum:team+num+dob",
+"ko": "알렉스 카라반",
+"no": "33",
+"team": "23"
+},
+"4997526": {
+"how": "daum:team+num+dob",
+"ko": "우스만 디엥",
+"no": "21",
+"team": "15"
+},
+"4997528": {
+"how": "daum:team+num+dob",
+"ko": "니콜라 요비치",
+"no": "5",
+"team": "14"
+},
+"4997530": {
+"how": "daum:team+num+dob",
+"ko": "칼리파 디옵",
+"no": "18",
+"team": "5"
+},
+"4997536": {
+"how": "daum:team+num+dob",
+"ko": "구이 산토스",
+"no": "15",
+"team": "9"
+},
+"4997537": {
+"how": "daum:team+num+dob",
+"ko": "트리스탄 부크체비치",
+"no": "00",
+"team": "27"
+},
+"4997538": {
+"how": "daum:team+num+dob",
+"ko": "카를로 마코비치",
+"no": "17",
+"team": "3"
+},
+"5023693": {
+"how": "daum:team+num+dob",
+"ko": "타이리스 프록터",
+"no": "24",
+"team": "5"
+},
+"5037871": {
+"how": "daum:team+num+dob",
+"ko": "딜런 하퍼",
+"no": "2",
+"team": "24"
+},
+"5037873": {
+"how": "daum:team+num+dob",
+"ko": "드레이크 파월",
+"no": "4",
+"team": "17"
+},
+"5037878": {
+"how": "daum:team+num+dob",
+"ko": "우고나 오니엔소",
+"no": "34",
+"team": "8"
+},
+"5041935": {
+"how": "daum:team+num+dob",
+"ko": "캐머런 부저",
+"no": "27",
+"team": "29"
+},
 "5041939": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "쿠퍼 플래그",
 "no": "32",
 "team": "6"
 },
+"5041951": {
+"how": "daum:team+num+dob",
+"ko": "멜릭 토마스",
+"no": "15",
+"team": "5"
+},
+"5041953": {
+"how": "daum:team+num+dob",
+"ko": "코아 피트",
+"no": "18",
+"team": "21"
+},
+"5041955": {
+"how": "daum:team+num+dob",
+"ko": "대린 피터슨",
+"no": "22",
+"team": "26"
+},
+"5044385": {
+"how": "daum:team+num+dob",
+"ko": "레너드 밀러",
+"no": "11",
+"team": "4"
+},
+"5060631": {
+"how": "daum:team+num+dob",
+"ko": "아두 티에로",
+"no": "1",
+"team": "13"
+},
+"5060701": {
+"how": "daum:team+num+dob",
+"ko": "크리스천 앤더슨",
+"no": "5",
+"team": "30"
+},
+"5061568": {
+"how": "daum:team+num+dob",
+"ko": "카터 브라이언트",
+"no": "11",
+"team": "24"
+},
+"5061575": {
+"how": "daum:team+num+dob",
+"ko": "콘 크니플",
+"no": "7",
+"team": "30"
+},
+"5061585": {
+"how": "daum:team+num+dob",
+"ko": "아이제아 에반스",
+"no": "33",
+"team": "16"
+},
+"5061589": {
+"how": "daum:team+num+dob",
+"ko": "이브 미시",
+"no": "21",
+"team": "3"
+},
+"5061603": {
+"how": "daum:team+num+dob",
+"ko": "토마스 소버",
+"no": "12",
+"team": "25"
+},
+"5075626": {
+"how": "daum:team+num+dob",
+"ko": "바바 밀러",
+"no": "18",
+"team": "12"
+},
+"5081727": {
+"how": "daum:team+num+dob",
+"ko": "시디 시소코",
+"no": "91",
+"team": "22"
+},
+"5082206": {
+"how": "daum:team+num+dob",
+"ko": "브레이든 버리스",
+"no": "0",
+"team": "15"
+},
+"5093267": {
+"how": "daum:team+num+dob",
+"ko": "콜린 머레이 보일스",
+"no": "30",
+"team": "28"
+},
+"5095151": {
+"how": "daum:team+num+dob",
+"ko": "케일럽 윌슨",
+"no": "8",
+"team": "4"
+},
+"5099752": {
+"how": "daum:team+num+dob",
+"ko": "라얀 뤼페르",
+"no": "12",
+"team": "20"
+},
+"5101761": {
+"how": "daum:team+num+dob",
+"ko": "마이클 브라운 주니어",
+"no": "0",
+"team": "17"
+},
+"5101845": {
+"how": "daum:team+num+dob",
+"ko": "제이든 퀘인턴스",
+"no": "22",
+"team": "24"
+},
 "5104155": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "빌랄 쿨리발리",
 "no": "0",
 "team": "27"
 },
 "5104157": {
-"how": "enwiki-exact+langlink",
-"ko": "빅토르 웸바냐마",
+"how": "daum:team+num+dob",
+"ko": "빅터 웸반야마",
 "no": "1",
 "team": "24"
 },
+"5105337": {
+"how": "daum:team+num+dob",
+"ko": "말릭 브라운",
+"no": "15",
+"team": "24"
+},
+"5105550": {
+"how": "daum:team+num+dob",
+"ko": "G.G. 잭슨",
+"no": "45",
+"team": "29"
+},
+"5105553": {
+"how": "daum:team+num+dob",
+"ko": "줄리언 필립스",
+"no": "3",
+"team": "10"
+},
+"5105555": {
+"how": "daum:team+num+dob",
+"ko": "토베 아와카",
+"no": "19",
+"team": "4"
+},
+"5105565": {
+"how": "daum:team+num+dob",
+"ko": "도노반 클링언",
+"no": "23",
+"team": "22"
+},
+"5105571": {
+"how": "daum:team+num+dob",
+"ko": "헨리 베사르",
+"no": "13",
+"team": "1"
+},
+"5105592": {
+"how": "daum:team+num+dob",
+"ko": "캠 휘트모어",
+"no": "00",
+"team": "7"
+},
+"5105623": {
+"how": "daum:team+num+dob",
+"ko": "켈렐 웨어",
+"no": "9",
+"team": "15"
+},
+"5105626": {
+"how": "daum:team+num+dob",
+"ko": "타일러 빌로도",
+"no": "34",
+"team": "17"
+},
+"5105637": {
+"how": "daum:team+num+dob",
+"ko": "아뎀 보나",
+"no": "30",
+"team": "20"
+},
+"5105800": {
+"how": "daum:team+num+dob",
+"ko": "조쉬 딕스",
+"no": "21",
+"team": "25"
+},
+"5105806": {
+"how": "daum:team+num+dob",
+"ko": "제트 하워드",
+"no": "9",
+"team": "6"
+},
+"5105809": {
+"how": "daum:team+num+dob",
+"ko": "타리스 리드 주니어",
+"no": "10",
+"team": "24"
+},
+"5105817": {
+"how": "daum:team+num+dob",
+"ko": "카슨 쿠퍼",
+"no": "20",
+"team": "29"
+},
+"5105832": {
+"how": "daum:team+num+dob",
+"ko": "닉 마르티넬리",
+"no": "12",
+"team": "12"
+},
+"5105837": {
+"how": "daum:team+num+dob",
+"ko": "브루스 손턴",
+"no": "2",
+"team": "10"
+},
+"5105839": {
+"how": "daum:team+num+dob",
+"ko": "브라이스 센사바",
+"no": "28",
+"team": "26"
+},
+"5105841": {
+"how": "daum:team+num+dob",
+"ko": "펠릭스 오크파라",
+"no": "34",
+"team": "27"
+},
+"5105977": {
+"how": "daum:team+num+dob",
+"ko": "라시어 플레밍",
+"no": "20",
+"team": "21"
+},
+"5106040": {
+"how": "daum:team+num+dob",
+"ko": "토비 라왈",
+"no": "33",
+"team": "6"
+},
+"5106058": {
+"how": "daum:team+num+dob",
+"ko": "이매뉴얼 샤프",
+"no": "34",
+"team": "23"
+},
+"5106060": {
+"how": "daum:team+num+dob",
+"ko": "제러스 워커",
+"no": "5",
+"team": "11"
+},
 "5106258": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "그래디 딕",
 "no": "9",
 "team": "12"
 },
+"5106262": {
+"how": "daum:team+num+dob",
+"ko": "주비 에지오포",
+"no": "20",
+"team": "1"
+},
+"5106268": {
+"how": "daum:team+num+dob",
+"ko": "네이콴 톰린",
+"no": "35",
+"team": "5"
+},
+"5106270": {
+"how": "daum:team+num+dob",
+"ko": "오테가 오웨",
+"no": "13",
+"team": "25"
+},
+"5106272": {
+"how": "daum:team+num+dob",
+"ko": "마일로스 우잔",
+"no": "29",
+"team": "2"
+},
+"5106283": {
+"how": "daum:team+num+dob",
+"ko": "딜런 미첼",
+"no": "20",
+"team": "2"
+},
+"5106293": {
+"how": "daum:team+num+dob",
+"ko": "모하메드 와게",
+"no": "17",
+"team": "26"
+},
+"5107157": {
+"how": "daum:team+num+dob",
+"ko": "라이언 콘웰",
+"no": "4",
+"team": "14"
+},
+"5107173": {
+"how": "daum:team+num+dob",
+"ko": "대니 울프",
+"no": "2",
+"team": "17"
+},
+"5107199": {
+"how": "daum:team+num+dob",
+"ko": "다니스 젠킨스",
+"no": "24",
+"team": "8"
+},
+"5107251": {
+"how": "daum:team+num+dob",
+"ko": "아이지아 넬슨",
+"no": "25",
+"team": "19"
+},
+"5107897": {
+"how": "daum:team+num+dob",
+"ko": "조나단 모그보",
+"no": "22",
+"team": "23"
+},
+"5107968": {
+"how": "daum:team+num+dob",
+"ko": "자코비 길레스피",
+"no": "17",
+"team": "24"
+},
+"5108024": {
+"how": "daum:team+num+dob",
+"ko": "야닉 코난 니더하우저",
+"no": "14",
+"team": "12"
+},
+"5109790": {
+"how": "daum:team+num+dob",
+"ko": "크리스토프 틸리",
+"no": "33",
+"team": "25"
+},
+"5112087": {
+"how": "daum:team+num+dob",
+"ko": "제일런 웰스",
+"no": "0",
+"team": "29"
+},
+"5113969": {
+"how": "daum:team+num+dob",
+"ko": "캐머런 카",
+"no": "43",
+"team": "13"
+},
+"5114350": {
+"how": "daum:team+num+dob",
+"ko": "AK 오케레케",
+"no": "31",
+"team": "13"
+},
+"5116468": {
+"how": "daum:team+num+dob",
+"ko": "앤드류 홀리필드",
+"no": "17",
+"team": "25"
+},
+"5124612": {
+"how": "daum:team+num+dob",
+"ko": "VJ 엣지콤",
+"no": "77",
+"team": "20"
+},
+"5142620": {
+"how": "daum:team+num+dob",
+"ko": "대리어스 아큐프 주니어",
+"no": "5",
+"team": "23"
+},
+"5142621": {
+"how": "daum:team+num+dob",
+"ko": "크리스 세낙 주니어",
+"no": "12",
+"team": "2"
+},
+"5142718": {
+"how": "daum:team+num+dob",
+"ko": "AJ 디반사",
+"no": "4",
+"team": "27"
+},
+"5144091": {
+"how": "daum:team+num+dob",
+"ko": "제레마이아 피어스",
+"no": "0",
+"team": "3"
+},
+"5144126": {
+"how": "daum:team+num+dob",
+"ko": "윌 라일리",
+"no": "27",
+"team": "27"
+},
+"5148538": {
+"how": "daum:team+num+dob",
+"ko": "타리크 비베로비치",
+"no": "13",
+"team": "6"
+},
+"5149077": {
+"how": "daum:team+num+dob",
+"ko": "킹스턴 플레밍스",
+"no": "4",
+"team": "1"
+},
+"5149115": {
+"how": "daum:team+num+dob",
+"ko": "앨런 그레이브스",
+"no": "22",
+"team": "28"
+},
+"5157066": {
+"how": "daum:team+num+dob",
+"ko": "조니 퍼피",
+"no": "12",
+"team": "11"
+},
+"5157587": {
+"how": "daum:team+num+dob",
+"ko": "로코 지카스키",
+"no": "44",
+"team": "16"
+},
 "5159895": {
-"how": "enwiki-exact+langlink",
-"ko": "가와무라 유키",
+"how": "daum:team+num+dob",
+"ko": "카와무라 유키",
 "no": "17",
 "team": "12"
 },
+"5159925": {
+"how": "daum:team+num+dob",
+"ko": "니콜라 토피치",
+"no": "44",
+"team": "25"
+},
+"5160992": {
+"how": "daum:team+num+dob",
+"ko": "알렉스 사르",
+"no": "20",
+"team": "27"
+},
+"5164559": {
+"how": "daum:team+num+dob",
+"ko": "네이트 아멘트",
+"no": "15",
+"team": "15"
+},
+"5170947": {
+"how": "daum:team+num+dob",
+"ko": "AJ 존슨",
+"no": "14",
+"team": "3"
+},
+"5170949": {
+"how": "daum:team+num+dob",
+"ko": "알렉스 투히",
+"no": "22",
+"team": "9"
+},
+"5174563": {
+"how": "daum:team+num+dob",
+"ko": "키숀 조지",
+"no": "18",
+"team": "27"
+},
+"5174655": {
+"how": "daum:team+num+dob",
+"ko": "채니 존슨",
+"no": "31",
+"team": "17"
+},
+"5174983": {
+"how": "daum:team+num+dob",
+"ko": "아다이 마라",
+"no": "15",
+"team": "25"
+},
+"5175643": {
+"how": "daum:team+num+dob",
+"ko": "이고르 데민",
+"no": "8",
+"team": "17"
+},
+"5175647": {
+"how": "daum:team+num+dob",
+"ko": "우고 곤잘레스",
+"no": "28",
+"team": "2"
+},
+"5175737": {
+"how": "daum:team+num+dob",
+"ko": "약셀 렌데보그",
+"no": "1",
+"team": "9"
+},
+"5176420": {
+"how": "daum:team+num+dob",
+"ko": "헤이든 그레이",
+"no": "44",
+"team": "2"
+},
+"5177362": {
+"how": "daum:team+num+dob",
+"ko": "라일리 미닉스",
+"no": "12",
+"team": "5"
+},
+"5203685": {
+"how": "daum:team+num+dob",
+"ko": "카만 말루아치",
+"no": "10",
+"team": "21"
+},
 "5211175": {
-"how": "enwiki-exact+langlink",
-"ko": "자카리 리자셰",
+"how": "daum:team+num+dob",
+"ko": "자카리 리사셰",
 "no": "10",
 "team": "6"
 },
+"5211176": {
+"how": "daum:team+num+dob",
+"ko": "티잔 살룬",
+"no": "31",
+"team": "30"
+},
+"5211983": {
+"how": "daum:team+num+dob",
+"ko": "파콤 다디엣",
+"no": "4",
+"team": "18"
+},
+"5214637": {
+"how": "daum:team+num+dob",
+"ko": "노아 펜다",
+"no": "93",
+"team": "19"
+},
+"5214640": {
+"how": "daum:team+num+dob",
+"ko": "카스파라스 야쿠쇼니스",
+"no": "25",
+"team": "15"
+},
+"5214989": {
+"how": "daum:team+num+dob",
+"ko": "보골류브 마르코비치",
+"no": "23",
+"team": "15"
+},
+"5217746": {
+"how": "daum:team+num+dob",
+"ko": "양 한센",
+"no": "16",
+"team": "22"
+},
+"5231919": {
+"how": "daum:team+num+dob",
+"ko": "카림 로페즈",
+"no": "35",
+"team": "29"
+},
 "5238230": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "트레 존슨",
 "no": "12",
 "team": "27"
 },
+"5239561": {
+"how": "daum:team+num+dob",
+"ko": "제이스 리처드슨",
+"no": "11",
+"team": "19"
+},
+"5239590": {
+"how": "daum:team+num+dob",
+"ko": "리암 맥닐리",
+"no": "33",
+"team": "30"
+},
+"5241364": {
+"how": "daum:team+num+dob",
+"ko": "베넷 스터츠",
+"no": "14",
+"team": "25"
+},
+"5242496": {
+"how": "daum:team+num+dob",
+"ko": "노아 에셍게",
+"no": "2",
+"team": "4"
+},
+"5242502": {
+"how": "daum:team+num+dob",
+"ko": "벤 사라프",
+"no": "77",
+"team": "17"
+},
+"5254165": {
+"how": "daum:team+num+dob",
+"ko": "키튼 와글러",
+"no": "1",
+"team": "12"
+},
+"5258459": {
+"how": "daum:team+num+dob",
+"ko": "에부카 오코리에",
+"no": "23",
+"team": "8"
+},
+"5279129": {
+"how": "daum:team+num+dob",
+"ko": "세르히오 데라레아",
+"no": "55",
+"team": "6"
+},
+"5279130": {
+"how": "daum:team+num+dob",
+"ko": "놀란 트라오레",
+"no": "10",
+"team": "17"
+},
+"5279133": {
+"how": "daum:team+num+dob",
+"ko": "조안 베링제이",
+"no": "19",
+"team": "16"
+},
+"5281370": {
+"how": "daum:team+num+dob",
+"ko": "하네스 슈타인바흐",
+"no": "22",
+"team": "30"
+},
+"5289900": {
+"how": "daum:team+num+dob",
+"ko": "모하메드 디와라",
+"no": "51",
+"team": "18"
+},
+"6430": {
+"how": "daum:team+num+dob",
+"ko": "지미 버틀러 3세",
+"no": "10",
+"team": "9"
+},
+"6440": {
+"how": "daum:team+num+dob",
+"ko": "토바이어스 해리스",
+"no": "23",
+"team": "24"
+},
 "6442": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "카이리 어빙",
 "no": "11",
 "team": "6"
 },
 "6450": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "카와이 레너드",
 "no": "2",
 "team": "28"
 },
 "6475": {
-"how": "enwiki-exact+langlink",
-"ko": "클레이 톰프슨",
+"how": "daum:team+num+dob",
+"ko": "클레이 톰슨",
 "no": "11",
 "team": "14"
 },
+"6478": {
+"how": "daum:team+num+dob",
+"ko": "니콜라 부세비치",
+"no": "9",
+"team": "19"
+},
 "6578": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "해리슨 반스",
 "no": "40",
 "team": "24"
 },
+"6580": {
+"how": "daum:team+num+dob",
+"ko": "브래들리 빌",
+"no": "3",
+"team": "12"
+},
 "6583": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "앤서니 데이비스",
 "no": "23",
 "team": "27"
 },
+"6585": {
+"how": "daum:team+num+dob",
+"ko": "안드레 드러먼드",
+"no": "0",
+"team": "18"
+},
 "6589": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "드레이먼드 그린",
 "no": "23",
 "team": "9"
 },
 "6606": {
-"how": "enwiki-exact+langlink",
-"ko": "데이미언 릴러드",
+"how": "daum:team+num+dob",
+"ko": "데미안 릴라드",
 "no": "0",
 "team": "22"
 },
 "6609": {
-"how": "enwiki-exact+langlink",
+"how": "daum:team+num+dob",
 "ko": "크리스 미들턴",
 "no": "22",
 "team": "27"
