@@ -117,7 +117,7 @@ def _mlb_side(t):
         if not bo:
             continue
         b = (p.get("stats") or {}).get("batting") or {}
-        bat.append({"id": pid, "o": int(bo[0]), "sub": bo[1:] != "00", "_k": int(bo), "name": (p.get("person") or {}).get("fullName"),
+        bat.append({"id": pid, "o": int(bo[0]), "sub": bo[1:] != "00", "_k": int(bo), "name": __import__("pname").ko("mlb", pid, (p.get("person") or {}).get("fullName")),
                     "pos": "-".join(MPOS.get(x.get("abbreviation"), x.get("abbreviation")) for x in p.get("allPositions") or [p.get("position") or {}]),
                     "avg": ((p.get("seasonStats") or {}).get("batting") or {}).get("avg"),
                     **({"ab": b.get("atBats"), "r": b.get("runs"), "h": b.get("hits"), "rbi": b.get("rbi"), "bb": b.get("baseOnBalls"), "so": b.get("strikeOuts"), "hr": b.get("homeRuns")} if b else {})})
@@ -127,7 +127,7 @@ def _mlb_side(t):
         s = (p.get("stats") or {}).get("pitching") or {}
         if not s:
             continue
-        pit.append({"id": pid, "name": (p.get("person") or {}).get("fullName"), "ip": s.get("inningsPitched"), "h": s.get("hits"), "r": s.get("runs"),
+        pit.append({"id": pid, "name": __import__("pname").ko("mlb", pid, (p.get("person") or {}).get("fullName")), "ip": s.get("inningsPitched"), "h": s.get("hits"), "r": s.get("runs"),
                     "er": s.get("earnedRuns"), "bb": s.get("baseOnBalls"), "so": s.get("strikeOuts"), "np": s.get("numberOfPitches") or s.get("pitchesThrown"),
                     "era": ((p.get("seasonStats") or {}).get("pitching") or {}).get("era"), "dec": s.get("note") or ""})
     return {"bat": bat, "pit": pit, "pre": not any("ab" in b for b in bat) and not pit}

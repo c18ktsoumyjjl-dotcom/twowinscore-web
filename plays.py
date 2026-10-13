@@ -110,8 +110,9 @@ def _mlb(g):
         if ev not in SHOW and not scoring:
             continue
         name, emo = EV_KO.get(ev, (res.get("event") or "플레이", "⚾"))
-        batter = (mu.get("batter") or {}).get("fullName")
-        pitcher = (mu.get("pitcher") or {}).get("fullName")
+        _k = __import__("pname").ko
+        batter = _k("mlb", (mu.get("batter") or {}).get("id"), (mu.get("batter") or {}).get("fullName"))
+        pitcher = _k("mlb", (mu.get("pitcher") or {}).get("id"), (mu.get("pitcher") or {}).get("fullName"))
         if ev == "home_run":
             line = f"{emo} {inn} {team} {batter} {'만루 ' if rbi == 4 else ''}홈런!! " + (f"{rbi}점 홈런이에요" if rbi > 1 else "솔로포!")
         elif scoring:
