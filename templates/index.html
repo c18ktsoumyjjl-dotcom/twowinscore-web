@@ -167,7 +167,7 @@ document.getElementById('list').addEventListener('keydown',e=>{if(e.key==='Enter
 document.getElementById('chips').onclick=e=>{const b=e.target.closest('button');if(b){F=b.dataset.f;render()}};
 document.getElementById('q').oninput=e=>{Q=e.target.value;render()};
 document.getElementById('cal').onchange=e=>{if(e.target.value)location.href='/?d='+e.target.value};
-async function load(){try{if(window.__G){DATA=window.__G;window.__G=null}else{const r=await fetch('/api/games?d='+D,{cache:'no-store'});DATA=await r.json()}render();if(OPEN&&Date.now()-(PV[OPEN+'@']||0)>30000&&DATA.games.some(g=>g.key===OPEN&&g.state==='live'))loadPv(OPEN)}catch(e){document.getElementById('status').textContent='연결이 불안정해요. 다시 시도 중…'}}
+let LF=0,LB=false;async function load(){if(LB)return;LB=true;let ok=false;try{if(window.__G){DATA=window.__G;window.__G=null}else{const ac=new AbortController(),tt=setTimeout(()=>ac.abort(),12000);let j;try{const r=await fetch('/api/games?d='+D,{cache:'no-store',signal:ac.signal});if(!r.ok)throw new Error('http '+r.status);j=await r.json()}finally{clearTimeout(tt)}if(!j||!Array.isArray(j.games))throw new Error('bad');DATA=j}ok=true;LF=0;try{render()}catch(re){console.error('render',re)}if(OPEN&&Date.now()-(PV[OPEN+'@']||0)>30000&&DATA.games.some(g=>g.key===OPEN&&g.state==='live'))loadPv(OPEN)}catch(e){/* 일시 실패(뒤로가기·앱 복귀 중 끊김, 배포 중 502)는 조용히 재시도. 3회 연속 실제 실패 + 숨김 아닐 때만 안내 */if(!document.hidden&&navigator.onLine!==false)LF++;if(LF>=3)document.getElementById('status').textContent='연결이 불안정해요. 다시 시도 중…';else if(LF===1)setTimeout(()=>{if(!document.hidden)load()},2000)}finally{LB=false}}
 const LG=document.getElementById('lounge'),FAB=document.getElementById('chatFab');let CH=null;
 const fabN=n=>document.getElementById('fabN').textContent=n?n+'명':'';
 const DW=matchMedia('(min-width:1024px)'),SBS=matchMedia('(min-width:1240px)');
@@ -179,7 +179,7 @@ ping();setInterval(ping,20000);
 if(SBS.matches&&(localStorage.getItem('tw_chat_open')==='1'||(innerWidth>=1100&&localStorage.getItem('tw_chat_open')!=='0')))openChat();
 DW.addEventListener('change',e=>{if(!e.matches&&!LG.hidden)closeChat(true);render()});SBS.addEventListener('change',e=>{if(!e.matches&&!LG.hidden)closeChat(true)});
 const FB=document.getElementById('feat');TWVote.feat(D,FB,true);setInterval(()=>{if(!document.hidden)TWVote.feat(D,FB,true)},90000);
-window.TWload=load;load();setInterval(()=>{if(!document.hidden)load()},5000);
+window.TWload=load;load();addEventListener('pageshow',e=>{if(e.persisted){LF=0;load()}});setInterval(()=>{if(!document.hidden)load()},5000);
 
 (function(){const c=document.getElementById('chips'),w=document.getElementById('chipwrap'),L=document.getElementById('chL'),R=document.getElementById('chR');
 function upd(){const m=c.scrollWidth-c.clientWidth;const l=c.scrollLeft>2,r=c.scrollLeft<m-2;L.hidden=!l;R.hidden=!r;w.classList.toggle('fl',l);w.classList.toggle('fr',r)}
