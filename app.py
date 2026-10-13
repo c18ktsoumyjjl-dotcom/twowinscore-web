@@ -347,7 +347,7 @@ def period_table(g):
 @app.route("/api/naver_kr")
 def api_naver_kr():
     """국내 농구·배구 네이버 합치기 상태(15분 점검용): 성공/실패 수, 최근 불일치."""
-    return jsonify(data.naver_kr.status())
+    return jsonify(dict(data.naver_kr.status(), timefix=data.timefix.status()))
 
 
 @app.route("/api/games")

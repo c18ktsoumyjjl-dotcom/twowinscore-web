@@ -10,6 +10,7 @@ import score_bot as sb      # noqa: E402  (읽기 전용 사용)
 import features             # noqa: E402
 import mlb_official         # noqa: E402
 import naver_kr             # noqa: E402
+import timefix              # noqa: E402
 
 SEOUL = ZoneInfo("Asia/Seoul")
 CACHE = os.environ.get("CACHE_DIR", "/tmp/twowinscore-cache")
@@ -206,6 +207,7 @@ def _sport_fetch(kind, day, name, c, now):
     try:
         other = []
         games = _fetch_raw(kind, day, other)
+        timefix.apply(kind, games)   # API-Sports 시작 시간이 네이버·ESPN 둘 다와 다를 때만 보정
         _wr(name, {"ts": now, "ok": True, "games": games, "other": other})
         return [_de(g) for g in games], True
     except Exception:
