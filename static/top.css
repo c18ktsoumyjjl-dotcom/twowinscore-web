@@ -159,3 +159,28 @@ html:not([data-theme=light]) .tpvs td.tt b{color:#fff}
 .tprow:has(.tpvs:not([hidden])){align-items:stretch}
 .tprow:has(.tpvs:not([hidden])) .tpbk{height:auto;min-height:40px}
 }
+/* E안: 실제 경기장 톤 + 반투명 유리 띠 (모바일 전용) */
+@media (max-width:1023px){
+.tp .tpst{height:146px;margin:0 2px;border-radius:16px;box-shadow:0 6px 18px rgba(20,32,59,.14),inset 0 0 0 1px rgba(255,255,255,.18)}
+.tp .tpsh{display:none}
+.tp .tpg .pu{animation:tpE 1.6s ease-out infinite}@keyframes tpE{from{r:5;opacity:.9}to{r:22;opacity:0}}
+.tp .tph{display:none}.tp .tph.on{display:inline}
+.tp .tpsb{left:8px;right:8px;top:8px;bottom:auto;padding:5px 10px;border-radius:12px;background:rgba(255,255,255,.6);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border:1px solid rgba(255,255,255,.6);gap:6px}
+.tp .tpt img{width:24px;height:24px;padding:2px;background:#fff}
+.tp .tpt b{font-size:12.5px;color:#14203b;-webkit-line-clamp:1}
+.tp .tpc .sc{font-size:22px;color:#14203b}.tp .tpc .sc b{color:rgba(20,32,59,.55)}.tp .tpc .sc b.ld{color:#14203b}.tp .tpc .sc i{font-size:16px;vertical-align:2px}
+.tp .tpc .clk{margin-top:1px;padding:0 7px;background:rgba(20,32,59,.08);color:#d9560f;font-size:10px}
+.tp .tptag{left:12px;right:12px;top:auto;bottom:9px;font-size:10px;pointer-events:none}
+.tp .tptag .fn,.tp .tptag .pre,.tp .tptag .lg{padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.6);color:#14203b;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:1}
+.tp .tptag .lg{max-width:30%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tp .tpev{position:absolute;left:50%;bottom:32px;transform:translateX(-50%);max-width:calc(100% - 24px);box-sizing:border-box;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:999px;background:rgba(255,255,255,.66);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.6);color:#14203b}
+.tp .tpev.nw{animation:tpEv .6s cubic-bezier(.2,1.5,.4,1)}@keyframes tpEv{from{transform:translate(-50%,8px) scale(.9);opacity:0}}
+.tp .tpbb{top:auto;bottom:32px;right:12px;background:rgba(20,32,59,.55)}
+.tp .tpbb:not([hidden])~.tpev{left:12px;transform:none;max-width:calc(100% - 130px)}
+.tp .tpfx{padding-top:62px}
+html:not([data-theme=light]) .tp .tpg,[data-theme=dark] .tp .tpg{filter:brightness(.72) saturate(.9)}
+html:not([data-theme=light]) .tp .tpsb,[data-theme=dark] .tp .tpsb,html:not([data-theme=light]) .tp .tpev,[data-theme=dark] .tp .tpev,html:not([data-theme=light]) .tp .tptag .fn,html:not([data-theme=light]) .tp .tptag .pre,html:not([data-theme=light]) .tp .tptag .lg,[data-theme=dark] .tp .tptag .fn,[data-theme=dark] .tp .tptag .pre,[data-theme=dark] .tp .tptag .lg{background:rgba(14,20,38,.6);border-color:rgba(255,255,255,.12);color:#fff}
+html:not([data-theme=light]) .tp .tpt b,[data-theme=dark] .tp .tpt b,html:not([data-theme=light]) .tp .tpc .sc,[data-theme=dark] .tp .tpc .sc,html:not([data-theme=light]) .tp .tpc .sc b.ld,[data-theme=dark] .tp .tpc .sc b.ld{color:#fff}
+html:not([data-theme=light]) .tp .tpc .sc b,[data-theme=dark] .tp .tpc .sc b{color:rgba(255,255,255,.6)}
+html:not([data-theme=light]) .tp .tpc .clk,[data-theme=dark] .tp .tpc .clk{background:rgba(0,0,0,.3);color:#ffb27a}
+}

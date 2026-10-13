@@ -23,7 +23,9 @@ function setPla(j){if(!MQ.matches||!Array.isArray(j.pla))return;let sp=document.
  if(!sp){sp=document.createElement('section');sp.className='box';sp.id='sec-plays';(document.getElementById('lu9')||document.querySelector('.tmbar6')||document.getElementById('hero')).after(sp)}
  sp.hidden=false;sp.innerHTML=`<h3>문자중계 <small>${esc(j.src||'')}</small></h3>`+j.pla.map(x=>`<p class="pl6 ${x.h?'hot':''}">${esc(x.t)}</p>`).join('');placePlays()}
 function setVs(j){const o=document.getElementById('tpvs');if(o&&typeof j.vs==='string'&&j.vs)o.outerHTML=j.vs}
-function setPl(pl){if(!tk||!Array.isArray(pl))return;if(!pl.length){tk.hidden=true;return}const l=tk.querySelector('.tkl');if(l.textContent!==pl[0]){l.textContent=pl[0];l.classList.remove('nw');void l.offsetWidth;l.classList.add('nw')}tk.querySelector('.tkx').innerHTML=pl.map(t=>`<li>${esc(t)}</li>`).join('');tk.hidden=false}
+function setEv(pl){const e=document.getElementById('tpev');if(!e||!Array.isArray(pl))return;if(!pl.length){e.hidden=true;return}if(e.textContent!==pl[0]){e.textContent=pl[0];e.classList.remove('nw');void e.offsetWidth;e.classList.add('nw')}e.hidden=false}
+function setHot(ev){if(!Array.isArray(ev)||!ev.length)return;const x=ev[ev.length-1];if(x.t!=='goal'&&x.t!=='pen')return;S.querySelectorAll('.tph').forEach(h=>h.classList.toggle('on',h.classList.contains(x.t==='goal'?(x.s==='L'?'R':'L'):x.s)))}
+function setPl(pl){setEv(pl);if(!tk||!Array.isArray(pl))return;if(!pl.length){tk.hidden=true;return}const l=tk.querySelector('.tkl');if(l.textContent!==pl[0]){l.textContent=pl[0];l.classList.remove('nw');void l.offsetWidth;l.classList.add('nw')}tk.querySelector('.tkx').innerHTML=pl.map(t=>`<li>${esc(t)}</li>`).join('');tk.hidden=false}
 if(S.dataset.live!=='1')return;
 if(kind0!=='football'&&kind0!=='hockey'){const pp=async()=>{if(document.hidden)return;try{const j=await (await fetch('/api/top/'+encodeURIComponent(K)+Q,{cache:'no-store'})).json();const sb=S.querySelectorAll('.tpc .sc b');if(sb.length===2&&j.L!=null){sb[0].textContent=j.L;sb[1].textContent=j.R;sb[0].className=j.L>j.R?'ld':'';sb[1].className=j.R>j.L?'ld':''}setPl(j.pl);setPla(j);setVs(j);const c=document.getElementById('tpclk');if(c&&j.period)c.textContent=j.period}catch(e){}};setInterval(pp,5000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)pp()})}
 const bb=S.querySelector('.tpbb');
@@ -37,7 +39,7 @@ const fx=S.querySelector('.tpfx'),st=S.querySelector('.tpst'),seen=new Set();let
 const NM={goal:'⚽ 골!',yel:'🟨 경고',red:'🟥 퇴장',sub:'🔁 교체',pen:'⏱ 페널티'};if(kind==='hockey')NM.goal='🏒 골!';
 function show(e){const d=document.createElement('div');d.className='t '+e.t;d.textContent=`${NM[e.t]||''} ${e.lab} ${e.who||''}`.trim();fx.innerHTML='';fx.appendChild(d);if(e.t==='goal'){st.classList.remove('flash');void st.offsetWidth;st.classList.add('flash')}}
 async function poll(){if(document.hidden)return;try{const j=await (await fetch('/api/top/'+encodeURIComponent(K)+Q,{cache:'no-store'})).json();
- const nw=(j.ev||[]).filter(e=>{const k=e.t+e.s+e.m+e.lab+e.who;return !seen.has(k)&&seen.add(k)});if(!first&&nw.length)show(nw[nw.length-1]);first=false;
+ setHot(j.ev);const nw=(j.ev||[]).filter(e=>{const k=e.t+e.s+e.m+e.lab+e.who;return !seen.has(k)&&seen.add(k)});if(!first&&nw.length)show(nw[nw.length-1]);first=false;
  const sb=S.querySelectorAll('.tpc .sc b');if(sb.length===2&&j.L!=null){sb[0].textContent=j.L;sb[1].textContent=j.R;sb[0].className=j.L>j.R?'ld':'';sb[1].className=j.R>j.L?'ld':''}
  setPl(j.pl);setPla(j);setVs(j);const c=document.getElementById('tpclk');if(c&&j.period)c.textContent=j.period}catch(e){}}
 poll();setInterval(poll,8000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()})})();
