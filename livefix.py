@@ -227,7 +227,112 @@ def _one(kind, g, now):
     return True
 
 
+_TEN = None
+
+
+def _team_en(kind, tid):
+    global _TEN
+    if _TEN is None:
+        import json, os
+        try:
+            with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "team_en.json"), encoding="utf-8") as f:
+                _TEN = json.load(f)
+        except Exception:
+            _TEN = {}
+    return _TEN.get(f"{kind}:{tid}")
+
+
+NBA_LEAGUE = 12
+
+
+def _nba(g, now):
+    """NBA 전용: API-Sports 점수가 뒤집히거나 늦을 때 ESPN 으로 덮는다.
+    양 팀 영문 정식명(team_en.json)이 ESPN displayName 과 정확히 같고, 홈/원정 방향도 같고, 후보가 하나일 때만."""
+    if g.get("kind") != "basketball" or g.get("league") != NBA_LEAGUE:
+        return False
+    st = g.get("start")
+    st = datetime.fromisoformat(st) if isinstance(st, str) else st
+    if st is None or st.tzinfo is None:
+        return False
+    age = (now - st).total_seconds()
+    if not (-15 * 60 <= age <= 8 * 3600):
+        return False
+    he, ae = _team_en("basketball", g.get("home_id")), _team_en("basketball", g.get("away_id"))
+    if not he or not ae or he == ae:
+        return False
+    u, hits = st.astimezone(timezone.utc), {}
+    for d in {(u + timedelta(hours=dh)).strftime("%Y%m%d") for dh in (-6, 0, 6)}:
+        for e in _espn("basketball/nba", d) or []:
+            try:
+                cs = e["competitions"][0]["competitors"]
+                h = next(c for c in cs if c.get("homeAway") == "home"); a = next(c for c in cs if c.get("homeAway") == "away")
+                t = datetime.fromisoformat(e["date"].replace("Z", "+00:00"))
+            except Exception:
+                continue
+            if abs((t - st).total_seconds()) > 3 * 3600:
+                continue
+            hn, an = (h.get("team") or {}).get("displayName"), (a.get("team") or {}).get("displayName")
+            if {hn, an} & {he, ae} and (hn, an) != (he, ae):
+                return False                  # 방향이 다르거나 한 팀만 일치 → 불확실, 덮지 않음
+            if (hn, an) == (he, ae):
+                hits[e.get("id")] = (e, h, a)
+    if len(hits) != 1:
+        return False
+    e, h, a = next(iter(hits.values()))
+    hs, as_ = _int(h.get("score")), _int(a.get("score"))
+    s = e.get("status") or {}
+    t = s.get("type") or {}
+    name, per = str(t.get("name") or ""), _int(s.get("period")) or 0
+    if hs is None or as_ is None:
+        return False
+    if t.get("state") == "post":
+        if name != "STATUS_FINAL":
+            return False
+        code, lab = ("AOT", "연장 종료") if per > 4 else ("FT", "종료")
+    elif t.get("state") == "in":
+        if name == "STATUS_HALFTIME":
+            code, lab = "HT", "하프타임"
+        elif name == "STATUS_END_PERIOD" and 1 <= per <= 4 and per != 2:
+            code, lab = "BT", "휴식"
+        elif per > 4:
+            code, lab = "OT", "OT"
+        elif 1 <= per <= 4:
+            code, lab = f"Q{per}", f"{per}Q"
+        else:
+            return False
+    else:
+        return False
+    lines = []
+    try:
+        hl, al = h.get("linescores") or [], a.get("linescores") or []
+        for i, (x, y) in enumerate(zip(hl, al)):
+            lines.append([f"{i + 1}Q" if i < 4 else "OT", int(float(x.get("value"))), int(float(y.get("value")))])
+    except Exception:
+        lines = None
+    if lines and (sum(l[1] for l in lines) != hs or sum(l[2] for l in lines) != as_):
+        lines = [l for l in lines[:-1]] if (sum(l[1] for l in lines[:-1]) <= hs and sum(l[2] for l in lines[:-1]) <= as_) else []
+    old = (g.get("status"), g.get("home_score"), g.get("away_score"))
+    if old == (code, hs, as_):
+        return False
+    g.update(status=code, period=lab, home_score=hs, away_score=as_, status_api=g.get("status"),
+             live_src="espn-nba", status_long=None)
+    if lines is not None:
+        g["lines"] = lines
+    k = (g.get("key"), code, hs, as_)
+    if not LOG or LOG[-1][1:] != k:
+        LOG.append((time.time(),) + k)
+        tf.log(f"livefix NBA {g.get('key')} {old} → {code} {hs}-{as_} (ESPN)")
+    return True
+
+
 def apply(kind, games):
+    if kind == "basketball":
+        now = datetime.now(SEOUL)
+        for g in games:
+            try:
+                _nba(g, now)
+            except Exception as ex:
+                tf.log(f"livefix NBA {g.get('key')} 오류: {str(ex)[:100]}")
     if not tf.ESPN.get(kind) or not tf.NAVER_UP.get(kind):
         return games
     now = datetime.now(SEOUL)
