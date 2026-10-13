@@ -47,7 +47,7 @@ def _fb(g):
             for r, v in rows.items():
                 v.sort(key=lambda z: z[0])
                 for i, (c, p) in enumerate(v):
-                    pl.append({**mk(p), "x": (i + 1) / (len(v) + 1), "y": 0.84 - (r - 1) * 0.70 / max(1, n - 1)})
+                    pl.append({**mk(p), "x": (i + 1) / (len(v) + 1), "y": 0.80 - (r - 1) * 0.66 / max(1, n - 1)})
         out[sd] = _team(g, sd, form=t.get("form") or "", coach=t.get("coach") or "", pitch=bool(t.get("pitch")),
                         players=pl, xi=[mk(p) for p in t["xi"]], bench=[f"{p.get('no') or ''} {mk(p)['name']}".strip() for p in t.get("subs") or []])
     out["pitch"] = out["home"]["pitch"] and out["away"]["pitch"]

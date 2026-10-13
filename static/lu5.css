@@ -107,3 +107,6 @@ html[data-theme=dark] .l5 .mound{fill:#76593d}
 .l5 .note{font-size:11px;color:var(--mut);margin:8px 2px 0}
 .l5 .av b[hidden]{display:none}
 .l5 .av b{z-index:2}
+.l5 .fld.football{aspect-ratio:1/2.25}.l5.pc .fld.football{aspect-ratio:1.6/1}
+.l5 .fld.football .av{width:38px;height:38px}.l5.pc .fld.football .av{width:46px;height:46px}.l5 .fld.football .tk{width:70px}.l5 .fld.football .tk span{max-width:70px;font-size:10.5px;padding:1px 5px}
+.l5:not(.pc) .fld .chip.away{top:6px;left:6px;padding:3px 7px}.l5:not(.pc) .fld .chip.home{bottom:6px;left:6px;padding:3px 7px}
