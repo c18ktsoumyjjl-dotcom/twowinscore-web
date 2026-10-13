@@ -123,6 +123,12 @@ def _sec_headers(r):
     h.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
     h.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()")
     h.setdefault("Cross-Origin-Opener-Policy", "same-origin-allow-popups")
+    # 성능: 버전(?v=) 붙은 정적 파일은 내용이 바뀌면 버전을 올리므로 길게 캐시(재검증 왕복 제거). 버전 없는 이미지·폰트는 하루.
+    if r.status_code == 200 and request.path.startswith("/static/"):
+        if request.args.get("v"):
+            h["Cache-Control"] = "public, max-age=2592000, immutable"
+        elif request.path.rsplit(".", 1)[-1].lower() in ("webp", "jpg", "jpeg", "png", "svg", "gif", "ico", "woff2", "woff"):
+            h["Cache-Control"] = "public, max-age=86400"
     return r
 
 

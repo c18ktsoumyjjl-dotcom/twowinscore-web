@@ -3,9 +3,11 @@
 const box=document.querySelector('.fxw');if(!box)return;if(innerWidth<1024)return;
 const still=matchMedia('(prefers-reduced-motion: reduce)').matches;if(still)return;
 const mob=()=>innerWidth<=700;
+// 성능: 히어로가 화면 밖이면 플래시·비 계산 중지(보이는 모습은 동일)
+let vis=true;if('IntersectionObserver' in window)new IntersectionObserver(es=>{vis=es[es.length-1].isIntersecting}).observe(box);
 // 관중석 플래시: 관중석 띠 영역에서 무작위 소수
 const crowd=box.querySelector('.fx-crowd');
-function flash(){if(document.hidden)return;const d=document.createElement('i');const m=mob();
+function flash(){if(document.hidden||!vis)return;const d=document.createElement('i');const m=mob();
  let x,y,n=0;do{x=1+Math.random()*98;y=(m?44:38)+Math.random()*(m?46:56);n++}while(n<20&&(m?(x>17&&x<85&&y<76):(x>29&&x<73&&y<84)));
  d.style.left=x+'%';d.style.top=y+'%';d.style.animationDuration=(0.8+Math.random()*1.4).toFixed(2)+'s';
  const r=Math.random();d.className=r<.2?'w':r<.35?'b':'';crowd.appendChild(d);setTimeout(()=>d.remove(),2500)}
@@ -21,7 +23,7 @@ const cv=box.querySelector('.fx-rain'),cx=cv.getContext('2d');let drops=[],W=0,H
 function size(){const r=box.getBoundingClientRect(),dp=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;cv.width=W*dp;cv.height=H*dp;cx.setTransform(dp,0,0,dp,0,0);
  const n=Math.round(W/(mob()?14:18));drops=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,l:8+Math.random()*12,v:5+Math.random()*4,a:.08+Math.random()*.14}))}
 size();addEventListener('resize',size);
-function tick(){if(!document.hidden){cx.clearRect(0,0,W,H);cx.lineWidth=1;
+function tick(){if(!document.hidden&&vis){cx.clearRect(0,0,W,H);cx.lineWidth=1;
  for(const p of drops){cx.strokeStyle=`rgba(200,220,255,${p.a})`;cx.beginPath();cx.moveTo(p.x,p.y);cx.lineTo(p.x-p.l*.18,p.y+p.l);cx.stroke();
   p.y+=p.v;p.x-=p.v*.18;if(p.y>H){p.y=-p.l;p.x=Math.random()*W*1.1}}}
  requestAnimationFrame(tick)}
