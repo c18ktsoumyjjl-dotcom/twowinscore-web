@@ -20,7 +20,7 @@ SITE_LEAGUES = [
     # 한국
     ("baseball", 5, "KBO"), ("basketball", 91, "KBL"), ("basketball", 92, "WKBL"),
     ("volleyball", 151, "V리그 남자"), ("volleyball", 152, "V리그 여자"), ("volleyball", 153, "KOVO컵 여자"),
-    ("football", 292, "K리그1"), ("football", 293, "K리그2"), ("football", 660, "WK리그(여자)"),
+    ("football", 292, "K리그1"), ("football", 17, "AFC 챔피언스리그 엘리트"), ("football", 18, "AFC 챔피언스리그2"), ("football", 293, "K리그2"), ("football", 660, "WK리그(여자)"),
     # 일본·아시아
     ("baseball", 2, "NPB"), ("baseball", 29, "CPBL"), ("basketball", 56, "B리그"), ("basketball", 31, "CBA"), ("basketball", 386, "EASL"),
     ("volleyball", 252, "SV리그"), ("football", 98, "J1리그"), ("football", 99, "J2리그"), ("football", 307, "사우디 리그"),

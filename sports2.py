@@ -12,6 +12,7 @@ LEAGUES = {
     ("football", 293): "K리그2", ("football", 660): "WK리그(여자)", ("football", 98): "J1리그", ("football", 99): "J2리그",
     ("football", 307): "사우디 리그", ("football", 40): "챔피언십", ("football", 3): "유로파리그", ("football", 848): "컨퍼런스리그",
     ("football", 253): "MLS", ("football", 5): "UEFA 네이션스리그", ("football", 10): "A매치 친선",
+    ("football", 17): "AFC 챔피언스리그 엘리트", ("football", 18): "AFC 챔피언스리그2",
     ("hockey", 106): "아시아리그", ("hockey", 16): "핀란드 리가", ("hockey", 47): "스웨덴 SHL", ("hockey", 58): "AHL",
 }
 SEASON = {("football", 292): 2026, ("football", 98): 2027, ("football", 293): 2026, ("football", 660): 2026, ("football", 253): 2026, ("hockey", 57): 2026, ("hockey", 35): 2026}  # 나머지 축구 유럽 리그는 2026(=2026-27)
