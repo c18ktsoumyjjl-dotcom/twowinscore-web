@@ -26,7 +26,7 @@ async function go0(url,push,sy){if(busy){pend=[url,push,sy];return}busy=true;let
  if(push){history.replaceState(Object.assign({},history.state,{tw:1,y:scrollY}),'');history.pushState({tw:1,y:0},'',r.url)}
  cleanup();
  D.title=nd.title;['description','theme-color','robots'].forEach(k=>{const a=D.querySelector('meta[name="'+k+'"]'),b=nd.querySelector('meta[name="'+k+'"]');if(a&&b&&k!=='theme-color')a.content=b.content});
- nd.head.querySelectorAll('link[rel=stylesheet]').forEach(l=>{if(!D.head.querySelector('link[href="'+l.getAttribute('href')+'"]'))D.head.appendChild(l.cloneNode())});D.head.querySelectorAll('style[data-tw-page]').forEach(s=>s.remove());nd.head.querySelectorAll('style').forEach(s=>{const n=s.cloneNode(true);n.setAttribute('data-tw-page','1');D.head.appendChild(n)});
+ {const ps=[];nd.head.querySelectorAll('link[rel=stylesheet]').forEach(l=>{if(!D.head.querySelector('link[href="'+l.getAttribute('href')+'"]')){const n=l.cloneNode();ps.push(new Promise(r=>{n.onload=n.onerror=r}));D.head.appendChild(n)}});if(ps.length)await Promise.race([Promise.all(ps),new Promise(r=>N.st(r,1500))])}D.head.querySelectorAll('style[data-tw-page]').forEach(s=>s.remove());nd.head.querySelectorAll('style').forEach(s=>{const n=s.cloneNode(true);n.setAttribute('data-tw-page','1');D.head.appendChild(n)});
  const nb=nd.body,sc=[...nb.querySelectorAll('script')];sc.forEach(s=>s.remove());
  const keepEl=[...D.body.children].filter(e=>e.id==='bgmPop');
  for(const a of [...D.body.attributes])D.body.removeAttribute(a.name);for(const a of nb.attributes)D.body.setAttribute(a.name,a.value);
