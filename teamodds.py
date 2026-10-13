@@ -24,17 +24,23 @@ def _snap_path(kind, gid):
 
 
 def snap_get(kind, gid):
+    """디스크 스냅샷. 미리 받기는 다른 프로세스(warmer)에서 저장하니, 파일 수정 시각이 바뀌면 다시 읽어요(없음도 영구 캐시 안 함)."""
     k = (kind, gid)
+    try:
+        mt = os.stat(_snap_path(kind, gid)).st_mtime
+    except OSError:
+        return None
     with _snap_lk:
-        if k in _snap:
-            return _snap[k]
+        e = _snap.get(k)
+        if e and e[0] == mt:
+            return e[1]
     try:
         with open(_snap_path(kind, gid), encoding="utf-8") as f:
             v = json.load(f)
     except Exception:
         v = None
     with _snap_lk:
-        _snap[k] = v
+        _snap[k] = (mt, v)
     return v
 
 
@@ -49,7 +55,7 @@ def _snap_put(kind, gid, v):
             json.dump(v, f, ensure_ascii=False)
         os.replace(p + ".tmp", p)
         with _snap_lk:
-            _snap[(kind, gid)] = v
+            _snap[(kind, gid)] = (os.stat(p).st_mtime, v)
             if len(_snap) > 5000:
                 _snap.clear()
     except Exception:
