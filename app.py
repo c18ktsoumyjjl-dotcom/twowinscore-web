@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from flask import Flask, render_template, request, abort, jsonify, redirect
+from flask import get_template_attribute, Flask, render_template, request, abort, jsonify, redirect
 import data
 import curation
 import chat
@@ -513,7 +513,8 @@ def api_top(key):
         cm = {}
     its = [x for x in (cm.get("items") or []) if x.get("t")]
     return jsonify({"ev": t.get("ev"), "period": t.get("period"), "L": v["L"]["score"], "R": v["R"]["score"], "pl": [x["t"] for x in its[:6]],
-                    "pla": [{"t": x["t"], "h": 1 if x.get("hot") else 0} for x in its[:80]], "src": cm.get("source") or ""})
+                    "pla": [{"t": x["t"], "h": 1 if x.get("hot") else 0} for x in its[:80]], "src": cm.get("source") or "",
+                    "vs": get_template_attribute("_top.html", "vsets")(v["lines"], g["state"] == "live", v["L"]["name"], v["R"]["name"]) if g["kind"] == "volleyball" else None})
 
 
 def _analysis(g, v, det, forms):

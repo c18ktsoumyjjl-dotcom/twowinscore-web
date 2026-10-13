@@ -96,3 +96,26 @@ body.tpon .gm7sb,body.tpon .gm7ls{display:none}
 .tprow .tptk .tkb{height:38px}
 .tptag{left:10px}
 }
+@media (max-width:1023px){
+.tpvs{margin:6px 10px 2px;padding:6px 8px 5px;border-radius:12px;background:#fff;border:1px solid #e3e8f1;box-shadow:0 1px 3px rgba(16,32,64,.06)}
+.tpvs table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;font-variant-numeric:tabular-nums}
+.tpvs th,.tpvs td{text-align:center;padding:4px 0;font-size:13px;line-height:1.2;color:#1c2b4a}
+.tpvs thead th{font-size:10.5px;font-weight:600;color:#7a869c;padding:2px 0 4px;vertical-align:bottom}
+.tpvs th.nm{width:30%;text-align:left;font-weight:700;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:4px}
+.tpvs .sm{width:13%;font-weight:800;border-left:1px solid #e3e8f1}
+.tpvs td.w{font-weight:800;color:#0f2a5c}
+.tpvs .on{background:rgba(255,122,26,.09);box-shadow:inset 1px 0 #ff7a1a,inset -1px 0 #ff7a1a;color:#e8630a;font-weight:800}
+.tpvs thead th.on{box-shadow:inset 1px 0 #ff7a1a,inset -1px 0 #ff7a1a,inset 0 1px #ff7a1a;border-radius:7px 7px 0 0}
+.tpvs tbody tr:last-child td.on{box-shadow:inset 1px 0 #ff7a1a,inset -1px 0 #ff7a1a,inset 0 -1px #ff7a1a;border-radius:0 0 7px 7px}
+.tpvs th.on em{display:block;margin:2px auto 0;width:max-content;font-style:normal;font-size:9px;font-weight:800;color:#fff;background:#ff7a1a;border-radius:6px;padding:1px 4px}
+.tpvt{margin-top:4px;padding-top:4px;border-top:1px dashed #e3e8f1;text-align:right;font-size:11px;color:#7a869c}
+.tpvt b{color:#1c2b4a;font-size:12.5px;margin:0 1px}
+html:not([data-theme=light]) .tpvs,[data-theme=dark] .tpvs{background:#141c2b;border-color:#26324a;box-shadow:none}
+html:not([data-theme=light]) .tpvs th,html:not([data-theme=light]) .tpvs td,[data-theme=dark] .tpvs th,[data-theme=dark] .tpvs td{color:#dfe6f3}
+html:not([data-theme=light]) .tpvs thead th,[data-theme=dark] .tpvs thead th,html:not([data-theme=light]) .tpvt,[data-theme=dark] .tpvt{color:#8f9bb3}
+html:not([data-theme=light]) .tpvs td.w,[data-theme=dark] .tpvs td.w{color:#fff}
+html:not([data-theme=light]) .tpvs .sm,[data-theme=dark] .tpvs .sm,html:not([data-theme=light]) .tpvt,[data-theme=dark] .tpvt{border-color:#26324a}
+html:not([data-theme=light]) .tpvt b,[data-theme=dark] .tpvt b{color:#fff}
+html:not([data-theme=light]) .tpvs .on,[data-theme=dark] .tpvs .on{color:#ff9a4d;background:rgba(255,122,26,.14)}
+}
+@media (min-width:1024px){.tpvs{display:none}}
