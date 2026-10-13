@@ -874,6 +874,7 @@ def football(g):
         _ko_names(g, out)
     except Exception:
         pass
+    _ko_freeze(g, st, out)
     for side in ("home", "away"):
         for p in out[side]["xi"]:
             p.pop("_g", None)
@@ -1056,3 +1057,32 @@ def _freeze(g, st, ef):
         except Exception:
             continue
     return ef
+
+
+def _ko_freeze(g, st, out):
+    """한글 이름도 킥오프 전 확인된 것으로 고정 (경기 중 네이버 라인업은 교체 반영으로 행 구성이 바뀜). 등번호로만 붙임."""
+    import os
+    base = os.path.dirname(os.path.abspath(__file__))
+    fn = os.path.join(base, "cache", "lu_freeze", f"{g['id']}_ko.json")
+    cur = {sd: {str(p["no"]): p["ko"] for p in out[sd]["xi"] if p.get("ko")} for sd in ("home", "away")}
+    if st == "scheduled":
+        if any(cur.values()):
+            try:
+                os.makedirs(os.path.dirname(fn), exist_ok=True)
+                json.dump(cur, open(fn, "w"), ensure_ascii=False)
+            except Exception:
+                pass
+        return
+    for f in (fn, os.path.join(base, "lu_seed", f"{g['id']}_ko.json")):
+        try:
+            d = json.load(open(f))
+        except Exception:
+            continue
+        for sd in ("home", "away"):
+            if cur[sd]:
+                continue
+            m = d.get(sd) or {}
+            if m and all(str(p["no"]) in m for p in out[sd]["xi"]):   # 선발 11명이 모두 같을 때만
+                for p in out[sd]["xi"]:
+                    p["ko"] = m[str(p["no"])]
+        return
