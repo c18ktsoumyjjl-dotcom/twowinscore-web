@@ -611,7 +611,7 @@ def _analysis(g, v, det, forms):
     out = {"odds": None, "snap": None, "h2h": None}
     try:
         import teamodds
-        o = teamodds.odds(g)
+        o = teamodds.odds_swr(g)
     except Exception:
         o = None
     if o:
@@ -804,7 +804,7 @@ def api_odds():
     def one(k):
         try:
             g = data.find_game(k, d) or (data.find_game(k, d - timedelta(days=1)) if d == today() else None)
-            o = teamodds.odds(g, lite) if g else None
+            o = teamodds.odds_swr(g, lite) if g else None
             return k, _od_lr(g, o)
         except Exception:
             return k, None

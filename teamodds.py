@@ -384,3 +384,36 @@ def _team_fetch(kind, tid):
     out["next"] = sorted([r for r in rows if (r["live"] or r["ts"] > now - 3 * 3600) and not r["r"] and r["st"] not in LIVE_SKIP], key=lambda r: r["ts"])[:10]
     out["roster"] = sorted(out["roster"], key=lambda p: (["골키퍼", "수비수", "미드필더", "공격수", "가드", "포워드", "센터"].index(p["pos"]) if p["pos"] in ("골키퍼", "수비수", "미드필더", "공격수", "가드", "포워드", "센터") else 9, p["no"] if isinstance(p["no"], int) else 999))
     return out
+
+
+_swr_busy = set()
+
+
+def odds_swr(g, lite=False):
+    """화면용: 경기 전 배당 캐시가 만료됐어도 이전 값(메모리/스냅샷)을 바로 돌려주고 뒤에서 갱신(stale-while-revalidate).
+    시작한 경기·이전 값이 없는 경기는 odds() 그대로."""
+    kind, gid = g.get("kind"), g.get("id")
+    if kind not in HOSTS or not gid or g.get("state") != "scheduled":
+        return odds(g, lite)
+    key = ("odds", kind, gid)
+    with _lk:
+        e = _c.get(key)
+    if e and time.time() < e[0]:
+        return odds(g, lite)
+    prev = (e[1] if e else None) or snap_get(kind, gid)
+    if not prev:
+        return odds(g, lite)
+    if key not in _swr_busy:
+        _swr_busy.add(key)
+        def _r():
+            try:
+                odds(g, lite)
+            finally:
+                _swr_busy.discard(key)
+        threading.Thread(target=_r, daemon=True).start()
+    bk = prev.get("bk") or "bet365"
+    out = dict(prev["o"]); out["book"] = prev.get("name") or BOOK
+    out["bs"] = BOOK_SHORT.get(bk, (prev.get("name") or bk)[:4].upper())
+    out["x"] = prev.get("x") or {}
+    out["mv"] = prev.get("mv") or {}; out["at"] = prev.get("at"); out["final"] = False
+    return out
