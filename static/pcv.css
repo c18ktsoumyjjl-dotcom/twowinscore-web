@@ -98,4 +98,6 @@ html:not([data-theme=light]) .tp.pcv .tpc .clk,[data-theme=dark] .tp.pcv .tpc .c
 .dmain:has(>.tp.pcv) #hero .t6,.dmain:has(>.tp.pcv) #hero .score5{display:none}
 .dmain:has(>.tp.pcv) #hero .m6{display:block;margin:0;padding:0}
 .dmain:has(>.tp.pcv) #hero .m6>span{margin:0}
+.lsx{padding:10px 12px 0}.lsx .tp.pcv{margin:0}.lsx .lsl{margin:0;padding:8px 0;font-size:12px;opacity:.6}
+.lsmore{display:block;text-align:right;margin:6px 2px 0;font-size:12px;font-weight:800;color:#ff8a3d;text-decoration:none}.lsmore:hover{text-decoration:underline}
 }

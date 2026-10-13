@@ -512,6 +512,25 @@ def _top(g, v, det, com=None):
         return None
 
 
+@app.route("/api/strip/<path:key>")
+def api_strip(key):
+    """PC 메인 목록 펼침용: 상세 페이지와 같은 경기장 스트립 HTML(실제 데이터만)."""
+    d = parse_day(request.args.get("d"))
+    g = data.find_game(key, d) or (data.find_game(key, d - timedelta(days=1)) if d == today() else None)
+    if not g:
+        return jsonify({}), 404
+    v = view(g)
+    try:
+        com = plays.commentary(g)
+    except Exception:
+        com = None
+    t = _top(g, v, None, com)
+    if not t:
+        return jsonify({}), 500
+    html = str(get_template_attribute("_top.html", "top")(t, v, v["table"], "pcv"))
+    return jsonify({"html": html, "live": g["state"] == "live", "kind": g["kind"], "url": f"/game/{v['key']}?d={d.isoformat()}"})
+
+
 @app.route("/api/top/<path:key>")
 def api_top(key):
     d = parse_day(request.args.get("d"))
