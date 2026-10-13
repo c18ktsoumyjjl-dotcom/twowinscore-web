@@ -201,6 +201,9 @@ def _loop(order):
         time.sleep(max(5, LOOP - (time.time() - t0)))
 
 
+_od_tried = {}
+
+
 def _odds_loop():
     """경기 시작 전 배당을 미리 받아 디스크 스냅샷으로 남겨요(아무도 안 열어본 경기도 종료 후 배당 표시)."""
     import teamodds, curation
@@ -216,18 +219,23 @@ def _odds_loop():
             except Exception:
                 pass
             cnt = 0
+            # 오늘·내일 경기 전 전부(가까운 경기부터). 첫 화면 HTML에 배당을 같이 넣으려면 디스크 스냅샷에 미리 있어야 해서요.
+            gs = sorted((g for g in gs if g.get("state") == "scheduled" and g.get("id") and g.get("start")), key=lambda g: g["start"])
             for g in gs:
-                if g.get("state") != "scheduled" or not g.get("id") or not g.get("start"):
-                    continue
                 mins = (g["start"] - now).total_seconds() / 60
-                if not (0 < mins < 100) or curation.hidden(g, now, g["start"].date() == t or mins < 1440):
+                if not (0 < mins < 2880) or curation.hidden(g, now, g["start"].date() == t or mins < 1440):
                     continue
                 sv = teamodds.snap_get(g["kind"], g["id"])
-                if sv and time.time() - sv.get("saved", 0) < 40 * 60:
+                age = 40 * 60 if mins < 360 else 120 * 60   # 6시간 안: 40분, 그 뒤: 2시간마다
+                if sv and time.time() - sv.get("saved", 0) < age:
                     continue
+                tk = (g["kind"], g["id"])
+                if time.time() - _od_tried.get(tk, 0) < age:   # 제공처에 배당 없음 → 같은 간격 동안 다시 안 물어요
+                    continue
+                _od_tried[tk] = time.time()
                 teamodds.odds(g)
                 cnt += 1
-                if cnt >= 40:
+                if cnt >= 80:
                     break
                 time.sleep(1.5)
             n += 1

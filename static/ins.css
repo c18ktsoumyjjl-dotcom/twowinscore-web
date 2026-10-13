@@ -61,3 +61,5 @@ img.bso{display:block;flex:none;width:56px!important;height:22px!important;max-w
 .bsl{display:block;max-width:100%;margin-top:1px;font-size:10px;line-height:13px;color:#9fb0d6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .bsl i{font-style:normal}.bsl b{font-weight:400;color:#5d6a88}
 .ms .bsl{max-width:76px;text-align:left}.ms .bsl .bsp,.ms .bsl b{display:none}
+
+/* 모바일 배당: 고정 폭 칸, 없으면 같은 높이 '배당 준비중' */.mr .mo i{display:inline-block;min-width:36px;text-align:center;box-sizing:border-box}.mr .mo.mo0{grid-column:2/5;justify-self:center;font-size:10px;font-weight:700;color:var(--mu);opacity:.75;letter-spacing:.2px;padding:2px 0}

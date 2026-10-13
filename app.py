@@ -441,7 +441,18 @@ def api_games_other():
             out.append(_cur([view(g)], [g], d)[0])
         except Exception:
             pass
-    r = jsonify({"games": out})
+    od = {}
+    try:   # 기타 리그도 저장된 배당을 같이 보내 행과 같은 프레임에 그려요(조회 없음)
+        import teamodds
+        for g in gs:
+            o = teamodds.peek(g)
+            if o:
+                od[str(g["key"])] = _od_lr(g, o)
+            elif o is False:
+                od[str(g["key"])] = None
+    except Exception:
+        pass
+    r = jsonify({"games": out, "od": od})
     r.headers["Cache-Control"] = "no-store"
     return r
 
