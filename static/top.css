@@ -147,3 +147,15 @@ html:not([data-theme=light]) .tpvs td.tt b{color:#fff}
 .tpvs.many td.tt b{font-size:12.5px}
 .tpvs.many th.on em{font-size:8px;padding:0 3px}
 }
+@media (max-width:1023px){
+.tpvs{padding:5px 6px 3px;border-radius:10px}
+.tpvs th,.tpvs td,.tpvs.many th,.tpvs.many td{font-size:12px;padding:1px 0;line-height:1.15}
+.tpvs thead th,.tpvs.many thead th{font-size:10px;padding:0 0 2px}
+.tpvs th.nm,.tpvs.many th.nm{font-size:11.5px}
+.tpvs.many th,.tpvs.many td{font-size:11px}
+.tpvs td.tt b,.tpvs.many td.tt b{font-size:13px}
+.tpvs .tt,.tpvs.many .tt{font-size:9px}
+.tpvs th.on em,.tpvs.many th.on em{top:-9px;font-size:7.5px;line-height:1.25;padding:0 3px;border-radius:5px}
+.tprow:has(.tpvs:not([hidden])){align-items:stretch}
+.tprow:has(.tpvs:not([hidden])) .tpbk{height:auto;min-height:40px}
+}
