@@ -15,6 +15,11 @@ import livefix              # noqa: E402
 
 SEOUL = ZoneInfo("Asia/Seoul")
 CACHE = os.environ.get("CACHE_DIR", "/tmp/twowinscore-cache")
+for _d in ("", "odds", "logos", "lu_freeze"):
+    try:
+        os.makedirs(os.path.join(CACHE, _d), exist_ok=True)
+    except OSError:
+        pass
 os.makedirs(CACHE, exist_ok=True)
 _lock = threading.Lock()
 

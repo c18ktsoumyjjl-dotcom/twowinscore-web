@@ -8,6 +8,11 @@ NAVER_H = {**UA, "Referer": "https://m.sports.naver.com/"}
 _c, _lk = {}, threading.Lock()
 
 
+def _lu_dir(base):
+    import os
+    return os.path.join(os.environ["CACHE_DIR"], "lu_freeze") if os.environ.get("CACHE_DIR") else os.path.join(base, "cache", "lu_freeze")
+
+
 def _j(url, h=UA):
     with urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=12) as r:
         return json.loads(r.read().decode())
@@ -1105,7 +1110,7 @@ def _freeze(g, st, ef):
     킥오프 전: 저장. 경기 중·후: 저장본(또는 검증해 둔 data/lu_seed) 사용, 없으면 실시간 ESPN 그대로(어긋나면 숨김 쪽으로 안전)."""
     import os
     base = os.path.dirname(os.path.abspath(__file__))
-    fn = os.path.join(base, "cache", "lu_freeze", f"{g['id']}.json")
+    fn = os.path.join(_lu_dir(base), f"{g['id']}.json")
     if st == "scheduled":
         if ef:
             try:
@@ -1129,7 +1134,7 @@ def _ko_freeze(g, st, out):
     """한글 이름도 킥오프 전 확인된 것으로 고정 (경기 중 네이버 라인업은 교체 반영으로 행 구성이 바뀜). 등번호로만 붙임."""
     import os
     base = os.path.dirname(os.path.abspath(__file__))
-    fn = os.path.join(base, "cache", "lu_freeze", f"{g['id']}_ko.json")
+    fn = os.path.join(_lu_dir(base), f"{g['id']}_ko.json")
     cur = {sd: {str(p["no"]): p["ko"] for p in out[sd]["xi"] if p.get("ko")} for sd in ("home", "away")}
     if st == "scheduled":
         if any(cur.values()):

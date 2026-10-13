@@ -15,7 +15,7 @@ _c, _lk = {}, threading.Lock()
 
 # 경기 전 배당 스냅샷(디스크): API-Sports 는 경기가 끝나면 배당을 지우는 경우가 많아서,
 # 마지막으로 받은 실제 경기 전 배당을 저장해 두고 시작/종료 후에 그대로 보여줘요(재시작해도 유지).
-SNAP_DIR = os.path.join(os.environ.get("DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")), "odds")
+SNAP_DIR = os.path.join(os.environ.get("CACHE_DIR") or os.environ.get("DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")), "odds")
 _snap, _snap_lk = {}, threading.Lock()
 
 

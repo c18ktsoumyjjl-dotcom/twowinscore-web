@@ -5,7 +5,7 @@ import members as M
 
 log = logging.getLogger("logos")
 bp = Blueprint("logos", __name__)
-DIR = os.path.join(M.DATA_DIR, "logos")
+DIR = os.path.join(os.environ.get("CACHE_DIR") or M.DATA_DIR, "logos")
 SPORTS = {"football", "baseball", "basketball", "hockey", "volley", "handball", "rugby", "american-football"}
 RX = re.compile(r"^https://media\.api-sports\.io/([a-z-]+)/teams/(\d+)\.png$")
 _mem, _lk, _fail = {}, threading.Lock(), {}
