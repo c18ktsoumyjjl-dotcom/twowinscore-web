@@ -4,7 +4,8 @@ const box=document.querySelector('.fxw');if(!box)return;if(innerWidth<1024)retur
 const still=matchMedia('(prefers-reduced-motion: reduce)').matches;if(still)return;
 const mob=()=>innerWidth<=700;
 // 성능: 히어로가 화면 밖이면 플래시·비 계산 중지(보이는 모습은 동일)
-let vis=true;if('IntersectionObserver' in window)new IntersectionObserver(es=>{vis=es[es.length-1].isIntersecting}).observe(box);
+let vis=true;if('IntersectionObserver' in window)new IntersectionObserver(es=>{vis=es[es.length-1].isIntersecting;box.classList.toggle('fxoff',!vis)}).observe(box);
+if(!document.getElementById('fxoffcss')){const st=document.createElement('style');st.id='fxoffcss';st.textContent='.fxw.fxoff,.fxw.fxoff *{animation-play-state:paused!important}';document.head.appendChild(st)}
 // 관중석 플래시: 관중석 띠 영역에서 무작위 소수
 const crowd=box.querySelector('.fx-crowd');
 function flash(){if(document.hidden||!vis)return;const d=document.createElement('i');const m=mob();
