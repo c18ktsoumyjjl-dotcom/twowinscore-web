@@ -747,7 +747,7 @@ def api_odds():
 def lineup_page(key):
     d = parse_day(request.args.get("d"))
     g = data.find_game(key, d) or (data.find_game(key, d - timedelta(days=1)) if d == today() else None)
-    if not g or g["kind"] != "football":
+    if not g or g["kind"] not in ("football", "basketball", "baseball", "volleyball", "hockey"):
         abort(404)
     return render_template("lineup.html", page="lineup", g=g, d=d.isoformat(), st=data.state(g))
 
@@ -776,6 +776,19 @@ def team_page(kind, tid):
     seo["desc"] = f"{t['name']}{(' (' + t['en'] + ')') if t.get('en') else ''} {sk} {lg} 선수 명단(로스터)과 선수별 시즌 기록을 투윈스코어에서 확인하세요."
     thin = not ro["groups"]
     return render_template("team.html", page="team", t=t, ro=ro, sk=sk, seo=seo, ld=ld, thin=thin, emo=EMO.get(kind, ""))
+
+
+@app.route("/api/lu5/<path:key>")
+def api_lu5(key):
+    import lineup5
+    d = parse_day(request.args.get("d"))
+    g = data.find_game(key, d) or (data.find_game(key, d - timedelta(days=1)) if d == today() else None)
+    if not g:
+        return jsonify({"ok": False, "pre": True})
+    r = jsonify(lineup5.build(g))
+    st = data.state(g)
+    r.headers["Cache-Control"] = "public, max-age=20" if st == "live" else "public, max-age=120"
+    return r
 
 
 @app.route("/api/lineup/<path:key>")

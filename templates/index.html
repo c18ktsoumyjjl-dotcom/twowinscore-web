@@ -42,7 +42,7 @@ function pv(j){let h=(j.halt?`<div class="pv-b halt6"><b>⏸ ${esc(j.halt)}</b>$
  if(j.plays)h+=`<div class="pv-b"><h4>문자중계</h4>${j.plays.items.map(x=>`<p class="pl6 ${x.hot?'hot':''}">${esc(x.t)}</p>`).join('')}</div>`;
  if(j.vote)h+=TWVote.html({k:j.vote.k,L:j.L,R:j.R,draw:j.vote.draw,open:j.vote.open,lh:j.vote.lh});
  return h+`<a class="more6" href="${esc(j.url)}">상세 페이지 보기 ›</a>`}
-function tmBar(g){if(!g||!g.kind)return'';const fb=g.kind==='football'&&g.key;const b=t=>t&&t.id?`<a class="tmb" href="${fb?'/lineup/'+encodeURIComponent(g.key)+'?d='+D:'/team/'+esc(g.kind)+'/'+esc(t.id)}"><span>${esc(t.name)}</span><b>${fb?'선발 라인업 ›':'선수 명단 ›'}</b></a>`:'';const h=b(g.L)+b(g.R);return h?`<div class="tmbar">${h}</div>`:''}
+function tmBar(g){if(!g||!g.kind)return'';const fb=['football','basketball','baseball','volleyball','hockey'].includes(g.kind)&&g.key;const b=t=>t&&t.id?`<a class="tmb" href="${fb?'/lineup/'+encodeURIComponent(g.key)+'?d='+D:'/team/'+esc(g.kind)+'/'+esc(t.id)}"><span>${esc(t.name)}</span><b>${fb?'선발 라인업 ›':'선수 명단 ›'}</b></a>`:'';const h=b(g.L)+b(g.R);return h?`<div class="tmbar">${h}</div>`:''}
 async function loadPv(k){try{const j=await (await fetch('/api/preview/'+encodeURIComponent(k)+'?d='+D)).json();PV[k]=j.error?'<p class="empty">정보를 불러오지 못했어요.</p>':tmBar(odGame(k))+pv(j);PV[k+'@']=Date.now()}catch(e){PV[k]='<p class="empty">정보를 불러오지 못했어요.</p>'}
  const el=document.querySelector('.pv6[data-k="'+CSS.escape(k)+'"] .pvin');if(el){el.innerHTML=PV[k];TWVote.scan(el)}}
 function toggleRow(k){const was=OPEN===k;document.querySelectorAll('.pv6.open').forEach(x=>x.classList.remove('open'));document.querySelectorAll('.g5.op').forEach(x=>x.classList.remove('op'));
