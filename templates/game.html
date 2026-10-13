@@ -64,7 +64,7 @@
 </section>
 {% endif %}
 
-{% if kind in ('baseball','basketball') %}<section class="box lu9" id="lu9" data-kind="{{kind}}" data-lh="{{1 if g.left_home else 0}}" data-k="{{g.key}}" data-d="{{d}}" data-live="{{1 if g.state=='live' else 0}}" data-pre="{{1 if g.state=='scheduled' else 0}}" data-away="{{g.L.name if not g.left_home else g.R.name}}" data-home="{{g.R.name if not g.left_home else g.L.name}}"><h3>{{ '선수 기록' if kind=='basketball' else ('선발 라인업' if kind=='football' else '라인업') }} <small id="lu9s"></small></h3><div id="lu9b"><p class="lu9e">불러오는 중…</p></div></section><script src="/static/lineup.js?v=8"></script>{% endif %}
+{% if kind in ('baseball','basketball') %}<section class="box lu9" id="lu9" data-kind="{{kind}}" data-lh="{{1 if g.left_home else 0}}" data-k="{{g.key}}" data-d="{{d}}" data-live="{{1 if g.state=='live' else 0}}" data-pre="{{1 if g.state=='scheduled' else 0}}" data-away="{{g.L.name if not g.left_home else g.R.name}}" data-home="{{g.R.name if not g.left_home else g.L.name}}"><h3>{{ '선수 기록' if kind=='basketball' else ('선발 라인업' if kind=='football' else '라인업') }} <small id="lu9s"></small></h3><div id="lu9b"><p class="lu9e">불러오는 중…</p></div></section><script src="/static/lineup.js?v=9"></script>{% endif %}
 
 {% if injuries %}<section class="box"><h3>{{injuries[0].label}}</h3><div class="two">{% for b in injuries %}<div><small>{{b.team}}</small>{% if b.none %}<span>없음</span>{% endif %}{% for n,dt in b.rows %}<p class="inj"><b>{{n}}</b> {{dt}}</p>{% endfor %}{% if b.more %}<span>외 {{b.more}}명</span>{% endif %}</div>{% endfor %}</div></section>{% endif %}
 

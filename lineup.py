@@ -864,12 +864,11 @@ def football(g):
     ef = _freeze(g, st, ef)
     if ef and not ef.get("agree"):   # ESPN과 선발 11명이 다르면 틀릴 수 있는 라인업은 숨김
         return {"kind": "football", "none": True, "why": "disagree"}
+    pre_ok = bool(ef) and (st == "scheduled" or ef.get("_frozen"))   # 킥오프 전 저장본(또는 킥오프 전 실시간)만 좌우 판단 근거
     for side in ("home", "away"):
         t = out[side]
-        t["pitch"] = _grid_ok(t["xi"], ((ef or {}).get("pos") or {}).get(side) or {})
-        if not t["pitch"]:
-            for p in t["xi"]:
-                p["_g"] = p.pop("g", None)
+        _orient(t["xi"], (((ef or {}).get("pos") or {}).get(side) or {}) if pre_ok else {})
+        t["pitch"] = True   # 축구는 항상 경기장 배치 (API-Sports formation+grid, 좌우는 ESPN 킥오프 전 위치로 보정)
     try:
         _ko_names(g, out)
     except Exception:
@@ -884,9 +883,6 @@ def football(g):
         for p in out[side]["xi"]:
             p.pop("_g", None)
         nos = out[side].pop("_no")
-        e = (ef or {}).get(side)
-        if e and out[side]["form"] and e != out[side]["form"]:   # 두 출처 포메이션이 다르면 숨김 (라인업은 유지)
-            out[side]["form"] = ""
     return out
 
 
@@ -930,6 +926,45 @@ def _side_tag(a):
     if a.endswith("-R") or a in ("RB", "RM", "RW", "RWB", "RF"):
         return "R"
     return None
+
+
+def _orient(xi, epos):
+    """grid 없거나 깨지면 포지션(GK/DF/MF/FW)으로 행을 만듦. ESPN 킥오프 전 위치가 11명 모두 있고
+    좌우 표시가 grid와 반대 쪽이 더 많으면 열을 뒤집음(ESPN 우선). 그 외에는 API-Sports grid 그대로."""
+    rows = {}
+    try:
+        for p in xi:
+            r, c = map(int, str(p.get("g") or "").split(":"))
+            rows.setdefault(r, []).append(c)
+        bad = len({(r, c) for r in rows for c in rows[r]}) != 11 or len(rows) < 2
+    except Exception:
+        bad = True
+    if bad:
+        order = {"GK": 1, "DF": 2, "MF": 3, "FW": 4}
+        cnt = {}
+        for p in xi:
+            r = order.get(p.get("pos"), 3)
+            cnt[r] = cnt.get(r, 0) + 1
+            p["g"] = f"{r}:{cnt[r]}"
+        return
+    if len(epos) < 11:
+        return
+    keep = flip = 0
+    for p in xi:
+        tag = _side_tag(epos.get(p.get("no")))
+        r, c = map(int, p["g"].split(":"))
+        n = len(rows[r])
+        if not tag or n < 2 or c == (n + 1) / 2:
+            continue
+        left = c < (n + 1) / 2
+        if (tag == "L") == left:
+            keep += 1
+        else:
+            flip += 1
+    if flip > keep:
+        for p in xi:
+            r, c = map(int, p["g"].split(":"))
+            p["g"] = f"{r}:{len(rows[r]) + 1 - c}"
 
 
 def _grid_ok(xi, epos):
@@ -1083,6 +1118,7 @@ def _freeze(g, st, ef):
         try:
             d = json.load(open(f))
             d["pos"] = {k: {int(n): a for n, a in v.items()} for k, v in (d.get("pos") or {}).items()}
+            d["_frozen"] = True
             return d
         except Exception:
             continue
