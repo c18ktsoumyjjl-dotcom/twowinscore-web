@@ -24,3 +24,6 @@ footer .mft a{color:inherit!important;text-decoration:none;font-weight:500}
 footer .mft i{font-style:normal;opacity:.6}
 body.gm7c footer{display:none!important}
 }
+
+/* 소리 켜기 힌트: 하단 탭바 위로 */
+@media (max-width:1023px){body.mapp .sndhint{bottom:calc(58px + env(safe-area-inset-bottom) + 12px)!important;z-index:51}}
