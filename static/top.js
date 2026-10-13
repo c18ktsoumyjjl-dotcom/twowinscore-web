@@ -9,11 +9,11 @@ const bk=document.getElementById('tpbk');if(bk)bk.addEventListener('click',goBac
 function tgBack(){try{const tg=window.Telegram&&Telegram.WebApp;if(tg&&tg.BackButton&&(tg.initData||tg.platform&&tg.platform!=='unknown')){tg.BackButton.show();tg.BackButton.onClick(()=>goBack())}}catch(e){}}
 const inTg=window.TelegramWebviewProxy||/tgWebApp/.test(location.hash)||/tgWebApp/.test(sessionStorage.getItem('tw_tg')||'');if(/tgWebApp/.test(location.hash))try{sessionStorage.setItem('tw_tg','tgWebApp')}catch(e){}
 if(window.Telegram&&Telegram.WebApp)tgBack();else if(inTg){const sc=document.createElement('script');sc.src='/static/tg/telegram-web-app.js?v=59';sc.onload=tgBack;document.head.appendChild(sc)}
-fetch('/api/odds?k='+encodeURIComponent(K)+'&d='+(new URLSearchParams(Q).get('d')||'')).then(r=>r.json()).then(j=>{const o=j[K];if(!o||o.L==null||o.R==null){document.getElementById('tpod').hidden=true;return}const mv=o.mv||{};
+const tpShow=o=>{if(!o||o.L==null||o.R==null){document.getElementById('tpod').hidden=true;return}const mv=o.mv||{};
  const c=(k,v,m)=>`<span class="c"><small>${k}</small><b class="${m>0?'up':m<0?'dn':''}">${Number(v).toFixed(2)}${m>0?'▲':m<0?'▼':''}</b></span>`;
  const lh=o.lh!==false;let h=`<span class="bk">${esc(o.bs||o.book||'')}</span>`+c(lh?'1':'원정',o.L,mv.L)+(o.D?c('X',o.D,mv.D):'')+c(lh?'2':'홈',o.R,mv.R);
  const x=o.x||{},ex=[];if(x.hc){const l=lh?x.hc.ln:-x.hc.ln;ex.push(`핸디 ${l>0?'+':''}${l}`)}if(x.ou)ex.push(`기준 ${x.ou.ln}`);if(ex.length)h+=`<span class="ex">${ex.join(' · ')}</span>`;
- const el=document.getElementById('tpod');el.innerHTML=h;el.hidden=false}).catch(()=>{const el=document.getElementById('tpod');if(el&&!el.innerHTML)el.hidden=true});
+ const el=document.getElementById('tpod');if(el.innerHTML!==h)el.innerHTML=h;el.hidden=false};/* 서버가 HTML에 넣어준 캐시 배당은 바로 그리고, 최신값은 뒤에서 받아 바뀐 경우만 교체 */const o0=(window.__OD||{})[K];if(o0)tpShow(o0);fetch('/api/odds?k='+encodeURIComponent(K)+'&d='+(new URLSearchParams(Q).get('d')||'')).then(r=>r.json()).then(j=>{const o=j[K];if(!o&&o0)return;tpShow(o)}).catch(()=>{const el=document.getElementById('tpod');if(el&&!el.innerHTML)el.hidden=true});
 const tk=document.getElementById('tptk');if(tk){const b=tk.querySelector('.tkb'),x=tk.querySelector('.tkx');b.onclick=()=>{const o=x.hidden;x.hidden=!o;b.setAttribute('aria-expanded',String(o));tk.classList.toggle('open',o);if(window.TWGMmeas)TWGMmeas()}}
 const MQ=matchMedia('(max-width:1023px)');let spHome=null;
 function placePlays(){const sp=document.getElementById('sec-plays');if(!sp)return;if(!spHome){spHome=document.createComment('sp');sp.before(spHome)}

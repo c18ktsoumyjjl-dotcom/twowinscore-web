@@ -3,7 +3,7 @@
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const mine=()=>{try{return JSON.parse(localStorage.getItem('tw_votes')||'{}')}catch(e){return{}}};
 const setMine=(k,s)=>{const m=mine();m[k]=s;const ks=Object.keys(m);if(ks.length>300)delete m[ks[0]];localStorage.setItem('tw_votes',JSON.stringify(m))};
-const C={},O={};
+const C={},O={};{const o0=window.__OD||{};for(const x in o0)if(o0[x])O[x]=o0[x]}
 const oc=(el,s)=>{const o=O[el.dataset.k];if(!o)return'';let m=s;if(s!=='D'&&o[s]==null){const lh=el.dataset.lh!=='0';m=((s==='L')===lh)?'H':'A'}const v=o[m];if(v==null)return'';const mv=(o.mv||{})[m];return `<i class="od8 ${mv>0?'up':mv<0?'dn':''}">${Number(v).toFixed(2)}${mv>0?'▲':mv<0?'▼':''}</i>`};
 function vhtml(o){/* o:{k,L,R,draw,open} */
  return `<div class="vt8" data-k="${esc(o.k)}" data-l="${esc(o.L)}" data-r="${esc(o.R)}" data-draw="${o.draw?1:0}" data-open="${o.open?1:0}" data-lh="${(o.lh===false||o.lh===0||o.lh==='0')?0:1}"></div>`}
@@ -14,10 +14,10 @@ function paint(el){const k=el.dataset.k,c=C[k],my=mine()[k],open=el.dataset.open
  h+=sides.map(([s,n])=>{const p=tot?Math.round((c[s]||0)*100/tot):0;
   const od=oc(el,s);return show?`<div class="vt8r ${my===s?'me':''} ${O[k]?'hasod':''}"><span class="nm">${esc(n)}${my===s?' ✓':''}</span>${O[k]?`<span class="odc">${od||'-'}</span>`:''}<span class="vbar"><span class="fill" style="width:${p}%"></span></span><b>${p}%</b></div>`
   :`<button class="vt8btn" data-s="${s}" ${open?'':'disabled'}><span class="bn">${esc(n)}</span>${od}</button>`}).join('');
- const ob=O[k];el.innerHTML=h+`</div>${ob?`<p class="od8n">배당 기준 <b>${esc(ob.book)}</b> · ${ob.final?'경기 전 최종 배당':`${esc(ob.at||'')} 갱신 · 15분마다 반영`}</p>`:''}<p class="vt8n">팬들의 응원 비율이며 경기 결과 예측이 아닙니다.${open&&!my?'':' 투표는 경기 시작 전까지 가능해요.'}</p>`}
+ const ob=O[k];const H=h+`</div>${ob?`<p class="od8n">배당 기준 <b>${esc(ob.book)}</b> · ${ob.final?'경기 전 최종 배당':`${esc(ob.at||'')} 갱신 · 15분마다 반영`}</p>`:''}<p class="vt8n">팬들의 응원 비율이며 경기 결과 예측이 아닙니다.${open&&!my?'':' 투표는 경기 시작 전까지 가능해요.'}</p>`;if(el.__h!==H){el.__h=H;el.innerHTML=H}/* 같으면 그대로 둬서 깜빡임 없음 */}
 async function scan(root,lazy){const els=[...(root||document).querySelectorAll('.vt8')];if(!els.length)return;
  const need=[...new Set(els.map(e=>e.dataset.k))].filter(k=>!lazy||!C[k]);if(!need.length){els.forEach(paint);return}
- const qs=need.map(encodeURIComponent).join(','),dq=new URLSearchParams(location.search).get('d')||'';
+ els.forEach(paint);/* 캐시 배당은 바로 */const qs=need.map(encodeURIComponent).join(','),dq=new URLSearchParams(location.search).get('d')||'';
  await Promise.all([fetch('/api/votes?k='+qs).then(r=>r.json()).then(j=>Object.assign(C,j)).catch(()=>{}),
   fetch('/api/odds?d='+dq+'&k='+qs).then(r=>r.json()).then(j=>{for(const x in j)if(j[x])O[x]=j[x]}).catch(()=>{})]);
  els.forEach(paint)}

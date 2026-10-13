@@ -214,7 +214,7 @@ def peek(g):
             e = _c.get(("odds", kind, gid))
         cur = (e[1] if e else None) or snap_get(kind, gid)
         if not cur:
-            return None
+            return False if (e and time.time() < e[0]) else None   # False = 최근 조회했는데 배당 없음
         bk = cur.get("bk") or "bet365"
         out = dict(cur["o"]); out["book"] = cur.get("name") or BOOK
         out["bs"] = BOOK_SHORT.get(bk, (cur.get("name") or bk)[:4].upper())

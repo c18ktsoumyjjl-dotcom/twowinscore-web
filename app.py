@@ -538,7 +538,13 @@ def game(key):
     vi = _vinfo(g, v); seo = _game_seo(g, v); _m("vote_seo")
     an = _analysis(g, v, det, forms); _m("an")
     top = _top(g, v, det, com); _m("top")
-    html = render_template("game.html", page="game", g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=com, gl=gl,
+    try:
+        import teamodds
+        _o = teamodds.peek(g)
+        od0 = {v["key"]: _od_lr(g, _o)} if _o else {}
+    except Exception:
+        od0 = {}
+    html = render_template("game.html", page="game", od0=od0, g=v, d=d.isoformat(), label=day_label(d), table=v["table"], com=com, gl=gl,
                            forms=[f for f in forms if f[1]], h2h=det["h2h"], starters=det.get("starters"), batters=det.get("batters"),
                            injuries=det["injuries"], stand=det["standings"], kind=g["kind"],
                            names={g["home"], g["away"]}, gnews=gnews, points=pts, vote=vi, seo=seo, an=an,
@@ -781,6 +787,8 @@ def _od0(d, g0):
             o = teamodds.peek(g) if g else None
             if o:
                 out[x["key"]] = _od_lr(g, o)
+            elif o is False:
+                out[x["key"]] = None   # 배당 없음 확정: 자리 안 잡고 다시 묻지도 않아요
     except Exception:
         pass
     return out
