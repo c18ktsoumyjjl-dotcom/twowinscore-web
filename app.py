@@ -464,7 +464,7 @@ def index():
                            yday=(t - timedelta(days=1)).isoformat(), today=t.isoformat(),
                            tmr=(t + timedelta(days=1)).isoformat(),
                            dmin=(t - timedelta(days=14)).isoformat(), dmax=(t + timedelta(days=7)).isoformat(),
-                           f=request.args.get("f", "all"), g0=g0, lg0=lg0)
+                           f=request.args.get("f", "all"), g0=g0, lg0=lg0, od0=_od0(d, g0))
 
 
 def _g0(d):
@@ -738,6 +738,37 @@ def api_featured():
     return jsonify({"date": d.isoformat(), "today": d == today(), "pending": pending, "games": out})
 
 
+def _od_lr(g, o):
+    """화면 좌·우(L/R)에 맞춘 배당. 야구=원정L/홈R, 그 외=홈L/원정R. 투표 L/R과 동일."""
+    if not (o and g):
+        return o
+    lh = g["kind"] != "baseball"
+    o = dict(o)
+    o["L"], o["R"] = (o["H"], o["A"]) if lh else (o["A"], o["H"])
+    mv = o.get("mv") or {}
+    o["mv"] = {**mv, "L": mv.get("H") if lh else mv.get("A"), "R": mv.get("A") if lh else mv.get("H")}
+    o["lh"] = lh
+    return o
+
+
+def _od0(d, g0):
+    """첫 화면용: 서버 캐시에 이미 있는 배당을 HTML에 같이 넣어 /api/odds 왕복 없이 행과 함께 그려요(조회 없음)."""
+    import teamodds
+    out = {}
+    try:
+        if not g0:
+            return out
+        raw = {str(g["key"]): g for g in data.games_for(d)[0]}
+        for x in g0.get("games", []):
+            g = None if x.get("other") else raw.get(str(x["key"]))
+            o = teamodds.peek(g) if g else None
+            if o:
+                out[x["key"]] = _od_lr(g, o)
+    except Exception:
+        pass
+    return out
+
+
 @app.route("/api/odds")
 def api_odds():
     import teamodds
@@ -749,15 +780,7 @@ def api_odds():
         try:
             g = data.find_game(k, d) or (data.find_game(k, d - timedelta(days=1)) if d == today() else None)
             o = teamodds.odds(g, lite) if g else None
-            if o and g:
-                # 화면 좌·우(L/R)에 맞춘 배당. 야구=원정L/홈R, 그 외=홈L/원정R. 투표 L/R과 동일.
-                lh = g["kind"] != "baseball"
-                o = dict(o)
-                o["L"], o["R"] = (o["H"], o["A"]) if lh else (o["A"], o["H"])
-                mv = o.get("mv") or {}
-                o["mv"] = {**mv, "L": mv.get("H") if lh else mv.get("A"), "R": mv.get("A") if lh else mv.get("H")}
-                o["lh"] = lh
-            return k, o
+            return k, _od_lr(g, o)
         except Exception:
             return k, None
     ks = [x[:80] for x in (request.args.get("k") or "").split(",") if x][:20]

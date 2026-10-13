@@ -204,6 +204,27 @@ def has_hint(g):
         return False
 
 
+def peek(g):
+    """네트워크 조회 없이 캐시·스냅샷에 있는 배당만(첫 화면 HTML에 같이 넣는 용도). 없으면 None."""
+    try:
+        kind, gid = g.get("kind"), g.get("id")
+        if kind not in HOSTS or not gid:
+            return None
+        with _lk:
+            e = _c.get(("odds", kind, gid))
+        cur = (e[1] if e else None) or snap_get(kind, gid)
+        if not cur:
+            return None
+        bk = cur.get("bk") or "bet365"
+        out = dict(cur["o"]); out["book"] = cur.get("name") or BOOK
+        out["bs"] = BOOK_SHORT.get(bk, (cur.get("name") or bk)[:4].upper())
+        out["x"] = cur.get("x") or {}
+        out["mv"] = cur.get("mv") or {}; out["at"] = cur.get("at"); out["final"] = g.get("state") != "scheduled"
+        return out
+    except Exception:
+        return None
+
+
 def odds(g, lite=False):
     """{"book","bs","H","A",("D"),"mv","at","final"} 또는 None. 시작/종료 경기는 마지막 경기 전 배당(1회 조회 후 고정)."""
     kind = g.get("kind")

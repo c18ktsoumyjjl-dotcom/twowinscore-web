@@ -75,7 +75,7 @@ async function bsoTick(){if(document.hidden||!DATA)return;const ks=DATA.games.fi
  if(!ks.length){if(BSJ!==''){for(const k in BS)delete BS[k];BSJ='';render()}return}
  try{const j=await (await fetch('/api/bso?d='+D+'&k='+ks.slice(0,20).map(encodeURIComponent).join(','))).json();const js=JSON.stringify(j);if(js===BSJ)return;BSJ=js;for(const k in BS)delete BS[k];for(const k in j)if(j[k])BS[k]=j[k];render()}catch(e){}}
 setTimeout(bsoTick,1500);setInterval(bsoTick,12000);
-const OD={},ODQ=new Set();let ODT=0;
+const OD={{ (od0 or {})|tojson }},ODQ=new Set();let ODT=0;
 function odV(g){const o=OD[g.key];if(!o)return null;const f=m=>{const v=o[m];if(v==null)return'';const mv=(o.mv||{})[m];return `<i class="${mv>0?'up':mv<0?'dn':''}">${Number(v).toFixed(2)}</i>`};if(o.L!=null&&o.R!=null)return{L:f('L'),D:o.D!=null?f('D'):'',R:f('R')};const lh=g.left_home!=null?!!g.left_home:g.kind!=='baseball';return{L:f(lh?'H':'A'),D:o.D!=null?f('D'):'',R:f(lh?'A':'H')}}
 function odRow(g){const v=odV(g);return v?`<div class="od5" title="${esc(OD[g.key].book||'')} 배당">${v.L}${v.D||`<small>${esc(OD[g.key].bs||'')}</small>`}${v.R}</div>`:''}
 function odM(g){const v=odV(g);return v?`<span class="mo L">${v.L}</span><span class="mo C">${v.D||`<small>${esc(OD[g.key].bs||'')}</small>`}</span><span class="mo R">${v.R}</span>`:''}
