@@ -749,10 +749,10 @@ def api_lineup(key):
     import lineup
     d = parse_day(request.args.get("d"))
     g = data.find_game(key, d) or (data.find_game(key, d - timedelta(days=1)) if d == today() else None)
-    if not g or g["kind"] not in ("baseball", "basketball"):
+    if not g or g["kind"] not in ("baseball", "basketball", "football"):
         return jsonify({"ok": False})
     st = data.state(g)
-    lu = lineup.get(g) if g["kind"] == "baseball" else lineup.basketball(g)
+    lu = lineup.get(g) if g["kind"] == "baseball" else lineup.basketball(g) if g["kind"] == "basketball" else lineup.football(g)
     r = jsonify({"ok": bool(lu), "state": st, **(lu or {})})
     r.headers["Cache-Control"] = "public, max-age=20" if st == "live" else "public, max-age=120"
     return r

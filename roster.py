@@ -52,7 +52,9 @@ def _football(tid, base):
         return None
     key = lambda p: (FORD.index(p["pos"]) if p["pos"] in FORD else 9, -p["_ln"])
     top = set(id(p) for p in sorted(ps, key=lambda p: -p["_ln"])[:11] if p["_ln"] > 0)
-    return [_g("선발", sorted([p for p in ps if id(p) in top], key=key), f"{season} 시즌 선발 출전 상위 11명"),
+    if sum(1 for p in ps if p["_ln"] > 0) < 11 or max(p["_ln"] for p in ps) < 3:   # 시즌 표본이 너무 적으면 주전 구분 안 함
+        return [_g("출전 선수", sorted(ps, key=key), f"{season} 시즌 출전 기록 (경기 수가 적어 주전 구분 안 함)")], f"API-Sports · {season} 시즌 출전 선수"
+    return [_g("주전급", sorted([p for p in ps if id(p) in top], key=key), f"{season} 시즌 선발 출전 많은 11명 · 경기별 선발 라인업 아님"),
             _g("후보", sorted([p for p in ps if id(p) not in top], key=key), "그 외 출전 선수")], f"API-Sports · {season} 시즌 출전 선수"
 
 

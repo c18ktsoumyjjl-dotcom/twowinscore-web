@@ -29,6 +29,12 @@ async function load(){if(!document.body.contains(box)){clearInterval(timer);retu
  let j;try{j=await (await fetch('/api/lineup/'+encodeURIComponent(box.dataset.k)+'?d='+box.dataset.d)).json()}catch(e){return}
  const b=document.getElementById('lu9b'),s=document.getElementById('lu9s');
  if(!j.ok){b.innerHTML='<p class="lu9e">라인업 정보 없음</p>';s.textContent='';clearInterval(timer);return}
+ if(j.kind==='football'){if(j.none){b.innerHTML='<p class="lu9e">공식 라인업 발표 전이에요 (보통 킥오프 약 1시간 전 발표)</p>';s.textContent='';return}
+  const lh=box.dataset.lh==='1',order=lh?['home','away']:['away','home'];
+  const li=p=>`<tr><td class="o">${p.no!=null?esc(p.no):''}</td><td class="n">${esc(p.name)}${p.pos?`<small>${esc(p.pos)}</small>`:''}</td></tr>`;
+  b.innerHTML='<div class="lu9g">'+order.map(sd=>{const t=j[sd],nm=sd==='home'?box.dataset.home:box.dataset.away;
+   return `<div class="lu9t"><h4>${esc(nm)} <small>${sd==='away'?'원정':'홈'}${t.form?' · '+esc(t.form):''}</small></h4><div class="lu9w"><table><thead><tr><th class="o">#</th><th class="n">선발 11</th></tr></thead><tbody>${t.xi.map(li).join('')}${t.subs.length?`<tr><td class="o"></td><td class="n sep">교체 명단</td></tr>`+t.subs.map(li).join(''):''}</tbody></table></div>${t.coach?`<p class="lu9e">감독 ${esc(t.coach)}</p>`:''}</div>`}).join('')+'</div>';
+  s.textContent=j.src;return}
  if(j.kind==='basketball'){bk(j,b,s);return}
  const pre=j.away.pre&&j.home.pre;
  if(pre&&!j.away.bat.length&&!j.home.bat.length){b.innerHTML='<p class="lu9e">라인업 발표 전</p>';s.textContent=j.src;return}

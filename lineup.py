@@ -828,3 +828,33 @@ def bso_mini(g, b):
         if m:
             b["t"]["avg"] = m.group(1)
     return b
+
+
+# ---------- 축구: 공식 발표 선발 (API-Sports /fixtures/lineups) ----------
+_FP = {"G": "GK", "D": "DF", "M": "MF", "F": "FW"}
+
+
+def football(g):
+    """경기별 공식 발표 라인업만. 팀 id가 이 경기 홈/원정과 정확히 맞고 양 팀 선발 11명일 때만 보여줌.
+    발표 전·불일치 → {'none': True} (예상 라인업이나 시즌 주전으로 대신 채우지 않음)."""
+    import teamodds as T
+    if g.get("kind") != "football" or not g.get("id"):
+        return None
+    st = data.state(g) if g else ""
+    ttl = 120 if st == "scheduled" else 300
+    rs = _cache(("fbl", g["id"]), ttl, lambda: T._get("football", "/fixtures/lineups", {"fixture": g["id"]}))
+    if not rs:
+        return {"kind": "football", "none": True}
+    by = {((x.get("team") or {}).get("id")): x for x in rs}
+    if len(rs) != 2 or set(by) != {g.get("home_id"), g.get("away_id")}:
+        return {"kind": "football", "none": True, "why": "mismatch"}
+    out = {"kind": "football", "src": "API-Sports · 공식 발표"}
+    for side in ("home", "away"):
+        x = by[g.get(side + "_id")]
+        xi = [(p.get("player") or {}) for p in x.get("startXI") or []]
+        if len(xi) != 11 or sum(1 for p in xi if p.get("pos") == "G") != 1 or len({p.get("id") or p.get("name") for p in xi}) != 11:
+            return {"kind": "football", "none": True, "why": "invalid"}
+        sub = [(p.get("player") or {}) for p in x.get("substitutes") or []]
+        mk = lambda p: {"id": p.get("id") or p.get("name"), "no": p.get("number"), "name": __import__("html").unescape(p.get("name") or ""), "pos": _FP.get(p.get("pos"), "")}
+        out[side] = {"form": x.get("formation") or "", "coach": ((x.get("coach") or {}).get("name") or ""), "xi": [mk(p) for p in xi], "subs": [mk(p) for p in sub]}
+    return out
