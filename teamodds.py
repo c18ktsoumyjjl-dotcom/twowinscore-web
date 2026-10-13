@@ -343,7 +343,7 @@ def _team_fetch(kind, tid):
     ctry = t0.get("country")
     if isinstance(ctry, dict):
         ctry = ctry.get("name")
-    out = {"kind": kind, "id": tid, "name": name, "en": en, "logo": t0.get("logo"), "country": ctry,
+    out = {"kind": kind, "id": tid, "name": name, "en": en, "logo": __import__("logos").url(t0.get("logo")), "country": ctry,
            "founded": t0.get("founded"), "venue": venue, "roster": [], "past": [], "next": []}
     now = time.time()
     if kind == "football":

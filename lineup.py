@@ -848,7 +848,7 @@ def football(g):
     by = {((x.get("team") or {}).get("id")): x for x in rs}
     if len(rs) != 2 or set(by) != {g.get("home_id"), g.get("away_id")}:
         return {"kind": "football", "none": True, "why": "mismatch"}
-    out = {"kind": "football", "src": "API-Sports · 공식 발표", "logo": {"home": g.get("home_logo") or "", "away": g.get("away_logo") or ""}}
+    out = {"kind": "football", "src": "API-Sports · 공식 발표", "logo": {"home": __import__("logos").url(g.get("home_logo")) or "", "away": __import__("logos").url(g.get("away_logo")) or ""}}
     for side in ("home", "away"):
         x = by[g.get(side + "_id")]
         xi = [(p.get("player") or {}) for p in x.get("startXI") or []]
