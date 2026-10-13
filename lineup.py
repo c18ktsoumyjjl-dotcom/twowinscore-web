@@ -252,7 +252,7 @@ def _bk_espn(g, live):
                 n = lambda k: int(v[k]) if str(v.get(k, "")).lstrip("-").isdigit() else None
                 mins = n("minutes")
                 tp = str(v.get("threePointFieldGoalsMade-threePointFieldGoalsAttempted") or "").split("-")[0]
-                rows.append({"id": ath.get("id") or ath.get("displayName"), "name": _h.unescape(ath.get("displayName") or ""), "no": ath.get("jersey"),
+                rows.append({"id": ath.get("id") or ath.get("displayName"), "name": __import__("pname").ko("nba", ath.get("id"), _h.unescape(ath.get("displayName") or "")), "no": ath.get("jersey"),
                              "pos": P.get((ath.get("position") or {}).get("abbreviation"), ""), "st": bool(a.get("starter")),
                              "min": str(mins) if mins else None, "_s": (mins or 0) * 60, "pts": n("points"), "reb": n("rebounds"), "ast": n("assists"),
                              "to": n("turnovers"), "stl": n("steals"), "blk": n("blocks"), "tpm": int(tp) if tp.isdigit() else None})

@@ -83,7 +83,8 @@ def _bk(g):
         for p in st:
             if all(p is not q for q, _ in pl):
                 c = next(c for c in free if c not in used); used.append(c); pl.append((p, c))
-        nm = lambda p: ko("basketball", p.get("id"), p.get("name"))
+        sp = "nba" if "ESPN" in src else "basketball"
+        nm = lambda p: ko(sp, p.get("id"), p.get("name"))
         out[sd] = _team(g, sd, players=[{"x": c[0], "y": c[1], "no": p.get("no"), "name": nm(p), "pos": p.get("pos"), "photo": ph(p)} for p, c in pl],
                         bench=[f"{p.get('no') or ''} {nm(p)}".strip() for p in lu[sd] if not p.get("st")])
     return out
