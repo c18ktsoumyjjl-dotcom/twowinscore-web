@@ -263,7 +263,8 @@ def view(g):
     L["win"] = R["win"] = False
     if show and st == "final":
         L["win"], R["win"] = L["score"] > R["score"], R["score"] > L["score"]
-    badge = {"live": g.get("period") or "진행 중", "final": "종료", "cancelled": "취소",
+    rc = home_result(g) if show and st == "final" else None
+    badge = {"live": g.get("period") or "진행 중", "final": {"w": "홈승", "l": "홈패", "d": "무승부"}.get(rc, "종료"), "cancelled": "취소",
              "postponed": "연기", "scheduled": g["start"].strftime("%H:%M")}.get(st, "")
     halt, reason = halt_info(g)
     if halt:
@@ -277,10 +278,23 @@ def view(g):
     if g.get("if_necessary"):
         sub.append("필요 시 개최")
     return {"key": str(g["key"]), "kind": g["kind"], "league": SHORT.get(g["site_league"], g["site_league"]),
-            "lorder": league_order(g["site_league"], g["site_order"]), "emoji": EMO[g["kind"]], "state": st, "badge": badge,
+            "lorder": league_order(g["site_league"], g["site_order"]), "emoji": EMO[g["kind"]], "state": st, "badge": badge, "rc": rc,
             "time": g["start"].strftime("%H:%M"), "ts": g["start"].timestamp(), "L": L, "R": R,
             "lines": lines, "sub": " · ".join(sub), "left_home": left_home, "sport": SPORT_KO[g["kind"]],
             "table": period_table(g), "halt": halt, "reason": reason}
+
+
+def home_result(g):
+    """종료 경기 홈팀 기준 결과 w/l/d. 동점이면 승부차기·슛아웃 점수로 판정, 그래도 같으면 무승부."""
+    h, a = g.get("home_score"), g.get("away_score")
+    if h is None or a is None:
+        return None
+    if h != a:
+        return "w" if h > a else "l"
+    for lab, hs, as_ in [tuple(x) for x in g.get("lines") or []]:
+        if lab in ("승부차기", "SO", "PT") and hs is not None and as_ is not None and hs != as_:
+            return "w" if hs > as_ else "l"
+    return "d"
 
 
 def period_table(g):
@@ -514,7 +528,8 @@ def api_top(key):
     its = [x for x in (cm.get("items") or []) if x.get("t")]
     return jsonify({"ev": t.get("ev"), "period": t.get("period"), "L": v["L"]["score"], "R": v["R"]["score"], "pl": [x["t"] for x in its[:6]],
                     "pla": [{"t": x["t"], "h": 1 if x.get("hot") else 0} for x in its[:80]], "src": cm.get("source") or "",
-                    "vs": get_template_attribute("_top.html", "vsets")(v["lines"], g["state"] == "live", v["L"]["name"], v["R"]["name"]) if g["kind"] == "volleyball" else None})
+                    "vs": get_template_attribute("_top.html", "vsets")(v["lines"], g["state"] == "live", v["L"]["name"], v["R"]["name"]) if g["kind"] == "volleyball" else
+                    (get_template_attribute("_top.html", "ptab")(v["table"], g["kind"]) if g["kind"] in ("baseball", "basketball", "hockey") and v.get("table") else None)})
 
 
 def _analysis(g, v, det, forms):

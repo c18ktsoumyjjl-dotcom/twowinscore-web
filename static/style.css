@@ -581,3 +581,10 @@ body.mapp .seo5{margin:20px 12px 90px;padding:14px}
 .ch-nwrap{position:relative;height:0;z-index:3}
 .ch-new{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);padding:6px 14px;border-radius:999px;border:0;background:var(--or);color:#fff;font-size:12.5px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;white-space:nowrap}
 .ch-new[hidden]{display:none}
+.fin.rc-w,.fin.rc-l,.fin.rc-d{display:inline-block;padding:1px 7px;border-radius:6px;font-size:11.5px;font-weight:800;line-height:1.5}
+.fin.rc-w{background:#ff7a1a;color:#fff}
+.fin.rc-l{background:#1d3461;color:#fff}
+.fin.rc-d{background:#8d97b0;color:#fff}
+.tptag .fn.rc-w{background:#ff7a1a!important;color:#fff!important}
+.tptag .fn.rc-l{background:#2a4a85!important;color:#fff!important}
+.tptag .fn.rc-d{background:#6b7590!important;color:#fff!important}

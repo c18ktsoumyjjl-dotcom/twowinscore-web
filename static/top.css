@@ -138,3 +138,12 @@ html:not([data-theme=light]) .tpvs td.tt b{color:#fff}
 .tpvs thead th.on{position:relative}
 .tpvs th.on em{position:absolute;left:50%;top:-11px;transform:translateX(-50%);margin:0;font-size:8.5px;line-height:1.3;padding:0 4px;white-space:nowrap}
 }
+@media (max-width:1023px){
+.tpvs.many th,.tpvs.many td{font-size:11.5px;padding:3px 0}
+.tpvs.many thead th{font-size:9.5px}
+.tpvs.many th.nm{width:17%;font-size:11px}
+.tpvs.many .sm{width:8%}
+.tpvs.many .tt{width:10%;font-size:8.5px}
+.tpvs.many td.tt b{font-size:12.5px}
+.tpvs.many th.on em{font-size:8px;padding:0 3px}
+}
