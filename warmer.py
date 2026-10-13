@@ -238,6 +238,11 @@ def _odds_loop():
                 if cnt >= 80:
                     break
                 time.sleep(1.5)
+            try:   # API-Sports 에 배당이 없는 KBO·NPB·MLB·NBA 만 The Odds API 로 보충(키 없으면 무동작)
+                import theoddsapi
+                theoddsapi.fill(gs)
+            except Exception as e:
+                log.warning("theoddsapi fill: %s", type(e).__name__)
             n += 1
             if n % 50 == 1:
                 teamodds.snap_prune()
