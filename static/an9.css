@@ -110,3 +110,5 @@
 .fd9v[hidden],.fd9cd[hidden]{display:none}
 [data-theme=light] .fd9,[data-theme=light] .detail6 .box.fd9{background:linear-gradient(180deg,#0f1d40,#0b1530);color:#fff;border-color:rgba(255,138,61,.35)}
 [data-theme=light] .fd9 .fd9cd .nm,[data-theme=light] .fd9 .fd9p b,[data-theme=light] .fd9 .fd9cd .pc b{color:#fff}
+
+.lu9sub{margin-top:8px}.lu9sub summary{cursor:pointer;font-size:12px;font-weight:700;color:var(--mu);padding:6px 2px;list-style:none}.lu9sub summary::-webkit-details-marker{display:none}.lu9sub summary::after{content:' ▾'}.lu9sub[open] summary::after{content:' ▴'}

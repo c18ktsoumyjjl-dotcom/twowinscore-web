@@ -33,7 +33,7 @@ async function load(){if(!document.body.contains(box)){clearInterval(timer);retu
   const lh=box.dataset.lh==='1',order=lh?['home','away']:['away','home'];
   const li=p=>`<tr><td class="o">${p.no!=null?esc(p.no):''}</td><td class="n">${esc(p.name)}${p.pos?`<small>${esc(p.pos)}</small>`:''}</td></tr>`;
   b.innerHTML='<div class="lu9g">'+order.map(sd=>{const t=j[sd],nm=sd==='home'?box.dataset.home:box.dataset.away;
-   return `<div class="lu9t"><h4>${esc(nm)} <small>${sd==='away'?'원정':'홈'}${t.form?' · '+esc(t.form):''}</small></h4><div class="lu9w"><table><thead><tr><th class="o">#</th><th class="n">선발 11</th></tr></thead><tbody>${t.xi.map(li).join('')}${t.subs.length?`<tr><td class="o"></td><td class="n sep">교체 명단</td></tr>`+t.subs.map(li).join(''):''}</tbody></table></div>${t.coach?`<p class="lu9e">감독 ${esc(t.coach)}</p>`:''}</div>`}).join('')+'</div>';
+   return `<div class="lu9t"><h4>${esc(nm)} <small>${sd==='away'?'원정':'홈'}${t.form?' · '+esc(t.form):''}</small></h4><div class="lu9w"><table><thead><tr><th class="o">#</th><th class="n">선발 11</th></tr></thead><tbody>${t.xi.map(li).join('')}</tbody></table></div>${t.subs.length?`<details class="lu9sub"><summary>교체 명단 ${t.subs.length}명</summary><div class="lu9w"><table><tbody>${t.subs.map(li).join('')}</tbody></table></div></details>`:''}${t.coach?`<p class="lu9e">감독 ${esc(t.coach)}</p>`:''}</div>`}).join('')+'</div>';
   s.textContent=j.src;return}
  if(j.kind==='basketball'){bk(j,b,s);return}
  const pre=j.away.pre&&j.home.pre;
