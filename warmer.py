@@ -10,9 +10,9 @@ from collections import deque
 import data
 
 log = logging.getLogger("warmer")
-WARM_PER_MIN = int(os.environ.get("WARM_PER_MIN", "120"))
-GLOBAL_SOFT = int(os.environ.get("WARM_GLOBAL_SOFT", "240"))
-GAP = 1.0
+WARM_PER_MIN = int(os.environ.get("WARM_PER_MIN", "30"))
+GLOBAL_SOFT = int(os.environ.get("WARM_GLOBAL_SOFT", "120"))
+GAP = 2.0
 LOOP = 60
 STATUS = os.path.join(data.CACHE, "warmer_status.json")
 
@@ -126,6 +126,7 @@ def _warm_one(g):
             fn()
         except Exception as e:
             log.debug("warm part %s: %s", g["key"], e)
+        time.sleep(0.3)                    # 한 경기 안에서도 쉬어서 손님 요청이 먼저 처리되게
 
 
 def _lineup(g):
@@ -193,7 +194,7 @@ def _loop(order):
                     _calls_warm.extend([tnow] * n); _tot["warm"] += n
                 _stat["queue"] -= 1; _stat["last"] = datetime.now(data.SEOUL).strftime("%H:%M:%S")
                 _save()
-                time.sleep(GAP if n else 0.2)
+                time.sleep(GAP if n else 0.5)
         except Exception as e:
             log.warning("warmer loop: %s", e)
         _save()
