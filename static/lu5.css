@@ -105,3 +105,4 @@ html[data-theme=dark] .l5 .mound{fill:#76593d}
 .l5 .l5tbl{display:grid;gap:12px}.l5.pc .l5tbl{grid-template-columns:1fr 1fr}.l5 .l5tbl .chip{position:static;display:inline-flex;margin-bottom:6px;box-shadow:none;background:rgba(27,42,85,.06)}
 .l5 .l5r{display:flex;align-items:center;gap:10px;padding:6px 4px;border-top:1px solid rgba(127,140,170,.18);font-size:13px}.l5 .l5r .av{width:34px;height:34px;flex:none}.l5 .l5r .av i{font-size:12px}.l5 .l5r small{color:var(--mut);font-size:11px;margin-left:auto}
 .l5 .note{font-size:11px;color:var(--mut);margin:8px 2px 0}
+.l5 .av b[hidden]{display:none}
