@@ -358,7 +358,11 @@ def api_naver_kr():
 
 @app.route("/api/games")
 def api_games():
-    return jsonify(_games_payload(parse_day(request.args.get("d"))))
+    p = _games_payload(parse_day(request.args.get("d")))
+    k = request.args.get("k")
+    if k:   # 상세 화면 폴링: 그 경기 하나만(전체 목록 44KB → 1KB)
+        p = dict(p, games=[g for g in p["games"] if g.get("key") == k])
+    return jsonify(p)
 
 
 def _games_payload(d):
