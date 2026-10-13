@@ -20537,6 +20537,722 @@
 "team": 543
 }
 },
+"hockey": {
+"8470621": {
+"how": "enwiki-exact+langlink",
+"ko": "코리 페리",
+"no": 90,
+"team": "LAK"
+},
+"8471215": {
+"how": "enwiki-exact+langlink",
+"ko": "예브게니 말킨",
+"no": 71,
+"team": "PIT"
+},
+"8471675": {
+"how": "enwiki-exact+langlink",
+"ko": "시드니 크로즈비",
+"no": 87,
+"team": "PIT"
+},
+"8471724": {
+"how": "enwiki-exact+langlink",
+"ko": "크리스 러탱",
+"no": 58,
+"team": "PIT"
+},
+"8473419": {
+"how": "enwiki-exact+langlink",
+"ko": "브래드 마숀드",
+"no": 63,
+"team": "FLA"
+},
+"8473533": {
+"how": "enwiki-exact+langlink",
+"ko": "조던 스톨",
+"no": 11,
+"team": "CAR"
+},
+"8473994": {
+"how": "enwiki-exact+langlink",
+"ko": "제이미 벤",
+"no": 14,
+"team": "DAL"
+},
+"8474141": {
+"how": "enwiki-exact+langlink",
+"ko": "패트릭 케인",
+"no": 88,
+"team": "CHI"
+},
+"8474563": {
+"how": "enwiki-exact+langlink",
+"ko": "드루 다우티",
+"no": 8,
+"team": "LAK"
+},
+"8474564": {
+"how": "enwiki-exact+langlink",
+"ko": "스티븐 스탬코스",
+"no": 91,
+"team": "NSH"
+},
+"8474590": {
+"how": "enwiki-exact+langlink",
+"ko": "존 칼슨",
+"no": 74,
+"team": "TBL"
+},
+"8474600": {
+"how": "enwiki-exact+langlink",
+"ko": "로만 요지",
+"no": 59,
+"team": "NSH"
+},
+"8475158": {
+"how": "enwiki-exact+langlink",
+"ko": "라이언 오라일리",
+"no": 90,
+"team": "NSH"
+},
+"8475166": {
+"how": "enwiki-exact+langlink",
+"ko": "존 타바레스",
+"no": 91,
+"team": "TOR"
+},
+"8475167": {
+"how": "enwiki-exact+langlink",
+"ko": "빅토르 헤드만",
+"no": 77,
+"team": "TBL"
+},
+"8475168": {
+"how": "enwiki-exact+langlink",
+"ko": "맷 듀셰인",
+"no": 95,
+"team": "DAL"
+},
+"8475171": {
+"how": "enwiki-exact+langlink",
+"ko": "올리베르 에크만라르손",
+"no": 95,
+"team": "TOR"
+},
+"8475287": {
+"how": "enwiki-exact+langlink",
+"ko": "에리크 하울라",
+"no": 56,
+"team": "LAK"
+},
+"8475311": {
+"how": "enwiki-exact+langlink",
+"ko": "다시 켐퍼",
+"no": 35,
+"team": "LAK"
+},
+"8475462": {
+"how": "enwiki-exact+langlink",
+"ko": "라트코 구다스",
+"no": 6,
+"team": "FLA"
+},
+"8475683": {
+"how": "enwiki-exact+langlink",
+"ko": "세르게이 보브롭스키",
+"no": 72,
+"team": "TOR"
+},
+"8475692": {
+"how": "enwiki-exact+langlink",
+"ko": "마츠 수카렐로",
+"no": 36,
+"team": "LAK"
+},
+"8475726": {
+"how": "enwiki-exact+langlink",
+"ko": "타일러 토폴리",
+"no": 73,
+"team": "SJS"
+},
+"8475754": {
+"how": "enwiki-exact+langlink",
+"ko": "브록 넬슨",
+"no": 11,
+"team": "COL"
+},
+"8475798": {
+"how": "enwiki-exact+langlink",
+"ko": "미카엘 그란룬드",
+"no": 64,
+"team": "ANA"
+},
+"8475799": {
+"how": "enwiki-exact+langlink",
+"ko": "니노 니더라이터",
+"no": 62,
+"team": "WPG"
+},
+"8475831": {
+"how": "enwiki-exact+langlink",
+"ko": "필리프 그루바워",
+"no": 31,
+"team": "SEA"
+},
+"8475883": {
+"how": "enwiki-exact+langlink",
+"ko": "프레데리크 안데르센",
+"no": 30,
+"team": "EDM"
+},
+"8475913": {
+"how": "enwiki-exact+langlink",
+"ko": "마크 스톤",
+"no": 61,
+"team": "VGK"
+},
+"8476389": {
+"how": "enwiki-exact+langlink",
+"ko": "빈센트 트로첵",
+"no": 16,
+"team": "UTA"
+},
+"8476412": {
+"how": "enwiki-exact+langlink",
+"ko": "조던 비닝턴",
+"no": 50,
+"team": "STL"
+},
+"8476453": {
+"how": "enwiki-exact+langlink",
+"ko": "니키타 쿠체로프",
+"no": 86,
+"team": "TBL"
+},
+"8476454": {
+"how": "enwiki-exact+langlink",
+"ko": "라이언 뉴전트홉킨스",
+"no": 93,
+"team": "EDM"
+},
+"8476455": {
+"how": "enwiki-exact+langlink",
+"ko": "가브리엘 란데스코그",
+"no": 92,
+"team": "COL"
+},
+"8476456": {
+"how": "enwiki-exact+langlink",
+"ko": "조나탕 위베르도",
+"no": 10,
+"team": "CGY"
+},
+"8476460": {
+"how": "enwiki-exact+langlink",
+"ko": "마크 샤이플리",
+"no": 55,
+"team": "WPG"
+},
+"8476469": {
+"how": "enwiki-exact+langlink",
+"ko": "요엘 아르미아",
+"no": 40,
+"team": "LAK"
+},
+"8476539": {
+"how": "enwiki-exact+langlink",
+"ko": "조나탕 마르셰소",
+"no": 81,
+"team": "NSH"
+},
+"8476878": {
+"how": "enwiki-exact+langlink",
+"ko": "젬구스 기르겐손스",
+"no": 28,
+"team": "TBL"
+},
+"8476880": {
+"how": "enwiki-exact+langlink",
+"ko": "톰 윌슨",
+"no": 43,
+"team": "WSH"
+},
+"8476883": {
+"how": "enwiki-exact+langlink",
+"ko": "안드레이 바실렙스키",
+"no": 88,
+"team": "TBL"
+},
+"8476892": {
+"how": "enwiki-exact+langlink",
+"ko": "콜턴 퍼레이코",
+"no": 55,
+"team": "STL"
+},
+"8476902": {
+"how": "enwiki-exact+langlink",
+"ko": "에사 린델",
+"no": 23,
+"team": "DAL"
+},
+"8476914": {
+"how": "enwiki-exact+langlink",
+"ko": "요나스 코르피살로",
+"no": 70,
+"team": "NYR"
+},
+"8476945": {
+"how": "enwiki-exact+langlink",
+"ko": "코너 헬러벅",
+"no": 37,
+"team": "WPG"
+},
+"8476958": {
+"how": "enwiki-exact+langlink",
+"ko": "제이컵 슬레이빈",
+"no": 74,
+"team": "CAR"
+},
+"8477346": {
+"how": "enwiki-exact+langlink",
+"ko": "매켄지 위거",
+"no": 52,
+"team": "UTA"
+},
+"8477404": {
+"how": "enwiki-exact+langlink",
+"ko": "제이크 겐츨",
+"no": 59,
+"team": "TBL"
+},
+"8477424": {
+"how": "enwiki-exact+langlink",
+"ko": "유세 사로스",
+"no": 74,
+"team": "NSH"
+},
+"8477447": {
+"how": "enwiki-exact+langlink",
+"ko": "셰이 시어도어",
+"no": 27,
+"team": "VGK"
+},
+"8477476": {
+"how": "enwiki-exact+langlink",
+"ko": "아르투리 레흐코넨",
+"no": 62,
+"team": "COL"
+},
+"8477492": {
+"how": "enwiki-exact+langlink",
+"ko": "네이선 매키넌",
+"no": 29,
+"team": "COL"
+},
+"8477493": {
+"how": "enwiki-exact+langlink",
+"ko": "알렉산데르 바르코브",
+"no": 16,
+"team": "FLA"
+},
+"8477499": {
+"how": "enwiki-exact+langlink",
+"ko": "라스무스 리스톨라이넨",
+"no": 55,
+"team": "PHI"
+},
+"8477500": {
+"how": "enwiki-exact+langlink",
+"ko": "보 호뱃",
+"no": 14,
+"team": "NYI"
+},
+"8477504": {
+"how": "enwiki-exact+langlink",
+"ko": "조시 모리시",
+"no": 44,
+"team": "WPG"
+},
+"8477932": {
+"how": "enwiki-exact+langlink",
+"ko": "에런 엑블래드",
+"no": 5,
+"team": "FLA"
+},
+"8477933": {
+"how": "enwiki-exact+langlink",
+"ko": "샘 라인하트",
+"no": 13,
+"team": "FLA"
+},
+"8477934": {
+"how": "enwiki-exact+langlink",
+"ko": "레온 드라이자이틀",
+"no": 29,
+"team": "EDM"
+},
+"8477935": {
+"how": "enwiki-exact+langlink",
+"ko": "샘 베넷",
+"no": 9,
+"team": "FLA"
+},
+"8477940": {
+"how": "enwiki-exact+langlink",
+"ko": "니콜라이 엘레르스",
+"no": 27,
+"team": "CAR"
+},
+"8477942": {
+"how": "enwiki-exact+langlink",
+"ko": "케빈 피알라",
+"no": 22,
+"team": "LAK"
+},
+"8477946": {
+"how": "enwiki-exact+langlink",
+"ko": "딜런 라킨",
+"no": 71,
+"team": "DET"
+},
+"8477948": {
+"how": "enwiki-exact+langlink",
+"ko": "트래비스 샌하임",
+"no": 6,
+"team": "PHI"
+},
+"8478038": {
+"how": "enwiki-exact+langlink",
+"ko": "데번 테이브스",
+"no": 7,
+"team": "COL"
+},
+"8478048": {
+"how": "enwiki-exact+langlink",
+"ko": "이고리 셰스툐르킨",
+"no": 31,
+"team": "NYR"
+},
+"8478396": {
+"how": "enwiki-exact+langlink",
+"ko": "노아 해니핀",
+"no": 15,
+"team": "VGK"
+},
+"8478398": {
+"how": "enwiki-exact+langlink",
+"ko": "카일 코너",
+"no": 81,
+"team": "WPG"
+},
+"8478399": {
+"how": "enwiki-exact+langlink",
+"ko": "요나스 지겐탈러",
+"no": 71,
+"team": "NJD"
+},
+"8478402": {
+"how": "enwiki-exact+langlink",
+"ko": "코너 맥데이비드",
+"no": 97,
+"team": "EDM"
+},
+"8478403": {
+"how": "enwiki-exact+langlink",
+"ko": "잭 아이클",
+"no": 9,
+"team": "VGK"
+},
+"8478414": {
+"how": "enwiki-exact+langlink",
+"ko": "티모 마이어",
+"no": 28,
+"team": "NJD"
+},
+"8478420": {
+"how": "enwiki-exact+langlink",
+"ko": "미코 란타넨",
+"no": 96,
+"team": "DAL"
+},
+"8478427": {
+"how": "enwiki-exact+langlink",
+"ko": "세바스티안 아호",
+"no": 20,
+"team": "CAR"
+},
+"8478449": {
+"how": "enwiki-exact+langlink",
+"ko": "로페 힌츠",
+"no": 24,
+"team": "DAL"
+},
+"8478460": {
+"how": "enwiki-exact+langlink",
+"ko": "잭 워렌스키",
+"no": 8,
+"team": "CBJ"
+},
+"8478474": {
+"how": "enwiki-exact+langlink",
+"ko": "로슨 크라우스",
+"no": 67,
+"team": "UTA"
+},
+"8478483": {
+"how": "enwiki-exact+langlink",
+"ko": "미치 마너",
+"no": 93,
+"team": "VGK"
+},
+"8478859": {
+"how": "enwiki-exact+langlink",
+"ko": "니코 미콜라",
+"no": 77,
+"team": "FLA"
+},
+"8478864": {
+"how": "enwiki-exact+langlink",
+"ko": "키릴 카프리조프",
+"no": 97,
+"team": "MIN"
+},
+"8478882": {
+"how": "enwiki-exact+langlink",
+"ko": "블라디슬라프 가브리코프",
+"no": 44,
+"team": "NYR"
+},
+"8479314": {
+"how": "enwiki-exact+langlink",
+"ko": "매슈 커척",
+"no": 19,
+"team": "FLA"
+},
+"8479318": {
+"how": "enwiki-exact+langlink",
+"ko": "오스턴 매슈스",
+"no": 34,
+"team": "TOR"
+},
+"8479325": {
+"how": "enwiki-exact+langlink",
+"ko": "찰리 매커보이",
+"no": 73,
+"team": "BOS"
+},
+"8479343": {
+"how": "enwiki-exact+langlink",
+"ko": "클레이턴 켈러",
+"no": 9,
+"team": "UTA"
+},
+"8479400": {
+"how": "enwiki-exact+langlink",
+"ko": "피에르뤼크 뒤부아",
+"no": 80,
+"team": "WSH"
+},
+"8479420": {
+"how": "enwiki-exact+langlink",
+"ko": "테이지 톰프슨",
+"no": 72,
+"team": "BUF"
+},
+"8479542": {
+"how": "enwiki-exact+langlink",
+"ko": "브랜던 헤이글",
+"no": 38,
+"team": "TBL"
+},
+"8479979": {
+"how": "enwiki-exact+langlink",
+"ko": "제이크 오틴저",
+"no": 29,
+"team": "DAL"
+},
+"8479996": {
+"how": "enwiki-exact+langlink",
+"ko": "코디 글래스",
+"no": 12,
+"team": "NJD"
+},
+"8480002": {
+"how": "enwiki-exact+langlink",
+"ko": "니코 히시어",
+"no": 13,
+"team": "NJD"
+},
+"8480009": {
+"how": "enwiki-exact+langlink",
+"ko": "엘리 톨바넨",
+"no": 17,
+"team": "NYR"
+},
+"8480018": {
+"how": "enwiki-exact+langlink",
+"ko": "닉 서주키",
+"no": 14,
+"team": "MTL"
+},
+"8480036": {
+"how": "enwiki-exact+langlink",
+"ko": "미로 헤이스카넨",
+"no": 4,
+"team": "DAL"
+},
+"8480069": {
+"how": "enwiki-exact+langlink",
+"ko": "케일 머카",
+"no": 8,
+"team": "COL"
+},
+"8480074": {
+"how": "enwiki-exact+langlink",
+"ko": "알렉상드르 텍시에",
+"no": 85,
+"team": "MTL"
+},
+"8480185": {
+"how": "enwiki-exact+langlink",
+"ko": "에투 루오스타리넨",
+"no": 27,
+"team": "FLA"
+},
+"8480280": {
+"how": "enwiki-exact+langlink",
+"ko": "제러미 스웨이먼",
+"no": 1,
+"team": "BOS"
+},
+"8480313": {
+"how": "enwiki-exact+langlink",
+"ko": "로건 톰프슨",
+"no": 48,
+"team": "WSH"
+},
+"8480796": {
+"how": "enwiki-exact+langlink",
+"ko": "마르틴 페헤르바리",
+"no": 42,
+"team": "WSH"
+},
+"8480800": {
+"how": "enwiki-exact+langlink",
+"ko": "퀸 휴스",
+"no": 43,
+"team": "MIN"
+},
+"8480801": {
+"how": "enwiki-exact+langlink",
+"ko": "브레이디 커척",
+"no": 8,
+"team": "FLA"
+},
+"8480839": {
+"how": "enwiki-exact+langlink",
+"ko": "라스무스 달린",
+"no": 26,
+"team": "BUF"
+},
+"8480947": {
+"how": "enwiki-exact+langlink",
+"ko": "케빈 랑키넨",
+"no": 32,
+"team": "VAN"
+},
+"8481477": {
+"how": "enwiki-exact+langlink",
+"ko": "니코 슈투름",
+"no": 78,
+"team": "MIN"
+},
+"8481554": {
+"how": "enwiki-exact+langlink",
+"ko": "카포 카코",
+"no": 84,
+"team": "SEA"
+},
+"8481557": {
+"how": "enwiki-exact+langlink",
+"ko": "맷 볼디",
+"no": 12,
+"team": "MIN"
+},
+"8481559": {
+"how": "enwiki-exact+langlink",
+"ko": "잭 휴스",
+"no": 86,
+"team": "NJD"
+},
+"8481581": {
+"how": "enwiki-exact+langlink",
+"ko": "토머스 할리",
+"no": 55,
+"team": "DAL"
+},
+"8481605": {
+"how": "enwiki-exact+langlink",
+"ko": "잭슨 라콤",
+"no": 2,
+"team": "ANA"
+},
+"8481641": {
+"how": "enwiki-exact+langlink",
+"ko": "요엘 키비란타",
+"no": 22,
+"team": "DAL"
+},
+"8482105": {
+"how": "enwiki-exact+langlink",
+"ko": "제이크 샌더슨",
+"no": 85,
+"team": "OTT"
+},
+"8482113": {
+"how": "enwiki-exact+langlink",
+"ko": "안톤 룬델",
+"no": 15,
+"team": "FLA"
+},
+"8482116": {
+"how": "enwiki-exact+langlink",
+"ko": "팀 슈튀츨레",
+"no": 18,
+"team": "OTT"
+},
+"8482122": {
+"how": "enwiki-exact+langlink",
+"ko": "브록 페이버",
+"no": 7,
+"team": "MIN"
+},
+"8482775": {
+"how": "enwiki-exact+langlink",
+"ko": "올리베르 카파넨",
+"no": 91,
+"team": "MTL"
+},
+"8483515": {
+"how": "enwiki-exact+langlink",
+"ko": "유라이 슬라프코우스키",
+"no": 20,
+"team": "MTL"
+},
+"8484321": {
+"how": "enwiki-exact+langlink",
+"ko": "니콜라스 마틴팔로",
+"no": 33,
+"team": "OTT"
+},
+"8484801": {
+"how": "enwiki-exact+langlink",
+"ko": "매클린 셀리브리니",
+"no": 71,
+"team": "SJS"
+}
+},
 "mlb": {
 "445276": {
 "how": "fullname+num",
