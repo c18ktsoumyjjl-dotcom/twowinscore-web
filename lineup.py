@@ -861,6 +861,7 @@ def football(g):
         ef = _espn_forms(g, out)
     except Exception:
         ef = None
+    ef = _freeze(g, st, ef)
     if ef and not ef.get("agree"):   # ESPN과 선발 11명이 다르면 틀릴 수 있는 라인업은 숨김
         return {"kind": "football", "none": True, "why": "disagree"}
     for side in ("home", "away"):
@@ -1031,3 +1032,27 @@ def _nv_match(ln, out):
         return all(_nv_map(ln[sd], out[sd]["xi"], sd) is not None for sd in ("home", "away"))
     except Exception:
         return False
+
+
+def _freeze(g, st, ef):
+    """ESPN 확인 자료는 킥오프 전 발표 시점 것으로 고정. 경기 중 ESPN은 실시간 전술 위치로 바뀌어(예: 3-4-3→4-4-2) 비교 기준이 못 됨.
+    킥오프 전: 저장. 경기 중·후: 저장본(또는 검증해 둔 data/lu_seed) 사용, 없으면 실시간 ESPN 그대로(어긋나면 숨김 쪽으로 안전)."""
+    import os
+    base = os.path.dirname(os.path.abspath(__file__))
+    fn = os.path.join(base, "cache", "lu_freeze", f"{g['id']}.json")
+    if st == "scheduled":
+        if ef:
+            try:
+                os.makedirs(os.path.dirname(fn), exist_ok=True)
+                json.dump({**ef, "pos": {k: {str(n): a for n, a in v.items()} for k, v in (ef.get("pos") or {}).items()}}, open(fn, "w"))
+            except Exception:
+                pass
+        return ef
+    for f in (fn, os.path.join(base, "lu_seed", f"{g['id']}.json")):
+        try:
+            d = json.load(open(f))
+            d["pos"] = {k: {int(n): a for n, a in v.items()} for k, v in (d.get("pos") or {}).items()}
+            return d
+        except Exception:
+            continue
+    return ef
