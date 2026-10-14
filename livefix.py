@@ -20,9 +20,33 @@ LOG = deque(maxlen=50)
 _c, _lk, _busy = {}, threading.Lock(), set()
 
 
-def _bg(key, fn):
+KEEP_WARM = 15 * 60      # 최근 15분 안에 쓰인 출처는 뒤에서 계속 갱신(워커가 한동안 요청을 못 받아도 첫 응답부터 보정되게)
+_want, _warm_on = {}, [False]
+
+
+def _keep_warm():
+    while True:
+        time.sleep(20)
+        try:
+            now = time.time()
+            with _lk:
+                todo = [(k, f) for k, (t, f) in list(_want.items()) if now - t < KEEP_WARM]
+                for k in [k for k, (t, f) in _want.items() if now - t >= KEEP_WARM]:
+                    _want.pop(k, None)
+            for k, f in todo:
+                _bg(k, f, touch=False)
+        except Exception:
+            pass
+
+
+def _bg(key, fn, touch=True):
     """캐시값(없으면 None) 즉시 반환, 만료면 뒤에서 갱신. STALE_MAX 보다 오래된 값은 None(덮지 않음)."""
     with _lk:
+        if touch:
+            _want[key] = (time.time(), fn)
+            if not _warm_on[0]:
+                _warm_on[0] = True
+                threading.Thread(target=_keep_warm, daemon=True).start()
         hit = _c.get(key)
         fresh = hit and time.time() - hit[0] < TTL
         usable = hit and time.time() - hit[0] < STALE_MAX
@@ -317,8 +341,8 @@ def _nba(g, now):
     if old == (code, hs, as_):
         return False
     oh, oa = _int(g.get("home_score")), _int(g.get("away_score"))
-    if code not in ("FT", "AOT") and oh is not None and oa is not None and oh + oa > hs + as_:
-        return False                          # API-Sports 가 더 앞서 있음(ESPN 이 늦음) → 점수를 되돌리지 않음
+    if code not in ("FT", "AOT") and oh is not None and oa is not None and oh >= hs and oa >= as_ and oh + oa > hs + as_:
+        return False                          # API-Sports 가 양 팀 모두 앞서 있음(ESPN 이 늦음) → 되돌리지 않음. 한쪽만 크면 뒤집힘 → ESPN
     g.update(status=code, period=lab, home_score=hs, away_score=as_, status_api=g.get("status"),
              live_src="espn-nba", status_long=None)
     if lines is not None:
@@ -408,8 +432,8 @@ def _nhl(g, now):
     if old == (code, hs, as_):
         return False
     oh, oa = _int(g.get("home_score")), _int(g.get("away_score"))
-    if code not in ("FT", "AOT", "AP") and oh is not None and oa is not None and oh + oa > hs + as_:
-        return False                          # API-Sports 가 더 앞서 있음(ESPN 이 늦음) → 점수를 되돌리지 않음
+    if code not in ("FT", "AOT", "AP") and oh is not None and oa is not None and oh >= hs and oa >= as_ and oh + oa > hs + as_:
+        return False                          # API-Sports 가 양 팀 모두 앞서 있음(ESPN 이 늦음) → 되돌리지 않음. 한쪽만 크면 뒤집힘 → ESPN
     g.update(status=code, period=lab, home_score=hs, away_score=as_, status_api=g.get("status"),
              live_src="espn-nhl", status_long=None)
     if lines is not None:
