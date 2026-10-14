@@ -15,15 +15,17 @@ import timefix as tf
 
 SEOUL = ZoneInfo("Asia/Seoul")
 TTL, MIN_AGE, MAX_AGE = 30, 5 * 60, 30 * 3600
+STALE_MAX = 120          # 이보다 오래된 출처 캐시는 덮는 데 쓰지 않음(한동안 요청이 없다가 첫 요청 때 옛 점수로 되돌리는 것 방지)
 LOG = deque(maxlen=50)
 _c, _lk, _busy = {}, threading.Lock(), set()
 
 
 def _bg(key, fn):
-    """캐시값(없으면 None) 즉시 반환, 만료면 뒤에서 갱신."""
+    """캐시값(없으면 None) 즉시 반환, 만료면 뒤에서 갱신. STALE_MAX 보다 오래된 값은 None(덮지 않음)."""
     with _lk:
         hit = _c.get(key)
         fresh = hit and time.time() - hit[0] < TTL
+        usable = hit and time.time() - hit[0] < STALE_MAX
         if not fresh and key not in _busy:
             _busy.add(key)
             def run():
@@ -37,7 +39,7 @@ def _bg(key, fn):
                     _c[key] = (time.time(), v)
                     _busy.discard(key)
             threading.Thread(target=run, daemon=True).start()
-    return hit[1] if hit else None
+    return hit[1] if usable else None
 
 
 def _naver(up, day):
@@ -314,6 +316,9 @@ def _nba(g, now):
     old = (g.get("status"), g.get("home_score"), g.get("away_score"))
     if old == (code, hs, as_):
         return False
+    oh, oa = _int(g.get("home_score")), _int(g.get("away_score"))
+    if code not in ("FT", "AOT") and oh is not None and oa is not None and oh + oa > hs + as_:
+        return False                          # API-Sports 가 더 앞서 있음(ESPN 이 늦음) → 점수를 되돌리지 않음
     g.update(status=code, period=lab, home_score=hs, away_score=as_, status_api=g.get("status"),
              live_src="espn-nba", status_long=None)
     if lines is not None:
