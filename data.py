@@ -190,7 +190,7 @@ def _sport_day0(kind, day, today):
             ttl = 1800
         elif day < today - timedelta(days=1) or (day < today and all(g["status"] not in ("NS", "TBD") for g in games)):
             ttl = TTL_PAST
-        elif _near(games):
+        elif _near(games) or _near(c.get("other") or []):   # 기타 리그 경기 시작 무렵도 1분 캐시(시작 후 10분 넘게 '예정'으로 남지 않게)
             ttl = 60
         else:
             ttl = TTL_IDLE
@@ -469,8 +469,11 @@ def live_ttl(kind):
 def _near(games):
     n = datetime.now(SEOUL)
     for g in games:
-        st = datetime.fromisoformat(g["start"])
-        if g["status"] in ("NS", "TBD") and timedelta(minutes=-20) < st - n < timedelta(minutes=15):
+        try:
+            st = datetime.fromisoformat(g["start"])
+        except Exception:
+            continue
+        if g.get("status") in ("NS", "TBD") and timedelta(minutes=-20) < st - n < timedelta(minutes=15):
             return True
     return False
 
