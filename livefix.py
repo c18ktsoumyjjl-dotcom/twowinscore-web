@@ -301,7 +301,7 @@ def _nba(g, now):
         return False
     age = (now - st).total_seconds()
     lo = -12 * 3600 if str(g.get("status") or "") in _PST else -15 * 60   # API '연기' 표시는 경기 전에도 ESPN 으로 확인
-    if not (lo <= age <= 8 * 3600):
+    if not (lo <= age <= 30 * 3600):   # 종료 경기도 그날(KST) 내내 ESPN 과 맞춤(API-Sports 점수 뒤바뀜 보정)
         return False
     he, ae = _team_en("basketball", g.get("home_id")), _team_en("basketball", g.get("away_id"))
     he, ae = _ESPN_NBA.get(he, he), _ESPN_NBA.get(ae, ae)   # ESPN 표기가 다른 팀(클리퍼스)
@@ -391,7 +391,7 @@ def _nhl(g, now):
         return False
     age = (now - st).total_seconds()
     lo = -12 * 3600 if str(g.get("status") or "") in _PST else -15 * 60   # API '연기' 표시는 경기 전에도 ESPN 으로 확인
-    if not (lo <= age <= 8 * 3600):
+    if not (lo <= age <= 30 * 3600):   # 종료 경기도 그날(KST) 내내 ESPN 과 맞춤(API-Sports 점수 뒤바뀜 보정)
         return False
     he, ae = _team_en("hockey", g.get("home_id")), _team_en("hockey", g.get("away_id"))
     if not he or not ae or he == ae:
@@ -486,7 +486,7 @@ def _mlb(g, now):
         return False
     age = (now - st).total_seconds()
     lo = -12 * 3600 if str(g.get("status") or "") in _PST else -15 * 60
-    if not (lo <= age <= 8 * 3600):
+    if not (lo <= age <= 30 * 3600):   # 종료 경기도 그날(KST) 내내 ESPN 과 맞춤(API-Sports 점수 뒤바뀜 보정)
         return False
     he, ae = _team_en("baseball", g.get("home_id")), _team_en("baseball", g.get("away_id"))
     if not he or not ae or he == ae:
