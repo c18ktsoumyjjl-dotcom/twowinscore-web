@@ -4,7 +4,7 @@
 피리어드(전후반·쿼터·이닝 초말)·분(축구 ±2분)·점수가 모두 같을 때만 그 값을 덮는다. 한 곳이라도 없거나 다르면 그대로.
 API-Sports 가 NS/TBD 를 벗어나면(따라잡으면) 즉시 덮지 않는다. 덮은 경기는 g["live_src"]="naver+espn".
 요청 경로를 막지 않도록 출처 응답은 30초 캐시 + 뒤에서 갱신(첫 호출은 덮지 않고 받아오기만 함).
-배구(ESPN 없음)는 두 출처가 갖춰지지 않아 절대 덮지 않는다. NHL 은 네이버가 없어 이중 출처 보정 대상이 아니지만, NBA 와 같이 ESPN 단독 보정(_nhl)으로 API-Sports 점수 지연을 막는다.
+배구(ESPN 없음)는 두 출처가 갖춰지지 않아 절대 덮지 않는다. NHL·MLB 는 네이버 이중 출처 보정이 어렵거나(NHL) API 가 이닝 점수에 늦게 따라와서, NBA 와 같이 ESPN 단독 보정(_nhl·_mlb)으로 API-Sports 점수 지연을 막는다.
 """
 import re, threading, time
 from collections import deque
@@ -472,6 +472,101 @@ def _nhl(g, now):
 
 
 
+MLB_LEAGUE = 1
+
+
+def _mlb(g, now):
+    """MLB 전용: API-Sports 이닝 점수가 늦을 때 ESPN 으로 덮는다.
+    양 팀 영문 정식명(team_en.json)이 ESPN displayName 과 정확히 같고, 홈/원정 방향도 같고, 후보가 하나일 때만."""
+    if g.get("kind") != "baseball" or g.get("league") != MLB_LEAGUE:
+        return False
+    st = g.get("start")
+    st = datetime.fromisoformat(st) if isinstance(st, str) else st
+    if st is None or st.tzinfo is None:
+        return False
+    age = (now - st).total_seconds()
+    lo = -12 * 3600 if str(g.get("status") or "") in _PST else -15 * 60
+    if not (lo <= age <= 8 * 3600):
+        return False
+    he, ae = _team_en("baseball", g.get("home_id")), _team_en("baseball", g.get("away_id"))
+    if not he or not ae or he == ae:
+        return False
+    u, hits = st.astimezone(timezone.utc), {}
+    for d in {(u + timedelta(hours=dh)).strftime("%Y%m%d") for dh in (-6, 0, 6)}:
+        for e in _espn("baseball/mlb", d) or []:
+            try:
+                cs = e["competitions"][0]["competitors"]
+                h = next(c for c in cs if c.get("homeAway") == "home"); a = next(c for c in cs if c.get("homeAway") == "away")
+                t = datetime.fromisoformat(e["date"].replace("Z", "+00:00"))
+            except Exception:
+                continue
+            if abs((t - st).total_seconds()) > 3 * 3600:
+                continue
+            hn, an = (h.get("team") or {}).get("displayName"), (a.get("team") or {}).get("displayName")
+            if {hn, an} & {he, ae} and (hn, an) != (he, ae):
+                return False
+            if (hn, an) == (he, ae):
+                hits[e.get("id")] = (e, h, a)
+    if len(hits) != 1:
+        return False
+    e, h, a = next(iter(hits.values()))
+    hs, as_ = _int(h.get("score")), _int(a.get("score"))
+    s = e.get("status") or {}
+    t = s.get("type") or {}
+    name, per = str(t.get("name") or ""), _int(s.get("period")) or 0
+    if hs is None or as_ is None:
+        return False
+    detail = str(t.get("shortDetail") or t.get("detail") or "").lower()
+    if t.get("state") == "post":
+        if name != "STATUS_FINAL":
+            return False
+        code, lab = ("AOT", "연장 종료") if per > 9 else ("FT", "종료")
+    elif t.get("state") == "in":
+        if not per:
+            return False
+        if detail.startswith("top") or detail.startswith("mid"):
+            half = "초"
+        elif detail.startswith("bot") or detail.startswith("end"):
+            half = "말"
+        else:
+            return False
+        code, lab = f"IN{per}", f"{per}회{half}"
+    elif t.get("state") == "pre":
+        return _unpostpone(g, name, "MLB")
+    else:
+        return False
+    # 이닝표·안타·실책(표시용). 점수 합과 안 맞으면 마지막 이닝만 잘라 ESPN 총점과 맞춤.
+    inn = {"home": {"inn": {}, "H": _int(h.get("hits")), "E": _int(h.get("errors"))},
+           "away": {"inn": {}, "H": _int(a.get("hits")), "E": _int(a.get("errors"))}}
+    try:
+        for side, node in (("home", h), ("away", a)):
+            for i, ls in enumerate(node.get("linescores") or []):
+                inn[side]["inn"][str(i + 1)] = int(float(ls.get("value")))
+        sh = sum(inn["home"]["inn"].values())
+        sa = sum(inn["away"]["inn"].values())
+        if sh != hs or sa != as_:
+            # 진행 중 이닝이 아직 총점에 덜 반영된 경우 등 → 이닝표만 버리고 총점은 ESPN 유지
+            if sh > hs or sa > as_:
+                inn = None
+    except Exception:
+        inn = None
+    old = (g.get("status"), g.get("home_score"), g.get("away_score"))
+    if old == (code, hs, as_):
+        return False
+    oh, oa = _int(g.get("home_score")), _int(g.get("away_score"))
+    if code not in ("FT", "AOT") and oh is not None and oa is not None and oh >= hs and oa >= as_ and oh + oa > hs + as_:
+        return False
+    g.update(status=code, period=lab, home_score=hs, away_score=as_, status_api=g.get("status"),
+             live_src="espn-mlb", status_long=None)
+    if inn is not None:
+        g["innings"] = inn
+    k = (g.get("key"), code, hs, as_)
+    if not LOG or LOG[-1][1:] != k:
+        LOG.append((time.time(),) + k)
+        tf.log(f"livefix MLB {g.get('key')} {old} → {code} {hs}-{as_} (ESPN)")
+    return True
+
+
 def apply(kind, games):
     if kind == "basketball":
         now = datetime.now(SEOUL)
@@ -487,6 +582,13 @@ def apply(kind, games):
                 _nhl(g, now)
             except Exception as ex:
                 tf.log(f"livefix NHL {g.get('key')} 오류: {str(ex)[:100]}")
+    if kind == "baseball":
+        now = datetime.now(SEOUL)
+        for g in games:
+            try:
+                _mlb(g, now)
+            except Exception as ex:
+                tf.log(f"livefix MLB {g.get('key')} 오류: {str(ex)[:100]}")
     if not tf.ESPN.get(kind) or not tf.NAVER_UP.get(kind):
         return games
     now = datetime.now(SEOUL)
