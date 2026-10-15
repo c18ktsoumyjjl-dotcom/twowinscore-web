@@ -20,7 +20,7 @@ MENU_GROUPS = [
     ("g_admin", "", "관리자", [("admins", "관리자 계정", "/admin/admins"), ("log", "접근 기록", "/admin/log"), ("otp", "OTP 재설정", "/admin/otp")]),
 ]
 MENU = [it for _, _, _, items in MENU_GROUPS for it in items]
-SUPER_ONLY = ("music", "admins", "activity", "settle", "cash")
+SUPER_ONLY = ("music", "admins", "activity", "settle", "cash", "deposits")
 
 BOTS = [("score", "@kr_twowin_bot", "채널 알림 · 그룹방 · 스코어 검색"),
         ("cscenter", "@twowinscore_cs_bot", "투윈스코어 고객센터"),

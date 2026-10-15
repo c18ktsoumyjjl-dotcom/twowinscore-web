@@ -96,6 +96,7 @@ def counts():
 
 @bp.route("/admin/deposits")
 @M.admin_required
+@M.super_required
 def page():
     st = request.args.get("st", "pending")
     if st not in ("pending", "approved", "rejected", "all"):
@@ -128,6 +129,7 @@ def _who():
 
 @bp.post("/admin/deposits/<int:did>/approve")
 @M.admin_required
+@M.super_required
 def approve(did):
     with _lk:
         r = q("SELECT member_id, cash, status, amount_krw FROM deposit_request WHERE id=?", (did,), one=True)
@@ -145,6 +147,7 @@ def approve(did):
 
 @bp.post("/admin/deposits/<int:did>/reject")
 @M.admin_required
+@M.super_required
 def reject(did):
     reason = re.sub(r"[\x00-\x1f<>]", "", request.form.get("reason") or "").strip()[:120]
     with _lk:
@@ -160,6 +163,7 @@ def reject(did):
 
 @bp.route("/admin/deposits/poll")
 @M.admin_required
+@M.super_required
 def poll():
     r = q("SELECT COUNT(*), COALESCE(MAX(id),0) FROM deposit_request WHERE status='pending'", one=True)
     return jsonify(pending=int(r[0]), last=int(r[1]))

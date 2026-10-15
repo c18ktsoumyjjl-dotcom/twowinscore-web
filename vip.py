@@ -391,6 +391,7 @@ def shop_charge():
 
 @bp.post("/admin/member/<int:mid>/cash")
 @admin_required
+@M.super_required
 def admin_cash(mid):
     try:
         d = int(request.form.get("delta", "0"))
