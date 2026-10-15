@@ -567,7 +567,36 @@ def _mlb(g, now):
     return True
 
 
+# 리그 공식 발표로 연기됐는데 API-Sports 가 아직 예정(NS/TBD)으로 내보내는 경기. 원래 킥오프(ts)가 그대로일 때만 '연기'로 바꾼다
+# (API 가 새 날짜로 옮기거나 상태를 바꾸면 자동으로 손 뗌). 출처 URL 필수, 추측으로 넣지 않는다.
+_SPL_MW9 = "https://www.spl.com.sa/en/news/spl-reschedules-three-fixtures-mw9"
+OFFICIAL_PST = {
+    "football:307:1603044": (1792087200, "리그 공식 일정 변경 (2027.3.6 개최)", _SPL_MW9),   # 알아흘리–알나스르
+    "football:307:1603051": (1792162800, "리그 공식 일정 변경 (2026.12.19 개최)", _SPL_MW9),  # 알리야드–알힐랄
+    "football:307:1603048": (1792173600, "리그 공식 일정 변경 (2026.12.19 개최)", _SPL_MW9),  # 알이티하드–알샤바브
+}
+
+
+def _official_pst(g):
+    o = OFFICIAL_PST.get(str(g.get("key")))
+    if not o or str(g.get("status") or "") not in ("NS", "TBD"):
+        return False
+    try:
+        st = g["start"] if isinstance(g["start"], datetime) else datetime.fromisoformat(str(g["start"]))
+        if abs(st.timestamp() - o[0]) > 60:
+            return False
+    except Exception:
+        return False
+    g.update(status="PST", status_api=g.get("status"), halt_reason=o[1], live_src="official")
+    return True
+
+
 def apply(kind, games):
+    for g in games:
+        try:
+            _official_pst(g)
+        except Exception:
+            pass
     if kind == "basketball":
         now = datetime.now(SEOUL)
         for g in games:
