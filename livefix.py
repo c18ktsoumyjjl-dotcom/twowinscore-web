@@ -269,6 +269,25 @@ def _team_en(kind, tid):
 
 
 NBA_LEAGUE = 12
+_ESPN_NBA = {"Los Angeles Clippers": "LA Clippers"}   # API-Sports 영문명 → ESPN displayName
+
+
+_PST = {"POST", "PST"}
+
+
+def _unpostpone(g, espn_name, tag):
+    """API-Sports 가 '연기(POST)'로 잘못 내보냈는데 ESPN 은 정상 예정(STATUS_SCHEDULED)이면 예정으로 되돌린다.
+    ESPN 도 연기·취소면(STATUS_POSTPONED 등) 그대로 둔다. 점수는 만들지 않는다."""
+    if str(g.get("status") or "") not in _PST or espn_name != "STATUS_SCHEDULED":
+        return False
+    old = g.get("status")
+    g.update(status="NS", period=None, home_score=None, away_score=None, status_api=old,
+             live_src=f"espn-{tag.lower()}", status_long=None, halt_reason=None)
+    k = (g.get("key"), "NS", None, None)
+    if not LOG or LOG[-1][1:] != k:
+        LOG.append((time.time(),) + k)
+        tf.log(f"livefix {tag} {g.get('key')} {old} → NS (ESPN 정상 예정, API 연기 표시 무시)")
+    return True
 
 
 def _nba(g, now):
@@ -281,9 +300,11 @@ def _nba(g, now):
     if st is None or st.tzinfo is None:
         return False
     age = (now - st).total_seconds()
-    if not (-15 * 60 <= age <= 8 * 3600):
+    lo = -12 * 3600 if str(g.get("status") or "") in _PST else -15 * 60   # API '연기' 표시는 경기 전에도 ESPN 으로 확인
+    if not (lo <= age <= 8 * 3600):
         return False
     he, ae = _team_en("basketball", g.get("home_id")), _team_en("basketball", g.get("away_id"))
+    he, ae = _ESPN_NBA.get(he, he), _ESPN_NBA.get(ae, ae)   # ESPN 표기가 다른 팀(클리퍼스)
     if not he or not ae or he == ae:
         return False
     u, hits = st.astimezone(timezone.utc), {}
@@ -326,6 +347,8 @@ def _nba(g, now):
             code, lab = f"Q{per}", f"{per}Q"
         else:
             return False
+    elif t.get("state") == "pre":
+        return _unpostpone(g, name, "NBA")
     else:
         return False
     lines = []
@@ -367,7 +390,8 @@ def _nhl(g, now):
     if st is None or st.tzinfo is None:
         return False
     age = (now - st).total_seconds()
-    if not (-15 * 60 <= age <= 8 * 3600):
+    lo = -12 * 3600 if str(g.get("status") or "") in _PST else -15 * 60   # API '연기' 표시는 경기 전에도 ESPN 으로 확인
+    if not (lo <= age <= 8 * 3600):
         return False
     he, ae = _team_en("hockey", g.get("home_id")), _team_en("hockey", g.get("away_id"))
     if not he or not ae or he == ae:
@@ -416,6 +440,8 @@ def _nhl(g, now):
             code, lab = f"P{per}", f"{per}피리어드"
         else:
             return False
+    elif t.get("state") == "pre":
+        return _unpostpone(g, name, "NHL")
     else:
         return False
     lines = []
