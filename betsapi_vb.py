@@ -15,7 +15,7 @@ import teamodds
 
 log = logging.getLogger("betsapi_vb")
 HOST = "https://api.betsapi.com"
-LEAGUES = {151, 152, 153}                    # V리그 남·여, KOVO컵 여자
+LEAGUES = {151, 152, 153, 154}               # V리그 남·여, KOVO컵 여자·남자
 TEAM = {   # API-Sports volleyball team id → BetsAPI 이름(정확히 일치할 때만)
     1178: "Gimcheon Hi-Pass (W)", 1179: "GS Caltex Seoul (W)", 1180: "Heungkuk Pink Spiders (W)",
     1181: "Hyundai Hillstate (W)", 1182: "IBK Altos (W)", 2162: "SOOP SOOPers VC (W)",

@@ -22,8 +22,8 @@ H = {"User-Agent": "Mozilla/5.0 (twowinscore)", "Referer": "https://m.sports.nav
 BASE = "https://api-gw.sports.naver.com/schedule/games"
 TTL, FAIL_TTL, TIMEOUT = 5, 20, 4
 LEAGUES = {("basketball", 91): "kbasketball", ("volleyball", 151): "kvolleyball",
-           ("volleyball", 152): "kvolleyball", ("volleyball", 153): "kvolleyball"}
-CATS = {("basketball", 91): {"kbl"}, ("volleyball", 151): {"kovo"}, ("volleyball", 152): {"wkovo"}}  # 153(컵): 이름+시간으로만
+           ("volleyball", 152): "kvolleyball", ("volleyball", 153): "kvolleyball", ("volleyball", 154): "kvolleyball"}
+CATS = {("basketball", 91): {"kbl"}, ("volleyball", 151): {"kovo"}, ("volleyball", 152): {"wkovo"}, ("volleyball", 154): {"kovo"}}  # 153(컵)·154(남자컵 kovo): 이름+시간으로만
 BB_ST = {1: "Q1", 2: "Q2", 3: "Q3", 4: "Q4"}
 
 _cache, _lock = {}, threading.Lock()

@@ -27,7 +27,7 @@ _lock = threading.Lock()
 SITE_LEAGUES = [
     # 한국
     ("baseball", 5, "KBO"), ("basketball", 91, "KBL"), ("basketball", 92, "WKBL"),
-    ("volleyball", 151, "V리그 남자"), ("volleyball", 152, "V리그 여자"), ("volleyball", 153, "KOVO컵 여자"),
+    ("volleyball", 151, "V리그 남자"), ("volleyball", 152, "V리그 여자"), ("volleyball", 153, "KOVO컵 여자"), ("volleyball", 154, "KOVO컵 남자"),
     ("football", 292, "K리그1"), ("football", 17, "AFC 챔피언스리그 엘리트"), ("football", 18, "AFC 챔피언스리그2"), ("football", 293, "K리그2"), ("football", 660, "WK리그(여자)"),
     # 일본·아시아
     ("baseball", 2, "NPB"), ("baseball", 29, "CPBL"), ("basketball", 56, "B리그"), ("basketball", 31, "CBA"), ("basketball", 386, "EASL"),
@@ -47,7 +47,7 @@ SITE_LEAGUES = [
 ]
 # score_bot(읽기 전용)에 없는 리그는 여기서만 등록
 for _k, _l, _s, _n in [("baseball", 32, 2026, "아시안게임 야구"), ("baseball", 43, 2026, "프리미어12"),
-                       ("basketball", 386, "2026-2027", "EASL"), ("volleyball", 153, 2026, "KOVO컵 여자"),
+                       ("basketball", 386, "2026-2027", "EASL"), ("volleyball", 153, 2026, "KOVO컵 여자"), ("volleyball", 154, 2026, "KOVO컵 남자"),
                        ("volleyball", 233, 2026, "아시안게임 배구"), ("volleyball", 252, "2026-2027", "SV리그"),
                        ("volleyball", 174, "2026-2027", "튀르키예 여자 술탄라르")]:
     if (_k, _l) not in sb.LEAGUE_BY_KEY:
