@@ -245,3 +245,108 @@ def status():
     now = time.time()
     return {"stats": {**STATS, "last_ok_ago": round(now - STATS["last_ok"]) if STATS["last_ok"] else None},
             "mismatch": [{"ago": round(now - t), "key": k, "type": ty, "data": d} for t, k, ty, d, _ in list(MISMATCH)[-20:]]}
+
+
+# ── 네이버에만 있는 경기 추가(API-Sports 미등록 경기) ─────────────────────────────
+# 같은 날짜·같은 두 팀 경기가 API-Sports 에 있으면 추가하지 않는다(API-Sports 우선).
+# 팀이 아직 정해지지 않은 경기("준결승 A승")는 띄우지 않는다. 점수·상태는 네이버 실제 값만.
+_PLACEHOLDER = re.compile(r"(준결승|결승|[A-Z]\s*[승패]|미정|TBD|\d위)")
+_UP_KIND = {"kbasketball": "basketball", "kvolleyball": "volleyball"}
+_LOGO = {"basketball": "basketball", "volleyball": "volley"}
+EXTRA = {"added": 0, "last": []}
+
+
+def _naver_league(kind, x):
+    cat, rnd = x.get("categoryId"), str(x.get("roundCode") or "")
+    cup = rnd.startswith("kovo_cup")
+    if kind == "volleyball":
+        return {"wkovo": 153 if cup else 152, "kovo": 154 if cup else 151}.get(cat)
+    if kind == "basketball":
+        return {"kbl": 91, "wkbl": 92}.get(cat)
+    return None
+
+
+def _team_id(kind, name, ko_map):
+    ids = [i for i, n in (ko_map or {}).items() if _nm(n) == _nm(name)]
+    return ids[0] if len(ids) == 1 else None
+
+
+def _same(x, y):
+    return bool(x and y) and (x == y or x in y or y in x)
+
+
+def _seen(have, h, a):
+    h, a = _nm(h), _nm(a)
+    for p in have:
+        p1, p2 = (list(p) * 2)[:2]
+        if (_same(h, p1) and _same(a, p2)) or (_same(h, p2) and _same(a, p1)):
+            return True
+    return False
+
+
+def extra_games(kind, day, games, ko_map=None, enabled=None):
+    """네이버 일정에만 있는 국내 경기 → 사이트 형식 dict 목록. 실패하면 []."""
+    try:
+        return _extra(kind, day, games, ko_map, enabled)
+    except Exception as e:
+        log(f"naver_kr extra {kind} {day} 실패: {str(e)[:120]}")
+        return []
+
+
+def _extra(kind, day, games, ko_map, enabled):
+    ups = [u for u, k in _UP_KIND.items() if k == kind]
+    if not ups:
+        return []
+    have = set()
+    for g in games:
+        try:
+            if g["start"].astimezone(SEOUL).date() == day:
+                have.add(frozenset((_nm(g.get("home")), _nm(g.get("away")))))
+        except Exception:
+            pass
+    out = []
+    for up in ups:
+        for x in _day(up, day.isoformat()):
+            lg = _naver_league(kind, x)
+            if lg is None or (enabled is not None and (kind, lg) not in enabled):
+                continue
+            h, a = str(x.get("homeTeamName") or "").strip(), str(x.get("awayTeamName") or "").strip()
+            if not h or not a or _PLACEHOLDER.search(h) or _PLACEHOLDER.search(a):
+                continue
+            if _seen(have, h, a):
+                continue                      # API-Sports 에 이미 있음 → API-Sports 사용
+            try:
+                st = datetime.fromisoformat(x["gameDateTime"]).replace(tzinfo=SEOUL)
+            except (KeyError, ValueError, TypeError):
+                continue
+            if st.date() != day:
+                continue
+            code = x.get("statusCode")
+            g = {"key": f"{kind}:{lg}:nv{x['gameId']}", "id": None, "kind": kind, "league": lg, "start": st,
+                 "home": h, "away": a, "home_score": None, "away_score": None, "lines": [], "src": "naver",
+                 "venue": x.get("stadium") or None}
+            for sd, nm in (("home", h), ("away", a)):
+                tid = _team_id(kind, nm, ko_map)
+                g[sd + "_id"] = tid
+                g[sd + "_logo"] = f"https://media.api-sports.io/{_LOGO[kind]}/teams/{tid}.png" if tid else None
+            if x.get("cancel") or code in ("CANCEL", "CANCELED"):
+                g.update(status="CANC", period="취소", status_long="Cancelled")
+            elif code == "BEFORE":
+                g.update(status="NS", period="Not Started", status_long="Not Started")
+            elif code in ("STARTED", "RESULT"):
+                try:
+                    n = _parse(g, x, False)
+                except Exception:
+                    n = None
+                if not n:
+                    continue
+                n.pop("rank", None)
+                g.update(n)
+                g["status_long"] = "Finished" if n["status"] == "FT" else "In Progress"
+            else:
+                continue                      # 모르는 상태는 띄우지 않음
+            have.add(frozenset((_nm(h), _nm(a))))
+            out.append(g)
+    if out:
+        EXTRA["added"] = len(out); EXTRA["last"] = [g["key"] for g in out][-10:]
+    return out

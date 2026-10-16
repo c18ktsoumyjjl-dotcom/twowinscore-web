@@ -170,7 +170,11 @@ def _naver_halt(g):
 
 def _sport_day(kind, day, today):
     games, ok = _sport_day0(kind, day, today)
-    return livefix.apply(kind, _naver_fresh(kind, games)), ok   # API-Sports NS 고착 시 네이버·ESPN 일치값만
+    games = livefix.apply(kind, _naver_fresh(kind, games))   # API-Sports NS 고착 시 네이버·ESPN 일치값만
+    if kind in ("basketball", "volleyball") and abs((day - today).days) <= 7:
+        # API-Sports 에 아직 없는 국내 경기는 네이버 일정·실시간으로 추가(같은 날·같은 두 팀이면 API-Sports 우선)
+        games = games + naver_kr.extra_games(kind, day, games, sb.TEAM_KO.get(kind) or {}, set(SITE_KEYS))
+    return games, ok
 
 
 def _sport_day0(kind, day, today):
