@@ -111,7 +111,8 @@ def _ser(g):
     d = {k: v for k, v in g.items() if k in (
         "key", "id", "kind", "league", "start", "status", "home", "away", "home_score", "away_score",
         "period", "lines", "label", "home_logo", "away_logo", "if_necessary", "series_ko",
-        "home_id", "away_id", "innings", "venue", "home_en", "away_en", "status_long", "halt_reason")}
+        "home_id", "away_id", "innings", "venue", "home_en", "away_en", "status_long", "halt_reason",
+        "tf_he", "tf_ae")}
     d["start"] = g["start"].isoformat()
     d["lines"] = [list(x) for x in g.get("lines") or []]
     return d
@@ -259,6 +260,8 @@ def _fetch_raw(kind, day, other=None):
         if not g:
             continue
         g["status_long"] = (raw.get("status") or {}).get("long")
+        tm = raw.get("teams") or {}   # 시작 시간 보정(timefix)의 ESPN 맞추기용 영문 팀명 — 화면에는 안 나감
+        g["tf_he"], g["tf_ae"] = (tm.get("home") or {}).get("name"), (tm.get("away") or {}).get("name")
         if kind == "baseball" and g.get("src") != "naver":   # 네이버 값이 있으면 그대로
             sc = raw.get("scores") or {}
             inn = {}

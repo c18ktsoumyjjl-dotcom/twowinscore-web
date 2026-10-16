@@ -88,7 +88,8 @@ def _tnames(c):
 
 def _espn_time(kind, g, st):
     hits = set()
-    he, ae = g.get("home_en") or g.get("home"), g.get("away_en") or g.get("away")
+    he = g.get("home_en") or g.get("tf_he") or g.get("home")
+    ae = g.get("away_en") or g.get("tf_ae") or g.get("away")
     u = st.astimezone(timezone.utc)
     for slug in ESPN.get(kind, ()):
         for d in {(u + timedelta(hours=dh)).strftime("%Y%m%d") for dh in (-12, 0, 12)}:
