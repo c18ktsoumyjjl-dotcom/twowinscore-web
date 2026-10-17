@@ -74,7 +74,7 @@ def _ko(s):
     return re.sub(r"[\s·.\-]", "", str(s or "")).lower()
 
 
-@functools.lru_cache(maxsize=300000)
+@functools.lru_cache(maxsize=60000)
 def _pair_eq(a, b):
     """정규화된 두 영문 이름이 같은 팀인지(결과 캐시 — 매 요청 ESPN 전 경기와 difflib 비교하던 CPU 부담 제거)."""
     if len(b) < 3:
