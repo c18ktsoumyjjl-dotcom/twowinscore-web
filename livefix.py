@@ -273,6 +273,8 @@ _ESPN_NBA = {"Los Angeles Clippers": "LA Clippers"}   # API-Sports 영문명 →
 
 
 _PST = {"POST", "PST"}
+_FIN_API = {"FT", "AOT", "AP", "AET"}
+HALT_LAB = {"INTR": "경기 중단", "SUSP": "일시 중단"}
 
 
 def _unpostpone(g, espn_name, tag):
@@ -521,6 +523,13 @@ def _mlb(g, now):
         if name != "STATUS_FINAL":
             return False
         code, lab = ("AOT", "연장 종료") if per > 9 else ("FT", "종료")
+    elif t.get("state") == "in" and ("DELAY" in name or "SUSPEND" in name):
+        # ESPN '지연/서스펜디드'(예: "Delayed, Top 1st"): API-Sports 가 점수 없이 FT 로 내보내도 종료로 두지 않고 중단으로.
+        last = detail.split(",")[-1].strip()
+        half = "초" if last.startswith(("top", "mid")) else "말" if last.startswith(("bot", "end")) else None
+        code = "SUSP" if "SUSPEND" in name else "INTR"
+        lab = HALT_LAB[code]
+        g["halt_reason"] = ("서스펜디드" if code == "SUSP" else "경기 지연") + (f" ({per}회{half})" if per and half else "")
     elif t.get("state") == "in":
         if not per:
             return False
@@ -532,6 +541,12 @@ def _mlb(g, now):
             return False
         code, lab = f"IN{per}", f"{per}회{half}"
     elif t.get("state") == "pre":
+        if str(g.get("status") or "") in _FIN_API and g.get("home_score") is None and g.get("away_score") is None:
+            # API-Sports 가 시작 전 경기를 점수 없이 FT 로 내보낸 경우 → ESPN 기준 예정으로 되돌림(점수는 만들지 않음)
+            old = g.get("status")
+            g.update(status="NS", status_api=old, live_src="espn-mlb", status_long=None)
+            tf.log(f"livefix MLB {g.get('key')} {old}(점수 없음) → NS (ESPN {name})")
+            return True
         return _unpostpone(g, name, "MLB")
     else:
         return False
