@@ -287,6 +287,7 @@ def find_game(key, day, _nx=True):
 
 def _find_game(key, day):
     games, _ = games_for(day)
+    key = _DUP_ALIAS.get(key, key)
     for g in games:
         if str(g["key"]) == key:
             return g
@@ -507,11 +508,43 @@ def games_for(day):
                     out.append(o)
         except Exception:
             pass
+    out = _dedupe(out)
     for g in out:
         g["site_order"], g["site_league"] = SITE_KEYS[(g["kind"], g["league"])]
         g["state"] = state(g)
     out.sort(key=lambda g: (g["site_order"], g["start"], str(g["key"])))
     return out, failed
+
+
+_DUP_ALIAS = {}   # 숨긴 중복 경기 key -> 남긴 경기 key (상세·즐겨찾기 링크가 404 나지 않게)
+
+
+def _dedupe(games):
+    """API-Sports 가 같은 경기를 두 번 내보낼 때(예: 우천 연기 후 재편성 경기가 새 id 로 하나 더 생김) 하나만 남겨요.
+    같은 리그·같은 홈/원정 팀 id·같은 시작 시각이면 같은 경기(같은 시각 더블헤더는 없음).
+    더 진행된 쪽(점수·상태)을 남기고, 같으면 먼저 있던(작은 id) 쪽을 남겨요."""
+    def rank(g):
+        started = g.get("status") not in (None, "NS", "TBD")
+        scored = g.get("home_score") is not None or g.get("away_score") is not None
+        tail = str(g.get("key")).rsplit(":", 1)[-1]
+        return (0 if started else 1, 0 if scored else 1, int(tail) if tail.isdigit() else 1 << 62)
+    groups, order = {}, []
+    for g in games:
+        if g.get("home_id") is None or g.get("away_id") is None or not str(g.get("key", "")).rsplit(":", 1)[-1].isdigit():
+            order.append([g]); continue
+        k = (g["kind"], g["league"], g["home_id"], g["away_id"], g["start"])
+        if k in groups:
+            groups[k].append(g)
+        else:
+            groups[k] = [g]; order.append(groups[k])
+    out = []
+    for grp in order:
+        if len(grp) > 1:
+            grp.sort(key=rank)
+            for d in grp[1:]:
+                _DUP_ALIAS[str(d["key"])] = str(grp[0]["key"])
+        out.append(grp[0])
+    return out
 
 
 HALT_LIVE = {"INT", "INTR", "SUSP"}
