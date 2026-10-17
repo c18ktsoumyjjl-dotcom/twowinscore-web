@@ -45,10 +45,41 @@ def _get(url):
     return d["result"]
 
 
+STALE_MAX = 60      # 만료 후 이 시간(초) 안의 값은 바로 주고 뒤에서 갱신(요청이 네이버 응답을 기다리지 않게)
+_busy = set()
+
+
+def _store(key, fn):
+    try:
+        val, exp = fn(), time.time() + TTL
+        STATS["ok"] += 1; STATS["last_ok"] = time.time()
+    except Exception as e:
+        log(f"naver_kr {key} 실패 → API-Sports 사용: {str(e)[:120]}")
+        STATS["fail"] += 1; STATS["last_fail"] = (time.time(), str(e)[:120])
+        val, exp = None, time.time() + FAIL_TTL
+    with _lock:
+        if len(_cache) > 500:
+            _cache.clear()
+        _cache[key] = (exp, val)
+    return val
+
+
 def _cached(key, fn):
     with _lock:
         hit = _cache.get(key)
-        if hit and time.time() < hit[0]:
+        now = time.time()
+        if hit and now < hit[0]:
+            return hit[1]
+        if hit and hit[1] is not None and now - hit[0] < STALE_MAX:
+            if key not in _busy:      # 만료된 값: 즉시 반환 + 뒤에서 한 번만 새로 받기
+                _busy.add(key)
+                def _r():
+                    try:
+                        _store(key, fn)
+                    finally:
+                        with _lock:
+                            _busy.discard(key)
+                threading.Thread(target=_r, daemon=True).start()
             return hit[1]
         lk = _cache.setdefault("lk:" + key, (0, threading.Lock()))[1]
     with lk:
@@ -56,18 +87,7 @@ def _cached(key, fn):
             hit = _cache.get(key)
             if hit and time.time() < hit[0]:
                 return hit[1]
-        try:
-            val, exp = fn(), time.time() + TTL
-            STATS["ok"] += 1; STATS["last_ok"] = time.time()
-        except Exception as e:
-            log(f"naver_kr {key} 실패 → API-Sports 사용: {str(e)[:120]}")
-            STATS["fail"] += 1; STATS["last_fail"] = (time.time(), str(e)[:120])
-            val, exp = None, time.time() + FAIL_TTL
-        with _lock:
-            if len(_cache) > 500:
-                _cache.clear()
-            _cache[key] = (exp, val)
-        return val
+        return _store(key, fn)
 
 
 def _day(up, day):

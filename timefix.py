@@ -4,7 +4,7 @@
 맞춰져 서로 같은 시간(5분 이내)을 가리킬 때만 그 시간으로 바꾼다. 한 출처만 있으면 절대 바꾸지 않는다.
 경기 목록을 새로 받을 때(배경)만 실행, 출처별 날짜 단위 30분 캐시·4초 타임아웃 → 요청/모바일 부담 없음.
 """
-import difflib, json, re, threading, time, unicodedata, urllib.request
+import difflib, functools, json, re, threading, time, unicodedata, urllib.request
 from collections import deque
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -60,7 +60,12 @@ def _espn(slug, ymd):
 
 
 def _en(s):
-    s = unicodedata.normalize("NFKD", str(s or "")).encode("ascii", "ignore").decode().lower()
+    return _en_c(str(s or ""))
+
+
+@functools.lru_cache(maxsize=50000)
+def _en_c(s):
+    s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().lower()
     s = re.sub(r"\b(fc|cf|sc|afc|club|the)\b", " ", s)
     return re.sub(r"[^a-z0-9]", "", s)
 
@@ -69,14 +74,25 @@ def _ko(s):
     return re.sub(r"[\s·.\-]", "", str(s or "")).lower()
 
 
+@functools.lru_cache(maxsize=300000)
+def _pair_eq(a, b):
+    """정규화된 두 영문 이름이 같은 팀인지(결과 캐시 — 매 요청 ESPN 전 경기와 difflib 비교하던 CPU 부담 제거)."""
+    if len(b) < 3:
+        return False
+    if a == b or (min(len(a), len(b)) >= 5 and (a in b or b in a)):
+        return True
+    if 2.0 * min(len(a), len(b)) / (len(a) + len(b)) < 0.85:   # 길이 차이만으로 0.85 불가능(같은 결과, 빠르게)
+        return False
+    m = difflib.SequenceMatcher(None, a, b)
+    return m.real_quick_ratio() >= 0.85 and m.quick_ratio() >= 0.85 and m.ratio() >= 0.85
+
+
 def _en_eq(a, names):
     a = _en(a)
     if len(a) < 3:
         return False
     for b in names:
-        b = _en(b)
-        if len(b) >= 3 and (a == b or (min(len(a), len(b)) >= 5 and (a in b or b in a))
-                            or difflib.SequenceMatcher(None, a, b).ratio() >= 0.85):
+        if _pair_eq(a, _en(b)):
             return True
     return False
 
