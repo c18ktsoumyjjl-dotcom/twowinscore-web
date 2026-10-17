@@ -519,6 +519,15 @@ def _mlb(g, now):
     if hs is None or as_ is None:
         return False
     detail = str(t.get("shortDetail") or t.get("detail") or "").lower()
+    if t.get("state") == "post" and name in ("STATUS_POSTPONED", "STATUS_CANCELED", "STATUS_CANCELLED"):
+        # ESPN '연기/취소'인데 API-Sports 가 점수 없이 FT(종료)로 내보낸 경우 → 연기/취소로(점수는 만들지 않음)
+        if str(g.get("status") or "") in _FIN_API and g.get("home_score") is None and g.get("away_score") is None:
+            old = g.get("status")
+            new = "POST" if "POSTPONED" in name else "CANC"
+            g.update(status=new, period=None, status_api=old, live_src="espn-mlb", status_long=None, halt_reason=None)
+            tf.log(f"livefix MLB {g.get('key')} {old}(점수 없음) → {new} (ESPN {name})")
+            return True
+        return False
     if t.get("state") == "post":
         if name != "STATUS_FINAL":
             return False
