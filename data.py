@@ -560,6 +560,15 @@ def state(g):
         except Exception:
             return "live"
         return "postponed"
+    if g["kind"] == "hockey" and g["status"] in ("OT", "PT"):
+        # API-Sports 하위 리그(ECHL·SPHL 등)는 연장·슛아웃이 끝난 뒤에도 OT/PT 로 몇 시간째 남는다.
+        # 연장은 골이 나면 끝나고 슛아웃도 승자가 나야 끝나므로, 시작 5시간이 지났고 점수가 갈렸으면 종료로 본다.
+        try:
+            hs, as_ = g.get("home_score"), g.get("away_score")
+            if hs is not None and as_ is not None and hs != as_ and (datetime.now(SEOUL) - g["start"]).total_seconds() > 5 * 3600:
+                return "final"
+        except Exception:
+            pass
     if g["kind"] in NEW_KINDS:
         return sports2.state(g["kind"], g["status"])
     if sb.is_live(g):
