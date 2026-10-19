@@ -272,6 +272,8 @@ def view(g):
     rc = home_result(g) if show and st == "final" else None
     badge = {"live": g.get("period") or "진행 중", "final": {"w": "홈승", "l": "홈패", "d": "무승부"}.get(rc, "종료"), "cancelled": "취소",
              "postponed": "연기", "scheduled": g["start"].strftime("%H:%M")}.get(st, g["start"].strftime("%H:%M"))   # 알 수 없는 상태(API 상태값 누락): 빈 배지 대신 시작 시각
+    if st == "other" and g.get("stale_live"):
+        badge = "결과 확인 중"   # 출처 데이터가 경기 중간에 멈춤: 점수·결과를 지어내지 않는다
     halt, reason = halt_info(g)
     if halt:
         badge = halt + (f" · {reason}" if reason else "")

@@ -548,6 +548,7 @@ def _dedupe(games):
 
 
 HALT_LIVE = {"INT", "INTR", "SUSP"}
+STALE_LIVE_H = 4   # 축구: 시작 후 이 시간이 지나도 진행 중 상태면 출처 멈춤으로 본다
 HALT_MAX_H = {"football": 3, "hockey": 3.5, "basketball": 3.5, "volleyball": 3.5, "baseball": 5}   # 중단·일시 중단: 진행 중으로 유지
 
 
@@ -567,6 +568,16 @@ def state(g):
             hs, as_ = g.get("home_score"), g.get("away_score")
             if hs is not None and as_ is not None and hs != as_ and (datetime.now(SEOUL) - g["start"]).total_seconds() > 5 * 3600:
                 return "final"
+        except Exception:
+            pass
+    if g["kind"] == "football" and sports2.is_live("football", g["status"]):
+        # API-Sports 하위 리그는 중계가 끊기면 '전반 40분' 같은 진행 상태로 몇 시간째 멈춘다.
+        # 축구는 연장·승부차기까지 해도 3시간을 넘지 않으므로, 시작 4시간이 지나도 진행 중이면
+        # 결과를 지어내지 않고 '결과 확인 중'(진행 중 목록·다음 날 진행 중 이월에서 제외)으로 둔다.
+        try:
+            if (datetime.now(SEOUL) - g["start"]).total_seconds() > STALE_LIVE_H * 3600:
+                g["stale_live"] = True
+                return "other"
         except Exception:
             pass
     if g["kind"] in NEW_KINDS:
