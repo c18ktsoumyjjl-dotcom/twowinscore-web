@@ -556,7 +556,10 @@ def state(g):
     if g["status"] in HALT_LIVE:
         try:
             lim = HALT_MAX_H.get(g["kind"], 3) * 3600   # 이 시간이 지나도 중단이면 진행 중에서 뺀다
-            if (datetime.now(SEOUL) - g["start"]).total_seconds() < lim:
+            el = (datetime.now(SEOUL) - g["start"]).total_seconds()
+            # API-Sports 는 일시 중단(SUSP) 경기의 시작 시각을 재개 예정 시각(미래)으로 옮겨 둔다.
+            # 아직 재개 전이면 진행 중이 아니므로 진행 중 목록·LIVE 수에서 뺀다(⏸ 일시 중단 표시는 유지).
+            if 0 <= el < lim:
                 return "live"
         except Exception:
             return "live"
