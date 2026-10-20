@@ -576,6 +576,11 @@ def _mlb(g, now):
         inn = None
     old = (g.get("status"), g.get("home_score"), g.get("away_score"))
     if old == (code, hs, as_):
+        # 같은 이닝·같은 점수여도 API-Sports 는 말 공격 중에 '초'로 남는 일이 많음(홈 이닝 점수가 아직 없으면 '초'로 추정)
+        # → ESPN 이 같은 이닝 '말'이면 표시만 '말'로(초로 되돌리지는 않음)
+        if code.startswith("IN") and lab.endswith("말") and g.get("period") != lab:
+            g.update(period=lab, live_src="espn-mlb")
+            return True
         return False
     oh, oa = _int(g.get("home_score")), _int(g.get("away_score"))
     if code not in ("FT", "AOT") and oh is not None and oa is not None and oh >= hs and oa >= as_ and oh + oa > hs + as_:
