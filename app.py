@@ -315,6 +315,9 @@ def period_table(g):
             return None
         n = max([9] + [int(k) for s in ("home", "away") for k in raw[s]["inn"] if str(k).isdigit()])
         cols = [str(i) for i in range(1, n + 1)]
+        # API-Sports 는 연장을 'extra' 합계 하나로만 줌 → 9회 뒤 '연장' 칸으로 표시(없으면 이닝 합이 R과 안 맞음)
+        if any(raw[s]["inn"].get("extra") is not None for s in ("home", "away")):
+            cols.append("extra")
         ext = [c for c in ("H", "E") if any(raw[s].get(c) is not None for s in ("home", "away"))]
         rows = [{"name": g[s], "vals": [raw[s]["inn"].get(c) for c in cols], "T": g.get(s + "_score"),
                  "ext": [raw[s].get(c) for c in ext], "home": s == "home"} for s in ("away", "home")]
@@ -325,7 +328,7 @@ def period_table(g):
         stc = str(g.get("status") or "")
         if g["state"] == "live" and stc.startswith("IN") and stc[2:].isdigit() and int(stc[2:]) <= n:
             cur = int(stc[2:]) - 1
-        return {"cols": cols, "tlab": "R", "ext": ext, "rows": rows, "cur": cur}
+        return {"cols": ["연장" if c == "extra" else c for c in cols], "tlab": "R", "ext": ext, "rows": rows, "cur": cur}
     lines = g.get("lines") or []
     k = g["kind"]
     REG = {"basketball": ["1Q", "2Q", "3Q", "4Q"], "volleyball": ["1세트", "2세트", "3세트", "4세트", "5세트"],
