@@ -552,6 +552,25 @@ STALE_LIVE_H = 4   # 축구: 시작 후 이 시간이 지나도 진행 중 상�
 HALT_MAX_H = {"football": 3, "hockey": 3.5, "basketball": 3.5, "volleyball": 3.5, "baseball": 5}   # 중단·일시 중단: 진행 중으로 유지
 
 
+BB_TIE_CHECK_H = 6
+
+
+def _bb_tied_no_extra(g):
+    """야구 동점 + 연장 이닝 기록 없음(9회까지만) 이면 True. 네이버 출처(이닝 원본 없음)는 건드리지 않는다."""
+    hs, as_ = g.get("home_score"), g.get("away_score")
+    inn = g.get("innings")
+    if hs is None or hs != as_ or not isinstance(inn, dict):
+        return False
+    for side in ("home", "away"):
+        d = (inn.get(side) or {}).get("inn") or {}
+        for k, v in d.items():
+            if v is None:
+                continue
+            if str(k).lower() == "extra" or (str(k).isdigit() and int(k) > 9):
+                return False
+    return True
+
+
 def state(g):
     if g["status"] in HALT_LIVE:
         try:
@@ -585,6 +604,15 @@ def state(g):
             pass
     if g["kind"] in NEW_KINDS:
         return sports2.state(g["kind"], g["status"])
+    if g["kind"] == "baseball" and g["status"] == "FT" and _bb_tied_no_extra(g):
+        # API-Sports 는 9회 동점으로 연장에 들어간 경기를 FT(종료)로 먼저 찍는 일이 있다(10/21 CPBL 대만시리즈 4차전 4:4 → 실제 10회 진행).
+        # 9회 동점 종료는 정식 무승부가 아니므로, 시작 6시간 안에는 무승부를 지어내지 않고 '결과 확인 중'으로 둔다.
+        try:
+            if (datetime.now(SEOUL) - g["start"]).total_seconds() < BB_TIE_CHECK_H * 3600:
+                g["stale_live"] = True
+                return "other"
+        except Exception:
+            pass
     if sb.is_live(g):
         return "live"
     if sb.is_finished(g):
