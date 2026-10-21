@@ -556,19 +556,11 @@ BB_TIE_CHECK_H = 6
 
 
 def _bb_tied_no_extra(g):
-    """야구 동점 + 연장 이닝 기록 없음(9회까지만) 이면 True. 네이버 출처(이닝 원본 없음)는 건드리지 않는다."""
+    """API-Sports 야구 동점 종료면 True. API-Sports 는 연장을 1~9회 + 'extra' 합계로만 줘서 10회 진행 중과
+    연장 끝 무승부를 이닝값으로 가를 수 없다 → 시작 후 BB_TIE_CHECK_H 시간 동안은 결과를 확인 중으로 둔다.
+    네이버 출처(KBO 등, 이닝 원본 없음)는 건드리지 않는다."""
     hs, as_ = g.get("home_score"), g.get("away_score")
-    inn = g.get("innings")
-    if hs is None or hs != as_ or not isinstance(inn, dict):
-        return False
-    for side in ("home", "away"):
-        d = (inn.get(side) or {}).get("inn") or {}
-        for k, v in d.items():
-            if v is None:
-                continue
-            if str(k).lower() == "extra" or (str(k).isdigit() and int(k) > 9):
-                return False
-    return True
+    return hs is not None and hs == as_ and isinstance(g.get("innings"), dict) and g.get("src") != "naver"
 
 
 def state(g):
@@ -604,7 +596,7 @@ def state(g):
             pass
     if g["kind"] in NEW_KINDS:
         return sports2.state(g["kind"], g["status"])
-    if g["kind"] == "baseball" and g["status"] == "FT" and _bb_tied_no_extra(g):
+    if g["kind"] == "baseball" and sb.is_finished(g) and _bb_tied_no_extra(g):
         # API-Sports 는 9회 동점으로 연장에 들어간 경기를 FT(종료)로 먼저 찍는 일이 있다(10/21 CPBL 대만시리즈 4차전 4:4 → 실제 10회 진행).
         # 9회 동점 종료는 정식 무승부가 아니므로, 시작 6시간 안에는 무승부를 지어내지 않고 '결과 확인 중'으로 둔다.
         try:
