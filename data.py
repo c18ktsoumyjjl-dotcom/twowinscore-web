@@ -496,6 +496,7 @@ def games_for(day):
             if not ok:
                 failed.append(kind)
             out.extend(g for g in gs if g["start"].date() == day)
+            out.extend(_moved_in(kind, day, today))
     # MLB 공식 일정: 시리즈 이름 보강 + API-Sports 에 아직 없는 확정 예정 경기 추가
     if day >= today:
         try:
@@ -514,6 +515,21 @@ def games_for(day):
         g["state"] = state(g)
     out.sort(key=lambda g: (g["site_order"], g["start"], str(g["key"])))
     return out, failed
+
+
+def _moved_in(kind, day, today):
+    """timefix 가 전날 목록의 경기 시작을 이 날짜로 옮긴 경우(예: API 10/23 03:00 → 실제 10/24 03:00) 이 날짜 목록에 넣어요.
+    그 날짜 API 목록엔 없어서 보정 뒤 어느 날짜에도 안 보이던 문제 — 10/23 사우디 알아흘리–알칼리즈.
+    전날 캐시에 옮겨진 경기가 있을 때만 그 종목 전날 자료를 읽어요(추가 API 호출 최소)."""
+    prev = day - timedelta(days=1)
+    try:
+        c = _rd(f"games_{kind}_{prev.isoformat()}.json") or {}
+        if not any(g.get("start_api") and _de(g)["start"].date() == day for g in c.get("games") or []):
+            return []
+        gs, _ = _sport_day(kind, prev, today)
+        return [g for g in gs if g.get("start_api") and g["start"].date() == day]
+    except Exception:
+        return []
 
 
 _DUP_ALIAS = {}   # 숨긴 중복 경기 key -> 남긴 경기 key (상세·즐겨찾기 링크가 404 나지 않게)
