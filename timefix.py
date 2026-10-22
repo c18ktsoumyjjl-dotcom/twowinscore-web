@@ -1,7 +1,11 @@
 """시작 시간 자동 보정 (모든 종목).
 
 규칙: API-Sports 시작 시간이 네이버·ESPN과 30분 이상 다르고, 네이버와 ESPN이 같은 경기(양 팀 이름+날짜)로
-맞춰져 서로 같은 시간(5분 이내)을 가리킬 때만 그 시간으로 바꾼다. 한 출처만 있으면 절대 바꾸지 않는다.
+맞춰져 서로 같은 시간(5분 이내)을 가리킬 때만 그 시간으로 바꾼다. 한 출처만 있으면 바꾸지 않는다.
+예외(늦은 NS): API-Sports 시작 시각이 1시간 넘게 지났는데도 아직 NS/TBD(=그 시각에 안 열림)이고,
+네이버에 있으면 ESPN과 같은 시각이며, ESPN이 같은 두 팀 경기를 ±36시간 안에 딱 하나 '예정'(STATUS_SCHEDULED)으로, 아직 안 온 시각에 갖고 있을
+때만 ESPN 시각으로 바꾼다(ESPN 범위가 ±12시간이라 하루 밀린 경기는 기존 규칙으로 못 잡음) — 10/23 사우디 알아흘리–알칼리즈(API 10/23 03:00, ESPN·네이버 10/24 03:00)가 지난 시각
+'예정'으로 남던 문제.
 경기 목록을 새로 받을 때(배경)만 실행, 출처별 날짜 단위 30분 캐시·4초 타임아웃 → 요청/모바일 부담 없음.
 """
 import difflib, functools, json, re, threading, time, unicodedata, urllib.request
@@ -102,21 +106,23 @@ def _tnames(c):
     return [t.get(k) for k in ("displayName", "shortDisplayName", "name", "location", "abbreviation") if t.get(k)]
 
 
-def _espn_time(kind, g, st):
+def _espn_time(kind, g, st, win=12, sched_only=False):
     hits = set()
     he = g.get("home_en") or g.get("tf_he") or g.get("home")
     ae = g.get("away_en") or g.get("tf_ae") or g.get("away")
     u = st.astimezone(timezone.utc)
     for slug in ESPN.get(kind, ()):
-        for d in {(u + timedelta(hours=dh)).strftime("%Y%m%d") for dh in (-12, 0, 12)}:
+        for d in {(u + timedelta(hours=dh)).strftime("%Y%m%d") for dh in range(-win, win + 1, 12)}:
             for e in _espn(slug, d) or []:
                 try:
+                    if sched_only and ((e.get("status") or {}).get("type") or {}).get("name") != "STATUS_SCHEDULED":
+                        continue
                     cs = e["competitions"][0]["competitors"]
                     h = next(c for c in cs if c.get("homeAway") == "home"); a = next(c for c in cs if c.get("homeAway") == "away")
                     t = datetime.fromisoformat(e["date"].replace("Z", "+00:00"))
                 except Exception:
                     continue
-                if abs((t - st).total_seconds()) > 12 * 3600:
+                if abs((t - st).total_seconds()) > win * 3600:
                     continue
                 hn, an = _tnames(h), _tnames(a)
                 if (_en_eq(he, hn) and _en_eq(ae, an)) or (_en_eq(he, an) and _en_eq(ae, hn)):
@@ -148,6 +154,8 @@ def _fix_one(kind, g):
     st = datetime.fromisoformat(s) if isinstance(s, str) else s
     if st is None or st.tzinfo is None:
         return False
+    if _fix_late_ns(kind, g, s, st):
+        return True
     et = _espn_time(kind, g, st)
     if not et or abs((et - st).total_seconds()) < MIN_DIFF:
         return False
@@ -159,6 +167,24 @@ def _fix_one(kind, g):
     g["start_api"] = st.isoformat()
     LOG.append((time.time(), g.get("key"), st.astimezone(SEOUL).strftime("%m-%d %H:%M"), new.strftime("%m-%d %H:%M")))
     log(f"timefix {g.get('key')} {st.astimezone(SEOUL):%H:%M} → {new:%H:%M} (네이버·ESPN 일치)")
+    return True
+
+
+def _fix_late_ns(kind, g, s, st):
+    now = datetime.now(timezone.utc)
+    if g.get("status") not in ("NS", "TBD") or now - st < timedelta(hours=1):
+        return False
+    et = _espn_time(kind, g, st, win=36, sched_only=True)
+    if not et or et <= now or abs((et - st).total_seconds()) < MIN_DIFF:
+        return False
+    n0, n1 = _naver_time(kind, g, st), _naver_time(kind, g, et)
+    if (n0 and abs((n0 - et).total_seconds()) > AGREE) or (n1 and abs((n1 - et).total_seconds()) > AGREE):
+        return False      # 네이버에 있으면 ESPN과 같은 시각일 때만
+    new = et.astimezone(SEOUL)
+    g["start"] = new.isoformat() if isinstance(s, str) else new
+    g["start_api"] = st.isoformat()
+    LOG.append((time.time(), g.get("key"), st.astimezone(SEOUL).strftime("%m-%d %H:%M"), new.strftime("%m-%d %H:%M")))
+    log(f"timefix {g.get('key')} {st.astimezone(SEOUL):%m-%d %H:%M} → {new:%m-%d %H:%M} (API 시작 지난 NS·ESPN 예정)")
     return True
 
 
