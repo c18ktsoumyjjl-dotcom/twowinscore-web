@@ -497,6 +497,7 @@ def games_for(day):
                 failed.append(kind)
             out.extend(g for g in gs if g["start"].date() == day)
             out.extend(_moved_in(kind, day, today))
+            out.extend(_official_moved(kind, day, today, out))
     # MLB 공식 일정: 시리즈 이름 보강 + API-Sports 에 아직 없는 확정 예정 경기 추가
     if day >= today:
         try:
@@ -515,6 +516,36 @@ def games_for(day):
         g["state"] = state(g)
     out.sort(key=lambda g: (g["site_order"], g["start"], str(g["key"])))
     return out, failed
+
+
+def _official_moved(kind, day, today, have):
+    """livefix.OFFICIAL_MOVE: 리그 공식 발표로 재편성됐지만 API 가 옛 날짜 '예정'에 둔 경기를 새 날짜에 넣어요(옛 날짜엔 '연기')."""
+    res = []
+    for key, (ots, nts, _src) in livefix.OFFICIAL_MOVE.items():
+        try:
+            if not key.startswith(kind + ":"):
+                continue
+            new = datetime.fromtimestamp(nts, SEOUL)
+            old = datetime.fromtimestamp(ots, SEOUL)
+            if new.date() != day or old.date() == day or any(str(g.get("key")) == key for g in have):
+                continue
+            if abs((day - today).days) > 2:
+                continue
+            gs, _ = _sport_day(kind, old.date(), today)
+            for g in gs:
+                if str(g.get("key")) != key or abs(g["start"].timestamp() - ots) > 60:
+                    continue
+                m = dict(g)
+                if g.get("live_src") == "official" and g.get("status") == "PST":   # 우리 '연기' 표시만 걷어냄(API 진행·결과는 그대로)
+                    m.update(status=g.get("status_api") or "NS", halt_reason=None)
+                    m.pop("status_api", None)
+                elif str(g.get("status")) in ("PST", "CANC", "ABD"):
+                    continue
+                m["start"] = new
+                res.append(m)
+        except Exception:
+            continue
+    return res
 
 
 def _moved_in(kind, day, today):

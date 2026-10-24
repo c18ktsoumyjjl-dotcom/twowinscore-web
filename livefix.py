@@ -608,6 +608,12 @@ OFFICIAL_PST = {
 }
 
 
+# 공식 발표로 새 날짜가 확정됐는데 API-Sports 가 옛 날짜(NS)에 그대로 둔 경기 → 새 날짜 목록에 '예정'으로 넣어요(data.games_for).
+# key: (원래 시작 ts, 새 시작 ts(KST), 출처). API 가 경기를 옮기거나 상태를 바꾸면 자동으로 손 뗌. 출처 필수.
+OFFICIAL_MOVE = {
+    "baseball:29:190209": (1792751700, 1792919100, "https://udn.com/news/story/7001/9833931"),  # CPBL 대만시리즈 G5 → 10/25 18:05 KST (대만 17:05)
+}
+
 def _official_pst(g):
     o = OFFICIAL_PST.get(str(g.get("key")))
     if not o or str(g.get("status") or "") not in ("NS", "TBD"):
