@@ -536,10 +536,10 @@ def _official_moved(kind, day, today, have):
                 if str(g.get("key")) != key or abs(g["start"].timestamp() - ots) > 60:
                     continue
                 m = dict(g)
-                if g.get("live_src") == "official" and g.get("status") == "PST":   # 우리 '연기' 표시만 걷어냄(API 진행·결과는 그대로)
-                    m.update(status=g.get("status_api") or "NS", halt_reason=None)
+                if str(g.get("status")) in ("PST", "POST", "NS", "TBD"):   # 옛 날짜의 '연기'(우리 표시든 API POST 든) → 새 날짜엔 예정
+                    m.update(status="NS", halt_reason=None)
                     m.pop("status_api", None)
-                elif str(g.get("status")) in ("PST", "CANC", "ABD"):
+                elif str(g.get("status")) in ("CANC", "ABD"):
                     continue
                 m["start"] = new
                 res.append(m)
