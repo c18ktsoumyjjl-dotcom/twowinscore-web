@@ -8,7 +8,7 @@
 """
 import json, re, threading, time, urllib.request
 from collections import deque
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 try:
@@ -304,6 +304,38 @@ def _seen(have, h, a):
     return False
 
 
+_SEMI_SLOT = re.compile(r"^준결승\s*([AB])\s*승$")
+
+
+def _resolve_final(x, day):
+    """컵 결승 "준결승 A승/B승" → 실제 준결승 승리팀. 네이버 같은 카테고리 컵 준결승(kovo_cup_sf)이
+    최근 3일 안에 정확히 2경기, 둘 다 종료·승자 확정일 때만(시작 순서대로 A, B). 아니면 None(띄우지 않음)."""
+    if not str(x.get("roundCode") or "").endswith("_fi"):
+        return None
+    h, a = str(x.get("homeTeamName") or "").strip(), str(x.get("awayTeamName") or "").strip()
+    mh, ma = _SEMI_SLOT.match(h), _SEMI_SLOT.match(a)
+    if not mh or not ma or {mh.group(1), ma.group(1)} != {"A", "B"}:
+        return None
+    pre = str(x.get("roundCode"))[:-3] + "_sf"
+    sf = {}
+    for back in (0, 1, 2, 3):
+        d = (day - timedelta(days=back)).isoformat()
+        for y in _day(x.get("upperCategoryId") or "kvolleyball", d):
+            if y.get("categoryId") == x.get("categoryId") and y.get("roundCode") == pre:
+                sf[y.get("gameId")] = y
+    if len(sf) != 2:
+        return None
+    won = {}
+    for slot, y in zip("AB", sorted(sf.values(), key=lambda y: (str(y.get("gameDateTime")), str(y.get("gameId"))))):
+        if y.get("statusCode") != "RESULT" or y.get("winner") not in ("HOME", "AWAY"):
+            return None
+        w = str(y.get("homeTeamName" if y["winner"] == "HOME" else "awayTeamName") or "").strip()
+        if not w or _PLACEHOLDER.search(w):
+            return None
+        won[slot] = w
+    return won[mh.group(1)], won[ma.group(1)]
+
+
 def extra_games(kind, day, games, ko_map=None, enabled=None):
     """네이버 일정에만 있는 국내 경기 → 사이트 형식 dict 목록. 실패하면 []."""
     try:
@@ -331,6 +363,9 @@ def _extra(kind, day, games, ko_map, enabled):
             if lg is None or (enabled is not None and (kind, lg) not in enabled):
                 continue
             h, a = str(x.get("homeTeamName") or "").strip(), str(x.get("awayTeamName") or "").strip()
+            rf = _resolve_final(x, day) if (_PLACEHOLDER.search(h) or _PLACEHOLDER.search(a)) else None
+            if rf:
+                h, a = rf
             if not h or not a or _PLACEHOLDER.search(h) or _PLACEHOLDER.search(a):
                 continue
             if _seen(have, h, a):
