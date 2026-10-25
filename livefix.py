@@ -474,6 +474,73 @@ def _nhl(g, now):
 
 
 
+AHL_LEAGUE = 58
+_AHL_URL = ("https://lscluster.hockeytech.com/feed/index.php?feed=modulekit&view=scorebar&key=50c2cd9b5e18e390"
+            "&client_code=ahl&numberofdaysahead=1&numberofdaysback=1&lang_code=en&fmt=json")
+
+
+def _ahl_board():
+    return _bg(("ahl",), lambda: (tf._j(_AHL_URL).get("SiteKit") or {}).get("Scorebar") or [])
+
+
+def _ahl(g, now):
+    """AHL 전용: API-Sports 가 공식 종료 후에도 '진행 중'으로 멈춰 있을 때 AHL 공식 스코어바(HockeyTech)로 종료 처리.
+    양 팀 영문 정식명이 공식 LongName 과 정확히 같고 홈/원정·시작시각(±3시간)이 맞고 후보가 하나일 때만, 공식 Final 만 반영."""
+    if g.get("kind") != "hockey" or g.get("league") != AHL_LEAGUE:
+        return False
+    st = g.get("start")
+    st = datetime.fromisoformat(st) if isinstance(st, str) else st
+    if st is None or st.tzinfo is None or not (-24 * 3600 <= (now - st).total_seconds() <= 12 * 3600):
+        return False
+    he, ae = _team_en("hockey", g.get("home_id")), _team_en("hockey", g.get("away_id"))
+    if not he or not ae or he == ae:
+        return False
+    hits = []
+    for e in _ahl_board() or []:
+        try:
+            t = datetime.fromisoformat(e["GameDateISO8601"])
+        except Exception:
+            continue
+        if abs((t - st).total_seconds()) > 3 * 3600:
+            continue
+        hn, an = e.get("HomeLongName"), e.get("VisitorLongName")
+        if {hn, an} & {he, ae} and (hn, an) != (he, ae):
+            return False
+        if (hn, an) == (he, ae):
+            hits.append(e)
+    if len(hits) != 1:
+        return False
+    e = hits[0]
+    try:
+        ot = datetime.fromisoformat(e["GameDateISO8601"]).astimezone(SEOUL)
+        if 20 * 60 <= abs((ot - st).total_seconds()) <= 3 * 3600 and e.get("TimeTbd") in ("0", 0, None):
+            g["start"] = ot if not isinstance(g.get("start"), str) else ot.isoformat()   # API-Sports 시작시각 오류 → 공식 시각
+            tf.log(f"livefix AHL {g.get('key')} 시작 {st:%H:%M} → {ot:%H:%M} (AHL 공식)")
+    except Exception:
+        pass
+    if str(g.get("status") or "") in _FIN_API or str(g.get("status") or "") in {"NS", "TBD"} | _PST or now < st:
+        return False
+    if str(e.get("GameStatus")) != "4" or "final" not in str(e.get("GameStatusString") or "").lower():
+        return False
+    hs, as_ = _int(e.get("HomeGoals")), _int(e.get("VisitorGoals"))
+    if hs is None or as_ is None or hs == as_:
+        return False
+    pn = str(e.get("PeriodNameShort") or "").upper()
+    code, lab = ("AP", "슛아웃 종료") if pn == "SO" else ("AOT", "연장 종료") if pn == "OT" else ("FT", "종료")
+    old = (g.get("status"), g.get("home_score"), g.get("away_score"))
+    ln = g.get("lines")
+    if ln and not (code == "FT" and isinstance(ln, list) and all(isinstance(l, list) and len(l) == 3 for l in ln)
+                   and sum(_int(l[1]) or 0 for l in ln) == hs and sum(_int(l[2]) or 0 for l in ln) == as_):
+        g["lines"] = []
+    g.update(status=code, period=lab, home_score=hs, away_score=as_, status_api=g.get("status"),
+             live_src="ahl-official", status_long=None)
+    k = (g.get("key"), code, hs, as_)
+    if not LOG or LOG[-1][1:] != k:
+        LOG.append((time.time(),) + k)
+        tf.log(f"livefix AHL {g.get('key')} {old} → {code} {hs}-{as_} (AHL 공식)")
+    return True
+
+
 MLB_LEAGUE = 1
 
 
@@ -648,6 +715,10 @@ def apply(kind, games):
                 _nhl(g, now)
             except Exception as ex:
                 tf.log(f"livefix NHL {g.get('key')} 오류: {str(ex)[:100]}")
+            try:
+                _ahl(g, now)
+            except Exception as ex:
+                tf.log(f"livefix AHL {g.get('key')} 오류: {str(ex)[:100]}")
     if kind == "baseball":
         now = datetime.now(SEOUL)
         for g in games:
