@@ -548,23 +548,62 @@ _CPBL_KO = {"ACN011": "브라더스", "AAA011": "드래곤스", "ADD011": "라�
 _CPBL_TW = ZoneInfo("Asia/Taipei")
 
 
-def _cpbl_fetch():
-    import json, urllib.request
-    req = urllib.request.Request(_CPBL_URL, headers={"User-Agent": "Mozilla/5.0 (twowinscore)"})
-    h = urllib.request.urlopen(req, timeout=15).read().decode("utf-8", "replace")
+_CPBL_DONE = {}   # 종료된 경기 상세(경기별 페이지) — 바뀌지 않으므로 한 번만 받음
+
+
+def _cpbl_parse(h):
+    import json
     s = "".join(json.loads('"' + c + '"') for c in re.findall(r'self\.__next_f\.push\(\[1,"(.*?)"\]\)', h, re.S))
+    ms = list(re.finditer(r'"gameId":"([^"]+)","skipTrackman":\w+,"gameStatus":"(\w+)"', s))
     out = {}
-    for m in re.finditer(r'"gameId":"([^"]+)","skipTrackman":\w+,"gameStatus":"(\w+)"', s):
-        j = s[m.start():m.start() + 1500]
+    for i, m in enumerate(ms):
+        end = ms[i + 1].start() if i + 1 < len(ms) else len(s)
+        j = s[m.start():min(end, m.start() + 60000)]   # 경기별 페이지는 타자 기록이 길어 다음 경기 시작까지 봄
         v = re.search(r'"visiting":\{"team":\{"code":"(\w+)".*?"score":(\d+)', j, re.S)
         hm = re.search(r'"home":\{"team":\{"code":"(\w+)".*?"score":(\d+)', j, re.S)
         pe = re.search(r'"preExeDate":"([^"]+)".*?"inningSeq":(\d+),"visitingHomeType":(\d)', j, re.S)
         if not (v and hm and pe):
             continue
         x = dict(id=m.group(1), st=m.group(2), vc=v.group(1), vs=int(v.group(2)), hc=hm.group(1),
-                                        hs=int(hm.group(2)), t=pe.group(1), inn=int(pe.group(2)), vh=pe.group(3))
+                 hs=int(hm.group(2)), t=pe.group(1), inn=int(pe.group(2)), vh=pe.group(3))
         if x["id"] not in out or x["t"] > out[x["id"]]["t"]:   # 같은 경기 id 가 여러 날짜(연기 전·후, 상단 띠의 옛 날짜)로 나오면 가장 늦은 날짜(실제 일정)만
             out[x["id"]] = x
+    return out
+
+
+def _cpbl_get(url):
+    import urllib.request
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (twowinscore)"})
+    return urllib.request.urlopen(req, timeout=15).read().decode("utf-8", "replace")
+
+
+def _cpbl_fetch():
+    out = _cpbl_parse(_cpbl_get(_CPBL_URL))
+    # 일정 첫 화면은 다음 경기만 보여 줘 방금 끝난 포스트시즌 경기(예: 대만시리즈 G5)가 빠짐 →
+    # 같은 시리즈(연도-종류)의 바로 앞 2경기는 경기별 페이지(/schedule/<gameId>)에서 직접 확인
+    seen = {}
+    for gid in out:
+        mm = re.fullmatch(r"(\d{4})-([A-Z])-(\d+)", gid)
+        if mm and mm.group(2) != "A":
+            k = (mm.group(1), mm.group(2))
+            seen[k] = min(seen.get(k, 10 ** 6), int(mm.group(3)))
+    for (yr, kd), lo in seen.items():
+        for n in range(max(1, lo - 2), lo):
+            gid = f"{yr}-{kd}-{n}"
+            if gid in out:
+                continue
+            if gid not in _CPBL_DONE:
+                try:
+                    d = _cpbl_parse(_cpbl_get(f"{_CPBL_URL}/{gid}")).get(gid)
+                except Exception:
+                    d = None
+                if not d:
+                    continue
+                if d["st"] != "FINISHED":
+                    out[gid] = d
+                    continue
+                _CPBL_DONE[gid] = d
+            out[gid] = _CPBL_DONE[gid]
     return list(out.values())
 
 
