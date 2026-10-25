@@ -541,6 +541,80 @@ def _ahl(g, now):
     return True
 
 
+CPBL_KEY = "baseball:29:"
+_CPBL_URL = "https://stats.cpbl.com.tw/schedule"
+_CPBL_KW = {"ACN011": "brothers", "AAA011": "dragons", "ADD011": "lions", "AJL011": "monkeys", "AEO011": "guardians", "AKP011": "hawks"}
+_CPBL_KO = {"ACN011": "브라더스", "AAA011": "드래곤스", "ADD011": "라이온스", "AJL011": "몽키스", "AEO011": "가디언스", "AKP011": "호크스"}
+_CPBL_TW = ZoneInfo("Asia/Taipei")
+
+
+def _cpbl_fetch():
+    import json, urllib.request
+    req = urllib.request.Request(_CPBL_URL, headers={"User-Agent": "Mozilla/5.0 (twowinscore)"})
+    h = urllib.request.urlopen(req, timeout=15).read().decode("utf-8", "replace")
+    s = "".join(json.loads('"' + c + '"') for c in re.findall(r'self\.__next_f\.push\(\[1,"(.*?)"\]\)', h, re.S))
+    out = {}
+    for m in re.finditer(r'"gameId":"([^"]+)","skipTrackman":\w+,"gameStatus":"(\w+)"', s):
+        j = s[m.start():m.start() + 1500]
+        v = re.search(r'"visiting":\{"team":\{"code":"(\w+)".*?"score":(\d+)', j, re.S)
+        hm = re.search(r'"home":\{"team":\{"code":"(\w+)".*?"score":(\d+)', j, re.S)
+        pe = re.search(r'"preExeDate":"([^"]+)".*?"inningSeq":(\d+),"visitingHomeType":(\d)', j, re.S)
+        if not (v and hm and pe):
+            continue
+        x = dict(id=m.group(1), st=m.group(2), vc=v.group(1), vs=int(v.group(2)), hc=hm.group(1),
+                                        hs=int(hm.group(2)), t=pe.group(1), inn=int(pe.group(2)), vh=pe.group(3))
+        if x["id"] not in out or x["t"] > out[x["id"]]["t"]:   # 같은 경기 id 가 여러 날짜(연기 전·후, 상단 띠의 옛 날짜)로 나오면 가장 늦은 날짜(실제 일정)만
+            out[x["id"]] = x
+    return list(out.values())
+
+
+def _cpbl(g, now):
+    """CPBL 전용: API-Sports 가 재편성 경기(대만시리즈 G5 등)를 '예정'에 멈춰 둘 때 CPBL 공식 기록 사이트(stats.cpbl.com.tw)로 진행·종료 반영.
+    양 팀(공식 팀코드↔영문명)·홈/원정·시작시각(±3시간)이 맞고 진행/종료 후보가 하나일 때만."""
+    if not str(g.get("key") or "").startswith(CPBL_KEY) or str(g.get("status") or "") not in {"NS", "TBD"} | _PST:
+        return False
+    st = g.get("start")
+    st = datetime.fromisoformat(st) if isinstance(st, str) else st
+    if st is None or st.tzinfo is None or not (MIN_AGE <= (now - st).total_seconds() <= 12 * 3600):
+        return False
+    hn = " ".join(str(x or "") for x in (g.get("home_en"), _team_en("baseball", g.get("home_id")), g.get("home"))).lower()
+    an = " ".join(str(x or "") for x in (g.get("away_en"), _team_en("baseball", g.get("away_id")), g.get("away"))).lower()
+    hits = []
+    for e in _bg(("cpbl",), _cpbl_fetch) or []:
+        if e["st"] not in ("FINISHED", "PLAYING", "PLAY", "LIVE", "IN_PROGRESS", "INPROGRESS", "STARTED"):
+            continue
+        try:
+            t = datetime.fromisoformat(e["t"]).replace(tzinfo=_CPBL_TW)
+        except Exception:
+            continue
+        if abs((t - st).total_seconds()) > 3 * 3600:
+            continue
+        def has(code, name):
+            return any(w and w in name for w in (_CPBL_KW.get(code), _CPBL_KO.get(code)))
+        if has(e["hc"], hn) and has(e["vc"], an) and not has(e["hc"], an) and not has(e["vc"], hn):
+            hits.append(e)
+    if len(hits) != 1:
+        return False
+    e = hits[0]
+    if e["st"] == "FINISHED":
+        if e["hs"] == e["vs"]:
+            return False
+        code, per = "FT", "종료"
+    else:
+        half = "초" if e["vh"] == "1" else "말" if e["vh"] == "2" else None
+        if not half or e["inn"] < 1:
+            return False
+        code, per = f"IN{e['inn']}", f"{e['inn']}회{half}"
+    old = (g.get("status"), g.get("home_score"), g.get("away_score"))
+    g.update(status=code, period=per, home_score=e["hs"], away_score=e["vs"], status_api=g.get("status"),
+             halt_reason=None, live_src="cpbl-official", status_long=None)
+    k = (g.get("key"), code, e["hs"], e["vs"])
+    if not LOG or LOG[-1][1:] != k:
+        LOG.append((time.time(),) + k)
+        tf.log(f"livefix CPBL {g.get('key')} {old} → {code} {e['hs']}-{e['vs']} (CPBL 공식)")
+    return True
+
+
 MLB_LEAGUE = 1
 
 
@@ -726,6 +800,10 @@ def apply(kind, games):
                 _mlb(g, now)
             except Exception as ex:
                 tf.log(f"livefix MLB {g.get('key')} 오류: {str(ex)[:100]}")
+            try:
+                _cpbl(g, now)
+            except Exception as ex:
+                tf.log(f"livefix CPBL {g.get('key')} 오류: {str(ex)[:100]}")
     if not tf.ESPN.get(kind) or not tf.NAVER_UP.get(kind):
         return games
     now = datetime.now(SEOUL)

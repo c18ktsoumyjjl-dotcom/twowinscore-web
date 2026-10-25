@@ -542,6 +542,10 @@ def _official_moved(kind, day, today, have):
                 elif str(g.get("status")) in ("CANC", "ABD"):
                     continue
                 m["start"] = new
+                try:
+                    livefix._cpbl(m, datetime.now(SEOUL))   # 옮긴 경기는 apply 뒤에 붙으므로 공식 진행·종료를 여기서 반영
+                except Exception:
+                    pass
                 res.append(m)
         except Exception:
             continue
