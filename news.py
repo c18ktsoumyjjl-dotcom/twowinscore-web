@@ -55,8 +55,8 @@ def _refresh(cat):
         log.warning("naver %s: %s", cat, e)
         with _lk:
             c = _cache.get(cat)
-            if c:
-                _cache[cat] = (time.time() - TTL + 60, c[1])   # 실패하면 1분 뒤 다시 시도, 그동안 이전 목록
+            # 실패하면 1분 뒤 다시 시도, 그동안 이전 목록(처음부터 실패면 빈 목록 — 다음 요청이 또 3초씩 기다리지 않게, 10/27 00:20 /news 6초)
+            _cache[cat] = (time.time() - TTL + 60, c[1] if c else [])
     finally:
         with _lk:
             _busy.discard(cat)
