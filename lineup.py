@@ -18,20 +18,48 @@ def _j(url, h=UA):
         return json.loads(r.read().decode())
 
 
+_busy = set()
+
+
+def _cache_put(key, ttl, v, failed=False):
+    with _lk:
+        if len(_c) > 500:
+            _c.clear()
+        _c[key] = (time.time() + ttl, v, failed)
+
+
+def _cache_bg(key, ttl, fn):
+    try:
+        try:
+            _cache_put(key, ttl, fn())
+        except Exception:
+            with _lk:
+                e = _c.get(key)
+            _cache_put(key, 60, e[1] if e else None, True)
+    finally:
+        with _lk:
+            _busy.discard(key)
+
+
 def _cache(key, ttl, fn):
+    """만료·실패 시 요청이 기다리지 않게: 기존 값(실패면 None) 즉시 반환 + 뒤에서 1회 갱신.
+    (10/26 23:10 KBL 상세 12초 — Render→네이버 타임아웃 12초가 20초마다 반복)"""
     now = time.time()
     with _lk:
         e = _c.get(key)
         if e and now < e[0]:
             return e[1]
+        if e:
+            if key not in _busy:
+                _busy.add(key)
+                threading.Thread(target=_cache_bg, args=(key, ttl, fn), daemon=True).start()
+            return e[1]
     try:
         v = fn()
     except Exception:
-        v, ttl = (e[1] if e else None), 20
-    with _lk:
-        if len(_c) > 500:
-            _c.clear()
-        _c[key] = (now + ttl, v)
+        _cache_put(key, 60, None, True)
+        return None
+    _cache_put(key, ttl, v)
     return v
 
 
