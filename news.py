@@ -16,7 +16,7 @@ _cache, _lk = {}, threading.Lock()
 
 def _get(cat, day=None):
     u = f"https://api-gw.sports.naver.com/news/articles/{cat}?sort=popular&page=1&pageSize=20" + (f"&date={day}" if day else "")
-    d = json.load(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=8))
+    d = json.load(urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=6))
     return d["result"]["newsList"] or []
 
 
@@ -43,25 +43,44 @@ def _fetch(cat):
     return out
 
 
-def items(cat):
-    if cat not in CAT_OK:
-        return []
-    now = time.time()
-    with _lk:
-        c = _cache.get(cat)
-        if c and now - c[0] < TTL:
-            return c[1]
+_busy = set()
+
+
+def _refresh(cat):
     try:
         v = _fetch(cat)
         with _lk:
-            _cache[cat] = (now, v)
-        return v
+            _cache[cat] = (time.time(), v)
     except Exception as e:
         log.warning("naver %s: %s", cat, e)
         with _lk:
+            c = _cache.get(cat)
             if c:
-                _cache[cat] = (now - TTL + 60, c[1])   # 실패하면 1분 뒤 다시 시도, 그동안 이전 목록
-            return c[1] if c else []
+                _cache[cat] = (time.time() - TTL + 60, c[1])   # 실패하면 1분 뒤 다시 시도, 그동안 이전 목록
+    finally:
+        with _lk:
+            _busy.discard(cat)
+
+
+def items(cat, wait=3.0):
+    """요청은 네이버를 기다리지 않음: 저장된 목록을 바로 주고 만료·실패 시 뒤에서 1회 갱신.
+    처음(목록 없음)에만 최대 wait 초 기다림 (10/26 21:10 Render→네이버 타임아웃으로 /news 17초·빈 화면)."""
+    if cat not in CAT_OK:
+        return []
+    with _lk:
+        c = _cache.get(cat)
+        fresh = c and time.time() - c[0] < TTL
+        start = not fresh and cat not in _busy
+        if start:
+            _busy.add(cat)
+    if start:
+        t = threading.Thread(target=_refresh, args=(cat,), daemon=True)
+        t.start()
+        if not c and wait:
+            t.join(wait)
+            with _lk:
+                c = _cache.get(cat)
+    return c[1] if c else []
 
 
 def ago(s):
