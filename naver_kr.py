@@ -70,8 +70,10 @@ def _cached(key, fn):
         now = time.time()
         if hit and now < hit[0]:
             return hit[1]
-        if hit and hit[1] is not None and now - hit[0] < STALE_MAX:
-            if key not in _busy:      # 만료된 값: 즉시 반환 + 뒤에서 한 번만 새로 받기
+        if hit and (hit[1] is None or now - hit[0] < STALE_MAX):
+            # 만료된 값(또는 직전 실패=None → API-Sports 사용): 즉시 반환 + 뒤에서 한 번만 새로 받기
+            # (네이버가 타임아웃일 때 요청마다 4초씩 기다리던 문제 방지)
+            if key not in _busy:
                 _busy.add(key)
                 def _r():
                     try:
