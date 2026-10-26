@@ -36,11 +36,29 @@ def _j(url, h=None):
         return json.loads(r.read().decode())
 
 
+_busy = set()
+
+
 def _cached(key, fn):
     with _lk:
         hit = _c.get(key)
         if hit and time.time() < hit[0]:
             return hit[1]
+        if hit:      # 만료(또는 직전 실패): 기존 값 즉시 반환 + 뒤에서 한 번만 갱신 (네이버·ESPN 타임아웃 때 요청이 기다리지 않게)
+            if key not in _busy:
+                _busy.add(key)
+                def _r():
+                    try:
+                        _fetch(key, fn)
+                    finally:
+                        with _lk:
+                            _busy.discard(key)
+                threading.Thread(target=_r, daemon=True).start()
+            return hit[1]
+    return _fetch(key, fn)
+
+
+def _fetch(key, fn):
     try:
         v, exp = fn(), time.time() + TTL
     except Exception as e:

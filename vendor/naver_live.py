@@ -50,6 +50,27 @@ def _cached(key, ttl_fn, fn):
         hit = _cache.get(key)
         if hit and time.time() < hit[0]:
             return hit[1]
+        if hit and (hit[1] is None or time.time() - hit[0] < 60):
+            # 만료 직후 값(또는 직전 실패=None → API-Sports 사용)은 즉시 반환 + 뒤에서 한 번만 갱신
+            # (네이버 타임아웃 때 요청마다 8초씩 기다리던 문제 방지)
+            if key not in _busy:
+                _busy.add(key)
+                def _r():
+                    try:
+                        _fill(key, ttl_fn, fn)
+                    finally:
+                        with _lock:
+                            _busy.discard(key)
+                threading.Thread(target=_r, daemon=True).start()
+            return hit[1]
+    return _fill(key, ttl_fn, fn)
+
+
+_busy = set()
+
+
+def _fill(key, ttl_fn, fn):
+    with _lock:
         lk = _cache.setdefault("lk:" + key, (0, threading.Lock()))[1]
     with lk:
         with _lock:
