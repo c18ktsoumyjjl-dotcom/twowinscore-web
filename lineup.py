@@ -54,13 +54,18 @@ def _cache(key, ttl, fn):
                 _busy.add(key)
                 threading.Thread(target=_cache_bg, args=(key, ttl, fn), daemon=True).start()
             return e[1]
-    try:
-        v = fn()
-    except Exception:
-        _cache_put(key, 60, None, True)
-        return None
-    _cache_put(key, ttl, v)
-    return v
+        # 처음 조회: 뒤에서 가져오고 최대 3초만 기다림 (10/27 23:22 KBO·MLB·NPB 상세 첫 로딩 13~20초 — 네이버 12초 타임아웃 여러 번)
+        if key in _busy:
+            t = None
+        else:
+            _busy.add(key)
+            t = threading.Thread(target=_cache_bg, args=(key, ttl, fn), daemon=True)
+            t.start()
+    if t is not None:
+        t.join(3)
+    with _lk:
+        e = _c.get(key)
+    return e[1] if e else None
 
 
 def _n(v):
