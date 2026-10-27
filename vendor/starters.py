@@ -21,18 +21,43 @@ NAVER_H = {**UA, "Referer": "https://m.sports.naver.com/"}
 _cache = {}
 
 
+import threading as _th
+_lk = _th.Lock()
+_busy = set()
+
+
+def _bg(key, fn):
+    try:
+        try:
+            val = fn()
+            _cache[key] = (time.time(), val)
+        except Exception as e:
+            log(f"starter {key} {redact(e)[:140]}")
+            old = _cache.get(key)
+            _cache[key] = (time.time() - TTL + 300, old[1] if old else None)   # 실패는 5분만 (기존 값 유지)
+    finally:
+        with _lk:
+            _busy.discard(key)
+
+
 def _cached(key, fn):
+    """만료·실패 시 요청이 기다리지 않게: 기존 값 즉시 반환 + 뒤에서 1회 갱신, 처음엔 최대 3초만 대기.
+    (10/27 23:30 KBO 상세 첫 로딩 20초 — Render→네이버 20초 타임아웃이 5~10분마다 반복)"""
     hit = _cache.get(key)
     if hit and time.time() - hit[0] < TTL:
         return hit[1]
-    try:
-        val = fn()
-    except Exception as e:
-        log(f"starter {key} {redact(e)[:140]}")
-        _cache[key] = (time.time() - TTL + 300, None)   # 실패는 5분만
-        return None
-    _cache[key] = (time.time(), val)
-    return val
+    t = None
+    with _lk:
+        if key not in _busy:
+            _busy.add(key)
+            t = _th.Thread(target=_bg, args=(key, fn), daemon=True)
+            t.start()
+    if hit:
+        return hit[1]
+    if t is not None:
+        t.join(3)
+    hit = _cache.get(key)
+    return hit[1] if hit else None
 
 
 def _json(url, headers=UA):
