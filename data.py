@@ -55,6 +55,8 @@ for _k, _l, _s, _n in [("baseball", 32, 2026, "아시안게임 야구"), ("baseb
         sb.LEAGUES.append(_m); sb.LEAGUE_BY_KEY[(_k, _l)] = _m; sb.LEAGUE_ORDER[(_k, _l)] = len(sb.LEAGUE_ORDER)
 # 팀명 보정: 2162 페퍼저축은행 → SOOP 수퍼스(구단 인수·리브랜딩, API-Sports는 아직 "Pepper Savings Bank W")
 sb.TEAM_KO["volleyball"][2162] = "SOOP"
+# SV리그 팀 한글명 (API-Sports league 252 영문명 음역, 2026-10-31)
+sb.TEAM_KO["volleyball"].update({3929: "오사카 블루테온", 756: "나고야", 2192: "보레아스 홋카이도", 754: "제이텍트", 760: "산토리 선버즈", 4438: "닛폰제철 사카이 블레이저스", 761: "도레이 애로스", 4369: "신슈 마쓰모토 트라이던츠", 4437: "히로시마 선더스", 3619: "도쿄 그레이트 베어스", 4367: "프라골라드 가고시마", 4368: "홋카이도 옐로스타스"})
 _RENAMED = {("volleyball", 2162): ("SOOP", ("페퍼저축은행", "Pepper Savings Bank W")),
            ("basketball", 7340): ("사우스고비 브롱코스", ("Xac Broncos", "South Gobi Broncos"))}
 # 안전장치: 매핑 확인 당시 영문명과 업스트림 이름이 다르면 업스트림 이름 표시
